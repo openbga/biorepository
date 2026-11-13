@@ -1,0 +1,85 @@
+{
+  "id": "storage-container-type-detail",
+  "routes": [
+    "storage:container-type-detail"
+  ],
+  "title": "Container type",
+  "purpose": "Review one version of a box grid: geometry, label preview, its other versions and history.",
+  "sections": [
+    {
+      "title": "Container type",
+      "paragraphs": [
+        "A grid is fixed once any box uses it; a change is a new version and existing boxes keep their positions and labels. While no box uses this version its grid can still be corrected."
+      ],
+      "items": [
+        {
+          "label": "Code and version",
+          "description": "The code is shared by every version."
+        },
+        {
+          "label": "Name",
+          "description": "Display name."
+        },
+        {
+          "label": "Grid",
+          "description": "Rows × columns = positions."
+        },
+        {
+          "label": "Position labels",
+          "description": "Letter rows with numbered columns (A1), or numbered positions (1, 2, 3 ...)."
+        },
+        {
+          "label": "Numbering order",
+          "description": "Across rows (row-major) or down columns (column-major), from the top-left corner; this fixes each position's number."
+        },
+        {
+          "label": "Active boxes",
+          "description": "Active boxes using this version."
+        }
+      ]
+    },
+    {
+      "title": "Label preview",
+      "paragraphs": [
+        "The labels as seen from the labelled top-left corner. Grids larger than 12 × 12 show only the top-left 12 × 12."
+      ]
+    },
+    {
+      "title": "Versions",
+      "paragraphs": [
+        "Every version of this code with its name, grid and status; select another version to open it."
+      ]
+    },
+    {
+      "title": "Actions",
+      "paragraphs": [
+        "Admin and manager roles."
+      ],
+      "items": [
+        {
+          "label": "New version",
+          "description": "Opens the container type form pre-filled from this version; saving with the same code creates the next version."
+        },
+        {
+          "label": "Edit",
+          "description": "Opens the edit form for this version."
+        }
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/services.py",
+    "storage/templates/storage/container_type_detail.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

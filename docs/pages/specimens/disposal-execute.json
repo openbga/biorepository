@@ -1,0 +1,49 @@
+{
+  "id": "specimens-disposal-execute",
+  "routes": [
+    "specimens:disposal-execute"
+  ],
+  "title": "Record disposal",
+  "purpose": "Record that an approved disposal was carried out.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is available only for an approved request whose approval is still current. It is blocked while the request awaits approval or was rejected, cancelled or already recorded, when the specimen changed after approval (a new request is needed), while a disposal hold or an all-use hold is active (a use hold does not block disposal), and while the specimen is distributed (outside the repository until its return is recorded). The form shows the request details; the approved method and destination cannot be changed here."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "When it happened",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Describe how the disposal was carried out. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "What recording does",
+      "paragraphs": [
+        "Record disposal frees the storage position, adds a disposal custody event, writes off the whole remaining amount in the amount ledger and sets the specimen to Disposed. An open check-out period is ended at that time. The specimen record, ledger, custody and history are kept; the record is final apart from a manager's annotation. The time cannot be before the approval or the specimen's latest event. Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order.",
+        "Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

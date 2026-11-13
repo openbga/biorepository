@@ -1,0 +1,130 @@
+{
+  "id": "storage-unit-detail",
+  "routes": [
+    "storage:unit-detail"
+  ],
+  "title": "Storage unit",
+  "purpose": "Review one freezer or tank: its facts, occupancy, racks and shelves, boxes and history, and reach the actions to change it.",
+  "sections": [
+    {
+      "title": "Storage unit",
+      "paragraphs": [
+        "The nominal temperature is the unit's stated set point in degrees Celsius, not a measurement; it never blocks storing an item. A retired record shows a banner with when it was retired, by whom and the reason. Its Edit, Retire and Move buttons are gone."
+      ],
+      "items": [
+        {
+          "label": "Code",
+          "description": "Immutable, never reused."
+        },
+        {
+          "label": "Name",
+          "description": "Free-text name."
+        },
+        {
+          "label": "Site and room",
+          "description": "Links to both."
+        },
+        {
+          "label": "Storage class",
+          "description": "Opens the class."
+        },
+        {
+          "label": "Technology",
+          "description": "How the unit stores material; fixed at creation."
+        },
+        {
+          "label": "Nominal temperature",
+          "description": "Stated set point in °C."
+        },
+        {
+          "label": "Created from template",
+          "description": "The template version the unit was applied from, if any."
+        },
+        {
+          "label": "Equipment",
+          "description": "Shown when the equipment module is installed. Opens the equipment list filtered to the equipment registered for this unit, with latest readings and levels, due dates and open excursions."
+        },
+        {
+          "label": "Set up",
+          "description": "When and by whom the unit was created."
+        }
+      ]
+    },
+    {
+      "title": "Occupancy",
+      "paragraphs": [
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it."
+      ]
+    },
+    {
+      "title": "Racks and shelves",
+      "paragraphs": [
+        "Every rack, tower, shelf and canister in the unit, including retired ones, ordered by path."
+      ],
+      "items": [
+        {
+          "label": "Location",
+          "description": "Parent code, or Top level."
+        },
+        {
+          "label": "Slot",
+          "description": "Its place in the unit or parent."
+        },
+        {
+          "label": "Holds",
+          "description": "Used and total node slots or box slots. Counts active children only."
+        },
+        {
+          "label": "Positions, Occupied, Free",
+          "description": "Counts under that node."
+        },
+        {
+          "label": "Add rack or shelf",
+          "description": "Opens the rack or shelf form for this unit. Admin and manager roles, active unit only."
+        }
+      ]
+    },
+    {
+      "title": "Boxes",
+      "paragraphs": [
+        "Active boxes in the unit only, by rack path then slot. Retired boxes are not listed; find them through the Boxes list with status Active and retired."
+      ]
+    },
+    {
+      "title": "Actions",
+      "paragraphs": [
+        "Actions are shown to admin and manager roles, and only while the unit is active."
+      ],
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Opens the unit form to change the name, storage class or nominal temperature."
+        },
+        {
+          "label": "Save layout as template",
+          "description": "Opens a new template form pre-filled with a recipe that reproduces this unit's active racks, shelves and boxes. Nothing is saved until you submit it."
+        },
+        {
+          "label": "Retire storage unit",
+          "description": "Opens the retirement form. Disabled, with the reason beside it, while the unit still has active racks, towers or shelves. Retirement is permanent."
+        }
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/services.py",
+    "storage/templates/storage/unit_detail.html",
+    "storage/templates/storage/_capacity.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

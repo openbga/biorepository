@@ -1,0 +1,110 @@
+{
+  "id": "equipment-due-list",
+  "routes": [
+    "equipment:due-list"
+  ],
+  "title": "Maintenance due",
+  "purpose": "See the next due dates your repository recorded for maintenance, calibration, mapping and qualification, and which are overdue.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "One row for each piece of equipment in use and each kind of service whose latest effective event carries a next due date. Dates are the ones entered on those events: Vapor Phase has no default intervals and never calculates a date, so equipment with no recorded date does not appear. Repairs have no due date. Retired equipment is not listed. A correction or withdrawal changes the row at once, because the latest effective event counts.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the asset ID or equipment name. The default sort is Next due, soonest first. Sortable columns are Asset ID, Service, Next due and Last performed (newest first on the first click)."
+      ],
+      "items": [
+        {
+          "label": "Due",
+          "description": "All due dates, Overdue (the date is before today) or Due soon (today up to the number of days in Due soon within)."
+        },
+        {
+          "label": "Due soon within",
+          "description": "Next 7, 30 (the default) or 90 days. Applies only with Due soon."
+        },
+        {
+          "label": "Service",
+          "description": "Preventive maintenance, Calibration, Temperature mapping or Qualification or verification."
+        },
+        {
+          "label": "Equipment kind",
+          "description": "Under the More control: limit to one kind of equipment."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Asset ID",
+          "description": "Opens the equipment record. Always shown."
+        },
+        {
+          "label": "State",
+          "description": "Overdue, Due today or Scheduled."
+        },
+        {
+          "label": "Service",
+          "description": "The kind of service."
+        },
+        {
+          "label": "Next due",
+          "description": "The recorded due date."
+        },
+        {
+          "label": "Days",
+          "description": "Days from today; negative when overdue."
+        },
+        {
+          "label": "Last performed",
+          "description": "The date of the event carrying the due date."
+        },
+        {
+          "label": "Outcome",
+          "description": "That event's outcome."
+        },
+        {
+          "label": "Equipment",
+          "description": "The equipment name."
+        },
+        {
+          "label": "Record ...",
+          "description": "Technicians, managers and administrators. Opens Record service event for that equipment with the kind chosen."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact decimal values and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No due dates recorded",
+          "description": "No maintenance, calibration, mapping or qualification has been recorded with a next due date. Record one on an equipment record; the date is yours to enter."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/lists.py",
+    "equipment/queries.py",
+    "equipment/exports.py",
+    "equipment/templates/equipment/due_list.html"
+  ]
+}

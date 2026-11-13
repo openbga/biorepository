@@ -1,0 +1,82 @@
+{
+  "id": "storage-node-form",
+  "routes": [
+    "storage:node-create",
+    "storage:node-edit"
+  ],
+  "title": "Rack or shelf form",
+  "purpose": "Add a rack, tower, shelf or canister to a unit, or change the name of an existing one.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form.",
+        "Only the name can be edited later; moving a node uses the Move action. Opening the form from a unit or node page preselects the unit, and the parent and first kind that can be held."
+      ],
+      "items": [
+        {
+          "label": "Storage unit",
+          "description": "Create only. Required; active units."
+        },
+        {
+          "label": "Inside",
+          "description": "Create only. Optional. Leave as Top level of the unit, or choose a node that offers node slots. Must belong to the chosen unit."
+        },
+        {
+          "label": "Slot",
+          "description": "Create only. Required whole number, at least 1. Inside a parent it can be no higher than the parent's node slots. Must be unused by another active node in the same place."
+        },
+        {
+          "label": "Kind",
+          "description": "Create only. Shelf, Rack, Tower or Canister. A shelf holds racks; a rack, tower or canister holds shelves. Any kind may stand at the top level. Layouts are at most 4 levels deep."
+        },
+        {
+          "label": "Code",
+          "description": "Create only. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Node slots",
+          "description": "Create only. 0 to 100: how many shelves or racks it holds."
+        },
+        {
+          "label": "Box slots",
+          "description": "Create only. 0 to 100: how many boxes it holds directly. Give node slots or box slots, one of them and not both."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create rack or shelf / Save changes",
+          "description": "Saves and opens the node."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}

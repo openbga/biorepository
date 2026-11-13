@@ -1,0 +1,87 @@
+{
+  "id": "distribution-shipment-detail",
+  "routes": [
+    "distribution:shipment-detail"
+  ],
+  "title": "Shipment",
+  "purpose": "Read one shipment: where it goes, what is in it, the declarations made at packing, the receipt reported and returns.",
+  "sections": [
+    {
+      "title": "Header actions by state",
+      "paragraphs": [
+        "Every role can read the page; buttons appear only for roles that may use them."
+      ],
+      "items": [
+        {
+          "label": "Draft",
+          "description": "Edit, Pack (primary; disabled until it holds picked specimens), Cancel shipment (managers). The contents are changed with Change contents in the Contents panel."
+        },
+        {
+          "label": "Packed",
+          "description": "Dispatch (primary), Unpack, Record notification, Edit (courier details), Cancel shipment (managers)."
+        },
+        {
+          "label": "Dispatched",
+          "description": "Record receipt (primary), Record notification."
+        },
+        {
+          "label": "Receipt recorded",
+          "description": "Correct receipt (managers and administrators)."
+        },
+        {
+          "label": "Add note",
+          "description": "Technicians and above, in any state."
+        }
+      ]
+    },
+    {
+      "title": "Progress",
+      "paragraphs": [
+        "The Progress panel, under any notice and above the shipment facts, shows the shipment's four steps: Contents (the specimens in it), Pack, Dispatch and Receipt. Finished steps carry a tick and their date, the current step is highlighted, and later steps are open; a cancelled shipment marks the step it stopped at.",
+        "The Next line says what the next step needs. It shows Blocked with the reason when the header's next action is unavailable, or when specimens of a packed shipment would be refused at dispatch now."
+      ]
+    },
+    {
+      "title": "Shipment",
+      "paragraphs": [
+        "The request, ship-to details, planned date, courier, service and tracking number, and, under Declared at packing, the declarations recorded at packing (Not yet declared before packing): temperature class, refrigerant and dry ice mass, the classification as declared by the shipper (the software records it and does not classify shipments), packages, emergency contact, temperature loggers, storage instructions, whether participant codes are printed, whether the packer confirmed current shipping training, who packed and checked it and who dispatched it. Manifest opens the manifest.",
+        "On a packed shipment an alert lists anything that would refuse the dispatch now, naming the recorded fact."
+      ]
+    },
+    {
+      "title": "Contents",
+      "paragraphs": [
+        "Draft and packed: the picked specimens in it with their line, type and amount; a packed shipment shows the specimen revision stored at packing and marks one changed since (dispatch refuses it). Dispatched and later: the items written at dispatch (specimen, type, container, amount sent, study and, when included, participant code). These rows never change, whatever is corrected later."
+      ]
+    },
+    {
+      "title": "Receipt",
+      "paragraphs": [
+        "After dispatch: the receipt as reported by the recipient (who received and unpacked it and when, condition, refrigerant on arrival, temperature note, discrepancies, how it was reported, per-item exceptions and the attachment). A corrected receipt shows the latest version; earlier versions are kept under Earlier versions."
+      ]
+    },
+    {
+      "title": "Returns",
+      "paragraphs": [
+        "After dispatch: each item sent, with its return if one was recorded (review state, time, amount, thaws reported, attachment). Record return on an item not yet returned (technicians and above); Review on a return not yet released for use (managers and administrators)."
+      ]
+    },
+    {
+      "title": "Timeline and history",
+      "paragraphs": [
+        "The timeline lists, oldest first, every step with its time, person, note and attachment: created, details changed, contents changed, packed, unpacked, notified, acknowledged, dispatched, receipt recorded or corrected, returns, cancelled and notes. Attachments download as files. History lists the audit events, including manifest printouts."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/request_lists.py",
+    "distribution/templates/distribution/shipments/shipment_detail.html",
+    "distribution/templates/distribution/shipments/_attachment.html",
+    "distribution/templates/distribution/requests/_header_actions.html"
+  ]
+}

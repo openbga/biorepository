@@ -1,0 +1,9 @@
+/* Specimen label stylesheet, passed to WeasyPrint by specimens/labels.py; the page size comes
+   from the configured label stock and replaces the marker below. Black on white for any printer. */
+/* PAGE */
+html, body { margin: 0; padding: 0; color: #000; background: #fff; }
+body { font: 7pt / 1.1 "DejaVu Sans Mono", "Menlo", monospace; }
+.label { break-after: page; break-inside: avoid; text-align: center; }
+.label:last-child { break-after: auto; }
+.barcode svg { display: block; margin: 0 auto; }
+.accession { font-size: 9pt; font-weight: bold; letter-spacing: 0.04em; margin-top: 0.8mm; }

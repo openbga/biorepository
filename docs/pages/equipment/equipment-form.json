@@ -1,0 +1,89 @@
+{
+  "id": "equipment-equipment-form",
+  "routes": [
+    "equipment:equipment-create",
+    "equipment:equipment-edit"
+  ],
+  "title": "Equipment form",
+  "purpose": "Register a new tank, freezer, supply dewar or monitor, or change the details and limits of equipment that is already registered.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators only. Technicians and viewers are refused.",
+        "New equipment starts in service. Status changes (out of service, retired, back in service) have their own action, Change status, because they carry an effective time and a reason. Equipment is never deleted.",
+        "When editing, the form is opened with the current values. If someone else changed the record after you opened this form, the save is refused with a message that it changed since you opened it. Nothing is saved; reload, check the current values and enter the change again. Editing is also possible for retired equipment."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Asset ID",
+          "description": "Required, up to 40 characters: letters, digits, '.', '_' or '-', starting with a letter or digit, stored in capitals. It must be unique across the register (for example TANK-VP-01 or MON-01). It is how imports and other pages name the equipment. It cannot be changed once any service event, LN2 entry, reading or excursion exists for the equipment."
+        },
+        {
+          "label": "Kind",
+          "description": "Required. LN2 storage tank, Mechanical freezer or refrigerator, Temperature monitor or probe, LN2 supply dewar or Other equipment. The kind decides what can be recorded: LN2 entries only for tanks and supply dewars; temperature readings and excursions for everything except monitors. The kind cannot be changed once any service event, LN2 entry, reading or excursion exists for the equipment."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Critical equipment",
+          "description": "Marks the equipment as being on your repository's list of critical equipment. It is shown on the register and the record; it changes no rule."
+        },
+        {
+          "label": "Storage unit",
+          "description": "Optional. The storage unit this tank or freezer encloses. Excursions on this equipment use it to find the specimens that were stored there. Only active units are offered (a unit already linked stays available). A supply dewar cannot have one, and only one tank or freezer that is not retired can be linked to a storage unit."
+        },
+        {
+          "label": "Location",
+          "description": "Optional free text, up to 160 characters."
+        },
+        {
+          "label": "Manufacturer, Model, Serial number, Installed on, Service provider",
+          "description": "Optional details. Installed on cannot be in the future."
+        },
+        {
+          "label": "Lower limit and Upper limit (°C)",
+          "description": "Optional. The temperature limits your repository sets for this equipment, with up to two decimals. A reading below the lower limit or above the upper limit is flagged as outside. Leave a limit empty when none is set: there is no default. The lower limit must be below the upper limit. A monitor cannot have limits: set them on the tank or freezer it watches. Each reading and each excursion keeps the limits that were in force when it was recorded, so changing a limit later does not change past records."
+        },
+        {
+          "label": "Level unit",
+          "description": "Optional, for LN2 tanks and supply dewars only: mm, cm, in or % of full. It is the unit levels are read in, and is proposed when you record an LN2 entry."
+        },
+        {
+          "label": "Low level",
+          "description": "Optional, for LN2 tanks and supply dewars only, zero or more, up to two decimals. The level at which your repository refills; it needs a Level unit, and cannot exceed 100 when the unit is %. It drives the Below the low level filter and nothing else."
+        },
+        {
+          "label": "Notes",
+          "description": "Optional, up to 4,000 characters."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Editing only; required, up to 4,000 characters. Kept in the history with the change. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Create equipment registers the equipment in service, and opens its record. Save changes records the new values and your reason. If nothing changed, the save is refused with Nothing to save. Errors appear beside the field they concern and what you typed is kept. The Asset ID can be changed only while nothing is recorded for the equipment, and only to one that is unused.",
+        "Every registration and change is written to the record's History with who made it, and the before and after values."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "equipment/templates/equipment/equipment_detail.html",
+    "storage/models.py"
+  ]
+}

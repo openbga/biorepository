@@ -1,0 +1,54 @@
+{
+  "id": "equipment-import-detail",
+  "routes": [
+    "equipment:import-detail"
+  ],
+  "title": "Readings import",
+  "purpose": "Review one checked CSV file of temperature readings and, if it is valid, record all of its readings in one step.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "The header shows the state, the number of readings, the equipment chosen on the form (if any), and who checked the file and when. Warnings appear as Check notices at the top: readings outside the limits set on their equipment, ignored columns, or an earlier commit of identical content; commit again only if these are different readings.",
+        "Errors lists each problem with its row (the header is row 1), column and reason. Readings as read shows up to the first 200 rows as understood: equipment, time in repository time to the second, exact temperature, probe position, monitor and note. Check it before committing. A file with errors shows no readings, because none can be recorded."
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "Rejected",
+          "description": "The file has errors or no readings. Nothing can be recorded. Correct the file and upload it again; a checked import is never edited."
+        },
+        {
+          "label": "Ready to commit",
+          "description": "No errors and not expired. The commit form is shown."
+        },
+        {
+          "label": "Expired",
+          "description": "More than 24 hours old. Upload the file again so it is checked against the current register."
+        },
+        {
+          "label": "Committed",
+          "description": "The readings were recorded; Recorded shows how many, when, by whom and the reason, with a link to the imported readings."
+        }
+      ]
+    },
+    {
+      "title": "Committing",
+      "paragraphs": [
+        "Technicians, managers and administrators see the commit form; viewers are told who can. The Reason is required, up to 4,000 characters, and is kept with the import, for example the logger download it came from. Do not enter donor, patient or participant names or other text that could identify a person.",
+        "Record n readings revalidates the rows against the register and records all of them together, or none if anything changed since the check (equipment retired, a duplicate now present, or the check expired). Each reading keeps the limits set on its equipment at that moment and is marked Imported. A file is committed at most once. Imported readings can later be corrected one by one from the readings list.",
+        "A commit does not open excursions. Imported readings outside the limits are listed under the Outside the recorded limits filter."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/services.py",
+    "equipment/forms.py",
+    "equipment/templates/equipment/import_detail.html"
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "id": "specimens-catalogue-form",
+  "routes": [
+    "specimens:participant-create",
+    "specimens:participant-edit",
+    "specimens:collection-create",
+    "specimens:collection-edit",
+    "specimens:specimen-type-create",
+    "specimens:specimen-type-edit",
+    "specimens:container-type-create",
+    "specimens:container-type-edit",
+    "specimens:unit-create",
+    "specimens:unit-edit"
+  ],
+  "title": "Catalogue entry form",
+  "purpose": "Add an entry to one of the specimen catalogues, or change an existing one.",
+  "sections": [
+    {
+      "title": "Who can use it and how saving works",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form. A new entry may carry an optional reason (blank reads “Initial definition”). Changing an entry needs a reason, which is kept in the history with the values before and after. If someone else changed the entry since you opened it, the save is refused with a message to reload, your entries stay on the page and you should check the current values first. A save with nothing changed is refused.",
+        "Entries are never deleted. Stop offering one by clearing Active. Once an entry is used by a specimen (or a unit by a container or amount entry) its code can no longer change, and for units neither can its dimension or whether fractions are allowed; the form says so and shows those fields read-only. Create a new entry instead."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Required. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit; stored in capitals. Units: up to 16 characters starting with a letter, and the case is kept (mL, uL). Codes are unique within a catalogue. For a participant the code must be a coded identifier such as P-000123, never a name, record number, birth date or other identifying information."
+        },
+        {
+          "label": "Name",
+          "description": "Required except for participants; up to 160 characters (units 80)."
+        },
+        {
+          "label": "Nominal capacity, Capacity unit",
+          "description": "Specimen containers only. The vessel's stated capacity as an exact decimal and its unit; give both or leave both empty."
+        },
+        {
+          "label": "Dimension",
+          "description": "Units only. Volume, mass or count; it decides what amounts the unit can measure."
+        },
+        {
+          "label": "Fractional amounts allowed",
+          "description": "Units only. Clear for whole-number units. A count unit must be whole numbers."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Clear to stop offering the entry for new specimens; existing specimens keep it."
+        },
+        {
+          "label": "Reason",
+          "description": "Required when changing, optional when creating; up to 2,000 characters. Do not enter names, record numbers, birth dates or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "History and buttons",
+      "paragraphs": [
+        "When editing, the History section lists the recorded changes to this entry with who, when and why. Create or Save changes saves the entry and returns to the list with a confirmation; Cancel returns without saving. Errors appear next to the field and your input is kept."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/list_forms.py",
+    "specimens/templates/specimens/catalogue_form.html",
+    "specimens/templates/specimens/includes/audit_history.html",
+    "specimens/models.py",
+    "specimens/tests/test_views_records.py"
+  ]
+}

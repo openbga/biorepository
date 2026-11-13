@@ -1,0 +1,81 @@
+{
+  "id": "equipment-service-form",
+  "routes": [
+    "equipment:service-create"
+  ],
+  "title": "Record service event",
+  "purpose": "Record maintenance, calibration, a repair, temperature mapping or a qualification performed on a piece of equipment, with its certificate or report.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Technicians, managers and administrators. Viewers are refused. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. A retired piece of equipment takes no new events; a manager changes its status first.",
+        "Opened from the Record service event button on the equipment record, or from a row of Maintenance due, which preselects the kind."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Kind",
+          "description": "Required. Preventive maintenance, Calibration, Repair or service call, Temperature mapping, Qualification or verification. The kind cannot be changed by a later correction."
+        },
+        {
+          "label": "Performed on",
+          "description": "Required date, not in the future. Defaults to today."
+        },
+        {
+          "label": "Outcome",
+          "description": "Required. Maintenance and repair: Completed or Not acceptable. Calibration, mapping and qualification: Acceptable or Not acceptable."
+        },
+        {
+          "label": "Performed by (staff)",
+          "description": "A staff member with an account. Defaults to you."
+        },
+        {
+          "label": "Performed by (outside provider)",
+          "description": "Free text up to 160 characters. Either a staff member or an outside provider must be named."
+        },
+        {
+          "label": "Reference",
+          "description": "Optional, up to 160 characters: certificate, work order or procedure reference."
+        },
+        {
+          "label": "Description",
+          "description": "Optional, up to 4,000 characters: what was done; for a repair, the cause. Do not enter donor, patient or participant names or other text that could identify a person."
+        },
+        {
+          "label": "Reference device",
+          "description": "Optional, up to 160 characters. Calibration: the reference instrument's name and serial number."
+        },
+        {
+          "label": "As found, As left",
+          "description": "Optional, up to 200 characters each: the instrument's condition or readings before and after."
+        },
+        {
+          "label": "Next due",
+          "description": "Optional date, not before the date performed. Your repository's own date for the next event of this kind; it is never computed. It cannot be set on a repair. It feeds Maintenance due and the equipment record, and a later event of the same kind replaces it (an event without a date clears it)."
+        },
+        {
+          "label": "Certificate or report",
+          "description": "Optional file: PDF, PNG, JPEG, TXT or CSV, up to 10 MiB. The type is checked from the file's content, not only its name, and text files must be UTF-8. It is stored with the event and downloaded as a file, never displayed inside the page. If the repository has set a limit on the total size of attached files and it would be exceeded, the file is refused and nothing is recorded."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Record service event adds the event to the equipment's log and the audit trail together. It cannot be edited; to change it use Correct on the equipment record. Errors appear beside the field and what you typed is kept (a chosen file has to be chosen again)."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "core/attachments.py"
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "id": "distribution-study-detail",
+  "routes": [
+    "distribution:study-detail"
+  ],
+  "title": "Study",
+  "purpose": "Read one study: its approval and consent basis, the collections it governs, its consent form versions and how many consents it has by status.",
+  "sections": [
+    {
+      "title": "Study",
+      "items": [
+        {
+          "label": "Code, Title, Status",
+          "description": "As recorded; a status other than Active is also shown as a notice at the top: the study's material cannot be allocated, picked, packed or dispatched."
+        },
+        {
+          "label": "Principal investigator, Ethics reference",
+          "description": "As recorded."
+        },
+        {
+          "label": "Ethics approved until",
+          "description": "Shown, not enforced."
+        },
+        {
+          "label": "Consent basis",
+          "description": "Consent records, or Study-level determination with its reference."
+        },
+        {
+          "label": "Recorded",
+          "description": "Who created the study and when."
+        },
+        {
+          "label": "Description",
+          "description": "Opens with Description when there is one."
+        }
+      ]
+    },
+    {
+      "title": "Collections governed",
+      "paragraphs": [
+        "Current links first, then ended ones, each with when and by whom it was linked or ended and the reason. Linking makes the collection's specimens, including those already stored, governed by this study. Ending a link is refused while specimens of the collection are allocated or picked for a request; ended links stay listed."
+      ],
+      "items": [
+        {
+          "label": "Link collection",
+          "description": "Admin and manager. Offers active collections that no study governs now."
+        },
+        {
+          "label": "End link",
+          "description": "Admin and manager, on a current link. Asks for a reason."
+        }
+      ]
+    },
+    {
+      "title": "Consent forms",
+      "paragraphs": [
+        "Each form version with its kind, the categories it asks and whether it is active. The code opens the form's edit page for admin and manager; Add consent form opens the consent form catalogue form with the study chosen."
+      ]
+    },
+    {
+      "title": "Consents",
+      "paragraphs": [
+        "Counts of consent records by status; a status with consents opens the consent list filtered to this study and status."
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 audit events of the study (edits, links, ends), oldest first, with who, when and the reason."
+      ]
+    },
+    {
+      "title": "Actions and access",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else.",
+        "Edit (admin and manager) opens the study form."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/templates/distribution/governance/study_detail.html",
+    "distribution/templates/distribution/governance/_link_row.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

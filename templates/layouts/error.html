@@ -1,0 +1,15 @@
+{% extends user.is_authenticated|yesno:"base.html,layouts/entrance.html" %}
+{% load documentation %}
+{% comment %}
+Error pages (400, 403, 404). Signed-in users keep their own shell (base.html) so they can navigate
+away; anonymous visitors, or a page rendered without a user, get the entrance panel. No navigation
+item is current.
+Blocks: title, page_heading (the h1 text, in either layout), content (explanation and next step).
+Usage: {% extends "layouts/error.html" %}{% block page_heading %}Page not found{% endblock %}
+{% endcomment %}
+{% block form_surface_attributes %}{% endblock %}
+{% block documentation_panel %}
+  {% page_help "documentation:unavailable" as error_help %}
+  {% include "documentation/panel.html" with page_documentation=error_help %}
+{% endblock %}
+{% block entrance_heading %}<h1 class="vr-page-title mb-2">{% block page_heading %}{% endblock %}</h1>{% endblock %}

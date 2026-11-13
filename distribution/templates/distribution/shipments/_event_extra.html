@@ -1,0 +1,1 @@
+{% comment %}Timeline entry extra: the attached file of a shipment timeline entry. Context: e (ShipmentEvent).{% endcomment %}{% if e.has_attachment %}<p class="vr-timeline-meta">Attachment: {% include "distribution/shipments/_attachment.html" with item=e kind="shipment-event" %}</p>{% endif %}

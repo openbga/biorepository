@@ -1,0 +1,89 @@
+{
+  "id": "specimens-register",
+  "routes": [
+    "specimens:specimen-create"
+  ],
+  "title": "Register specimen",
+  "purpose": "Record a newly received specimen with its exact amount, origin, times, thaw history and custodian, and optionally store it right away.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused. Several specimens at once are registered through Imports. Specimen IDs (such as VP-000123) are assigned by the system, opaque, and carry no location, participant or study meaning; you cannot choose one."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. Collected and the processing times cannot be in the future."
+      ],
+      "items": [
+        {
+          "label": "Specimen type, Specimen container",
+          "description": "Required. Active catalogue entries."
+        },
+        {
+          "label": "Amount, Unit",
+          "description": "Required. Amount is an exact decimal as measured, for example 1.5, typed as text so that nothing is rounded and the text you typed is kept; it must suit the unit (whole numbers for count units, at most six decimals). It becomes the specimen's initial entry in the amount ledger."
+        },
+        {
+          "label": "Participant",
+          "description": "Optional. A coded participant identifier chosen from the catalogue, such as P-000123. Only codes exist; no names or other identifying text may be entered anywhere."
+        },
+        {
+          "label": "Collection",
+          "description": "Optional grouping of specimens."
+        },
+        {
+          "label": "Collected",
+          "description": "Required. When the material was collected."
+        },
+        {
+          "label": "Processing started, Processing completed",
+          "description": "Optional. The start is not before collection; a completion needs a start and is not before it."
+        },
+        {
+          "label": "Registered",
+          "description": "Required. When it was registered; not before collection or the end of processing. Becomes the first custody event."
+        },
+        {
+          "label": "Prior thaws, Unknown",
+          "description": "The number of thaws before registration as stated by the sender (0 to 1,000), or tick Unknown, which is the default. One of the two is required. Unknown stays unknown and is never counted as zero; later observed thaws are counted separately."
+        },
+        {
+          "label": "Custodian",
+          "description": "Required. The active staff member who has the specimen now; starts as you."
+        },
+        {
+          "label": "Box",
+          "description": "Active boxes, shown with their storage unit, rack path and number of free positions."
+        },
+        {
+          "label": "Position (optional)",
+          "description": "Optional: give both Box and Position to store it now in a free, unblocked position, or leave both blank to register it unplaced and place it later. Check the free positions listed in the help."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Starts as “Received for storage”. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Register specimen saves the specimen, its initial amount, its registration custody event and any placement together or not at all, then opens the new record. Errors appear beside the field and your entries are kept. Cancel returns to the specimen list. If the position was taken since you opened the form, the save is refused for that position."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py",
+    "specimens/templates/specimens/specimen_list.html"
+  ]
+}

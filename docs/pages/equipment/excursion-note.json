@@ -1,0 +1,44 @@
+{
+  "id": "equipment-excursion-note",
+  "routes": [
+    "equipment:excursion-note"
+  ],
+  "title": "Add note",
+  "purpose": "Add a note, a file, or both to an excursion's timeline at any stage.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators; viewers are refused. Notes can be added in any state, including after closing. They never change the excursion's status or details. Notes cannot be edited or deleted."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Note",
+          "description": "Up to 4,000 characters. Do not enter donor, patient or participant names or other text that could identify a person."
+        },
+        {
+          "label": "Attachment",
+          "description": "PDF, PNG, JPEG, TXT or CSV, up to 10 MiB, checked by content and downloaded as a file. Enter a note, attach a file, or both; with neither the form is refused. If the repository has set a limit on the total size of attached files and it would be exceeded, the file is refused and nothing is recorded."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Add note adds a Note or attachment entry to the timeline with your name and the time, and returns to the timeline."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "core/attachments.py"
+  ]
+}

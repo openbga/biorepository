@@ -1,0 +1,56 @@
+{
+  "id": "distribution-request-decide",
+  "routes": [
+    "distribution:request-decide"
+  ],
+  "title": "Decide request",
+  "purpose": "Record the access decision on the latest submission of a request: approve, return for changes or reject.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "People with an operating role (technician, manager or administrator) who were explicitly given the request decision permission by a superuser in account administration. Superuser status alone is not enough. Others are refused.",
+        "You cannot decide a request you created or submitted. The form then shows the request read-only with the sentence: You created or submitted this request. Another person with request decision permission must decide it. The rule is checked again when the decision is saved."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Decision",
+          "description": "Required: Approve, Return for changes or Reject."
+        },
+        {
+          "label": "Committee or reviewer reference",
+          "description": "Optional, up to 160 characters: where the decision is minuted. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Conditions",
+          "description": "Optional: conditions attached to an approval. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Conflicts of interest",
+          "description": "Optional: declared conflicts and how they were handled. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept with the decision. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The decision is recorded on the latest submission and the request becomes Approved, Returned for changes or Rejected. Rejected is final: in the same step any specimens still allocated to the request (for example from an approval before it was reopened) are released with their holds, and its draft shipments are cancelled. Approve and Return for changes leave allocations as they are. The software records the committee's or reviewer's decision; it does not judge the request. If a newer submission or change exists, saving is refused: reload and decide the latest one."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

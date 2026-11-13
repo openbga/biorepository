@@ -1,0 +1,40 @@
+{
+  "id": "distribution-study-collection-link",
+  "routes": [
+    "distribution:study-collection-link"
+  ],
+  "title": "Link collection",
+  "purpose": "Govern a specimen collection under this study.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Collection",
+          "description": "Required. Active collections that no study governs at present."
+        },
+        {
+          "label": "Reason",
+          "description": "Required; kept in the study's history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "From now on the collection's specimens, including those already stored, are governed by this study's consent basis. A refusal or withdrawal a participant recorded under a study that governed the collection before still blocks distribution of their specimens, whatever this study's basis. A collection already governed by another study is refused: end that link first. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

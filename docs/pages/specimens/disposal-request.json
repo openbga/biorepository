@@ -1,0 +1,52 @@
+{
+  "id": "specimens-disposal-request",
+  "routes": [
+    "specimens:disposal-request"
+  ],
+  "title": "Request disposal",
+  "purpose": "Ask for a specimen to be disposed of. Another person with disposal approval must approve it before the disposal can be recorded.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is blocked while a disposal hold or an all-use hold is active (it must be released first: a manual hold by a repository manager, a hold placed by another workflow through that workflow), while another disposal request for the specimen is open (decide or cancel it first), for a disposed specimen and for a distributed one (outside the repository until its return is recorded). A use hold does not block disposal."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Method",
+          "description": "Required, up to 160 characters. How the material will be disposed of, for example autoclave, then clinical waste."
+        },
+        {
+          "label": "Destination",
+          "description": "Required, up to 160 characters. Where the material goes."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Why it is disposed. Kept with the request. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Request disposal creates the request, which waits as Awaiting approval and appears under Disposal requests and on the approvers' dashboards. Requesting does not change the specimen. If the specimen changes later (moved, checked out, amount changed) the request becomes Out of date and a new one is needed. You can cancel your own request. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

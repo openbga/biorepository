@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load specimens %}
+{% comment %}
+One disposal request: its state, decision and execution, and the actions open to this user.
+Approvers who did not make the request approve or reject it; the requester sees the standard
+sentence instead (docs/ui-standards.md section 10). Context: req, specimen, state, decision,
+execution, requester, can_decide, can_cancel, can_execute, held_reason, timeline.
+{% endcomment %}
+{% block breadcrumbs %}{% url 'specimens:disposal-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Disposal requests" section_url=list_url current=page_title %}{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% request_status state %}</li><li class="vr-id">{{ specimen.accession }}</li><li>{{ specimen.specimen_type.name }}</li><li><time datetime="{{ req.recorded_at|date:'c' }}">{{ req.recorded_at|date:"Y-m-d H:i" }}</time></li></ul>{% endblock %}
+{% block page_actions %}
+{% if can_cancel %}<a class="btn btn-outline-danger" href="{% url 'specimens:disposal-decide' req.pk %}?decision=cancel">Cancel disposal request</a>{% endif %}
+{% if state == "pending" %}
+{% if can_decide %}
+<a class="btn btn-outline-secondary" href="{% url 'specimens:disposal-decide' req.pk %}?decision=reject">Reject disposal request</a>
+{% if held_reason %}<button class="btn btn-primary" type="button" disabled aria-describedby="approve-why">Approve disposal</button><span class="vr-action-note" id="approve-why">{{ held_reason }}</span>{% else %}<a class="btn btn-primary" href="{% url 'specimens:disposal-decide' req.pk %}?decision=approve">Approve disposal</a>{% endif %}
+{% endif %}
+{% elif state == "approved" %}
+{% if can_execute %}{% if held_reason %}<button class="btn btn-primary" type="button" disabled aria-describedby="execute-why">Record disposal</button><span class="vr-action-note" id="execute-why">{{ held_reason }}</span>{% else %}<a class="btn btn-primary" href="{% url 'specimens:disposal-execute' req.pk %}">Record disposal</a>{% endif %}{% endif %}
+{% endif %}
+{% endblock %}
+{% block content %}
+{% if state == "pending" and requester %}
+<div class="alert alert-info" role="status">{% request_status state plain=True %}<div>You requested this. Another person with disposal approval must approve it.</div></div>
+{% endif %}
+{% if state == "stale" %}
+<div class="alert alert-warning" role="status">{% request_status state plain=True %}<div>The specimen changed after this request was {% if decision %}approved{% else %}made{% endif %} (for example it was moved, checked out or its amount changed), so this request can no longer be used. A new disposal request is needed from <a class="vr-id" href="{% url 'specimens:specimen-detail' specimen.pk %}">{{ specimen.accession }}</a>.</div></div>
+{% endif %}
+{% if state == "executed" %}
+<div class="alert alert-secondary" role="status">{% request_status state plain=True %}<div>The disposal was recorded. The specimen's record and history are kept.</div></div>
+{% endif %}
+<section class="card mb-3" aria-labelledby="request-heading">
+  <div class="card-header"><h2 class="card-title" id="request-heading">Disposal request</h2></div>
+  <div class="card-body"><dl class="vr-facts">
+    <div><dt>Specimen</dt><dd><a class="vr-id" href="{% url 'specimens:specimen-detail' specimen.pk %}">{{ specimen.accession }}</a> <span class="vr-muted">{{ specimen.specimen_type.name }}, <span class="vr-id">{{ specimen.quantity_on_hand|amount:specimen.unit }}</span></span></dd></div>
+    <div><dt>State</dt><dd>{% request_status state plain=True %}</dd></div>
+    <div><dt>Method</dt><dd>{{ req.method }}</dd></div>
+    <div><dt>Destination</dt><dd>{{ req.destination }}</dd></div>
+    <div><dt>Reason</dt><dd class="vr-wrap">{{ req.reason|linebreaksbr }}</dd></div>
+    <div><dt>Requested</dt><dd><time datetime="{{ req.recorded_at|date:'c' }}">{{ req.recorded_at|date:"Y-m-d H:i" }}</time> by {{ req.requested_by.get_full_name|default:req.requested_by.get_username }}</dd></div>
+    <div><dt>Decision</dt><dd>{% if decision %}{{ decision.get_decision_display }} <time datetime="{{ decision.recorded_at|date:'c' }}">{{ decision.recorded_at|date:"Y-m-d H:i" }}</time> by {{ decision.actor.get_full_name|default:decision.actor.get_username }}: {{ decision.reason }}{% else %}<span class="vr-muted">Not decided</span>{% endif %}</dd></div>
+    <div><dt>Disposal</dt><dd>{% if execution %}<time datetime="{{ execution.occurred_at|date:'c' }}">{{ execution.occurred_at|date:"Y-m-d H:i" }}</time> by {{ execution.actor.get_full_name|default:execution.actor.get_username }}: {{ execution.reason }}{% else %}<span class="vr-muted">Not recorded</span>{% endif %}</dd></div>
+  </dl></div>
+</section>
+<section class="card mt-3" aria-labelledby="history-heading">
+  <div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div>
+  <div class="card-body">
+    <ol class="vr-timeline">
+      {% for item in timeline %}{% include "includes/history_item.html" with title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail %}{% endfor %}
+    </ol>
+  </div>
+</section>
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}

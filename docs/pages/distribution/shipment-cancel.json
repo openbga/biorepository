@@ -1,0 +1,40 @@
+{
+  "id": "distribution-shipment-cancel",
+  "routes": [
+    "distribution:shipment-cancel"
+  ],
+  "title": "Cancel shipment",
+  "purpose": "End a draft or packed shipment that will not be sent.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the shipment is a draft or packed. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline and history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The shipment becomes Cancelled (final) and keeps its timeline. Its specimens stay picked for the request: put them back or add them to another shipment.",
+        "If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

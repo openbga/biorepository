@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load distribution navigation %}
+{% comment %}Shipments, newest first (List page, tab Shipments of the Shipments section). A shipment is created from an approved request's record page, so this list has no New button. Context: request_views.grid_response for request_lists.SPECS["shipment"]; rows carry planned_count (specimens in a draft or packed shipment), item_count (specimens sent) and receipt_condition (the effective receipt's). ?specimen=VP-000123 lists the shipments that contain or contained it.{% endcomment %}
+{% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
+{% block content %}
+{% section_tabs "distribution-shipments" %}
+<section class="card vr-table-card" aria-labelledby="shipments-heading">
+  <h2 class="visually-hidden" id="shipments-heading">Shipments</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter shipments" q=q placeholder="Shipment or request number, tracking, institution" inline=inline more=more more_open=more_open grid="distribution.shipments" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="distribution.shipments" data-vr-grid-version="1" aria-labelledby="shipments-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Shipment" asc="number" desc="-number" first="desc" col="number" locked=True %}
+        {% include "includes/sort_header.html" with label="State" asc="state" desc="-state" col="state" %}
+        {% include "includes/sort_header.html" with label="Request" asc="request" desc="-request" first="desc" col="request" %}
+        {% include "includes/sort_header.html" with label="Ship to" asc="institution" desc="-institution" col="institution" %}
+        <th scope="col" class="text-end" data-vr-col="specimens" data-vr-col-label="Specimens">Specimens</th>
+        {% include "includes/sort_header.html" with label="Packed" asc="packed" desc="-packed" first="desc" col="packed" %}
+        {% include "includes/sort_header.html" with label="Dispatched" asc="dispatched" desc="-dispatched" first="desc" col="dispatched" %}
+        <th scope="col" data-vr-col="tracking" data-vr-col-label="Tracking number">Tracking number</th>
+        <th scope="col" data-vr-col="receipt" data-vr-col-label="Receipt">Receipt</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:shipment-detail' row.pk %}">{{ row.number }}</a></th>
+          <td>{% distribution_status "shipment" row.state plain=True %}</td>
+          <td><a class="vr-id" href="{% url 'distribution:request-detail' row.request_id %}">{{ row.request.number }}</a></td>
+          <td>{{ row.ship_to_institution }}</td>
+          <td class="text-end vr-id">{% if row.is_sent %}{{ row.item_count }}{% else %}{{ row.planned_count }}{% endif %}</td>
+          <td class="vr-nowrap">{% if row.packed_at %}<time datetime="{{ row.packed_at|date:'c' }}">{{ row.packed_at|date:"Y-m-d H:i" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-nowrap">{% if row.dispatched_at %}<time datetime="{{ row.dispatched_at|date:'c' }}">{{ row.dispatched_at|date:"Y-m-d H:i" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-id">{{ row.tracking|default:"—" }}</td>
+          <td>{% if row.receipt_condition %}{% distribution_status "receipt" row.receipt_condition plain=True %}{% elif row.state == "dispatched" %}<span class="vr-muted">Not yet recorded</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% include "storage/_list_states.html" with title_empty="No shipments recorded" body_empty="A shipment is started from an approved request with picked specimens (New shipment on the request)." %}
+  {% endif %}
+</section>
+{% endblock %}

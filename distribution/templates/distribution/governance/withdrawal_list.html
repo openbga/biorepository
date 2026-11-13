@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load navigation distribution_governance %}
+{% comment %}Withdrawals tab of the Consent section. Context: governance_views.grid_response for governance_lists.SPECS["withdrawal"] (rows annotated with follow_up_count and is_reinstated). Withdrawals are recorded from the consent page, so there is no New button.{% endcomment %}
+{% block page_intro %}<p class="vr-page-intro">Withdrawals of consent recorded on the consent pages, with what they held, released and found distributed.</p>{% endblock %}
+{% block page_actions %}{% include "distribution/governance/_list_actions.html" %}{% endblock %}
+{% block content %}
+{% section_tabs "distribution-consents" %}
+<section class="card vr-table-card" aria-labelledby="withdrawals-heading">
+  <h2 class="visually-hidden" id="withdrawals-heading">Withdrawals</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter withdrawals" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.withdrawals" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="distribution.withdrawals" data-vr-grid-version="2" aria-labelledby="withdrawals-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Consent" asc="participant" desc="-participant" col="participant" locked=True %}
+        <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
+        <th scope="col" data-vr-col="kind" data-vr-col-label="Withdrawal">Withdrawal</th>
+        {% include "includes/sort_header.html" with label="Effective" asc="effective" desc="-effective" first="desc" col="effective" %}
+        {% include "includes/sort_header.html" with label="Received" asc="received" desc="-received" first="desc" col="received" %}
+        <th scope="col" class="text-end vr-th-wrap" data-vr-col="held" data-vr-col-label="Held (specimens)">Held (specimens)</th>
+        <th scope="col" class="text-end vr-th-wrap" data-vr-col="released" data-vr-col-label="Allocations released (count)">Allocations released (count)</th>
+        <th scope="col" class="text-end vr-th-wrap" data-vr-col="distributed" data-vr-col-label="Distributed (specimens)">Distributed (specimens)</th>
+        <th scope="col" class="text-end vr-th-wrap" data-vr-col="followups" data-vr-col-label="Follow-ups (count)">Follow-ups (count)</th>
+        <th scope="col" data-vr-col="by" data-vr-col-label="Recorded by">Recorded by</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:consent-detail' row.consent_id %}#withdrawals-heading">{{ row.consent.participant.code }} · {{ row.consent.study.code }}</a></th>
+          <td>{% withdrawal_status row %}</td>
+          <td>{{ row.get_kind_display }}</td>
+          <td class="vr-nowrap"><time datetime="{{ row.effective_on|date:'Y-m-d' }}">{{ row.effective_on|date:"Y-m-d" }}</time></td>
+          <td class="vr-nowrap"><time datetime="{{ row.occurred_at|date:'c' }}">{{ row.occurred_at|date:"Y-m-d H:i" }}</time></td>
+          <td class="text-end vr-id">{{ row.held_count }}</td>
+          <td class="text-end vr-id">{{ row.released_count }}</td>
+          <td class="text-end vr-id">{{ row.distributed_count }}</td>
+          <td class="text-end vr-id">{{ row.follow_up_count }}</td>
+          <td>{{ row.actor|person }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% include "storage/_list_states.html" with title_empty="No withdrawals recorded" body_empty="A withdrawal is recorded from the consent page of the participant and study." %}
+  {% endif %}
+</section>
+{% endblock %}

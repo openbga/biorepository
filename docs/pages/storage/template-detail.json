@@ -1,0 +1,113 @@
+{
+  "id": "storage-template-detail",
+  "routes": [
+    "storage:template-detail"
+  ],
+  "title": "Storage template",
+  "purpose": "Review one version of a recorded unit layout: its settings, the layout outline, units already created from it, other versions and history.",
+  "sections": [
+    {
+      "title": "Storage template",
+      "paragraphs": [
+        "A template version's layout is fixed once a unit has been created from it. Until then it can be edited."
+      ],
+      "items": [
+        {
+          "label": "Code and version",
+          "description": "The code is shared by every version."
+        },
+        {
+          "label": "Name",
+          "description": "Display name."
+        },
+        {
+          "label": "Storage class",
+          "description": "The storage class the recipe names, with its code; links to the class when it exists."
+        },
+        {
+          "label": "Technology",
+          "description": "Technology from the recipe, for example LN2 vapor phase."
+        },
+        {
+          "label": "Nominal temperature",
+          "description": "Stated set point in °C from the recipe, not a measurement."
+        },
+        {
+          "label": "Units created",
+          "description": "Number of units created from this version."
+        }
+      ]
+    },
+    {
+      "title": "Layout",
+      "paragraphs": [
+        "One row per rack, tower, shelf or canister, parents before children. Suffix is added after the new unit's code to make each code, for example VP-02 plus T01 gives VP-02-T01."
+      ],
+      "items": [
+        {
+          "label": "Level",
+          "description": "Depth in the layout, from 1 to at most 4."
+        },
+        {
+          "label": "Slot",
+          "description": "Place in the parent or unit."
+        },
+        {
+          "label": "Holds",
+          "description": "Node slots or box slots."
+        },
+        {
+          "label": "Boxes",
+          "description": "Box suffix, slot and container type version."
+        }
+      ]
+    },
+    {
+      "title": "Units created from this version",
+      "paragraphs": [
+        "Units applied from this version, with room and status."
+      ]
+    },
+    {
+      "title": "Versions",
+      "paragraphs": [
+        "Every version of this code; select another to open it."
+      ]
+    },
+    {
+      "title": "Actions",
+      "paragraphs": [
+        "Admin and manager roles."
+      ],
+      "items": [
+        {
+          "label": "Apply template",
+          "description": "Active templates only. Opens the apply form."
+        },
+        {
+          "label": "New version",
+          "description": "Opens the template form pre-filled from this version; saving with the same code creates the next version."
+        },
+        {
+          "label": "Edit",
+          "description": "Opens the edit form for this version."
+        }
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/recipes.py",
+    "storage/templates/storage/template_detail.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

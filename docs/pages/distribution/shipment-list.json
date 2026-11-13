@@ -1,0 +1,105 @@
+{
+  "id": "distribution-shipment-list",
+  "routes": [
+    "distribution:shipment-list"
+  ],
+  "title": "Shipments",
+  "purpose": "Find shipments of distributed specimens and follow each from preparation to receipt.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Each row is one shipment, numbered SH-000001 and up, newest first. A shipment is started from an approved request with picked specimens (New shipment on the request), so this list has no New button. It moves from Draft to Packed to Dispatched to Receipt recorded; a draft or packed one can be Cancelled. The Shipments and Returns tabs switch between this list and returned specimens.",
+        "Every role can read this list. Type in the search box to narrow the rows, use the filters beside it and under More filters, and choose 25, 50 or 100 rows per page (25 by default). Active filters appear as chips you can remove one by one; Clear all removes them all. The sort and filters are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches the shipment number (SH-000003 or 3), the request number (RQ-000012), part of the tracking number or of the ship-to institution. The default sort is Shipment, newest first. Sortable columns are Shipment, State, Request, Ship to, Packed and Dispatched."
+      ],
+      "items": [
+        {
+          "label": "State",
+          "description": "Any state (the default), In preparation (draft or packed), or one state."
+        },
+        {
+          "label": "Institution",
+          "description": "The request's institution."
+        },
+        {
+          "label": "Specimen",
+          "description": "Under More filters. A specimen ID; lists shipments that contain it (draft or packed) or sent it. The specimen record links here with this filter set."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Shipment",
+          "description": "The number; opens the shipment. Always shown."
+        },
+        {
+          "label": "State",
+          "description": "Draft, Packed, Dispatched, Receipt recorded or Cancelled."
+        },
+        {
+          "label": "Request",
+          "description": "Opens the request."
+        },
+        {
+          "label": "Ship to",
+          "description": "The recipient institution recorded on the shipment."
+        },
+        {
+          "label": "Specimens",
+          "description": "Specimens in it now, or sent once dispatched."
+        },
+        {
+          "label": "Packed, Dispatched",
+          "description": "When it was packed and dispatched."
+        },
+        {
+          "label": "Tracking number",
+          "description": "As recorded."
+        },
+        {
+          "label": "Receipt",
+          "description": "The condition of the recorded receipt (as corrected), or Not yet recorded for a dispatched shipment."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact amounts and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No shipments recorded",
+          "description": "None has been started yet."
+        },
+        {
+          "label": "Nothing matches these filters",
+          "description": "Change or clear the search and filters."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_lists.py",
+    "distribution/exports.py",
+    "core/templatetags/navigation.py",
+    "distribution/templates/distribution/shipments/shipment_list.html"
+  ]
+}

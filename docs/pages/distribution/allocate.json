@@ -1,0 +1,89 @@
+{
+  "id": "distribution-allocate",
+  "routes": [
+    "distribution:allocate"
+  ],
+  "title": "Allocate",
+  "purpose": "Reserve specimens for one line of an approved request, choosing among the available candidates.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the request is approved and the line still needs specimens. It opens in a wide dialog that can be maximized."
+      ]
+    },
+    {
+      "title": "Finding candidates",
+      "paragraphs": [
+        "Candidates are the available specimens of the line's type, from the line's study, or else from the studies the request names (any study when it names none). Search by part of the specimen ID, a participant code or a collection code with Apply; Clear all removes the search. Candidates are shown 25, 50 or 100 at a time in specimen ID order. Changing the search or the page drops ticks not yet saved."
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Choose",
+          "description": "Tick up to the number the line still needs. A candidate that the recorded facts refuse has its box disabled."
+        },
+        {
+          "label": "Specimen, Participant, Study",
+          "description": "The specimen ID (opens the specimen), its coded participant and the study governing its collection."
+        },
+        {
+          "label": "Amount",
+          "description": "On hand now. Below the minimum marks a specimen holding less than the line's minimum amount or measured in another unit."
+        },
+        {
+          "label": "Location",
+          "description": "Its current storage path, or Not in storage."
+        },
+        {
+          "label": "Same type left (specimens)",
+          "description": "The participant's available specimens of this type, this one included. Last one marks a specimen whose allocation would use up the participant's material of this type; it is a prompt, not a rule."
+        },
+        {
+          "label": "Consent restrictions",
+          "description": "The restrictions text of the participant's current consent record, shown for reading; it is never interpreted by the software."
+        },
+        {
+          "label": "Cannot be allocated",
+          "description": "Each reason the recorded facts refuse now, naming the fact: not available, on a use hold, allocated to another request, not governed by a study, study not active, outside the request, no consent recorded, consent refused or withdrawn (also under a study that governed the collection before a relink), use not permitted by consent, consent expired, or request not approved."
+        }
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Allocate specimens below the requested minimum amount",
+          "description": "Tick to confirm allocating specimens marked Below the minimum; without it such an allocation is refused."
+        },
+        {
+          "label": "Allocated at",
+          "description": "Required; repository local time, not in the future and not before the request was approved."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept with each allocation. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "Allocate checks every chosen specimen again under lock. All are allocated or none: if any is refused, nothing is saved and the reasons are shown beside that specimen. Each allocated specimen gets an allocation and a disposal hold referring to the request, so nobody disposes of it meanwhile. Its position is not reserved: it stays where it is and can still be moved. If a specimen changed after the page was opened, saving is refused: reload it."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/templates/distribution/requests/allocate.html",
+    "distribution/templates/distribution/requests/_grid_head.html",
+    "distribution/templates/distribution/requests/_grid_foot.html"
+  ]
+}

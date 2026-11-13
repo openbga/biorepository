@@ -1,0 +1,40 @@
+{
+  "id": "distribution-shipment-unpack",
+  "routes": [
+    "distribution:shipment-unpack"
+  ],
+  "title": "Unpack",
+  "purpose": "Return a packed shipment to draft to change its contents or declarations.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the shipment is packed. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline and history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The shipment becomes a draft again; the stored specimen versions, packer and checker are cleared. Its specimens stay picked and in it.",
+        "If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

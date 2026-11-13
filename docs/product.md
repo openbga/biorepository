@@ -1,0 +1,232 @@
+# Vapor Phase: product scope
+
+Vapor Phase is a free, open-source biorepository management system: where every specimen is, what
+it is, who handled it and what happened to it, from registration through storage, custody,
+disposal and distribution to another institution. This document says what the product must do,
+why, and in what order. It does not prescribe architecture; [workflows](workflows.md) describes
+what is built in detail. Domain claims cite public sources, listed under Evidence and limits so
+they stay checkable after cloning. Researched 2026-11-12.
+
+## Working assumptions
+
+The product is built to the assumptions below. None is a rule of any standard; each is a choice a
+repository should check against its own policy before it holds real records. Items marked
+"expensive to change" shape the data model.
+
+| Assumption | Consequence |
+|---|---|
+| One repository organization per deployment | No tenant layer. A site level exists in the storage tree; permissions are not site-scoped |
+| Human specimens first; nothing in the model prevents animal or other material | Specimen types, containers and units are catalogues the repository manages, not code |
+| No donor identifiers are stored. A participant is a coded ID with no name, contact, record number or birth date (expensive to change) | No identity tables. Free-text fields warn against identifying text. Re-identification, if any, happens outside the system |
+| Collection and processing times are stored exactly, with time zone | Suits synthetic data and evaluation. Whether real dates must be coarsened or shifted is the repository's data-governance decision; changing precision is a schema change |
+| Staff-only access | No requester or investigator accounts and no billing. Requests are entered and decided by staff; nothing is emailed |
+| No regulatory claim | See "What this product claims". Electronic signatures are not implemented |
+| Roles: administrator, repository manager, technician, viewer (expensive to change) | Admin implies the other three. Few sources describe biorepository roles, so the list is a starting point |
+| Viewers read everything staff can read, export CSV and print labels, including consent records and agreement documents; they change nothing | A repository that treats agreements as confidential would narrow this |
+| Disposal approval is a permission granted per person (`accounts.approve_disposal`), held with an operating role; nobody approves their own request; no role, admin status or superuser status implies it | Second-person approval is checked on the server, under the specimen's lock |
+| Request decisions are a permission granted per person (`accounts.approve_distribution`), held with an operating role; nobody decides a request they created or submitted | The decision records the committee's own reference and any conflict of interest it noted; the software does not judge merit |
+| Thresholds belong to the repository | No limit on time out of storage, thaw count, hold age or time away. Temperature limits, LN2 low levels and service due dates exist only where the repository enters them |
+
+### Defaults the workflows are built to
+
+These defaults fill gaps the sources leave to the repository. They are visible in the
+application's page help and in [workflows](workflows.md).
+
+| Area | Default |
+|---|---|
+| Specimen identifier | `VP-000001` style from a database sequence; never reused, gaps are normal |
+| Processing times | Optional. Processing cannot start before collection, cannot finish before it started, and a completion needs a start; no time may be in the future, and registration cannot precede collection or the completion of processing |
+| Thaw history | Recorded when observed, never inferred from a check-out; a history unknown at registration stays marked unknown |
+| Holds | Three scopes: disposal (blocks disposal only), use (blocks use and dispatch, not disposal) and all-use (blocks both) |
+| Check-in | Into any free position; a checked-out specimen does not keep its slot reserved |
+| Consent scope | Categories the repository defines as data (the demonstration uses general research, genetic research including whole genome sequencing, commercial use, and sharing outside the repository). Each consent record answers permitted or refused per category the form asks; a category the form does not ask permits nothing. Free-text restrictions are shown to reviewers and pickers, never parsed |
+| Which consent governs | The participant's current record for the study governs all their material in it, including material collected under an earlier form |
+| Consent basis per study | Either individual consent records, or a recorded study-level determination (for example a waiver) that covers material without a record. A recorded refusal or withdrawal blocks in both cases |
+| Material without a consent basis | No participant, no collection, or a collection no study governs: cannot be requested, allocated or sent. There is no override; a wrong record is corrected with a reason |
+| Who records consent and withdrawal | Administrator and repository manager |
+| Withdrawal kinds | No further contact; no further use; no further use and destroy. The last two place a use hold on the participant's specimens in custody and release their allocations; destroy offers ordinary disposal requests, each approved by another person. Nothing is deleted or anonymized, and material already distributed is listed for recorded follow-up, not recalled |
+| Agreements | Every shipment needs a valid executed agreement (MTA or DUA) with the request's institution. Valid from its effective date through the day before it expires or is terminated; dates are shown and nothing ends automatically |
+| Allocation | Whole containers; send part of a specimen by deriving an aliquot first. Allocation reserves the specimen, not its position. Remaining stock is shown, not gated |
+| Shipping declarations | Classification, refrigerant, dry-ice weight, emergency contact and the packer's training confirmation are recorded as the shipper declares them; nothing classifies a shipment or blocks on them. A second person at packing is optional and must differ from the packer |
+| Manifest contents | Accession, type, container, quantity and unit, study, frozen at dispatch. Participant codes only when chosen for the shipment and the agreement's data level is coded or limited; collection dates never |
+| Returns from a shipment | Accepted only from the original shipment; the specimen comes back under a use hold until a manager reviews it and releases or keeps the hold |
+| Excursion review | A technician, manager or administrator opens and submits an excursion; a manager or administrator other than the person who submitted it closes or returns it |
+| Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
+| Operational bounds | 1,000 rows and 2 MiB per import, 200 labels per print, 10,000 rows per export, 1 to 50 children per split, 200 specimens per allocation, pick or shipment, 10 MiB per attachment. Product limits, not standards |
+
+## What this product claims
+
+Vapor Phase supports a repository's own records and quality system. It does not make a repository
+compliant, accredited or certified, and it does not classify shipments, decide consent or judge a
+request's merit. Do not write UI copy, README text or reports that claim compliance. Say
+"supports" and name the record or control.
+
+The audit trail records who, when, the old and new value and why, as 21 CFR 11.10(e) describes for
+audit trails; no conformance with 21 CFR Part 11, HIPAA, CAP or ISO 20387 is claimed. Restricted
+standards (ISO 20387, CAP checklists, IATA Dangerous Goods Regulations) are not reproduced here or
+in code.
+
+## The journey
+
+The product was built one complete path at a time, each working end to end before breadth was
+added. The synthetic demonstration (`seed_demo --full`) walks all of it.
+
+```
+storage unit (LN2 vapor-phase tank or freezer) -> racks -> boxes with a grid -> positions
+-> specimen registered (type, container, amount, collection time, coded participant)
+-> label printed -> stored in a position -> checked out (time out of storage runs)
+-> split into aliquots, each stored -> parent checked in, observed thaw recorded
+-> box moved to another rack -> specimen disposed with second-person approval
+-> study, consent record -> request decided by a second person -> allocation, pick list
+-> shipment packed and dispatched with a frozen manifest -> receipt recorded -> return reviewed
+-> every step visible in custody history and the audit trail
+```
+
+Acceptance outcomes:
+
+1. A manager defines storage: site, room, unit (with storage class, technology and nominal
+   temperature), racks, towers, canisters or shelves, boxes, and positions from a container type
+   with a grid and a numbering scheme. Templates build a unit like an existing one.
+2. Occupancy is visible per unit, rack and box; a technician can find free positions.
+3. A technician registers a specimen. The system assigns an opaque ID. Type, container, amount
+   with unit, collection and processing times, and an optional coded participant and collection
+   are recorded.
+4. Labels print as a PDF with a barcode; scanning or typing an ID in the top bar opens the record.
+5. A specimen is placed in a free position. Two people cannot store into the same position.
+6. A checked-out specimen is split into aliquots or derivatives. Each child is a specimen with a
+   parent link and its own ID, amount and position. The parent's amount is reduced by a ledger
+   entry, not edited.
+7. Check-out and check-in are recorded events with who, when and why. Time out of storage is
+   computed, never typed. A thaw is recorded when it is observed; an unknown thaw history stays
+   marked unknown.
+8. A box or rack moves with all its contents in one recorded event.
+9. Disposal records reason, method, who and when, needs approval by a different person holding
+   that permission, frees the position and keeps the electronic history. A hold blocks disposal.
+10. Specimens import in bulk from CSV with a validation pass before anything is committed.
+11. Lists filter, sort, paginate and export to CSV.
+12. Every change to a specimen, position, status or storage definition is traceable: who, when,
+    old value, new value, reason. Controlled fields require a reason to change.
+13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,
+    in-application page help, light and dark themes and the audit trail work as they do in
+    [Smart Roots LIMS](https://github.com/openbga/smart-roots-lims), whose platform layer Vapor
+    Phase shares.
+14. Equipment (tanks, freezers, monitors, supply dewars) is tied to its storage unit, with service
+    events and the due dates the repository enters, an LN2 level and fill log, temperature
+    readings entered or imported, and excursions reviewed by a second person that capture the
+    specimens in the unit when closed.
+15. A study governs collections; consent records and withdrawals are recorded per coded participant
+    and study; a request is decided by a second person; allocation, picking, packing and dispatch
+    each pass one gate that quotes the recorded fact behind any refusal; the manifest is frozen at
+    dispatch; receipt and returns are recorded, and returned material is held for review.
+
+The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
+like "P-000123".
+
+## Domain rules that must be right
+
+These are the rules where a plausible but wrong implementation misleads a repository. "Project
+rule" means no source read states it; it is a design choice.
+
+| Topic | Rule | Basis |
+|---|---|---|
+| Identifier | Specimen ID is system-assigned, unique, and carries no location, participant, study or date meaning; each aliquot or derivative gets its own ID and records its parent | NCI C.6.1.2, C.6.2.1, C.6.2.2; ISBER I3.2 |
+| Labels | Human- and machine-readable, and lead back to the inventory record | NCI C.6.2.2 |
+| Location | Location is a hierarchy down to the position and is updated when the event is recorded. Whole boxes and racks move as one event | NCI C.6.2.4; ISBER I3.1 |
+| Audit trail | Computer-generated, time-stamped; records create, modify and delete with who, when, old and new value and why; a change never obscures the earlier entry; kept as long as the record | 21 CFR 11.10(e); NCI C.6.2.6; ISBER I3.6 |
+| Occupancy | One specimen per position, enforced by the database and rechecked under lock | Project rule |
+| Vapor phase | LN2 vapor-phase storage is described as at or below −150 °C, warmer with distance from the liquid; the top of a vessel should stay below −140 °C and the gradient should be measured. Storage class and nominal temperature are recorded as stated and never used to refuse a record | ISBER 5th ed. (LN2 vapor-phase passages); IARC TP44 glossary; NCI C.2.8.2 |
+| Quantities | Exact decimal with an explicit unit; the amount is a ledger of additions and removals; no implied conversion between units | Project rule |
+| Time | Events store when they occurred and when they were recorded; future times and times before the item's latest event are rejected | Project rule |
+| Retrieval and thaws | Record the date and time of retrieval; record thaw and refreeze episodes and storage deviations | NCI C.2.8.1, C.2.9; ISBER J3.8 |
+| Disposal | Never deletes the specimen or its history; approval is a separate person's decision and the act is recorded separately | Project rule, following the audit-trail rule above |
+| Consent tracking | Consent, or the reason it was not required, is tracked for each specimen and is retrievable when specimens are retrieved; the system can tell when a participant revoked consent | NCI B.5.1, B.5.4.1, B.8.1.3 |
+| Refusal | A person who was asked for broad consent and refused cannot have that refusal waived for storage or secondary research use; a recorded refusal therefore blocks even under a study-level determination | 45 CFR 46.116(e)(1), (f)(1) |
+| Withdrawal | Options include no further contact and no further use (remainder disposed); the system records the withdrawal and supports disposal. Analysis of material already distributed is generally not prohibited, so the product lists it for follow-up and recalls nothing | ISBER C2.2.5; NCI B.5.7 |
+| Request review | Requests get scientific and/or administrative review for consistency with consent, ethics approval, agreements and availability; conflicts of interest are documented. Neither source states a self-approval rule; nobody deciding their own request is a project rule | ISBER K2.2; NCI B.8, C.1.2.2 |
+| Agreement before shipment | A material transfer agreement and a requisition from inventory exist before any shipment | NCI C.2.10.2.1; ISBER K3 |
+| Shipment classification | Category A or B assignment rests on the source's medical history or professional judgment, so the software records the shipper's declaration and never classifies. The emergency contact, dry-ice net mass and hazmat training are recorded as declared | 49 CFR 173.134(a)(1), 173.199(a)(7), 173.217, 172.704 |
+| Manifest and verification | A manifest lists specimen IDs, types, amounts with units and the study; the recipient verifies against it and reports discrepancies, condition and logger output | ISBER L4.1, L4.5; NCI C.2.10.2.2 |
+| Dates on manifests | All date elements except year are identifiers under HIPAA Safe Harbor, and a limited data set (which keeps dates) needs a data use agreement, so collection dates stay off the manifest | 45 CFR 164.514(b)(2)(i), (e) |
+| Retrieval of requested material | Confirm every requisitioned specimen was retrieved and document missing ones (recorded as "not found") | ISBER J7.2 |
+| Returns | Restocking returned, unused specimens is not recommended but must be tracked | NCI C.6.2.3 |
+| Depletion | Depleting remaining stock "may require" approval; the product shows stock and does not gate it | ISBER J7.2; NCI B.8.1.4 |
+| Excursions | Storage deviations and out-of-range events are recorded, documented and available for reporting. No source read requires a second person to sign off an excursion; supervisory or QA review of deviations is the closest, so the second-person close is a project default | NCI C.2.8.1, C.2.8.2, C.3.3; ISBER J3.5 |
+| LN2 log | LN2 level, consumption and storage temperature are critical parameters; record the level before and after a manual fill; consumption is derived from the levels | ISBER H2.2 |
+| Maintenance and calibration | Maintenance records carry description, date and who did it; calibration records name the reference device; intervals are set by the repository, so the product enforces none | ISBER H12.1, D3.6.2.2 |
+
+### Why this shapes the design
+
+- **Never overwrite.** Corrections add a record with a reason. History is the product's main trust
+  feature, and the database refuses updates and deletes on history tables.
+- **Records, not judgments.** Consent, classification, merit and specimen quality are decided by
+  people and committees. The product records what they decided and refuses steps the records do
+  not support.
+- **Second person on irreversible steps.** Disposal approval, request decisions, excursion close
+  and consent reinstatement are made by someone other than the person who started them, checked on
+  the server.
+- **Time is computed.** Time out of storage, time away and thaw counts come from recorded events,
+  so they cannot be typed in or drift.
+
+## Milestones
+
+| Milestone | Scope | Status |
+|---|---|---|
+| 0. Platform | Sign-in with optional two-factor authentication, announcements, four staff roles, shell and themes, audit trail, page help, tests, CI, container and Render Blueprint, presentation page | Built |
+| 1. Storage | Storage tree, container types and grids, templates, occupancy views, free-position search, blocked positions, box and rack moves | Built |
+| 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
+| 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
+| 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions | Built |
+| | Inventory audits, rack-scanner import, deviations and training, holds placed from an excursion | Next |
+| Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
+| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
+
+The public [roadmap](../website/about/roadmap/index.html) carries the same order without dates.
+Change it in the same increment when an area ships or the order changes.
+
+### Decisions a repository makes before real use
+
+The product leaves these to the repository that runs it: whether real collection dates are
+stored exactly; which roles exist and who may approve disposal and decide requests; whether
+viewers may read agreements; any time-out-of-storage or thaw limits (recorded outside the product
+today); label stock, adhesion at storage temperature and scanner verification; hosting, backup and
+recovery ownership; MFA enforcement and account recovery; and its own validation of the system
+for its intended use.
+
+## Project decisions
+
+| Date | Decision | Status |
+|---|---|---|
+| 2026-11-12 | Build Vapor Phase on the Smart Roots LIMS platform and pattern, sharing its platform layer so fixes can move between the two | Confirmed |
+| 2026-11-12 | License: AGPL-3.0-only, as Smart Roots LIMS, with the same LICENSE, NOTICE and footer "Source code" arrangement | Confirmed |
+| 2026-11-12 | Coded participants only; specimen IDs in `VP-000001` style; disposal approval is a permission granted per person | Working default |
+| 2026-11-12 | Distribution defaults: structured consent scope categories, current record governs, the three withdrawal kinds, request decisions by a per-person permission, an agreement for every shipment, the manifest contents above, returns held for review, no override of a blocked step | Working default |
+| 2026-11-12 | Equipment defaults: the repository enters every limit, low level and due date; second-person excursion close | Working default |
+
+## Evidence and limits
+
+- Read directly on 2026-11-12: NCI Best Practices for Biospecimen Resources, 4th edition (January
+  2026), the sections cited above; ISBER Best Practices: Recommendations for Repositories, 5th
+  edition (2023), the sections cited above; IARC Technical Publication No. 44 (2017), glossary and
+  section 3.3; and the federal rules below in the eCFR (text as of 2026-11-10).
+- The ISBER text was read in a full-text copy, not from ISBER's own site; obtain it from ISBER.
+- NCI and ISBER are voluntary guidance. Their section numbers are cited so a reader can check the
+  wording; the product's defaults are choices consistent with them, not requirements they impose.
+- Not read: IATA Dangerous Goods Regulations (paywalled), PHMSA guidance pages, current CAP
+  biorepository checklist items, ISO 20387, CLSI documents, HHS's interpretation of HIPAA
+  "reliance" after revocation, state law, FDA 21 CFR 50 and 56, NIH data-sharing policy and the
+  GDPR. Nothing here should be read as reflecting them. Regulatory statements are US federal.
+- Not legal advice. A repository confirms its own obligations with its institution.
+
+### Primary sources
+
+| Claim area | Source |
+|---|---|
+| Identifiers, labels, lineage, location, audit trail, consent tracking, retrieval, shipping, returns | [NCI Best Practices for Biospecimen Resources, 4th ed., January 2026](https://dctd.cancer.gov/data-tools-biospecimens/biospecimens-biobanks/resources/best-practices/biospecimen-resources/appendices/2026-4th-edition-best-practices.pdf) ([landing page](https://dctd.cancer.gov/data-tools-biospecimens/biospecimens-biobanks/resources/best-practices/biospecimen-resources)) |
+| Inventory system, withdrawal options, access review, agreements, manifests, retrieval, LN2 and equipment records | ISBER Best Practices: Recommendations for Repositories, 5th ed. (2023), International Society for Biological and Environmental Repositories |
+| Vapor-phase temperature range | [IARC Technical Publication No. 44 (2017)](https://publications.iarc.who.int/Book-And-Report-Series/Iarc-Technical-Publications/Common-Minimum-Technical-Standards-And-Protocols-For-Biobanks-Dedicated-To-Cancer-Research-2017) |
+| Audit trails | [21 CFR 11.10](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-11) |
+| Broad consent and refusal | [45 CFR 46.116](https://www.ecfr.gov/current/title-45/part-46/section-46.116) |
+| De-identification, limited data sets, data use agreements | [45 CFR 164.514](https://www.ecfr.gov/current/title-45/part-164/section-164.514) |
+| Shipment classification, Category B packaging, dry ice | [49 CFR 173.134](https://www.ecfr.gov/current/title-49/part-173/section-173.134), [173.199](https://www.ecfr.gov/current/title-49/part-173/section-173.199), [173.217](https://www.ecfr.gov/current/title-49/part-173/section-173.217) |
+| Hazmat employee training | [49 CFR 172.704](https://www.ecfr.gov/current/title-49/part-172/section-172.704) |

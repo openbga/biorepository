@@ -1,0 +1,64 @@
+{
+  "id": "distribution-request-items",
+  "routes": [
+    "distribution:request-items"
+  ],
+  "title": "Edit lines",
+  "purpose": "Enter what kind of material a request asks for and how much, one line per kind.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the request is a draft or returned for changes. Otherwise the grid is shown read-only with the reason. It opens in a wide dialog that can be maximized."
+      ]
+    },
+    {
+      "title": "The grid",
+      "paragraphs": [
+        "One row per line, from 1 to 50. Add line adds an empty row and Remove takes a row out; both only change the grid and record nothing, and both work without JavaScript. A line that already has allocations (after a reopened approval) keeps its type, study and minimum amount; only its count and notes can change, it cannot be removed, and its count cannot go below the specimens already allocated to it."
+      ],
+      "items": [
+        {
+          "label": "Line",
+          "description": "The line number, kept for existing lines; new lines take the next number."
+        },
+        {
+          "label": "Specimen type",
+          "description": "Required: the kind of material."
+        },
+        {
+          "label": "Count (specimens)",
+          "description": "Required, 1 to 500: how many specimens."
+        },
+        {
+          "label": "Minimum amount each, Unit",
+          "description": "Optional, together: the smallest amount each specimen should hold, as an exact decimal in the chosen unit. Allocation warns about specimens below it and asks for confirmation."
+        },
+        {
+          "label": "Study",
+          "description": "Optional: only specimens governed by this study."
+        },
+        {
+          "label": "Notes",
+          "description": "Optional, up to 500 characters, about the material asked for. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Save lines needs a reason (suggested for a new request's first lines) and replaces the request's lines with the grid; the change is kept in the timeline. Errors about a line are shown above the grid with its number. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/items.html",
+    "distribution/templates/distribution/requests/_grid_head.html",
+    "distribution/templates/distribution/requests/_grid_foot.html"
+  ]
+}

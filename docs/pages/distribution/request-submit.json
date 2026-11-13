@@ -1,0 +1,31 @@
+{
+  "id": "distribution-request-submit",
+  "routes": [
+    "distribution:request-submit"
+  ],
+  "title": "Submit for decision",
+  "purpose": "Freeze a draft or returned request as a numbered submission awaiting a decision.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the request is a draft or returned for changes and has at least one line. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "What it does",
+      "paragraphs": [
+        "The form shows the request, its uses requested and its lines. Submit for decision keeps the request exactly as it is as submission 1, 2 and so on, and sets the status to Awaiting decision. The request must name at least one use (scope category); otherwise the submission is refused and you edit the request first.",
+        "A person with request decision permission who neither created the request nor made this submission records the decision. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

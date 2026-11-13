@@ -1,0 +1,49 @@
+{% comment %}
+Where the request is in its flow, and what the next step needs. Presentation only: the current step
+is read from the request's status, its allocation counts and the header's primary action (built
+by request_views.request_actions, whose reason says what blocks it). Steps: prepare, decision,
+allocate, pick, ship, close; one _progress_step.html each. Parameters: request_obj, counts, actions, can_decide, refusal.
+{% endcomment %}{% with s=request_obj.status p=actions.primary %}
+{% if s == "draft" or s == "returned" %}{% firstof 1 as step %}
+{% elif s == "submitted" or s == "rejected" %}{% firstof 2 as step %}
+{% elif s == "approved" %}
+  {% if p.label == "Allocate" %}{% firstof 3 as step %}
+  {% elif counts.allocated %}{% firstof 4 as step %}
+  {% elif counts.unshipped_picked or counts.preparing %}{% firstof 5 as step %}
+  {% elif counts.shipped %}{% firstof 6 as step %}
+  {% else %}{% firstof 3 as step %}{% endif %}
+{% elif s == "closed" %}{% firstof 7 as step %}
+{% else %}{% firstof 0 as step %}{% endif %}
+<section class="card mb-3 vr-progress-card" aria-labelledby="progress-heading">
+  <div class="card-header"><h2 class="card-title" id="progress-heading">Progress</h2>
+    {% if s == "rejected" or s == "cancelled" %}<span class="vr-count">Ended: {{ request_obj.get_status_display|lower }}</span>{% elif s == "closed" %}<span class="vr-count">All steps done</span>{% endif %}
+  </div>
+  <div class="card-body">
+    {% with st=step|add:0 %}
+    <ol class="vr-steps">
+      {% include "distribution/requests/_progress_step.html" with n=1 label="Prepare" %}
+      {% include "distribution/requests/_progress_step.html" with n=2 label="Decision" %}
+      {% include "distribution/requests/_progress_step.html" with n=3 label="Allocate" %}
+      {% include "distribution/requests/_progress_step.html" with n=4 label="Pick" %}
+      {% include "distribution/requests/_progress_step.html" with n=5 label="Ship" %}
+      {% include "distribution/requests/_progress_step.html" with n=6 label="Close" %}
+    </ol>
+    {% if s != "closed" and s != "rejected" and s != "cancelled" %}
+    <p class="vr-steps-next{% if p.reason %} is-blocked{% endif %}">
+      {% if p %}
+        <span class="vr-steps-next-label">Next</span> {{ p.label }}{% if p.reason %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>{% endif %}
+      {% elif s == "submitted" %}
+        <span class="vr-steps-next-label">Next</span> A decision by a person with request decision permission who did not create or submit it.{% if can_decide and refusal %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Not you" tone="neutral" plain=True %} {{ refusal }}</span>{% endif %}
+      {% elif s == "draft" or s == "returned" %}
+        <span class="vr-steps-next-label">Next</span> Submit for decision, once the lines are complete.
+      {% elif st == 3 %}<span class="vr-steps-next-label">Next</span> A manager allocates specimens to the lines.
+      {% elif st == 4 %}<span class="vr-steps-next-label">Next</span> Pick the allocated specimens from storage.
+      {% elif st == 5 %}<span class="vr-steps-next-label">Next</span> Pack and dispatch the picked specimens.
+      {% elif st == 6 %}<span class="vr-steps-next-label">Next</span> A manager closes the request.
+      {% endif %}
+    </p>
+    {% endif %}
+    {% endwith %}
+  </div>
+</section>
+{% endwith %}

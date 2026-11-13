@@ -1,0 +1,145 @@
+{% comment %}
+Decorative entrance illustration: an LN2 vapor-phase storage room. A rack tower is lifted out of
+the open tank, its boxes of vials held in the vapor above the liquid; cold vapor spills over the rim
+and settles along the floor. Around it: a supply dewar with its fill hose, a second tank, a shelf of
+boxes and the oxygen monitor every such room carries. The story sits in the middle third of the
+viewBox, so the narrow crop beside the announcements box keeps it. Colours come from --vr-scene-*
+tokens in app.css so the dark theme switches the room to its night light; motion is slow and stops
+under prefers-reduced-motion.
+{% endcomment %}
+<div class="vr-scene" aria-hidden="true">
+  <svg class="vr-scene-art" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMax slice" focusable="false">
+    <defs>
+      <linearGradient id="vr-scene-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="vr-scene-c-wall-top"/><stop offset="0.76" class="vr-scene-c-wall-low"/></linearGradient>
+      <linearGradient id="vr-scene-floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="vr-scene-c-floor-far"/><stop offset="1" class="vr-scene-c-floor-near"/></linearGradient>
+      <radialGradient id="vr-scene-lamp"><stop offset="0" class="vr-scene-c-glow"/><stop offset="1" class="vr-scene-c-glow vr-scene-o-0"/></radialGradient>
+      <linearGradient id="vr-scene-steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="vr-scene-c-tank-shade"/><stop offset="0.28" class="vr-scene-c-tank-lit"/><stop offset="0.55" class="vr-scene-c-tank-body"/><stop offset="1" class="vr-scene-c-tank-shade"/></linearGradient>
+      <radialGradient id="vr-scene-puff"><stop offset="0" class="vr-scene-c-vapor"/><stop offset="1" class="vr-scene-c-vapor vr-scene-o-0"/></radialGradient>
+      <pattern id="vr-scene-caps-1" width="11" height="11" patternUnits="userSpaceOnUse"><circle cx="5.5" cy="5.5" r="3.4" class="vr-scene-cap-1"/></pattern>
+      <pattern id="vr-scene-caps-2" width="11" height="11" patternUnits="userSpaceOnUse"><circle cx="5.5" cy="5.5" r="3.4" class="vr-scene-cap-2"/></pattern>
+      <pattern id="vr-scene-caps-3" width="11" height="11" patternUnits="userSpaceOnUse"><circle cx="5.5" cy="5.5" r="3.4" class="vr-scene-cap-3"/></pattern>
+      <g id="vr-scene-shelf-boxes">
+        <rect class="vr-scene-box" x="0" y="0" width="58" height="50" rx="3"/><rect x="5" y="6" width="48" height="40" fill="url(#vr-scene-caps-1)"/>
+        <rect class="vr-scene-box" x="66" y="0" width="58" height="50" rx="3"/><rect x="71" y="6" width="48" height="40" fill="url(#vr-scene-caps-2)"/>
+        <rect class="vr-scene-box" x="132" y="0" width="58" height="50" rx="3"/><rect x="137" y="6" width="48" height="40" fill="url(#vr-scene-caps-3)"/>
+      </g>
+      <g id="vr-scene-tower-box">
+        <rect class="vr-scene-box" x="0" y="0" width="76" height="30" rx="2"/>
+        <path class="vr-scene-box-cut" d="M4 8h68"/>
+        <rect x="6" y="11" width="66" height="16" fill="url(#vr-scene-caps-1)"/>
+      </g>
+    </defs>
+
+    <!-- Room: wall with panel seams and a vent, ceiling light, floor -->
+    <rect width="800" height="1000" fill="url(#vr-scene-wall)"/>
+    <ellipse cx="470" cy="160" rx="380" ry="250" fill="url(#vr-scene-lamp)"/>
+    <path class="vr-scene-seam" d="M0 520h800M250 0v520M560 0v520"/>
+    <g class="vr-scene-far">
+      <rect class="vr-scene-vent" x="620" y="190" width="120" height="54" rx="3"/>
+      <path class="vr-scene-vent-slat" d="M630 203h100M630 215h100M630 227h100"/>
+    </g>
+    <rect class="vr-scene-skirting" x="0" y="756" width="800" height="6"/>
+    <rect x="0" y="762" width="800" height="238" fill="url(#vr-scene-floor)"/>
+    <path class="vr-scene-floor-line" d="M0 800h800M0 850h800M0 915h800M0 990h800M400 762 120 1000M400 762 680 1000M400 762 -120 1000M400 762 920 1000M400 762v238"/>
+
+    <!-- Oxygen monitor on the wall -->
+    <g class="vr-scene-o2">
+      <rect class="vr-scene-panel" x="566" y="318" width="74" height="84" rx="6"/>
+      <rect class="vr-scene-screen" x="575" y="328" width="56" height="26" rx="2"/>
+      <text class="vr-scene-readout-text" x="603" y="347" text-anchor="middle">O₂ 20.9</text>
+      <circle class="vr-scene-ok" cx="584" cy="376" r="4.5"/>
+      <rect class="vr-scene-band" x="596" y="372" width="34" height="8" rx="2"/>
+      <path class="vr-scene-cable" d="M603 402v40"/>
+    </g>
+
+    <!-- Shelf of boxes, left -->
+    <g class="vr-scene-far">
+      <rect class="vr-scene-rack-shade" x="24" y="420" width="9" height="340"/>
+      <rect class="vr-scene-rack-shade" x="206" y="420" width="9" height="340"/>
+      <rect class="vr-scene-rack" x="20" y="416" width="199" height="7"/>
+      <rect class="vr-scene-rack" x="20" y="506" width="199" height="7"/>
+      <rect class="vr-scene-rack" x="20" y="596" width="199" height="7"/>
+      <rect class="vr-scene-rack" x="20" y="686" width="199" height="7"/>
+      <use href="#vr-scene-shelf-boxes" x="22" y="456"/>
+      <use href="#vr-scene-shelf-boxes" x="22" y="546"/>
+      <use href="#vr-scene-shelf-boxes" x="22" y="636"/>
+    </g>
+
+    <!-- Second tank, closed, right -->
+    <g class="vr-scene-far">
+      <ellipse class="vr-scene-shadow" cx="704" cy="900" rx="86" ry="11"/>
+      <path d="M636 702q0-34 40-36h56q40 2 40 36v176q0 14-14 14h-108q-14 0-14-14z" fill="url(#vr-scene-steel)"/>
+      <rect class="vr-scene-band" x="633" y="694" width="142" height="9" rx="3"/>
+      <path class="vr-scene-lid" d="M656 666q0-30 48-32q48 2 48 32z"/>
+      <path class="vr-scene-handle" d="M690 634q14-10 28 0"/>
+      <rect class="vr-scene-band" x="633" y="852" width="142" height="7" rx="3"/>
+    </g>
+
+    <!-- Supply dewar with its fill hose to the main tank -->
+    <g>
+      <ellipse class="vr-scene-shadow" cx="270" cy="916" rx="56" ry="9"/>
+      <path d="M226 610q0-26 30-28h28q30 2 30 28v284q0 12-12 12h-64q-12 0-12-12z" fill="url(#vr-scene-steel)"/>
+      <rect class="vr-scene-band" x="223" y="606" width="94" height="8" rx="3"/>
+      <rect class="vr-scene-band" x="223" y="866" width="94" height="7" rx="3"/>
+      <rect class="vr-scene-band" x="258" y="560" width="24" height="24" rx="3"/>
+      <circle class="vr-scene-gauge" cx="270" cy="548" r="14"/>
+      <path class="vr-scene-needle" d="M270 548l7-8"/>
+      <circle class="vr-scene-caster" cx="240" cy="912" r="6"/>
+      <circle class="vr-scene-caster" cx="300" cy="912" r="6"/>
+      <path class="vr-scene-hose" d="M282 572c40-6 60 20 70 60s28 64 52 66"/>
+    </g>
+
+    <!-- Main vapor-phase tank, lid open, a rack tower lifted out -->
+    <ellipse class="vr-scene-shadow" cx="480" cy="918" rx="138" ry="17"/>
+    <path class="vr-scene-lid vr-scene-lid-open" d="M384 598q-6-98 56-104q62 6 56 104z" transform="rotate(-16 440 598)"/>
+    <path class="vr-scene-hinge" d="M404 596h72"/>
+    <path d="M362 640q0-44 52-48h132q52 4 52 48v248q0 18-18 18h-200q-18 0-18-18z" fill="url(#vr-scene-steel)"/>
+    <ellipse class="vr-scene-deck" cx="480" cy="606" rx="112" ry="14"/>
+    <ellipse class="vr-scene-opening" cx="480" cy="606" rx="74" ry="9"/>
+    <rect class="vr-scene-band" x="358" y="640" width="244" height="12" rx="4"/>
+    <rect class="vr-scene-band" x="358" y="848" width="244" height="9" rx="4"/>
+    <circle class="vr-scene-caster" cx="384" cy="914" r="7"/>
+    <circle class="vr-scene-caster" cx="576" cy="914" r="7"/>
+
+    <!-- Controller on the tank's flank: a flat temperature trace -->
+    <rect class="vr-scene-panel" x="520" y="676" width="72" height="62" rx="6"/>
+    <rect class="vr-scene-screen" x="528" y="684" width="56" height="30" rx="2"/>
+    <path class="vr-scene-trace" d="M533 704h10l4-6 4 6h28"/>
+    <circle class="vr-scene-led" cx="536" cy="726" r="4"/>
+
+    <!-- Rack tower, lifted: four boxes in a frame, a handle at the top -->
+    <g class="vr-scene-tower">
+      <path class="vr-scene-handle" d="M466 330v-20h28v20"/>
+      <rect class="vr-scene-tower-frame" x="438" y="330" width="84" height="270" rx="2"/>
+      <use href="#vr-scene-tower-box" x="442" y="344"/>
+      <use href="#vr-scene-tower-box" x="442" y="400"/>
+      <use href="#vr-scene-tower-box" x="442" y="456"/>
+      <use href="#vr-scene-tower-box" x="442" y="512"/>
+      <path class="vr-scene-tower-rail" d="M438 382h84M438 438h84M438 494h84M438 550h84"/>
+    </g>
+
+    <!-- Vapor: rising from the opening, then spilling over the rim, as cold vapor does -->
+    <g class="vr-scene-plume">
+      <ellipse cx="480" cy="586" rx="110" ry="28" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="452" cy="540" rx="70" ry="34" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="512" cy="490" rx="64" ry="30" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="470" cy="430" rx="58" ry="26" fill="url(#vr-scene-puff)"/>
+    </g>
+    <g class="vr-scene-spill">
+      <ellipse cx="372" cy="660" rx="34" ry="60" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="592" cy="676" rx="30" ry="70" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="366" cy="760" rx="26" ry="60" fill="url(#vr-scene-puff)"/>
+    </g>
+
+    <!-- Cold mist along the floor -->
+    <g class="vr-scene-mist">
+      <ellipse cx="200" cy="912" rx="240" ry="38" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="480" cy="944" rx="290" ry="44" fill="url(#vr-scene-puff)"/>
+      <ellipse cx="740" cy="960" rx="200" ry="34" fill="url(#vr-scene-puff)"/>
+    </g>
+  </svg>
+  <div class="vr-scene-caption">
+    <p class="vr-scene-title">Biorepository workspace</p>
+    <p class="vr-scene-sub">Storage · Specimens · Custody</p>
+  </div>
+</div>

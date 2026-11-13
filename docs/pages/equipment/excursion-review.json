@@ -1,0 +1,45 @@
+{
+  "id": "equipment-excursion-review",
+  "routes": [
+    "equipment:excursion-review"
+  ],
+  "title": "Review excursion",
+  "purpose": "Return an excursion for more work, or close it after review.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Managers and administrators. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. Only an excursion awaiting review can be reviewed.",
+        "A person who submitted the excursion cannot close it: the form tells you so and offers only Return for more work. Another manager or administrator closes it. If someone else changed the record after you opened this form, the save is refused with a message that it changed since you opened it. Nothing is saved; reload, check the current values and enter the change again."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Decision",
+          "description": "Required. Return for more work sends it back to Open, clears the submission and lets a technician edit and submit again. Close the excursion ends the review."
+        },
+        {
+          "label": "Review note",
+          "description": "Required, up to 4,000 characters. Kept in the timeline: what is missing, or why it can be closed. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Closing captures the specimens that were in the unit during the excursion, from the recorded storage movements, and keeps that list with the closing entry; the note and the closer are shown on the excursion. Returning adds a Returned for more work entry. Record review applies the chosen decision, and the status, the timeline entry and the audit event are saved together. Vapor Phase does not decide whether an excursion is acceptable; the note records the reviewer's decision."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "equipment/occupancy.py"
+  ]
+}

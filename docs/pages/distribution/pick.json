@@ -1,0 +1,66 @@
+{
+  "id": "distribution-pick",
+  "routes": [
+    "distribution:pick"
+  ],
+  "title": "Pick specimens",
+  "purpose": "Record the retrieval of a request's allocated specimens from storage, or that one was not found.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the request is approved and has specimens allocated and not yet picked. It opens in a wide dialog that can be maximized."
+      ]
+    },
+    {
+      "title": "The grid",
+      "paragraphs": [
+        "One row per allocated specimen in walking order (site, room, unit, rack slots, box, position; specimens not in storage last), as on the pick list, with its location, amount, consent restrictions and anything that would refuse picking it now."
+      ],
+      "items": [
+        {
+          "label": "Outcome",
+          "description": "Picked checks the specimen out of storage; Not found records only that it was not at its location; Not now leaves it allocated. Rows that would be refused start on Not now."
+        },
+        {
+          "label": "Note",
+          "description": "Optional, up to 500 characters, for example where a missing specimen was looked for. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Picked by (custodian)",
+          "description": "Required: the operating staff member who holds the specimens once checked out; you by default."
+        },
+        {
+          "label": "Picked at",
+          "description": "Required; repository local time, not in the future and not before the specimens were allocated."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept with each check-out and allocation event. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "Record pick needs at least one row marked Picked or Not found. Each picked specimen is checked out to the custodian with the destination Request RQ-…: its position becomes free, the time-out-of-storage clock starts, and the allocation becomes Picked. Every specimen is checked again first; if any is refused or changed since the page was opened (its record or storage position), nothing is saved and the reasons are shown. Not found changes nothing else; the specimen stays allocated."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/templates/distribution/requests/pick.html",
+    "distribution/templates/distribution/requests/_grid_head.html",
+    "distribution/templates/distribution/requests/_grid_foot.html"
+  ]
+}

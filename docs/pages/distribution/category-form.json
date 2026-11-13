@@ -1,0 +1,66 @@
+{
+  "id": "distribution-category-form",
+  "routes": [
+    "distribution:category-create",
+    "distribution:category-edit"
+  ],
+  "title": "New scope category or Edit scope category",
+  "purpose": "Define a use that consent forms ask about.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Required, unique; stored in capitals, e.g. GENETIC."
+        },
+        {
+          "label": "Name",
+          "description": "Required."
+        },
+        {
+          "label": "Description",
+          "description": "Optional: what use the category covers, as the forms word it."
+        },
+        {
+          "label": "Governs use",
+          "description": "Ticked: requests can require it and the consent must permit it. Cleared: recorded and shown only."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Clear to stop offering the entry for new records; existing records keep it."
+        },
+        {
+          "label": "Reason",
+          "description": "Required when changing, optional when creating. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Fixed once used",
+      "paragraphs": [
+        "Once a consent record answers the category, its code and Governs use are fixed. Fixed fields are shown read-only with the reason Fixed: recorded data already uses this entry; create a new entry instead."
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "A new entry may carry an optional reason (blank reads Initial definition); a change needs a reason, kept in the history shown under the form. After saving you return to the list. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first.",
+        "Entries are never deleted; clear Active to stop offering one."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html",
+    "distribution/templates/distribution/governance/catalogue_form.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

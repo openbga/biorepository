@@ -1,0 +1,104 @@
+{
+  "id": "distribution-consent-list",
+  "routes": [
+    "distribution:consent-list"
+  ],
+  "title": "Consent",
+  "purpose": "Find the recorded consent of a coded participant in a study.",
+  "sections": [
+    {
+      "title": "Tabs",
+      "paragraphs": [
+        "Consents lists one row per participant and study; Withdrawals lists the withdrawals recorded on consent pages."
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Consent",
+          "description": "Participant code and study code, e.g. P-000123 · DEMO-STUDY; opens the consent."
+        },
+        {
+          "label": "Status",
+          "description": "Consented, Refused or Withdrawn, from the newest record and any withdrawal in effect."
+        },
+        {
+          "label": "Study",
+          "description": "Opens the study."
+        },
+        {
+          "label": "Form",
+          "description": "The form version of the current record."
+        },
+        {
+          "label": "Date of the decision",
+          "description": "From the current record."
+        },
+        {
+          "label": "Expires",
+          "description": "The current record's expiry date, or No end date."
+        },
+        {
+          "label": "Do not contact",
+          "description": "Yes after a withdrawal of contact or any withdrawal."
+        }
+      ]
+    },
+    {
+      "title": "Finding consents",
+      "items": [
+        {
+          "label": "Search",
+          "description": "Participant code or study code."
+        },
+        {
+          "label": "Status, Study",
+          "description": "Filters; default any."
+        },
+        {
+          "label": "Participant",
+          "description": "A coded participant identifier, matched exactly (capitals not required). The specimen record links here filtered to its participant."
+        },
+        {
+          "label": "More filters: Do not contact",
+          "description": "Only consents flagged Do not contact."
+        },
+        {
+          "label": "Search, filters, Apply, Clear all",
+          "description": "Search and the filters narrow the rows on the server; Apply runs them and Clear all removes every filter and the search. Active filters show as chips you can remove one by one. An invalid filter shows an error and no rows rather than everything."
+        },
+        {
+          "label": "Columns",
+          "description": "Shows or hides columns for you; the first column stays."
+        },
+        {
+          "label": "Sorting and paging",
+          "description": "Click a sortable heading to sort; click again to reverse. Rows per page: 25, 50 or 100. The count under the table is the number of rows matching the filters."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "Actions and access",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else.",
+        "Record consent (admin and manager) opens the consent form. Participants are coded identifiers only; the system holds no names."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_lists.py",
+    "core/grids.py",
+    "distribution/templates/distribution/governance/consent_list.html",
+    "distribution/templates/distribution/governance/_list_actions.html",
+    "specimens/views.py"
+  ]
+}

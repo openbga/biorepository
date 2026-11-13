@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% comment %}
+Upload a CSV file for validation (form dialog). Validation registers nothing; the import page
+shows errors and a preview. Context: form (ImportUploadForm), columns, required.
+{% endcomment %}
+{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Imports" section_url=list_url current=page_title %}{% endblock %}
+{% block content %}
+<form class="vr-form" method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  {% include "includes/form_errors.html" with form=form %}
+  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Uploading only checks the file; nothing is registered until you commit it.</p>
+  <p class="vr-form-note"><a href="{% url 'specimens:import-template' %}" download>{% include "includes/icon.html" with name="download" %}Download the CSV template</a></p>
+  {% for legend, fields in form.grouped %}
+  <fieldset class="vr-form-section">
+    {% for field in fields %}{{ field.as_field_group }}{% endfor %}
+  </fieldset>
+  {% endfor %}
+  <details class="vr-form-note">
+    <summary>Column guide</summary>
+    <ul class="mb-0">
+      <li>One row per specimen. Required: {% for c in required %}<code>{{ c }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.</li>
+      <li><code>row_key</code> is your own reference for the row (up to 40 characters, unique in the file). The system assigns the specimen ID.</li>
+      <li>Types, containers, units, participants and collections are given by their catalogue codes. Unit codes keep their case (mL).</li>
+      <li><code>quantity</code> is an exact decimal in that unit. Times are ISO 8601, for example 2026-11-01T09:30:00-05:00; a time without an offset is read in repository time.</li>
+      <li><code>participant_code</code> is a coded identifier only, never a name or record number.</li>
+      <li><code>box_code</code> and <code>position_label</code> together store the specimen in a free position; leave both blank to register it unplaced.</li>
+      <li><code>baseline_thaws</code> is the number of thaws before registration; leave it blank if unknown.</li>
+      <li>All columns: {% for c in columns %}<code>{{ c }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.</li>
+    </ul>
+  </details>
+  <div class="vr-form-actions">
+    <a class="btn btn-link" href="{% url 'specimens:import-list' %}">Cancel</a>
+    <button class="btn btn-primary" type="submit">Validate file</button>
+  </div>
+</form>
+{% endblock %}

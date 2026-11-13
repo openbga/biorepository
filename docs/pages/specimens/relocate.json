@@ -1,0 +1,58 @@
+{
+  "id": "specimens-relocate",
+  "routes": [
+    "specimens:relocate"
+  ],
+  "title": "Relocate specimen",
+  "purpose": "Move a stored specimen from its position to a different free position, or record the correction of a movement that was recorded wrongly.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can relocate a specimen; a viewer is refused. Recording a move as the correction of an earlier wrong movement is for admin and manager only: the correction field is not shown to technicians, and the server refuses a correction from them.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is refused for a disposed specimen and for a distributed one: material sent out of the repository in a shipment takes no physical step until its return is recorded.",
+        "It is available only while the specimen occupies a storage position. Moving a whole box or rack is done under Storage, not here."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Box, Position",
+          "description": "The new position, required: choose the box and type the label (for example A1). It must exist, be free and not blocked, and is rechecked when you save."
+        },
+        {
+          "label": "This corrects a wrong movement",
+          "description": "Admin and manager only. Optional. Leave on “No, a new movement” for an ordinary move. Choose an earlier movement of this specimen only when that earlier record was wrong; this move is then stored as its correction. The earlier movement stays in the history. A relocation always ends in a position; to take a specimen out of storage, record a check-out."
+        },
+        {
+          "label": "Moved at",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Relocate specimen frees the old position and occupies the new one in one step; the movement is added to the history with the old and new path and is never edited. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again.",
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. The form starts at the current time."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

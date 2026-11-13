@@ -1,0 +1,69 @@
+{
+  "id": "distribution-consent-withdraw",
+  "routes": [
+    "distribution:consent-withdraw"
+  ],
+  "title": "Withdraw consent",
+  "purpose": "Record that the participant withdrew consent, and stop use of their material where the withdrawal asks for it.",
+  "sections": [
+    {
+      "title": "Kinds",
+      "items": [
+        {
+          "label": "No further contact",
+          "description": "Flags the consent Do not contact. Status, holds and allocations are unchanged."
+        },
+        {
+          "label": "No further use",
+          "description": "In one step: the status becomes Withdrawn; every available or exhausted specimen of the participant in every collection the study governs or has governed gets a use hold (reference 'Consent withdrawn: participant, study'); allocations not yet picked are released; distributed specimens are counted for follow-up. Picked specimens stay picked: the hold blocks packing and dispatch and staff put them back."
+        },
+        {
+          "label": "No further use and destroy",
+          "description": "As No further use, and the consent page then offers Request disposal of held specimens."
+        }
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "What was withdrawn",
+          "description": "Required. While the consent is already withdrawn only No further contact is offered."
+        },
+        {
+          "label": "Effective on",
+          "description": "Required; not in the future."
+        },
+        {
+          "label": "Received at",
+          "description": "Required; when the withdrawal reached the repository, not in the future."
+        },
+        {
+          "label": "Received via",
+          "description": "Required, e.g. letter or phone call. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reason",
+          "description": "Required; kept in the history and on the holds. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "The form shows the participant's specimens in custody, open allocations and distributed items before you confirm. Nothing is disposed, deleted or anonymized; a withdrawal is undone only by Reinstate consent by another manager. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

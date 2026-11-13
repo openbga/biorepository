@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load navigation specimens %}
+{% comment %}
+One specimen catalogue tab: participants, collections, specimen types, specimen containers or
+units. An entry has no record page: its code opens the edit form for managers and is plain text
+for everyone else (docs/ui-standards.md section 5, rule 3). Context: kind, tab, noun, plural,
+create_url, edit_route, page_obj, filter_form, q, sort, inline, active_filters, filtered,
+export_url, can_manage.
+{% endcomment %}
+{% block page_actions %}<a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% include "includes/icon.html" with name="download" %}Export CSV</a>{% if can_manage %}<a class="btn btn-primary" href="{{ create_url }}">{% include "includes/icon.html" with name="plus-lg" %}New {{ noun }}</a>{% endif %}{% endblock %}
+{% block content %}
+{% section_tabs "specimen-catalogues" %}
+<section class="card vr-table-card" aria-labelledby="catalogue-heading">
+  <h2 class="visually-hidden" id="catalogue-heading">{{ tab }}</h2>
+  {% with grid_key="specimens.catalogue-"|add:kind %}
+  {% if kind == "participant" %}{% include "includes/grid_toolbar.html" with label="Filter "|add:plural q=q placeholder="Code" inline=inline grid=grid_key %}{% else %}{% include "includes/grid_toolbar.html" with label="Filter "|add:plural q=q placeholder="Code or name" inline=inline grid=grid_key %}{% endif %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="{{ grid_key }}" data-vr-grid-version="1" aria-labelledby="catalogue-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% if kind != "participant" %}{% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}{% endif %}
+        {% if kind == "container_type" %}<th scope="col" class="text-end" data-vr-col="capacity" data-vr-col-label="Nominal capacity">Nominal capacity</th>{% endif %}
+        {% if kind == "unit" %}<th scope="col" data-vr-col="dimension" data-vr-col-label="Dimension">Dimension</th><th scope="col" data-vr-col="fractional" data-vr-col-label="Amounts">Amounts</th>{% endif %}
+        <th scope="col" data-vr-col="status" data-vr-col-label="Status">Status</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row">{% if can_manage %}<a class="vr-row-link vr-id" href="{% url edit_route row.pk %}">{{ row.code }}</a>{% else %}<span class="vr-id">{{ row.code }}</span>{% endif %}</th>
+          {% if kind != "participant" %}<td>{{ row.name }}</td>{% endif %}
+          {% if kind == "container_type" %}<td class="text-end vr-id vr-nowrap">{% if row.nominal_capacity is not None %}{{ row.nominal_capacity|amount:row.capacity_unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>{% endif %}
+          {% if kind == "unit" %}<td>{{ row.get_dimension_display }}</td><td>{% if row.fractional %}Fractional{% else %}Whole numbers{% endif %}</td>{% endif %}
+          <td>{% if row.is_active %}{% include "includes/status.html" with label="Active" tone="success" plain=True %}{% else %}{% include "includes/status.html" with label="Inactive" tone="neutral" plain=True %}{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=plural filtered=filtered %}
+  {% else %}
+  {% if can_manage %}{% with create_label="New "|add:noun %}{% include "specimens/includes/list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="Specimens are registered with entries from these catalogues." create_url=create_url create_label=create_label %}{% endwith %}{% else %}{% include "specimens/includes/list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="A repository manager adds the entries specimens are registered with." %}{% endif %}
+  {% endif %}
+  {% endwith %}
+</section>
+{% endblock %}

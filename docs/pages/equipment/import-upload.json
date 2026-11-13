@@ -1,0 +1,77 @@
+{
+  "id": "equipment-import-upload",
+  "routes": [
+    "equipment:import-upload"
+  ],
+  "title": "Upload readings",
+  "purpose": "Check a CSV file of temperature readings before anything is recorded.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators. Viewers are refused. Uploading only checks the file and saves the result: no reading exists until you commit the checked file on its page."
+      ]
+    },
+    {
+      "title": "The file",
+      "paragraphs": [
+        "A UTF-8 CSV with a header row, up to 5 MiB and 10,000 data rows. A file over a limit, empty, not UTF-8, without the required columns, or with neither an equipment column nor a chosen Equipment is refused on this form and nothing is saved. Blank rows are skipped, extra columns are ignored with a warning, and row numbers in messages count the header as row 1."
+      ],
+      "items": [
+        {
+          "label": "measured_at",
+          "description": "Required. ISO 8601 date and time, for example 2026-11-12T08:30. Without an offset the time is read in the repository's time zone. Not in the future."
+        },
+        {
+          "label": "temperature_c",
+          "description": "Required. Degrees Celsius, up to two decimals, not below absolute zero."
+        },
+        {
+          "label": "equipment",
+          "description": "Optional. The asset ID of the tank, freezer or other equipment read (for example TANK-VP-01). When blank, the Equipment chosen on this form is used. Monitors and retired equipment are refused."
+        },
+        {
+          "label": "probe_position",
+          "description": "Optional, up to 80 characters (longer is cut)."
+        },
+        {
+          "label": "device",
+          "description": "Optional. The asset ID of the monitor that produced the reading (for example MON-01); must be a registered monitor that is not retired."
+        },
+        {
+          "label": "note",
+          "description": "Optional text."
+        }
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "CSV file",
+          "description": "Required. Choose the file."
+        },
+        {
+          "label": "Equipment",
+          "description": "Optional. Used for every row without an equipment value. Leave it on Named in the file when every row names its equipment."
+        }
+      ]
+    },
+    {
+      "title": "What the check does",
+      "paragraphs": [
+        "Every row is checked against the register. A row is refused when the equipment or monitor is unknown, the time or value is invalid or in the future, the same equipment, time and probe position appears twice in the file, or a reading with that equipment, time and probe position is already recorded. Warnings do not block: readings outside the limits set on their equipment, and a file with exactly the same content that was committed before.",
+        "Validate file opens the result page whichever way the check went. A check expires 24 hours after it was made; after that upload the file again."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "equipment/templates/equipment/import_detail.html"
+  ]
+}

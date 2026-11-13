@@ -1,0 +1,46 @@
+{
+  "id": "equipment-excursion-submit",
+  "routes": [
+    "equipment:excursion-submit"
+  ],
+  "title": "Submit for review",
+  "purpose": "Send a completed excursion to a manager or administrator for review.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Technicians, managers and administrators. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. Only an open excursion can be submitted.",
+        "If someone else changed the record after you opened this form, the save is refused with a message that it changed since you opened it. Nothing is saved; reload, check the current values and enter the change again."
+      ]
+    },
+    {
+      "title": "Requirements",
+      "paragraphs": [
+        "The excursion needs an end time, a cause, an action taken and an impact assessment. If any is missing the submission is refused and each missing item is named beside it; use Edit on the excursion first. The top shows the excursion, equipment, status and the limits in force."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Note",
+          "description": "Optional, up to 4,000 characters, for the reviewer. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Submit for review changes the status to Awaiting review, records you as the submitter and adds a timeline entry. While it is awaiting review it cannot be edited. A manager or administrator other than you reviews and closes it; a manager can also return it to you for more work."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

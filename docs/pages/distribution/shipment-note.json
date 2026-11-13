@@ -1,0 +1,48 @@
+{
+  "id": "distribution-shipment-note",
+  "routes": [
+    "distribution:shipment-note"
+  ],
+  "title": "Add note",
+  "purpose": "Add a note, a file, or both to a shipment's timeline at any stage, for example a waybill, a photo or logger output.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, in any state. Notes never change the shipment and cannot be edited or deleted. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Note",
+          "description": "Up to 4,000 characters. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Attachment",
+          "description": "PDF, PNG, JPEG, TXT or CSV, up to 10 MiB, checked by content and downloaded as a file. Do not upload consent forms, signatures or any document that identifies a participant. Enter a note, attach a file, or both."
+        },
+        {
+          "label": "When",
+          "description": "Required; repository local time, not in the future."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "The entry is added to the timeline with your name."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "core/attachments.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

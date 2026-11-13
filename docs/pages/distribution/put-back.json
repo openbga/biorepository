@@ -1,0 +1,75 @@
+{
+  "id": "distribution-put-back",
+  "routes": [
+    "distribution:put-back"
+  ],
+  "title": "Put back",
+  "purpose": "Return picked specimens of a request to storage, keeping them allocated or releasing them.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators. Release from the request is offered to managers and administrators only. It opens in a wide dialog that can be maximized."
+      ]
+    },
+    {
+      "title": "The grid",
+      "paragraphs": [
+        "One row per picked specimen of the request that is not in a packed shipment; specimens in a packed shipment are listed above the grid (unpack the shipment first). Free positions are suggested above the grid; nothing is reserved.",
+        "A row marked Already in storage is a picked specimen that was checked in from the specimen record after it was picked. It has no box, position or thaw entry: ticking it records the put back against the check-in already made, moves nothing and checks nothing in again."
+      ],
+      "items": [
+        {
+          "label": "Put back",
+          "description": "Tick each specimen to put back."
+        },
+        {
+          "label": "Box, Position",
+          "description": "Required for a ticked row in hand (not for Already in storage): choose the box and type the position label, for example A1. The position is checked again when you save."
+        },
+        {
+          "label": "Thaw observed while out",
+          "description": "Yes, No or Not known (the default). Leaving storage is not a thaw; record only what was observed."
+        }
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Custodian after check-in",
+          "description": "Required: the operating staff member recorded as putting them away; you by default."
+        },
+        {
+          "label": "Release them from the request",
+          "description": "Managers and administrators: the allocations and their holds are released so the specimens can be allocated again. Unticked, they stay allocated to the request."
+        },
+        {
+          "label": "Put back at",
+          "description": "Required; repository local time, not in the future."
+        },
+        {
+          "label": "Reason",
+          "description": "Required. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "Each ticked specimen in hand is checked in to its position (an ordinary check-in); a specimen already in storage is recorded as put back without a new check-in. Either way it leaves any draft shipment it was in and stays allocated, or is released with Release them from the request. Nothing is saved if any line is refused."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "specimens/forms.py",
+    "distribution/templates/distribution/requests/put_back.html",
+    "distribution/templates/distribution/requests/_grid_head.html",
+    "distribution/templates/distribution/requests/_grid_foot.html"
+  ]
+}

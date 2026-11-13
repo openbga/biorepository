@@ -1,0 +1,109 @@
+{
+  "id": "specimens-disposal-list",
+  "routes": [
+    "specimens:disposal-list"
+  ],
+  "title": "Disposal requests",
+  "purpose": "Follow every disposal request from request to approval to recorded disposal. Each disposal needs approval by a different person who holds disposal approval.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "All roles can read the list. There is no New button: a request is started from the specimen's record with Request disposal.",
+        "Approving is an explicit permission given to named people. It is not part of any role and superuser status does not grant it. Nobody can approve a request they made themselves, even when they hold the permission."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the specimen ID. Without a filter all requests are listed, newest first. Click Request or Specimen to sort; click again to reverse. Choose 25, 50 or 100 rows per page (default 25). Invalid filters show an error and no rows."
+      ],
+      "items": [
+        {
+          "label": "State",
+          "description": "Awaiting approval, Approved, not yet disposed, Out of date, Rejected, Cancelled or Disposed."
+        },
+        {
+          "label": "Requested by me",
+          "description": "Only requests you made."
+        },
+        {
+          "label": "Awaiting my approval",
+          "description": "Shown only to people who hold the approval permission. Lists pending requests made by other people, which you may approve or reject."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "Awaiting approval",
+          "description": "Requested and not yet decided, and the specimen is unchanged since the request."
+        },
+        {
+          "label": "Approved, not yet disposed",
+          "description": "Approved and waiting for someone to dispose of the material and record it."
+        },
+        {
+          "label": "Out of date",
+          "description": "The specimen changed (moved, checked out, amount changed, and so on) after the request or after the approval, so the request cannot be used. A new request is needed."
+        },
+        {
+          "label": "Rejected, Cancelled",
+          "description": "Ended without disposal. The request stays in the history."
+        },
+        {
+          "label": "Disposed",
+          "description": "The disposal was recorded; the specimen record and history are kept."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Request",
+          "description": "Request followed by the date and time; opens the request. Sortable, newest first on first click. Always shown."
+        },
+        {
+          "label": "State",
+          "description": "The current state."
+        },
+        {
+          "label": "Specimen",
+          "description": "The specimen ID; opens the specimen. Sortable."
+        },
+        {
+          "label": "Method, Destination",
+          "description": "How and where the material is to be disposed of, as written in the request."
+        },
+        {
+          "label": "Requested by",
+          "description": "The person who made the request."
+        },
+        {
+          "label": "Decided by",
+          "description": "The person who approved, rejected or cancelled it, or a dash."
+        }
+      ]
+    },
+    {
+      "title": "Empty states",
+      "paragraphs": [
+        "With no requests the page says “No disposal requests yet”. With filters that match nothing it says “Nothing matches these filters”. The dashboard counts link here with the matching state or Awaiting my approval already applied."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/list_forms.py",
+    "specimens/dashboard.py",
+    "specimens/templates/specimens/disposal_list.html",
+    "specimens/tests/test_disposal.py",
+    "specimens/tests/test_views_records.py"
+  ]
+}

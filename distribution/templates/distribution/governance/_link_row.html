@@ -1,0 +1,9 @@
+{% load distribution_governance %}{% comment %}One collection link row on the study record. Context: link (StudyCollection), can_manage.{% endcomment %}
+<tr>
+  <th scope="row"><span class="vr-id">{{ link.collection.code }}</span></th>
+  <td>{{ link.collection.name }}</td>
+  <td class="vr-nowrap"><time datetime="{{ link.linked_at|date:'c' }}">{{ link.linked_at|date:"Y-m-d H:i" }}</time> <span class="vr-muted small">{{ link.linked_by|person }}</span></td>
+  <td class="vr-nowrap">{% if link.ended_at %}<time datetime="{{ link.ended_at|date:'c' }}">{{ link.ended_at|date:"Y-m-d H:i" }}</time> <span class="vr-muted small">{{ link.ended_by|person }}</span>{% else %}Current{% endif %}</td>
+  <td class="vr-wrap">{% if link.ended_at %}{{ link.end_reason }}{% else %}{{ link.link_reason }}{% endif %}</td>
+  {% if can_manage %}<td>{% if not link.ended_at %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:study-collection-end' link.pk %}">End link</a>{% endif %}</td>{% endif %}
+</tr>

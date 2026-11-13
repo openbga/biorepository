@@ -1,0 +1,57 @@
+{
+  "id": "equipment-service-correct",
+  "routes": [
+    "equipment:service-correct"
+  ],
+  "title": "Correct service event",
+  "purpose": "Replace the values of a service event that was recorded wrongly, or withdraw it, keeping the original visible.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "The person who recorded the event, and managers and administrators; anyone else is refused, and viewers cannot open it. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. An event that was already corrected must be corrected through the newer entry, and a withdrawn event cannot be corrected: record a new one.",
+        "The top of the form shows the equipment, the event and who recorded it and when."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Entries are never edited or deleted. A correction adds a new entry that replaces the values of the old one, or withdraws it, and it always needs a reason; the original stays visible in the log marked Corrected and the new one is marked Correction (or Withdrawal). The kind cannot change."
+      ],
+      "items": [
+        {
+          "label": "Withdraw this event",
+          "description": "Tick it when the event was recorded in error and should no longer count. The values below are then ignored."
+        },
+        {
+          "label": "Reason for the correction",
+          "description": "Required, up to 4,000 characters. Do not enter donor, patient or participant names or other text that could identify a person."
+        },
+        {
+          "label": "Event fields",
+          "description": "The same fields as Record service event (Performed on, Outcome, Performed by, Reference, Description, Reference device, As found, As left, Next due) start with the current values; change what is wrong."
+        },
+        {
+          "label": "Replace the attachment",
+          "description": "Optional new file (PDF, PNG, JPEG, TXT or CSV, up to 10 MiB). Leave empty to keep the current file. The file is stored once: a correction that keeps it refers to the same stored file rather than a copy, and the earlier entry keeps showing its own file. If the repository has set a limit on the total size of attached files and it would be exceeded, the file is refused and nothing is recorded."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Submitting with no value changed and no new file is refused with Nothing to correct. A correction takes effect for the due dates at once: the current due date comes from the latest effective event, so a corrected or withdrawn event changes what Maintenance due shows. Correct and the original, with its reason, both remain in the equipment record and in the audit trail."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "core/attachments.py",
+    "equipment/queries.py"
+  ]
+}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% comment %}Free positions in path order (unit, rack or shelf, box, position). No sorting: the order is fixed so a technician fills boxes in sequence. Context: grid_response for lists.SPECS["position"].{% endcomment %}
+{% block page_intro %}<p class="vr-page-intro">Unblocked, unoccupied positions in active boxes; a position is claimed only when an item is stored in it.</p>{% endblock %}
+{% block page_actions %}{% include "storage/_list_actions.html" %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="free-heading">
+  <h2 class="visually-hidden" id="free-heading">Free positions</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter free positions" q=q placeholder="Box code" inline=inline more=more more_open=more_open grid="storage.free" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="storage.free" data-vr-grid-version="1" aria-labelledby="free-heading">
+      <thead><tr>
+        <th scope="col" data-vr-col="position" data-vr-col-label="Position" data-vr-col-locked>Position</th>
+        <th scope="col" data-vr-col="unit" data-vr-col-label="Storage unit">Storage unit</th>
+        <th scope="col" data-vr-col="node" data-vr-col-label="Rack or shelf">Rack or shelf</th>
+        <th scope="col" data-vr-col="box" data-vr-col-label="Box">Box</th>
+        <th scope="col" data-vr-col="grid" data-vr-col-label="Container type" data-vr-col-hidden>Container type</th>
+        <th scope="col" class="text-end" data-vr-col="ordinal" data-vr-col-label="Number">Number</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:box-detail' row.box_id %}#position-{{ row.pk }}">{{ row.box.code }} {{ row.label }}</a></th>
+          <td><a class="vr-id" href="{% url 'storage:unit-detail' row.box.node.unit_id %}">{{ row.box.node.unit.code }}</a></td>
+          <td><a class="vr-id" href="{% url 'storage:node-detail' row.box.node_id %}">{{ row.box.node.code }}</a></td>
+          <td><a class="vr-id" href="{% url 'storage:box-detail' row.box_id %}">{{ row.box.code }}</a></td>
+          <td>{{ row.box.container_type }}</td>
+          <td class="text-end vr-id">{{ row.ordinal }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% include "storage/_list_states.html" with title_empty="No free positions" body_empty="Every position in an active box is occupied or blocked. Add a box, or unblock a position." %}
+  {% endif %}
+</section>
+{% endblock %}

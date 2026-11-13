@@ -1,0 +1,88 @@
+{
+  "id": "distribution-agreement-form",
+  "routes": [
+    "distribution:agreement-create",
+    "distribution:agreement-edit"
+  ],
+  "title": "New agreement or Edit agreement",
+  "purpose": "Record an agreement's terms as a draft, or change what may still change.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Kind, Title",
+          "description": "Required."
+        },
+        {
+          "label": "Institution",
+          "description": "Required: the recipient organization. Requests linked to the agreement must be from it; fixed once requests are linked."
+        },
+        {
+          "label": "Investigator",
+          "description": "Optional; must belong to the institution."
+        },
+        {
+          "label": "Provider reference, Recipient reference",
+          "description": "Optional references of each side."
+        },
+        {
+          "label": "Data level",
+          "description": "As the agreement states. Participant codes can go on a manifest only under Coded or Limited data set."
+        },
+        {
+          "label": "At the end of use, Onward transfer",
+          "description": "As the agreement states; shown with distributed material."
+        },
+        {
+          "label": "Permitted use",
+          "description": "Optional, in the agreement's words. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Permitted scope categories",
+          "description": "Optional. When any are chosen, a request whose uses fall outside them cannot be dispatched under the agreement. Only categories that govern use are offered."
+        },
+        {
+          "label": "Expires on",
+          "description": "Optional; not before the effective date."
+        },
+        {
+          "label": "Reporting due on",
+          "description": "Optional; shown on the dashboard, never enforced."
+        },
+        {
+          "label": "Where the signed agreement is filed",
+          "description": "Optional. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only; required and kept in the timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "paragraphs": [
+        "A draft can be edited freely. Once executed only the title, references, expiry, reporting date and filing reference change; the other fields are shown read-only with that reason, and an amendment is added as a document. A terminated agreement cannot be edited."
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "After saving you are taken to the agreement. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first.",
+        "Record the terms as stated; the software does not draft, check or interpret agreements."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

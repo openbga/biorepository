@@ -1,0 +1,46 @@
+{
+  "id": "distribution-consent-correct",
+  "routes": [
+    "distribution:consent-correct"
+  ],
+  "title": "Correct consent",
+  "purpose": "Correct a transcription error in the consent's current record.",
+  "sections": [
+    {
+      "title": "How a correction works",
+      "paragraphs": [
+        "The correction is added as a new version that replaces the current record; the earlier version stays in the records history with its values struck through. A change of the participant's decision is a new consent record, not a correction. Only the current record can be corrected. If the form version changes, saving shows the new version's categories to answer first."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Consent form version, Decision, Date of the decision, Expires on, Who decided, How it was documented, Answers per category, Where the original is filed, Restrictions",
+          "description": "As on Record consent, filled in from the current record. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reason for the correction",
+          "description": "Required: what was transcribed wrongly. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "After saving you return to the consent's records. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

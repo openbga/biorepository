@@ -1,0 +1,106 @@
+{
+  "id": "distribution-agreement-detail",
+  "routes": [
+    "distribution:agreement-detail"
+  ],
+  "title": "Agreement",
+  "purpose": "Read one agreement: parties, dates, the terms as recorded, the requests under it, its documents and its timeline.",
+  "sections": [
+    {
+      "title": "Header and notices",
+      "paragraphs": [
+        "The status stamp and today's validity, computed from the recorded dates. A draft or terminated agreement has a notice: nothing can be dispatched under a draft, nor under a terminated one from its termination date. The software does not draft or interpret agreements."
+      ]
+    },
+    {
+      "title": "Agreement",
+      "items": [
+        {
+          "label": "Title, Kind, Status, Today",
+          "description": "As recorded and computed."
+        },
+        {
+          "label": "Institution, Investigator",
+          "description": "The recipient organization and, optionally, the investigator."
+        },
+        {
+          "label": "Provider reference, Recipient reference",
+          "description": "As recorded."
+        },
+        {
+          "label": "Signed on, Effective from, Expires, Terminated on",
+          "description": "Dates recorded at execution and termination."
+        },
+        {
+          "label": "Reporting due",
+          "description": "Shown, never enforced."
+        },
+        {
+          "label": "Where the signed agreement is filed",
+          "description": "As recorded."
+        },
+        {
+          "label": "Recorded",
+          "description": "Who created it and when."
+        }
+      ]
+    },
+    {
+      "title": "Terms as recorded",
+      "items": [
+        {
+          "label": "Data level, At the end of use, Onward transfer",
+          "description": "As the agreement states."
+        },
+        {
+          "label": "Permitted scope categories",
+          "description": "When listed, requests whose uses fall outside them cannot be dispatched under it."
+        },
+        {
+          "label": "Permitted use",
+          "description": "Opens to show the recorded text."
+        }
+      ]
+    },
+    {
+      "title": "Requests, documents and timeline",
+      "paragraphs": [
+        "Requests linked to the agreement, each opening the request. Documents with kind, file (downloaded as a file, never displayed), what each supersedes and who added it; superseded documents stay listed. The timeline lists Created, Edited (each value before and after), Executed, Terminated and Document added, oldest first. History lists the newest 50 audit events."
+      ]
+    },
+    {
+      "title": "Actions",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else."
+      ],
+      "items": [
+        {
+          "label": "Execute agreement",
+          "description": "Primary for a draft (admin and manager)."
+        },
+        {
+          "label": "Edit",
+          "description": "Admin and manager; disabled with the reason for a terminated agreement."
+        },
+        {
+          "label": "Terminate agreement",
+          "description": "Admin and manager; for an executed agreement. Disabled for a draft with the reason."
+        },
+        {
+          "label": "Add document",
+          "description": "Admin and manager, in the documents card; a file is required."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/templates/distribution/governance/agreement_detail.html",
+    "distribution/templates/distribution/governance/_attachment.html",
+    "distribution/templatetags/distribution.py",
+    "storage/templates/storage/_history.html"
+  ]
+}

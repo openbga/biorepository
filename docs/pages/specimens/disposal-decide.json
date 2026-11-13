@@ -1,0 +1,56 @@
+{
+  "id": "specimens-disposal-decide",
+  "routes": [
+    "specimens:disposal-decide"
+  ],
+  "title": "Disposal decision",
+  "purpose": "Approve or reject a disposal request, or cancel it. The page opens with the decision already chosen by the button you used on the request.",
+  "sections": [
+    {
+      "title": "Who can decide",
+      "paragraphs": [
+        "Approve disposal and Reject disposal request need the explicit disposal approval permission, which belongs to named people. It is not part of any role and superuser status does not grant it. Nobody can approve or reject a request they made: the requester sees “You requested this. Another person with disposal approval must approve it.” and no way to submit. Cancel disposal request is for the person who made the request, or an admin or manager. Anyone else is refused.",
+        "Admin, manager and technician can open the page; a viewer is refused. If you open it with no decision chosen, you choose among the options you are allowed, otherwise the choice is fixed by the button."
+      ]
+    },
+    {
+      "title": "When it is not available",
+      "paragraphs": [
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The notice also appears when the request was already decided (approved, rejected or cancelled), already disposed, or is Out of date because the specimen changed. A request takes one decision only: an approved request cannot be cancelled or rejected afterwards (record the disposal instead, or leave it to go out of date). An Out of date request that nobody has decided yet cannot be approved but can still be rejected or cancelled. Approving is also refused while a disposal hold or an all-use hold is active (a use hold does not block disposal) and while the specimen is distributed; with no decision chosen, Approve is then left out of the choices, and Reject or Cancel stay possible."
+      ]
+    },
+    {
+      "title": "Page and fields",
+      "paragraphs": [
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment. The request's method, destination, who requested it and when, the reason, and any earlier decision are listed as facts. The breadcrumb reads Disposal requests, then “Disposal request for” the specimen ID, then the decision."
+      ],
+      "items": [
+        {
+          "label": "Decision",
+          "description": "Fixed to the button used, otherwise a choice of the decisions you may make: Approve disposal, Reject disposal request or Cancel disposal request."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept with the decision. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "The decision button is the red outlined one for Reject and Cancel and the standard one for Approve. Approving does not dispose of anything; it allows Record disposal and stays valid only while the specimen is unchanged. Rejecting or cancelling ends the request, which stays in the history. The decision and its audit entry are saved together and you return to the request. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "storage-container-type-form",
+  "routes": [
+    "storage:container-type-create",
+    "storage:container-type-edit"
+  ],
+  "title": "Container type form",
+  "purpose": "Create a box grid or a new version of one, or change an existing version.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form.",
+        "Entering a code that already exists adds the next version; earlier versions and their boxes are unchanged. Once any box uses a version its grid is fixed: the grid fields are then not offered on the edit form, so add a new version to change them. The form opened from New version is pre-filled from the earlier version."
+      ],
+      "items": [
+        {
+          "label": "Code",
+          "description": "Create only. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement. An existing code adds a new version."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Inactive versions stay on existing boxes but cannot be chosen for new boxes."
+        },
+        {
+          "label": "Rows, Columns",
+          "description": "Each a whole number from 1 to 100. Grid fields; not offered when a box already uses the version."
+        },
+        {
+          "label": "Position labels",
+          "description": "Letter rows with numbered columns (A1), or numbered positions (1, 2, 3 ...)."
+        },
+        {
+          "label": "Numbering order",
+          "description": "Across rows (row-major) or down columns (column-major), counted from the labelled top-left corner (A1 or 1)."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create container type / Save changes",
+          "description": "Saves and opens the version."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}

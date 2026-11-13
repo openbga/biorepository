@@ -1,0 +1,62 @@
+{
+  "id": "specimens-import-detail",
+  "routes": [
+    "specimens:import-detail"
+  ],
+  "title": "Import",
+  "purpose": "Review one validated CSV file and, if it is valid, register all of its specimens in one step.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "The header shows the state, the number of rows and who validated the file and when. A Check notice appears when the same file was validated before (and whether it was committed); commit it again only if these are different specimens.",
+        "Errors gives the number of problems found and lists file problems and then each row problem with its line, row key, column and reason. At most 200 problems are kept: when there are more, a note says how many are shown; correct those and upload the file again to see the rest. A supplied value repeated in a message is shortened to 40 characters. Rows as read shows what the system understood from each row: types and containers by code, the exact amount with its unit, collected time in repository time, participant and collection codes, the position (or Not placed) and prior thaws (Unknown when blank). Check this before committing."
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "Has errors",
+          "description": "Nothing can be registered from this file. Correct it and upload it again; an import is never edited."
+        },
+        {
+          "label": "Ready to commit",
+          "description": "No errors. The commit form is shown."
+        },
+        {
+          "label": "Expired",
+          "description": "Validated more than 24 hours ago. Upload the file again so it is checked against the current catalogues and positions."
+        },
+        {
+          "label": "Committed",
+          "description": "Registered. Registered specimens lists them with ID, type, amount and status, who committed and why."
+        }
+      ]
+    },
+    {
+      "title": "Committing",
+      "paragraphs": [
+        "The Register form is shown to the person who validated the file and to admin and manager. Others see who may commit it. The Reason is required (up to 2,000 characters) and is saved in each specimen's history; use it for the shipment or batch and do not enter names or other identifying text.",
+        "Register n specimens revalidates every row against the current catalogues and positions and registers and places all of them in one transaction. If anything changed since validation (an inactive code, a position taken), nothing is registered and the problems are listed. A file is committed at most once; submitting again does not create duplicates. The commit also checks that it is the same file that was validated."
+      ],
+      "items": [
+        {
+          "label": "Print labels",
+          "description": "After a commit, opens the label preview for the registered specimens (up to the first 200)."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/importing.py",
+    "specimens/list_forms.py",
+    "specimens/templates/specimens/import_detail.html",
+    "specimens/tests/test_registration.py"
+  ]
+}

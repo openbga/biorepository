@@ -1,0 +1,38 @@
+{
+  "id": "distribution-manifest",
+  "routes": [
+    "distribution:manifest"
+  ],
+  "title": "Manifest",
+  "purpose": "Preview and print a shipment's manifest: what is sent, where, and the shipper's declarations.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Every role can read it. The manifest number (the shipment number) and revision, the repository's name, the request, the studies, the ship-to details, temperature class, refrigerant and dry ice mass, the classification as declared by the shipper, package count, storage instructions, emergency contact, and one line per specimen with type, container, amount and study.",
+        "A draft or packed shipment shows its current contents marked Not dispatched. Once dispatched, the manifest is built only from the items written at dispatch and the shipment's own fields, so later corrections to specimens or catalogues never change it.",
+        "Participant codes appear only when the shipment includes them and, before dispatch, only while the request's agreement is at data level coded or limited data set; after dispatch they are those written at dispatch. Collection dates never appear. The document records the shipper's declarations as entered; it does not classify the shipment or state that it meets any rule.",
+        "The PDF ends with a Receipt block for the recipient to complete by hand: Received by, Date and time, Condition on arrival and Signature. Receipt is recorded in the application from what the recipient reports."
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Download PDF",
+          "description": "Produces an A4 PDF of the manifest; a draft or packed one carries a Not dispatched watermark. Each PDF produced is recorded on the shipment with who generated it, its revision and how many items it lists. If the PDF cannot be produced on the server, the page says so."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/documents.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/shipments/manifest.html",
+    "distribution/templates/distribution/pdf/manifest.html",
+    "distribution/documents.css"
+  ]
+}

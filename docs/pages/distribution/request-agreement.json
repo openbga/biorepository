@@ -1,0 +1,45 @@
+{
+  "id": "distribution-request-agreement",
+  "routes": [
+    "distribution:request-agreement"
+  ],
+  "title": "Link agreement",
+  "purpose": "Link the material transfer or data use agreement that covers a request, or remove it.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the request is not final. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Agreement",
+          "description": "Agreements with the request's institution that are not terminated, newest first; No agreement removes the link. A draft agreement can be linked, but dispatch needs one that is executed and valid on the dispatch date (and on the day the dispatch is recorded). The form shows the current agreement."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The link is recorded in the request's timeline with the previous and new agreement. Dispatch is refused unless the agreement is valid on the dispatch date (and on the day the dispatch is recorded), is with the request's institution, covers every use requested when it lists permitted categories, and is at data level coded or limited data set when participant codes are printed. One agreement can cover many requests.",
+        "If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

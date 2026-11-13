@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% comment %}
+Entry grid: the lines of a draft or returned request (docs/ui-standards.md section 7, rules 7 and
+8). Context (request_views.request_items): form (ItemsForm: reason, expected_revision), formset
+(prefix "items", ItemForm rows; row.locked when an allocation refers to the line), max_rows,
+request_obj, blocked, submit_label, back_url, crumbs, facts.
+"Add line" and each row's "Remove" are submit buttons: the server re-renders the grid with one
+row more or less and records nothing, so both work without JavaScript. A hidden copy of the save
+button comes first so Enter in a field saves rather than adding or removing a row.
+{% endcomment %}
+{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block content %}
+<form class="vr-form vr-form-wide" method="post" novalidate>
+  {% csrf_token %}
+  {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}
+  {% include "distribution/requests/_grid_head.html" with formset_label="lines" note="A line asks for a number of specimens of one type, optionally from one study and with a minimum amount each." %}
+  <fieldset class="vr-form-section">
+    <legend>Lines</legend>
+    <p class="vr-form-note">From 1 to {{ max_rows }} lines. A line that already has allocations keeps its type, study and minimum amount; only its count and notes can change, and it cannot be removed. Line notes are for the material asked for: do not enter names, signatures, record numbers, birth dates or contact details of a participant.</p>
+    {{ formset.management_form }}
+    <div class="vr-table-wrap">
+      <table class="table vr-table" id="items-grid">
+        <thead><tr>
+          <th scope="col">Line</th>
+          <th scope="col">Specimen type<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col" class="text-end">Count (specimens)<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col" class="text-end">Minimum amount each</th>
+          <th scope="col">Unit</th>
+          <th scope="col">Study</th>
+          <th scope="col">Notes</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr></thead>
+        <tbody>
+          {% for row in formset %}
+          <tr id="row-{{ row.prefix }}"{% if row.errors %} class="table-danger"{% endif %}>
+            <th scope="row" class="font-monospace">{{ row.line.value|default:forloop.counter }}{{ row.line }}</th>
+            {% for field in row.visible_fields %}
+            <td><label class="visually-hidden" for="{{ field.id_for_label }}">{{ field.label }}, row {{ forloop.parentloop.counter }}</label>{{ field }}{% if field.errors %}<ul class="vr-field-errors" id="{{ field.auto_id }}_error">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</td>
+            {% endfor %}
+            <td>{% if row.locked %}<span class="vr-muted small">Has allocations</span>{% elif not blocked and formset.total_form_count > 1 %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="remove_row" value="{{ forloop.counter0 }}" formnovalidate>Remove<span class="visually-hidden"> row {{ forloop.counter }}</span></button>{% endif %}</td>
+          </tr>
+          {% if row.non_field_errors %}
+          <tr class="table-danger"><td colspan="8"><ul class="vr-field-errors mb-0">{% for error in row.non_field_errors %}<li>Row {{ forloop.parentloop.counter }}: {{ error }}</li>{% endfor %}</ul></td></tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% include "includes/icon.html" with name="plus-lg" %}Add line</button>{% endif %}
+  </fieldset>
+  {% include "distribution/requests/_grid_foot.html" %}
+</form>
+{% endblock %}

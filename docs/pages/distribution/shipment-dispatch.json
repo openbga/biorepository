@@ -1,0 +1,53 @@
+{
+  "id": "distribution-shipment-dispatch",
+  "routes": [
+    "distribution:shipment-dispatch"
+  ],
+  "title": "Dispatch",
+  "purpose": "Record that a packed shipment left the repository.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the shipment is packed. The form lists anything that would refuse the dispatch now. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Courier, Tracking number",
+          "description": "Optional; prefilled from the shipment and kept when left empty."
+        },
+        {
+          "label": "Handed to",
+          "description": "Optional: the driver or person who collected it."
+        },
+        {
+          "label": "Dispatched at",
+          "description": "Required; repository local time, not before packing and not in the future. An earlier time does not move the checks: they are made on the day it is recorded as well."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline and each specimen's custody history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "Every specimen is checked first, before anything is written: consent and holds as at allocation, the specimen still checked out from its pick, an agreement linked to the request, executed and valid both on the day the dispatch is recorded and on the date entered (consent expiry is judged on both days too), with the request's institution and covering its uses, participant codes only under an agreement at data level coded or limited data set, and no change to the specimen since packing. If any check fails nothing is saved and the reasons are listed per specimen.",
+        "Then each specimen's allocation hold is released, it leaves custody (status Distributed, its remaining amount recorded as distributed) and an item is written with what was sent. The shipment becomes Dispatched and its manifest is fixed from those items. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

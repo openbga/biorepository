@@ -1,0 +1,77 @@
+{
+  "id": "distribution-request-form",
+  "routes": [
+    "distribution:request-create",
+    "distribution:request-edit"
+  ],
+  "title": "New request, Edit request",
+  "purpose": "Record a specimen request as it was received, or change a draft or returned one.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators; viewers are refused. Editing is possible only while the request is a draft or returned for changes; otherwise the form says why and nothing can be saved. A manager reopens an approved request to change it. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving.",
+        "Creating a request takes you to Edit lines to add what is requested. Editing returns to the request."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Title",
+          "description": "Required, up to 160 characters. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Investigator",
+          "description": "Required. The requesting investigator from the distribution catalogues (active ones, plus the current one when editing). The request takes the investigator's institution; it cannot change to another institution while a linked agreement is with the current one."
+        },
+        {
+          "label": "Received by",
+          "description": "Required: email, letter, request form, meeting or other."
+        },
+        {
+          "label": "Purpose",
+          "description": "Required, up to 4,000 characters: the research use as the requester stated it. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Uses requested",
+          "description": "Scope categories that govern use (only those marked Governs use). Each allocated specimen's consent must permit every category chosen. At least one is needed to submit."
+        },
+        {
+          "label": "Studies",
+          "description": "Optional. Leave all unticked for material of any study; ticked studies limit which specimens can be allocated."
+        },
+        {
+          "label": "Data requested",
+          "description": "Optional, up to 4,000 characters. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Ethics approval reference, Ethics approval valid until",
+          "description": "Optional: the requester's approval. The date is shown on the request; it is not checked."
+        },
+        {
+          "label": "Needed by",
+          "description": "Optional date."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Required when editing, kept in the request's timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Create request records a draft numbered RQ-000001 and up. Save changes records the change with its reason; the lines stay as they are. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

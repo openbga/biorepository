@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% comment %}Rooms with position counts. Context: grid_response for lists.SPECS["room"].{% endcomment %}
+{% block page_actions %}{% url 'storage:room-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New room" %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="rooms-heading">
+  <h2 class="visually-hidden" id="rooms-heading">Rooms</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter rooms" q=q placeholder="Code or name" inline=inline grid="storage.rooms" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="storage.rooms" data-vr-grid-version="1" aria-labelledby="rooms-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% include "includes/sort_header.html" with label="Site" asc="site" desc="-site" col="site" %}
+        {% include "includes/sort_header.html" with label="Storage units" asc="units" desc="-units" col="units" class="text-end" %}
+        {% include "storage/_capacity_headers.html" %}
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:room-detail' row.pk %}">{{ row.code }}</a></th>
+          <td>{{ row.name }}</td>
+          <td><a class="vr-id" href="{% url 'storage:site-detail' row.site_id %}">{{ row.site.code }}</a></td>
+          <td class="text-end vr-id">{{ row.unit_count }}</td>
+          {% include "storage/_capacity_cells.html" %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% if can_manage %}{% url 'storage:room-create' as create_url %}{% endif %}
+  {% include "storage/_list_states.html" with title_empty="No rooms yet" body_empty="Add the rooms of each site; storage units are placed in a room." create_url=create_url create_label="New room" %}
+  {% endif %}
+</section>
+{% endblock %}

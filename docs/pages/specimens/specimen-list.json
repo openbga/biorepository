@@ -1,0 +1,163 @@
+{
+  "id": "specimens-specimen-list",
+  "routes": [
+    "specimens:specimen-list"
+  ],
+  "title": "Specimens",
+  "purpose": "Find specimens, aliquots and derivatives, see what is on hand and where each one is, export the result, and print labels.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Every role (admin, manager, technician, viewer) can open the list, search it, export it and print labels. Register specimen appears only for admin, manager and technician; a viewer sees a read-only list. Every specimen is shown to every role; there is no per-study or per-participant restriction.",
+        "Specimen IDs are opaque numbers assigned by the system when a specimen is registered, such as VP-000123. They do not contain a location, participant, study or date, and they never change or get reused."
+      ]
+    },
+    {
+      "title": "Finding a specimen",
+      "paragraphs": [
+        "Find specimen ID in the top bar is the quickest way to open one specimen, for example after scanning a label. It trims spaces, ignores capitals and needs the whole ID (VP-000123); a match opens that specimen's record. If no specimen has that ID, you return to this list with the message “No specimen has ID …” and the text you typed placed in Search, so a partial ID can still match. An empty entry just opens this list.",
+        "Search on this page matches part of the specimen ID, participant code or collection code, ignoring capitals. Without any filter every specimen is listed, including exhausted, disposed and distributed ones."
+      ]
+    },
+    {
+      "title": "Filters",
+      "paragraphs": [
+        "Status, Specimen type and On hold are always visible; the rest sit under More filters, which opens by itself when one of them is in use. Active filters are shown as chips you can remove one at a time. Filters combine with each other (all must match).",
+        "Participant code and Box code are typed, not picked: type the exact code (any capitals). A code that does not exist makes that filter invalid. When any filter is invalid the page shows “These filters cannot be applied” and no rows at all, never an unfiltered list, so correct or clear the filter."
+      ],
+      "items": [
+        {
+          "label": "Status",
+          "description": "Any status, Available (some material on hand), Exhausted (used up, nothing left), Disposed (disposal recorded) or Distributed (sent out of the repository in a shipment and not returned)."
+        },
+        {
+          "label": "Specimen type",
+          "description": "One specimen type from the catalogue, shown by code."
+        },
+        {
+          "label": "On hold",
+          "description": "Any, Yes (has an unreleased hold of any kind: disposal, use or all-use, including holds placed by another workflow) or No."
+        },
+        {
+          "label": "Specimen container",
+          "description": "The vessel type the specimen is held in."
+        },
+        {
+          "label": "Participant code",
+          "description": "Specimens from one coded participant, for example P-000123."
+        },
+        {
+          "label": "Collection",
+          "description": "Specimens in one collection."
+        },
+        {
+          "label": "Unit",
+          "description": "Specimens measured in one unit of amount."
+        },
+        {
+          "label": "Box code",
+          "description": "Specimens currently in one box. Checked-out and unplaced specimens are not in any box."
+        },
+        {
+          "label": "Checked out",
+          "description": "Yes lists specimens that are out of storage now; No excludes them."
+        },
+        {
+          "label": "In storage",
+          "description": "Yes lists specimens that occupy a storage position; No lists those without one, which includes checked-out specimens and specimens never placed."
+        }
+      ]
+    },
+    {
+      "title": "Columns, sorting and paging",
+      "paragraphs": [
+        "Click Specimen ID, Status, Type, Amount, Collected or Registered to sort; click again to reverse. The default order is by specimen ID, and ties keep a stable order. Choose 25, 50 or 100 rows per page (default 25). Collection and Registered are hidden until you show them. The column menu shows or hides every column except Specimen ID and the selection box.",
+        "Amounts are exact decimals with their unit, for example 0.5 mL, never rounded. The amount shown is the balance of the amount ledger on the specimen's record."
+      ],
+      "items": [
+        {
+          "label": "Specimen ID",
+          "description": "The opaque ID; opens the specimen's record. Always shown."
+        },
+        {
+          "label": "Status",
+          "description": "Available, Exhausted, Disposed or Distributed, plus On hold when any hold is active."
+        },
+        {
+          "label": "Type",
+          "description": "The specimen type name (for example Plasma)."
+        },
+        {
+          "label": "Amount",
+          "description": "Amount on hand with its unit. Sortable."
+        },
+        {
+          "label": "Participant",
+          "description": "The participant code, or a dash. Codes only; no names are held."
+        },
+        {
+          "label": "Collection",
+          "description": "The collection code, or a dash."
+        },
+        {
+          "label": "Location",
+          "description": "The full storage path of its position. If it is out of storage in someone's hand (checked out, or returned and not yet stored) it says Checked out; a distributed specimen says Distributed: outside the repository; otherwise Not in storage (never placed, or disposed)."
+        },
+        {
+          "label": "Custodian",
+          "description": "The person who currently holds responsibility for it; Outside the repository while it is distributed."
+        },
+        {
+          "label": "Collected",
+          "description": "When it was collected, in repository time. Sortable; newest first on first click."
+        },
+        {
+          "label": "Registered",
+          "description": "When it was registered in the system. Sortable; newest first on first click."
+        }
+      ]
+    },
+    {
+      "title": "Actions and downloads",
+      "items": [
+        {
+          "label": "Register specimen",
+          "description": "Admin, manager and technician. Opens the form that registers one new specimen. Many at once are registered through Imports."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the specimens that match the current search, filters and sort as a CSV file named specimens-date-time.csv. The columns are ID, status, type, container, amount and unit, participant and collection codes, parent ID and derivation kind, collected, processing and registered times in UTC, custodian user name (blank while distributed), checked-out and on-hold (yes or no) and location. Status is written as its code: available, exhausted, disposed or distributed. Cells that start with =, +, - or @ are prefixed with an apostrophe so spreadsheets do not run them. An export may hold at most 10,000 specimens; a larger result is refused with a message to narrow the filters. If the filters are invalid you return here with an error. Each download is logged with who made it, how many rows and the filters used."
+        },
+        {
+          "label": "Print labels",
+          "description": "Tick the boxes of the specimens on this page (the box in the heading selects the whole page), then choose Print labels to open the label preview. The counter shows how many are selected. Selection applies to the current page only. Up to 200 labels can be previewed at a time."
+        },
+        {
+          "label": "Row link",
+          "description": "Opens the specimen record."
+        }
+      ]
+    },
+    {
+      "title": "Empty and error states",
+      "paragraphs": [
+        "Before any specimen exists the page says “No specimens registered yet” and, for roles that may register, offers Register specimen. With filters that match nothing it says “Nothing matches these filters” with a way to clear them. An unsupported rows-per-page value is refused with “Invalid page size”; choose 25, 50 or 100."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/list_forms.py",
+    "specimens/exports.py",
+    "specimens/templates/specimens/specimen_list.html",
+    "specimens/templates/specimens/includes/list_states.html",
+    "templates/layouts/document.html",
+    "specimens/tests/test_views_records.py",
+    "specimens/tests/test_outputs.py"
+  ]
+}

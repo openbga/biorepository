@@ -1,0 +1,122 @@
+{
+  "id": "storage-box-detail",
+  "routes": [
+    "storage:box-detail"
+  ],
+  "title": "Box",
+  "purpose": "Review one box: its facts, the grid of positions with their state and counts, the specimen IDs and storage keys of what is stored, recorded moves and history.",
+  "sections": [
+    {
+      "title": "Box",
+      "paragraphs": [
+        "A retired record shows a banner with when it was retired, by whom and the reason. Its Edit, Retire and Move buttons are gone."
+      ],
+      "items": [
+        {
+          "label": "Code",
+          "description": "Immutable, never reused."
+        },
+        {
+          "label": "Name",
+          "description": "Optional; the code by default."
+        },
+        {
+          "label": "Location",
+          "description": "The storage unit and the racks or shelves above the box, from the top down; each code links to its page."
+        },
+        {
+          "label": "Box slot",
+          "description": "The numbered slot the box occupies on its rack or shelf."
+        },
+        {
+          "label": "Container type",
+          "description": "Grid code and version, with rows × columns and the labelling scheme; opens the container type."
+        },
+        {
+          "label": "Unit conditions",
+          "description": "Technology and the unit's stated nominal temperature; a set point, not a measurement."
+        }
+      ]
+    },
+    {
+      "title": "Positions",
+      "paragraphs": [
+        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover). The key above the grid counts occupied, free and blocked positions and the total. The grid is created in full with the box and never changes.",
+        "Counts cover positions in active boxes; a retired box offers no free capacity. A checked-out item's position counts as free, and free positions are not reserved: a position is claimed only when an item is stored in it.",
+        "Admin and manager roles can select any position that is not occupied to Block position or Unblock position while the box is active. An occupied position cannot be selected: move the item out first.",
+        "An occupied well that holds a specimen links to that specimen's record; hover shows its specimen ID and type, and screen readers hear the specimen ID after the position. Where no specimen can be shown, hover shows the storage key instead."
+      ]
+    },
+    {
+      "title": "Occupied positions",
+      "paragraphs": [
+        "One row per occupied position, with the specimen stored there and its opaque storage key. Specimens in this box (shown while the box holds items) opens the specimen list filtered to this box."
+      ],
+      "items": [
+        {
+          "label": "Position",
+          "description": "Label of the occupied position."
+        },
+        {
+          "label": "Specimen",
+          "description": "Specimen ID, linked to the specimen record, with its specimen type code. A dash means no specimen could be shown for that key."
+        },
+        {
+          "label": "Storage key",
+          "description": "Opaque key of the item stored there, shown as its first eight characters (hover for the full key)."
+        },
+        {
+          "label": "Revision",
+          "description": "Version counter of the claim, used to detect concurrent changes."
+        }
+      ]
+    },
+    {
+      "title": "Moves",
+      "paragraphs": [
+        "Recorded moves of this box, newest first, up to 20, with the number of items carried and the reason. A Correction tag marks a record that corrects an earlier move."
+      ],
+      "items": [
+        {
+          "label": "Correct move",
+          "description": "Row action on the latest move, for admin and manager roles only, while that move has not been corrected. Opens the move form in correction mode; the wrong move stays in the list, and the correction is marked Correction."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Admin and manager roles, active box. Changes the name only."
+        },
+        {
+          "label": "Move box",
+          "description": "Admin, manager and technician roles, active box. Opens the move form."
+        },
+        {
+          "label": "Retire box",
+          "description": "Admin and manager roles, active box. Disabled, with the reason beside it, while the box still holds items."
+        }
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/services.py",
+    "storage/templates/storage/box_detail.html",
+    "storage/templates/storage/_capacity.html",
+    "storage/templates/storage/_moves.html",
+    "storage/templates/storage/_history.html",
+    "storage/tests/test_views.py"
+  ]
+}

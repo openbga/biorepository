@@ -1,0 +1,57 @@
+{
+  "id": "specimens-disposal-detail",
+  "routes": [
+    "specimens:disposal-detail"
+  ],
+  "title": "Disposal request",
+  "purpose": "See one disposal request, who decided it and what happened, and decide, cancel or record it if you may.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "The header shows the state, specimen ID, specimen type and when the request was made. Notices explain your position: if you made the request you are told another person with disposal approval must approve it; an Out of date request explains that the specimen changed and a new request is needed from the specimen's record; a Disposed request says the record and history are kept. The facts list the specimen with its amount, the state, method, destination, the reason given, who requested it and when, the decision (who, when and why) and the recorded disposal. History repeats these steps in order."
+      ]
+    },
+    {
+      "title": "Actions",
+      "paragraphs": [
+        "Buttons follow the state and your permissions; a blocked one is disabled with the reason. A disposal hold or an all-use hold on the specimen blocks approving and recording the disposal until it is released (a use hold does not), and so does the specimen being distributed outside the repository; the disabled button gives the reason. Every decision opens a form that asks for a reason and is saved together with its audit entry."
+      ],
+      "items": [
+        {
+          "label": "Approve disposal",
+          "description": "Awaiting approval requests only, for people who hold the approval permission and did not make the request. Approval stays valid only while the specimen is unchanged."
+        },
+        {
+          "label": "Reject disposal request",
+          "description": "Same people and state as Approve. Ends the request; it is not blocked by a hold."
+        },
+        {
+          "label": "Cancel disposal request",
+          "description": "For the person who made the request (admin, manager or technician), or any admin or manager, while the request has no decision yet: Awaiting approval, or Out of date before anyone decided it. An approved request cannot be cancelled, because a request takes one decision only: record the disposal, or leave it; any later change to the specimen makes the approval Out of date and a new request is then possible."
+        },
+        {
+          "label": "Record disposal",
+          "description": "Approved requests, for admin, manager and technician. Records that the material was disposed of; the specimen becomes Disposed, its amount is closed out and any open check-out period is ended."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Nobody approves their own request. A viewer can read this page but sees no buttons. Disposals are never deleted: the request, decision and recorded disposal stay on the specimen and in this history."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/disposal_detail.html",
+    "specimens/tests/test_disposal.py",
+    "specimens/tests/test_views_actions.py",
+    "docs/workflows.md"
+  ]
+}

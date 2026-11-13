@@ -1,0 +1,92 @@
+{
+  "id": "distribution-return-list",
+  "routes": [
+    "distribution:return-list"
+  ],
+  "title": "Returns",
+  "purpose": "Find specimens that came back from a shipment and see which still await a manager's review.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Each row is one returned specimen, newest return first. A return is recorded on the shipment page; the specimen comes back on a use hold referring to the shipment until a manager reviews it. It is under the Returns tab of Shipments. Every role can read it. Type in the search box to narrow the rows, use the filters beside it and under More filters, and choose 25, 50 or 100 rows per page (25 by default). Active filters appear as chips you can remove one by one; Clear all removes them all. The sort and filters are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the specimen ID or the shipment number. The default sort is Returned, newest first; Specimen and Shipment can also be sorted."
+      ],
+      "items": [
+        {
+          "label": "Review",
+          "description": "Any review state (the default), Awaiting review (no review yet), Kept on hold (reviewed and kept) or Released for use."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Specimen",
+          "description": "The specimen ID; opens the specimen. Always shown."
+        },
+        {
+          "label": "Review",
+          "description": "Awaiting review, Kept on hold or Released for use."
+        },
+        {
+          "label": "Shipment",
+          "description": "Opens the shipment it came back from."
+        },
+        {
+          "label": "Returned",
+          "description": "When it came back."
+        },
+        {
+          "label": "Amount returned",
+          "description": "The amount measured on return, in the specimen's unit."
+        },
+        {
+          "label": "Thaws reported (count)",
+          "description": "As the recipient reported, or Not known."
+        },
+        {
+          "label": "Recorded by",
+          "description": "Who recorded the return."
+        },
+        {
+          "label": "Review",
+          "description": "Row button for managers and administrators while the return is not released for use: opens Review return."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact amounts and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No returns recorded",
+          "description": "Nothing has come back yet."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_lists.py",
+    "distribution/exports.py",
+    "distribution/templatetags/distribution_requests.py",
+    "distribution/templates/distribution/shipments/return_list.html"
+  ]
+}

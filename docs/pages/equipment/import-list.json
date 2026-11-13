@@ -1,0 +1,90 @@
+{
+  "id": "equipment-import-list",
+  "routes": [
+    "equipment:import-list"
+  ],
+  "title": "Readings imports",
+  "purpose": "See the CSV files of temperature readings that were uploaded, whether each is ready to record, and open one.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "This is the Imports tab of Temperature readings. Each row is one uploaded and checked file: nothing is recorded from a file until a technician, manager or administrator commits it from its page. The file itself is not kept; the page keeps the checked rows, errors and warnings.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the file name. The default sort is Validated, newest first. Sortable columns are File, Rows and Validated."
+      ],
+      "items": [
+        {
+          "label": "State",
+          "description": "Any state, Ready to commit (valid and not yet expired), Rejected (errors or no readings), Committed, or Expired (not committed within 24 hours)."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "File",
+          "description": "The file name, or the validation time when there is none; opens the import."
+        },
+        {
+          "label": "State",
+          "description": "Ready to commit, Rejected, Committed or Expired."
+        },
+        {
+          "label": "Rows",
+          "description": "Readings found in the file."
+        },
+        {
+          "label": "Errors",
+          "description": "Problems found; a file with any error cannot be committed."
+        },
+        {
+          "label": "Equipment",
+          "description": "The equipment chosen on the upload form, or Named in the file."
+        },
+        {
+          "label": "Validated by, Validated",
+          "description": "Who uploaded it and when."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Upload readings",
+          "description": "Technicians, managers and administrators. Opens the upload form."
+        },
+        {
+          "label": "Readings, Imports tabs",
+          "description": "Switch between the two lists."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No imports yet",
+          "description": "No file was uploaded. Technicians and above see an Upload readings button."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/lists.py",
+    "equipment/queries.py",
+    "equipment/exports.py",
+    "equipment/templates/equipment/import_list.html"
+  ]
+}

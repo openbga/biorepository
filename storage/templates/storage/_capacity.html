@@ -1,0 +1,13 @@
+{% comment %}Position capacity facts of a unit, room, node or box. Parameters: c (object with installed, blocked_count or blocked, usable, occupied, free), heading_id. Counts positions in active boxes only; retired structure is never free capacity.{% endcomment %}
+<section class="card mb-3" aria-labelledby="{{ heading_id|default:'capacity-heading' }}">
+  <div class="card-header"><h2 class="card-title" id="{{ heading_id|default:'capacity-heading' }}">Occupancy</h2></div>
+  <div class="card-body">
+    <dl class="vr-facts">
+      <div><dt>Positions</dt><dd class="vr-id">{{ c.installed|floatformat:"0g" }}</dd></div>
+      <div><dt>Blocked</dt><dd class="vr-id">{% firstof c.blocked_count c.blocked 0 %}</dd></div>
+      <div><dt>Occupied</dt><dd class="vr-id">{{ c.occupied|floatformat:"0g" }}</dd></div>
+      <div><dt>Free</dt><dd class="vr-id">{{ c.free|floatformat:"0g" }}</dd></div>
+    </dl>
+    <p class="vr-muted small mt-3 mb-0">Counts positions in active boxes. A checked-out item's position counts as free; free positions are not reserved.</p>
+  </div>
+</section>

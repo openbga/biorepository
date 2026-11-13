@@ -1,0 +1,75 @@
+<!doctype html>
+{% comment %}
+Shipment manifest PDF for WeasyPrint (distribution/documents.py render_manifest). Dispatched and
+received shipments print only ShipmentItem rows and Shipment fields; draft and packed ones print
+the current contents under a "Not dispatched" mark. The classification printed is the one the
+shipper declared; the document makes no statement about classification or compliance. No
+collection dates; participant codes only when the shipment includes them. Context: shipment,
+request_number, lines (documents.ManifestLine), studies, show_participants, sent,
+repository_name, generated_at.
+{% endcomment %}
+{% load specimens %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Manifest {{ shipment.number }}</title>
+</head>
+<body>
+{% if not sent %}<div class="watermark">NOT DISPATCHED</div>{% endif %}
+<h1>Shipment manifest {{ shipment.number }}</h1>
+<p class="sub">{{ repository_name }} · Request {{ request_number }} · Revision {{ shipment.revision }}</p>
+{% if not sent %}<p class="notice">Not dispatched. This manifest shows the shipment's contents as they are now; the manifest of the dispatched shipment is the one that records what was sent.</p>{% endif %}
+<h2>Ship to</h2>
+<dl class="facts">
+  <dt>Recipient</dt><dd>{{ shipment.ship_to_name }}</dd>
+  <dt>Institution</dt><dd>{{ shipment.ship_to_institution }}</dd>
+  <dt>Address</dt><dd>{{ shipment.ship_to_address }}</dd>
+  {% if shipment.ship_to_contact %}<dt>Contact</dt><dd>{{ shipment.ship_to_contact }}</dd>{% endif %}
+</dl>
+<h2>Shipment</h2>
+<dl class="facts">
+  <dt>From</dt><dd>{{ repository_name }}</dd>
+  <dt>Request</dt><dd>{{ request_number }}</dd>
+  <dt>Studies</dt><dd>{{ studies|join:", "|default:"None recorded" }}</dd>
+  <dt>Temperature class</dt><dd>{{ shipment.get_temperature_class_display|default:"Not yet declared" }}</dd>
+  <dt>Refrigerant</dt><dd>{{ shipment.get_refrigerant_display|default:"Not yet declared" }}{% if shipment.dry_ice_kg %}, {{ shipment.dry_ice_kg }} kg dry ice{% endif %}</dd>
+  <dt>Classification declared by the shipper</dt><dd>{{ shipment.get_classification_display|default:"Not yet declared" }}{% if shipment.classification_note %} ({{ shipment.classification_note }}){% endif %}</dd>
+  <dt>Packages</dt><dd>{{ shipment.package_count|default_if_none:"Not yet declared" }}</dd>
+  <dt>Storage instructions</dt><dd>{{ shipment.storage_instructions|default:"None" }}</dd>
+  <dt>Emergency contact</dt><dd>{{ shipment.emergency_contact|default:"Not yet declared" }}</dd>
+  {% if shipment.logger_ids %}<dt>Temperature loggers</dt><dd>{{ shipment.logger_ids }}</dd>{% endif %}
+  {% if shipment.courier or shipment.tracking %}<dt>Courier</dt><dd>{{ shipment.courier }}{% if shipment.tracking %} · {{ shipment.tracking }}{% endif %}</dd>{% endif %}
+  {% if shipment.packed_at %}<dt>Packed</dt><dd>{{ shipment.packed_at|date:"Y-m-d H:i" }}{% if shipment.packed_by %} by {{ shipment.packed_by.get_full_name|default:shipment.packed_by.get_username }}{% endif %}{% if shipment.checked_by %}, checked by {{ shipment.checked_by.get_full_name|default:shipment.checked_by.get_username }}{% endif %}</dd>{% endif %}
+  {% if shipment.dispatched_at %}<dt>Dispatched</dt><dd>{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</dd>{% endif %}
+</dl>
+<h2>Contents ({{ lines|length }})</h2>
+<table>
+  <thead><tr><th class="num">#</th><th>Specimen ID</th><th>Type</th><th>Container</th><th class="num">Amount</th><th>Study</th>{% if show_participants %}<th>Participant</th>{% endif %}</tr></thead>
+  <tbody>
+  {% for line in lines %}
+  <tr>
+    <td class="num">{{ line.line }}</td>
+    <td class="id">{{ line.accession }}</td>
+    <td>{{ line.specimen_type }}</td>
+    <td>{{ line.container }}</td>
+    <td class="num">{{ line.quantity|amount:line.unit }}</td>
+    <td>{{ line.study_code|default:"—" }}</td>
+    {% if show_participants %}<td class="id">{{ line.participant_code|default:"—" }}</td>{% endif %}
+  </tr>
+  {% empty %}
+  <tr><td colspan="{% if show_participants %}7{% else %}6{% endif %}">No specimens in this shipment.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h2>Receipt (completed by the recipient)</h2>
+<table class="handwrite">
+  <tbody>
+  <tr><th>Received by</th><td></td></tr>
+  <tr><th>Date and time</th><td></td></tr>
+  <tr><th>Condition on arrival</th><td></td></tr>
+  <tr><th>Signature</th><td></td></tr>
+  </tbody>
+</table>
+<p class="foot">Generated {{ generated_at|date:"Y-m-d H:i T" }}.{% if sent %} Contents as recorded at dispatch.{% endif %} The classification, packaging and declarations are the shipper's; this document records them as entered.</p>
+</body>
+</html>

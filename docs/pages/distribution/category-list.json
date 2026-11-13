@@ -1,0 +1,83 @@
+{
+  "id": "distribution-category-list",
+  "routes": [
+    "distribution:category-list"
+  ],
+  "title": "Distribution catalogues",
+  "purpose": "Find and maintain the scope categories used by consent forms, consent records, requests and agreements.",
+  "sections": [
+    {
+      "title": "Tabs",
+      "paragraphs": [
+        "Scope categories, Consent forms, Institutions and Investigators are the four distribution catalogues. Entries have no record page: for admin and manager the code opens the entry's edit form; for others it is plain text."
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Opens the edit form for admin and manager."
+        },
+        {
+          "label": "Name",
+          "description": "As recorded."
+        },
+        {
+          "label": "Governs use",
+          "description": "Yes: a request can name it as a use the consent must permit. No: recorded and shown only (for example re-contact)."
+        },
+        {
+          "label": "Status",
+          "description": "Active or Inactive. Inactive entries stay on existing records but are not offered for new ones."
+        }
+      ]
+    },
+    {
+      "title": "Finding entries",
+      "items": [
+        {
+          "label": "Search",
+          "description": "Code or name."
+        },
+        {
+          "label": "Status",
+          "description": "Active (default), Inactive, or Active and inactive."
+        },
+        {
+          "label": "Search, filters, Apply, Clear all",
+          "description": "Search and the filters narrow the rows on the server; Apply runs them and Clear all removes every filter and the search. Active filters show as chips you can remove one by one. An invalid filter shows an error and no rows rather than everything."
+        },
+        {
+          "label": "Columns",
+          "description": "Shows or hides columns for you; the first column stays."
+        },
+        {
+          "label": "Sorting and paging",
+          "description": "Click a sortable heading to sort; click again to reverse. Rows per page: 25, 50 or 100. The count under the table is the number of rows matching the filters."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "Actions and access",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else.",
+        "New scope category (admin and manager) opens the catalogue form."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_lists.py",
+    "core/grids.py",
+    "distribution/templates/distribution/governance/catalogue_list.html",
+    "distribution/templates/distribution/governance/_list_actions.html"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "id": "distribution-consent-create",
+  "routes": [
+    "distribution:consent-create"
+  ],
+  "title": "Record consent",
+  "purpose": "Record a participant's consent decision on a form version, as a first consent or a re-consent.",
+  "sections": [
+    {
+      "title": "How the form works",
+      "paragraphs": [
+        "Choose the participant, the study and the form version. The form's scope categories appear under Answers per category. If you change the form version, saving shows the new version's categories to answer before anything is recorded. Opened from a consent page, the participant and study are filled in.",
+        "The newest record governs all of the participant's material in the study, including material collected under an earlier version. If the consent is withdrawn, the new record is kept but the status stays Withdrawn until another manager reinstates the consent."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Participant",
+          "description": "Required. The coded identifier, e.g. P-000123; it must exist in the specimen catalogues. Never a name or record number."
+        },
+        {
+          "label": "Study",
+          "description": "Required."
+        },
+        {
+          "label": "Consent form version",
+          "description": "Required. Active versions of the study."
+        },
+        {
+          "label": "Decision",
+          "description": "Consented or Refused. Consented: every category the form asks must be answered Permitted or Refused. Refused: the participant refused the whole form; leave the categories unanswered."
+        },
+        {
+          "label": "Date of the decision",
+          "description": "Required; not in the future."
+        },
+        {
+          "label": "Expires on",
+          "description": "Optional; not before the decision. After it the gate blocks distribution."
+        },
+        {
+          "label": "Who decided, How it was documented",
+          "description": "Required choices as recorded on the original."
+        },
+        {
+          "label": "Answers per category",
+          "description": "Permitted or Refused for each category the form asks. A category the form does not ask is not addressed and does not permit a use."
+        },
+        {
+          "label": "Where the original is filed",
+          "description": "Optional binder, cabinet or system reference. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Restrictions",
+          "description": "Optional, up to 2,000 characters, shown to reviewers, allocators and pickers and never interpreted. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reason",
+          "description": "Required; kept with the record. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "After saving you are taken to the consent. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first.",
+        "The software stores what the filed consent says; it does not judge whether a consent is adequate."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

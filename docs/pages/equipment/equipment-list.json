@@ -1,0 +1,125 @@
+{
+  "id": "equipment-equipment-list",
+  "routes": [
+    "equipment:equipment-list"
+  ],
+  "title": "Equipment",
+  "purpose": "See every tank, freezer, supply dewar and temperature monitor your repository has registered, with its latest reading and level, next due date and open excursions, and open one to work with it.",
+  "sections": [
+    {
+      "title": "What the page is for",
+      "paragraphs": [
+        "The register of storage equipment. Each row is one piece of equipment, identified by its asset ID. Open a row to record service events, LN2 entries, readings and excursions, or to change its limits and status. Vapor Phase has no default limits, refill levels or service intervals and never works out a due date: every one of them is entered by your repository, and what the page shows is what was entered.",
+        "Retired equipment is hidden until you choose Retired or Any status. Equipment is never deleted.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the asset ID, name, serial number or location, ignoring capitals. The default sort is asset ID ascending. Sortable columns are Asset ID, Status, Name, Kind, Storage unit, Read at (newest first on the first click), Next due and Active excursions (largest first on the first click). Latest reading and Latest level cannot be sorted."
+      ],
+      "items": [
+        {
+          "label": "Kind",
+          "description": "LN2 storage tank, Mechanical freezer or refrigerator, Temperature monitor or probe, LN2 supply dewar or Other equipment."
+        },
+        {
+          "label": "Status",
+          "description": "In use (the default: in service and out of service, not retired), In service, Out of service, Retired or Any status."
+        },
+        {
+          "label": "Storage unit",
+          "description": "Only the equipment that encloses the chosen storage unit."
+        },
+        {
+          "label": "Below the low level",
+          "description": "Under the More control. Lists LN2 tanks and supply dewars in use whose latest recorded level is below the low level your repository set, measured in the same unit. A vessel with no low level set, or whose latest level is in a different unit, is never listed."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Asset ID",
+          "description": "Opens the equipment record. Always shown."
+        },
+        {
+          "label": "Status",
+          "description": "In service, Out of service or Retired."
+        },
+        {
+          "label": "Name",
+          "description": "The equipment's name; Critical follows it when the equipment is on your repository's list of critical equipment."
+        },
+        {
+          "label": "Kind",
+          "description": "The kind of equipment."
+        },
+        {
+          "label": "Storage unit",
+          "description": "The storage unit the tank or freezer encloses, linked to the unit; a dash when it has none."
+        },
+        {
+          "label": "Latest reading (°C)",
+          "description": "The most recent temperature reading that is still effective (not replaced by a correction and not withdrawn), chosen by the time it was read, not the time it was entered."
+        },
+        {
+          "label": "Read at",
+          "description": "When the latest reading was taken. Hidden until you show it with Columns."
+        },
+        {
+          "label": "Latest level",
+          "description": "The most recent effective LN2 level with its unit, from a level check or from the level after a fill."
+        },
+        {
+          "label": "Next due",
+          "description": "The earliest of the equipment's current next-due dates (see Maintenance due). A date your repository entered, not a calculation."
+        },
+        {
+          "label": "Active excursions",
+          "description": "How many excursions are open or awaiting review. A number above zero links to those excursions."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "New equipment",
+          "description": "Opens the form that registers equipment. Shown to managers and administrators."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact decimal values and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No equipment registered yet",
+          "description": "Nothing has been registered. Managers and administrators see a New equipment button."
+        },
+        {
+          "label": "No rows match",
+          "description": "The search or filters exclude everything. Remove a chip or clear the search; check the Status filter if you expect retired equipment."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/lists.py",
+    "equipment/queries.py",
+    "equipment/exports.py",
+    "equipment/templates/equipment/equipment_list.html",
+    "equipment/templates/equipment/_list_actions.html",
+    "core/templatetags/navigation.py"
+  ]
+}

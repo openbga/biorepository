@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load equipment %}
+{% comment %}Equipment register with the latest reading and level, next due date and active excursions. Context: equipment.views.grid_response for lists.SPECS["equipment"].{% endcomment %}
+{% block page_actions %}{% url 'equipment:equipment-create' as create_url %}{% include "equipment/_list_actions.html" with create_label="New equipment" may_create=can_manage %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="equipment-heading">
+  <h2 class="visually-hidden" id="equipment-heading">Equipment</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter equipment" q=q placeholder="Asset ID, name, serial number or location" inline=inline more=more more_open=more_open grid="equipment.equipment" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="equipment.equipment" data-vr-grid-version="1" aria-labelledby="equipment-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Asset ID" asc="code" desc="-code" col="code" locked=True %}
+        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% include "includes/sort_header.html" with label="Kind" asc="kind" desc="-kind" col="kind" %}
+        {% include "includes/sort_header.html" with label="Storage unit" asc="unit" desc="-unit" col="unit" %}
+        <th scope="col" class="text-end" data-vr-col="reading" data-vr-col-label="Latest reading (°C)">Latest reading (°C)</th>
+        {% include "includes/sort_header.html" with label="Read at" asc="reading" desc="-reading" first="desc" col="reading_at" hidden=True %}
+        <th scope="col" class="text-end" data-vr-col="level" data-vr-col-label="Latest level">Latest level</th>
+        {% include "includes/sort_header.html" with label="Next due" asc="due" desc="-due" col="due" %}
+        {% include "includes/sort_header.html" with label="Active excursions" asc="excursions" desc="-excursions" first="desc" col="excursions" class="text-end" %}
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'equipment:equipment-detail' row.pk %}">{{ row.code }}</a></th>
+          <td>{% equipment_status row.status plain=True %}</td>
+          <td>{{ row.name }}{% if row.is_critical %} <span class="vr-muted small">Critical</span>{% endif %}</td>
+          <td>{{ row.get_kind_display }}</td>
+          <td>{% if row.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' row.storage_unit_id %}">{{ row.storage_unit.code }}</a>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="text-end vr-id">{% if row.latest_reading_value is not None %}{{ row.latest_reading_value }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-nowrap">{% if row.latest_reading_at %}<time datetime="{{ row.latest_reading_at|date:'c' }}">{{ row.latest_reading_at|date:"Y-m-d H:i" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="text-end vr-id vr-nowrap">{% if row.latest_level is not None %}{{ row.latest_level }} {{ row.latest_level_unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-nowrap">{% if row.next_due_on %}<time datetime="{{ row.next_due_on|date:'Y-m-d' }}">{{ row.next_due_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="text-end vr-id">{% if row.active_excursions %}<a href="{% url 'equipment:excursion-list' %}?equipment={{ row.pk }}&amp;status=active">{{ row.active_excursions }}</a>{% else %}0{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% if can_manage %}{% url 'equipment:equipment-create' as create_url %}{% endif %}
+  {% include "storage/_list_states.html" with title_empty="No equipment registered yet" body_empty="Register each tank, freezer, supply dewar and temperature monitor, with the limits your repository sets." create_url=create_url create_label="New equipment" %}
+  {% endif %}
+</section>
+{% endblock %}

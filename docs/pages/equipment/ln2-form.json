@@ -1,0 +1,82 @@
+{
+  "id": "equipment-ln2-form",
+  "routes": [
+    "equipment:ln2-create"
+  ],
+  "title": "Record LN2 entry",
+  "purpose": "Record a level check or a fill of an LN2 tank or supply dewar.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Technicians, managers and administrators. Viewers are refused. Only vessels that are LN2 storage tanks or LN2 supply dewars and are not retired are offered. The tabs at the top choose the kind of entry: Level check (one level read) or Fill. Switching tabs keeps the vessel when one is preselected but discards other typed values. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Times are repository local time, to the second, and cannot be in the future. Levels and amounts are exact decimals with up to two decimal places; no binary floating point is used."
+      ],
+      "items": [
+        {
+          "label": "Vessel",
+          "description": "Required. The tank or dewar. When it is opened from a record or a filtered list the vessel is preselected, along with the level unit set on it."
+        },
+        {
+          "label": "When",
+          "description": "Required. When the level was read or the fill was done. Defaults to now."
+        },
+        {
+          "label": "How the level was read",
+          "description": "Optional: Dipstick, Level sensor or display, or Other."
+        },
+        {
+          "label": "Level read (level check)",
+          "description": "Required for a level check, zero or more. A percentage cannot exceed 100."
+        },
+        {
+          "label": "Level before the fill, Level after the fill (fill)",
+          "description": "Fills record the level before and after; enter the level after, the amount added, or both. The level after cannot be below the level before."
+        },
+        {
+          "label": "Level unit",
+          "description": "mm, cm, in or % of full. Left empty, the unit set on the vessel is used; if the vessel has none, choose one. Needed whenever a level is entered."
+        },
+        {
+          "label": "Amount added, Amount unit (fill)",
+          "description": "The quantity added, above zero, in L or kg. Choose the unit whenever an amount is entered."
+        },
+        {
+          "label": "Supply dewar (fill)",
+          "description": "Optional: a registered supply dewar the fill came from. A vessel cannot be filled from itself."
+        },
+        {
+          "label": "Delivery reference (fill)",
+          "description": "Optional, up to 160 characters: delivery note or supplier reference."
+        },
+        {
+          "label": "Read by or Filled by (outside provider)",
+          "description": "Optional, up to 160 characters."
+        },
+        {
+          "label": "Note",
+          "description": "Optional, up to 4,000 characters. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Record LN2 entry adds it to the log and the audit trail together and returns to the LN2 log filtered to that vessel. Entries cannot be edited; use Correct. Errors appear beside the field and what you typed is kept. The page does not compare the level with the vessel's low level: that is only a filter on the equipment list."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "equipment-excursion-reopen",
+  "routes": [
+    "equipment:excursion-reopen"
+  ],
+  "title": "Reopen excursion",
+  "purpose": "Reopen a closed excursion so it can be corrected and reviewed again.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Managers and administrators. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. Only a closed excursion can be reopened.",
+        "If someone else changed the record after you opened this form, the save is refused with a message that it changed since you opened it. Nothing is saved; reload, check the current values and enter the change again."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason for reopening",
+          "description": "Required, up to 4,000 characters. Kept in the timeline. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Reopen excursion returns it to Open and clears the earlier submission and closure details; the earlier closing entry and its note stay in the timeline. The specimen list captured at closing stays with the record, the page shows the live list while it is open, and closing it again captures a new list."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

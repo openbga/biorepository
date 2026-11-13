@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load specimens %}
+{% comment %}
+Specimens list: server search, filters, sort and pagination over specimens.queries.specimen_queryset.
+Context: page_obj (rows carry .path from queries.locations_for, .held), filter_form, q, sort,
+inline, more, more_open, active_filters, filtered, export_url, max_labels, can_operate.
+Selecting rows prints their labels (label preview, at most max_labels).
+{% endcomment %}
+{% block page_actions %}<a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% include "includes/icon.html" with name="download" %}Export CSV</a>{% if can_operate %}<a class="btn btn-primary" href="{% url 'specimens:specimen-create' %}">{% include "includes/icon.html" with name="plus-lg" %}Register specimen</a>{% endif %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="specimens-heading">
+  <h2 class="visually-hidden" id="specimens-heading">Specimens</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter specimens" q=q placeholder="Specimen ID, participant or collection code" inline=inline more=more more_open=more_open grid="specimens.specimens" %}
+  {% if page_obj.paginator.count %}
+  <form method="get" action="{% url 'specimens:label-preview' %}" aria-label="Print labels for selected specimens">
+    <div class="vr-bulkbar">
+      <button class="btn btn-sm btn-outline-secondary" type="submit">{% include "includes/icon.html" with name="printer" %}Print labels</button>
+      <span class="vr-count" data-vr-select-count="id" aria-live="polite"></span>
+      <span class="vr-muted small">Select up to {{ max_labels }} specimens on this page.</span>
+    </div>
+    <div class="vr-table-wrap">
+      <table class="table table-hover vr-table" data-vr-grid="specimens.specimens" data-vr-grid-version="1" aria-labelledby="specimens-heading">
+        <thead><tr>
+          <th scope="col" data-vr-col="select" data-vr-col-label="Select" data-vr-col-locked>{% include "includes/select_all.html" with name="id" label="Select all specimens on this page" %}</th>
+          {% include "includes/sort_header.html" with label="Specimen ID" asc="accession" desc="-accession" col="accession" locked=True %}
+          {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+          {% include "includes/sort_header.html" with label="Type" asc="type" desc="-type" col="type" %}
+          {% include "includes/sort_header.html" with label="Amount" asc="quantity" desc="-quantity" col="quantity" class="text-end" %}
+          <th scope="col" data-vr-col="participant" data-vr-col-label="Participant">Participant</th>
+          <th scope="col" data-vr-col="collection" data-vr-col-label="Collection" data-vr-col-hidden>Collection</th>
+          <th scope="col" data-vr-col="location" data-vr-col-label="Location">Location</th>
+          <th scope="col" data-vr-col="custodian" data-vr-col-label="Custodian">Custodian</th>
+          {% include "includes/sort_header.html" with label="Collected" asc="collected_at" desc="-collected_at" first="desc" col="collected_at" %}
+          {% include "includes/sort_header.html" with label="Registered" asc="registered_at" desc="-registered_at" first="desc" col="registered_at" hidden=True %}
+        </tr></thead>
+        <tbody>
+          {% for row in page_obj %}
+          <tr>
+            <td><input class="form-check-input" type="checkbox" name="id" value="{{ row.pk }}" aria-label="Select {{ row.accession }}"></td>
+            <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' row.pk %}">{{ row.accession }}</a></th>
+            <td class="vr-nowrap">{% specimen_status row plain=True %}{% if row.held %} {% include "includes/status.html" with label="On hold" tone="hold" plain=True %}{% endif %}</td>
+            <td>{{ row.specimen_type.name }}</td>
+            <td class="text-end vr-id vr-nowrap">{{ row.quantity_on_hand|amount:row.unit }}</td>
+            <td class="vr-id">{{ row.participant.code|default:"—" }}</td>
+            <td class="vr-id">{{ row.collection.code|default:"—" }}</td>
+            <td class="vr-id vr-path">{% if row.path %}{% include "storage/_path.html" with p=row.path %}{% elif row.open_checkout_id %}<span class="vr-muted">Checked out</span>{% elif row.status == "distributed" %}<span class="vr-muted">Distributed: outside the repository</span>{% else %}<span class="vr-muted">Not in storage</span>{% endif %}</td>
+            <td>{% if row.custodian %}{{ row.custodian.get_full_name|default:row.custodian.get_username }}{% else %}<span class="vr-muted">Outside the repository</span>{% endif %}</td>
+            <td class="vr-nowrap"><time datetime="{{ row.collected_at|date:'c' }}">{{ row.collected_at|date:"Y-m-d H:i" }}</time></td>
+            <td class="vr-nowrap"><time datetime="{{ row.registered_at|date:'c' }}">{{ row.registered_at|date:"Y-m-d H:i" }}</time></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
+  {% include "includes/pagination.html" with noun="specimens" filtered=filtered %}
+  {% else %}
+  {% if can_operate %}{% url 'specimens:specimen-create' as create_url %}{% endif %}
+  {% include "specimens/includes/list_states.html" with title_empty="No specimens registered yet" body_empty="Register a specimen, or import many at once from a CSV file." create_url=create_url create_label="Register specimen" %}
+  {% endif %}
+</section>
+{% endblock %}
