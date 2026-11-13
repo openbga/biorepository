@@ -1,0 +1,61 @@
+{
+  "id": "storage-room-form",
+  "routes": [
+    "storage:room-create",
+    "storage:room-edit"
+  ],
+  "title": "Room form",
+  "purpose": "Create a room within a site or change the name of an existing room.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form."
+      ],
+      "items": [
+        {
+          "label": "Site",
+          "description": "Create only. Required; active sites only. Preselected when opened from a site page."
+        },
+        {
+          "label": "Code",
+          "description": "Create only. Unique within the site. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create room / Save changes",
+          "description": "Saves and opens the room."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}

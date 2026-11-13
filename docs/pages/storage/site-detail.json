@@ -1,0 +1,76 @@
+{
+  "id": "storage-site-detail",
+  "routes": [
+    "storage:site-detail"
+  ],
+  "title": "Site",
+  "purpose": "Review one site: its time zone, its rooms with their occupancy, and its history.",
+  "sections": [
+    {
+      "title": "Site",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Immutable, never reused."
+        },
+        {
+          "label": "Name",
+          "description": "Site name."
+        },
+        {
+          "label": "Time zone",
+          "description": "IANA time zone recorded as a setup fact. Times in forms use the repository's time zone."
+        },
+        {
+          "label": "Set up",
+          "description": "When and by whom the site was created."
+        }
+      ]
+    },
+    {
+      "title": "Rooms",
+      "paragraphs": [
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it."
+      ],
+      "items": [
+        {
+          "label": "Add room",
+          "description": "Admin and manager roles. Opens the room form with this site chosen."
+        },
+        {
+          "label": "Table",
+          "description": "Code (opens the room), name, active storage units, positions, occupied and free."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Admin and manager roles. Changes the name or time zone; a reason is required."
+        }
+      ]
+    },
+    {
+      "title": "Notes",
+      "paragraphs": [
+        "Sites cannot be retired or deleted."
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/templates/storage/site_detail.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

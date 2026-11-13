@@ -1,0 +1,21 @@
+<!doctype html>
+{% comment %}
+Specimen label sheet for WeasyPrint (specimens/labels.py), one label per page: the barcode and the
+human-readable accession, nothing else. The stylesheet (specimens/label.css, page size from the
+label stock) is passed by the renderer, so this document links nothing.
+Context: rows = [{accession, barcode (library-generated SVG)}].
+{% endcomment %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Specimen labels</title>
+</head>
+<body>
+{% for row in rows %}
+<section class="label">
+  <div class="barcode">{{ row.barcode }}</div>
+  <div class="accession">{{ row.accession }}</div>
+</section>
+{% endfor %}
+</body>
+</html>

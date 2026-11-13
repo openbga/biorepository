@@ -1,0 +1,119 @@
+{
+  "id": "equipment-ln2-list",
+  "routes": [
+    "equipment:ln2-list"
+  ],
+  "title": "LN2 log",
+  "purpose": "Review the level checks and fills of LN2 tanks and supply dewars, with the change since the previous entry, and record new ones.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Effective entries only: an entry that was corrected or withdrawn is replaced by its newer version, which is marked corrected. The log records levels you read and fills you perform; it does not decide when to refill. Low levels come from the low level set on each vessel by your repository.",
+        "Change since previous is worked out from the levels, never entered: for a level check, its level minus the vessel's previous effective level; for a fill, its level before the fill minus that previous level. A negative number means LN2 was used. It is blank when there is no previous entry or the units differ. It always compares with the vessel's whole log even when the list is filtered.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the asset ID, vessel name or delivery reference. The default sort is When, newest first. Sortable columns are When, Vessel and Entry."
+      ],
+      "items": [
+        {
+          "label": "Vessel",
+          "description": "One LN2 tank or supply dewar."
+        },
+        {
+          "label": "Entry",
+          "description": "Level checks and fills (the default), Level check or Fill."
+        },
+        {
+          "label": "From, To",
+          "description": "Under the More control. Entries on or after the first date and on or before the second, in repository local time. The end date cannot be before the start date."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "When",
+          "description": "When the level was read or the fill done, with corrected where the row replaces an earlier entry. Always shown."
+        },
+        {
+          "label": "Vessel",
+          "description": "Opens the equipment record."
+        },
+        {
+          "label": "Entry",
+          "description": "Level check or Fill."
+        },
+        {
+          "label": "Level before",
+          "description": "Fills only: the level before the fill, with its unit."
+        },
+        {
+          "label": "Level",
+          "description": "The level read, or the level after a fill, with its unit."
+        },
+        {
+          "label": "Change since previous",
+          "description": "Derived as described above, signed."
+        },
+        {
+          "label": "Amount added",
+          "description": "Fills only: the amount and its unit (L or kg)."
+        },
+        {
+          "label": "Supply dewar",
+          "description": "The registered dewar the fill came from, or the outside provider named."
+        },
+        {
+          "label": "Method",
+          "description": "Dipstick, Level sensor or display, or Other."
+        },
+        {
+          "label": "Recorded by",
+          "description": "Who entered it."
+        },
+        {
+          "label": "Correct",
+          "description": "Technicians, managers and administrators, on entries they recorded (managers and administrators: any entry). Opens the correction form."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Record LN2 entry",
+          "description": "Technicians, managers and administrators. Opens the form; when the list is filtered to one vessel, that vessel is preselected."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact decimal values and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No LN2 entries yet",
+          "description": "No level check or fill has been recorded. Technicians and above see a Record LN2 entry button."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/lists.py",
+    "equipment/queries.py",
+    "equipment/exports.py",
+    "equipment/templates/equipment/ln2_list.html"
+  ]
+}

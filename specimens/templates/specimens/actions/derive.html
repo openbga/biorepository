@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% comment %}
+Entry grid: make aliquots or derivatives from one specimen (docs/ui-standards.md section 7, rules
+7 and 8). Context (specimens.action_views.derive): page_title, form (DeriveForm), formset (prefix
+"children", ChildForm rows), suggestions (free positions text), max_rows, aliquot, blocked,
+submit_label, back_url, crumbs and the _context.html parameters.
+"Add specimen" and each row's "Remove" are submit buttons: the server re-renders the grid with one
+row more or less and records nothing, so both work without JavaScript. A hidden copy of the save
+button comes first so Enter in a field saves rather than removing the first row.
+{% endcomment %}
+{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block content %}
+<form class="vr-form vr-form-wide" method="post" novalidate>
+  {% csrf_token %}
+  {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}
+  {% include "includes/form_errors.html" with form=form formset=formset formset_label="new specimens" %}
+  {% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Error" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
+  {% if blocked %}
+  <div class="alert alert-warning" role="alert">
+    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
+    <div>{{ blocked }}</div>
+  </div>
+  {% else %}
+  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Times are repository local time. Each new specimen gets its own identifier and keeps the parent's participant, collection, collection time, custodian and thaw history.</p>
+  {% endif %}
+  {% include "specimens/actions/_context.html" %}
+  {% with sections=form.grouped %}{% for legend, rows in sections %}
+  {% if forloop.last %}
+  <fieldset class="vr-form-section">
+    <legend>New specimens</legend>
+    <p class="vr-form-note">One row per new specimen, from 1 to {{ max_rows }}. Aliquots keep the parent's type and unit. Position is optional: choose a box and type the position label. {{ suggestions }}</p>
+    {{ formset.management_form }}
+    <div class="vr-table-wrap">
+      <table class="table vr-table" id="children-grid">
+        <thead><tr>
+          <th scope="col">#</th>
+          <th scope="col">Specimen type<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col">Specimen container<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col" class="text-end">Amount<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col">Unit<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col">Box</th>
+          <th scope="col">Position</th>
+          <th scope="col"><span class="visually-hidden">Actions</span></th>
+        </tr></thead>
+        <tbody>
+          {% for row in formset %}
+          <tr id="row-{{ row.prefix }}"{% if row.errors %} class="table-danger"{% endif %}>
+            <th scope="row" class="font-monospace">{{ forloop.counter }}</th>
+            {% for field in row.visible_fields %}
+            <td><label class="visually-hidden" for="{{ field.id_for_label }}">{{ field.label }}, row {{ forloop.parentloop.counter }}</label>{{ field }}{% if field.errors %}<ul class="vr-field-errors" id="{{ field.auto_id }}_error">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</td>
+            {% endfor %}
+            <td>{% if not blocked and formset.total_form_count > 1 %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="remove_row" value="{{ forloop.counter0 }}" formnovalidate>Remove<span class="visually-hidden"> row {{ forloop.counter }}</span></button>{% endif %}</td>
+          </tr>
+          {% if row.non_field_errors %}
+          <tr class="table-danger"><td colspan="8"><ul class="vr-field-errors mb-0" id="{{ row.prefix }}-errors">{% for error in row.non_field_errors %}<li>Row {{ forloop.parentloop.counter }}: {{ error }}</li>{% endfor %}</ul></td></tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% include "includes/icon.html" with name="plus-lg" %}Add specimen</button>{% endif %}
+  </fieldset>
+  {% endif %}
+  <fieldset class="vr-form-section">
+    <legend>{{ legend }}</legend>
+    {% for row in rows %}{% include "includes/field.html" with field=row.0 suffix=row.0.field.suffix %}{% endfor %}
+  </fieldset>
+  {% endfor %}{% endwith %}
+  {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+  <div class="vr-form-actions">
+    <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
+    {% if not blocked %}<button class="btn btn-primary" type="submit">{{ submit_label }}</button>{% endif %}
+  </div>
+</form>
+{% endblock %}

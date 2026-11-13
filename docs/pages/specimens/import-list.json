@@ -1,0 +1,60 @@
+{
+  "id": "specimens-import-list",
+  "routes": [
+    "specimens:import-list"
+  ],
+  "title": "Imports",
+  "purpose": "Find CSV files that were uploaded to register many specimens at once, and open each to review or commit it.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Admin, manager and technician only; a viewer is refused. Uploading validates a file and registers nothing. Specimens are registered only when a valid file is committed, and then all rows or none."
+      ]
+    },
+    {
+      "title": "Search, sorting and paging",
+      "paragraphs": [
+        "Search matches part of the file name. Click Import, Rows or Validated to sort (default newest validated first); choose 25, 50 or 100 rows per page. Every validation is listed, including repeats of the same file."
+      ],
+      "items": [
+        {
+          "label": "Import",
+          "description": "File name, or the validation time when the browser sent none. Opens the import. Always shown."
+        },
+        {
+          "label": "State",
+          "description": "Has errors (nothing can be registered), Ready to commit, Expired (validated more than 24 hours ago) or Committed."
+        },
+        {
+          "label": "Rows",
+          "description": "How many specimen rows the file had."
+        },
+        {
+          "label": "Errors",
+          "description": "How many problems were found."
+        },
+        {
+          "label": "Validated by, Validated",
+          "description": "Who uploaded it and when."
+        }
+      ]
+    },
+    {
+      "title": "Actions and empty state",
+      "paragraphs": [
+        "Upload CSV opens the upload form. With no imports the page says “No imports yet” and explains the steps; with a search that matches nothing it says so and offers to clear it."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/importing.py",
+    "specimens/templates/specimens/import_list.html",
+    "specimens/tests/test_registration.py"
+  ]
+}

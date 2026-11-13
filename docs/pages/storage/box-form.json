@@ -1,0 +1,70 @@
+{
+  "id": "storage-box-form",
+  "routes": [
+    "storage:box-create",
+    "storage:box-edit"
+  ],
+  "title": "Box form",
+  "purpose": "Add a box to a rack or shelf, creating all its positions, or change the name of an existing box.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form.",
+        "Confirm the physical box matches the container type's grid. The box's grid and location cannot be edited later; use Move to relocate it."
+      ],
+      "items": [
+        {
+          "label": "Rack or shelf",
+          "description": "Create only. Required; active nodes that offer box slots, shown with their unit and path. Preselected when opened from a node page."
+        },
+        {
+          "label": "Box slot",
+          "description": "Create only. Required whole number from 1 to the node's box slots; must be free of another active box. Opened from a node page, it starts at the first free slot."
+        },
+        {
+          "label": "Container type",
+          "description": "Create only. Required; active container types. Every position is created with the box and the grid never changes."
+        },
+        {
+          "label": "Code",
+          "description": "Create only. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement."
+        },
+        {
+          "label": "Name",
+          "description": "Optional, up to 160 characters; the code is used when blank."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create box / Save changes",
+          "description": "Creating saves the box and all its positions together and reports the number created, then opens the box."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}

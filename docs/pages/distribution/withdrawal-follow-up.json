@@ -1,0 +1,53 @@
+{
+  "id": "distribution-withdrawal-follow-up",
+  "routes": [
+    "distribution:withdrawal-follow-up"
+  ],
+  "title": "Record follow-up",
+  "purpose": "Record what was done about material already distributed when the participant withdrew.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Shipment",
+          "description": "Required. Shipments that contained this participant's material in the study; opened from a shipment row it is chosen."
+        },
+        {
+          "label": "What was done",
+          "description": "Recipient notified, Destruction confirmed by recipient, Material returned, Recipient unable to act, or Note."
+        },
+        {
+          "label": "When",
+          "description": "Required; not in the future."
+        },
+        {
+          "label": "Note",
+          "description": "Required: what happened. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Attachment",
+          "description": "Optional PDF, PNG, JPEG, TXT or CSV up to 10 MiB, checked by its content; downloaded only as a file. Do not upload consent forms, signatures or any document that identifies a participant."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "The software sends nothing and does not recall material; this records what people did. Not available when no shipment carried the participant's material. Follow-ups cannot be edited; record another one."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html",
+    "core/attachments.py"
+  ]
+}

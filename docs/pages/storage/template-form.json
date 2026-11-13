@@ -1,0 +1,115 @@
+{
+  "id": "storage-template-form",
+  "routes": [
+    "storage:template-create",
+    "storage:template-edit"
+  ],
+  "title": "Storage template form",
+  "purpose": "Record a unit layout as a template, add a new version, or change an existing version.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form.",
+        "Entering a code that already exists adds the next version. Once a unit has been created from a version its layout is fixed: the Layout recipe is then not offered, so add a new version to change it. Opened from a unit's Save layout as template, the recipe is pre-filled from that unit; opened from New version, from the earlier version."
+      ],
+      "items": [
+        {
+          "label": "Code",
+          "description": "Create only. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement. An existing code adds a new version."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Inactive templates cannot be applied."
+        },
+        {
+          "label": "Layout recipe",
+          "description": "Required JSON, described in the next section. The recipe is checked against the same rules as direct creation and saved in normalized form; an error names the node or box at fault."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Layout recipe",
+      "paragraphs": [
+        "The recipe is plain data, not a script. Unknown keys are rejected. Limits: at most 400 nodes, 400 boxes and 40,000 positions, and 4 levels. Codes in a recipe are suffixes; applying the template puts the new unit's code and a hyphen before each (VP-02 and T01 become VP-02-T01)."
+      ],
+      "items": [
+        {
+          "label": "schema",
+          "description": "Required; the number 1."
+        },
+        {
+          "label": "storage_class",
+          "description": "Required; the code of an existing storage class."
+        },
+        {
+          "label": "technology",
+          "description": "Required; one of ln2_vapor, ln2_liquid, mechanical, ambient."
+        },
+        {
+          "label": "nominal_temperature",
+          "description": "Required; a quoted decimal such as \"-160.00\" from -273.15 to 9999.99 with at most two decimal places. A stated set point, not a measurement."
+        },
+        {
+          "label": "nodes",
+          "description": "Required, non-empty list of top-level nodes."
+        },
+        {
+          "label": "node: suffix, name, kind",
+          "description": "suffix is required, 1 to 30 letters, digits, '.', '_' or '-', and unique across all nodes and boxes of the recipe. name is optional, up to 160 characters. kind is shelf, rack, tower or canister; a shelf holds racks, the others hold shelves."
+        },
+        {
+          "label": "node: slot",
+          "description": "Required whole number from 1 (up to the parent's child_slots, or 100 at the top level); not used twice in the same place."
+        },
+        {
+          "label": "node: child_slots, box_slots",
+          "description": "Whole numbers 0 to 100; exactly one must be above 0. A node with child_slots lists children and no boxes; one with box_slots lists boxes and no children."
+        },
+        {
+          "label": "node: children, boxes",
+          "description": "Lists of nodes and of boxes. A box has suffix, optional name, slot (1 to box_slots, unused) and container_type."
+        },
+        {
+          "label": "box: container_type",
+          "description": "An object with code and version, naming an existing container type version. It must also be active when the template is applied."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create storage template / Save changes",
+          "description": "Saves and opens the template version."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py",
+    "storage/recipes.py"
+  ]
+}

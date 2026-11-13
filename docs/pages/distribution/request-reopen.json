@@ -1,0 +1,40 @@
+{
+  "id": "distribution-request-reopen",
+  "routes": [
+    "distribution:request-reopen"
+  ],
+  "title": "Reopen request",
+  "purpose": "Return an approved request to draft so it can be changed and decided again.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the request is approved and nothing is picked for it or packed in a shipment (put picked specimens back and unpack first; the form says which). It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline and history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The request becomes a draft again and needs a new submission and decision. Its allocations stay, but they cannot be picked, packed or dispatched until the request is approved again; if the resubmission is rejected, they are released with their holds.",
+        "If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

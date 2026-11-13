@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load distribution %}
+{% comment %}Specimen requests, newest first (List page). Context: request_views.grid_response for request_lists.SPECS["request"]; rows carry line_count, open_count (allocated or picked) and shipped_count. Awaiting my decision is offered to people with the request decision permission only. ?specimen=VP-000123 lists the requests that allocated that specimen (linked from the specimen record).{% endcomment %}
+{% block page_actions %}{% url 'distribution:request-create' as create_url %}{% include "distribution/requests/_list_actions.html" with create_label="New request" may_create=can_operate %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="requests-heading">
+  <h2 class="visually-hidden" id="requests-heading">Requests</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter requests" q=q placeholder="Request number or title" inline=inline more=more more_open=more_open grid="distribution.requests" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="distribution.requests" data-vr-grid-version="2" aria-labelledby="requests-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Request" asc="number" desc="-number" first="desc" col="number" locked=True %}
+        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+        {% include "includes/sort_header.html" with label="Title" asc="title" desc="-title" col="title" %}
+        {% include "includes/sort_header.html" with label="Investigator" asc="investigator" desc="-investigator" col="investigator" %}
+        <th scope="col" data-vr-col="institution" data-vr-col-hidden data-vr-col-label="Institution">Institution</th>
+        <th scope="col" class="text-end" data-vr-col="lines" data-vr-col-hidden data-vr-col-label="Lines">Lines</th>
+        <th scope="col" class="text-end vr-th-wrap" data-vr-col="open" data-vr-col-label="Allocated or picked (specimens)">Allocated or picked (specimens)</th>
+        <th scope="col" class="text-end vr-th-wrap" data-vr-col="shipped" data-vr-col-label="Shipped (specimens)">Shipped (specimens)</th>
+        {% include "includes/sort_header.html" with label="Needed by" asc="needed" desc="-needed" col="needed" %}
+        {% include "includes/sort_header.html" with label="Created" asc="created" desc="-created" first="desc" col="created" %}
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:request-detail' row.pk %}">{{ row.number }}</a></th>
+          <td>{% distribution_status "request" row.status plain=True %}</td>
+          <td>{{ row.title }}</td>
+          <td>{{ row.investigator.name }} <span class="vr-muted vr-id">{{ row.investigator.code }}</span></td>
+          <td>{{ row.institution.name }}</td>
+          <td class="text-end vr-id">{{ row.line_count }}</td>
+          <td class="text-end vr-id">{{ row.open_count }}</td>
+          <td class="text-end vr-id">{{ row.shipped_count }}</td>
+          <td class="vr-nowrap">{% if row.needed_by %}<time datetime="{{ row.needed_by|date:'Y-m-d' }}">{{ row.needed_by|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-nowrap"><time datetime="{{ row.created_at|date:'c' }}">{{ row.created_at|date:"Y-m-d H:i" }}</time></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% url 'distribution:request-create' as create_url %}
+  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No specimen requests recorded" body_empty="Record a request as it was received from an investigator, then add its lines and submit it for a decision." create_url=create_url create_label="New request" %}{% else %}{% include "storage/_list_states.html" with title_empty="No specimen requests recorded" body_empty="Requests recorded by technicians and managers appear here." %}{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load navigation %}
+{% comment %}Container types: box grid geometry, versioned (catalogue tab). Context: grid_response for lists.CATALOGUE_SPECS["container_type"].{% endcomment %}
+{% block page_actions %}{% url 'storage:container-type-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New container type" %}{% endblock %}
+{% block content %}
+{% section_tabs "storage-catalogues" %}
+<section class="card vr-table-card" aria-labelledby="grids-heading">
+  <h2 class="visually-hidden" id="grids-heading">Container types</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter container types" q=q placeholder="Code or name" inline=inline grid="storage.container-types" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="storage.container-types" data-vr-grid-version="1" aria-labelledby="grids-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        <th scope="col" class="text-end" data-vr-col="version" data-vr-col-label="Version">Version</th>
+        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        <th scope="col" data-vr-col="grid" data-vr-col-label="Grid">Grid</th>
+        <th scope="col" class="text-end" data-vr-col="positions" data-vr-col-label="Positions">Positions</th>
+        <th scope="col" data-vr-col="labels" data-vr-col-label="Labels">Labels</th>
+        {% include "includes/sort_header.html" with label="Boxes" asc="boxes" desc="-boxes" col="boxes" class="text-end" %}
+        <th scope="col" data-vr-col="status" data-vr-col-label="Status">Status</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:container-type-detail' row.pk %}">{{ row.code }}</a></th>
+          <td class="text-end vr-id">{{ row.version }}</td>
+          <td>{{ row.name }}</td>
+          <td class="vr-id">{{ row.rows }} × {{ row.columns }}</td>
+          <td class="text-end vr-id">{{ row.capacity }}</td>
+          <td>{{ row.get_label_scheme_display }}, {{ row.get_fill_order_display|lower }}</td>
+          <td class="text-end vr-id">{{ row.box_count }}</td>
+          <td>{% include "storage/_status.html" with obj=row plain=True catalogue=True %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% if can_manage %}{% url 'storage:container-type-create' as create_url %}{% endif %}
+  {% include "storage/_list_states.html" with title_empty="No container types yet" body_empty="A container type is a box grid: rows, columns and how positions are labelled and numbered." create_url=create_url create_label="New container type" %}
+  {% endif %}
+</section>
+{% endblock %}

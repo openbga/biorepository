@@ -1,0 +1,61 @@
+{
+  "id": "distribution-shipment-form",
+  "routes": [
+    "distribution:shipment-create",
+    "distribution:shipment-edit"
+  ],
+  "title": "New shipment, Edit shipment",
+  "purpose": "Start a shipment for an approved request, or change its ship-to and courier details.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators. A shipment is started for an approved request only. A draft can change every field; a packed shipment only the planned date and courier details (unpack it to change the rest); a dispatched or cancelled one cannot be edited. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving.",
+        "Creating a shipment takes you to Contents to choose its specimens."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Recipient, Institution, Address",
+          "description": "Required. Copied from the investigator and institution for a new shipment; change them when it goes elsewhere. Printed on the manifest."
+        },
+        {
+          "label": "Contact",
+          "description": "Optional: the recipient's professional email or phone."
+        },
+        {
+          "label": "Planned dispatch date",
+          "description": "Optional."
+        },
+        {
+          "label": "Courier, Service, Tracking number",
+          "description": "Optional; can also be given at dispatch."
+        },
+        {
+          "label": "Storage instructions",
+          "description": "Optional, up to 500 characters, printed on the manifest. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Required when editing, kept in the timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Create shipment records a draft numbered SH-000001 and up. Save changes records the old and new values in the timeline. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

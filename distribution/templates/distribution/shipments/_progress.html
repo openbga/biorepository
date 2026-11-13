@@ -1,0 +1,41 @@
+{% comment %}
+Where the shipment is in its flow (contents, pack, dispatch, receipt) and what the next step needs,
+with the .vr-steps component of requests/_progress.html. Presentation only: the current step is read
+from the shipment's state and contents; the Next line names the header's primary action (built by
+request_views.shipment_actions, whose reason says what blocks it). Parameters: shipment, planned,
+items, effective, actions, dispatch_blockers.
+{% endcomment %}{% with s=shipment.state p=actions.primary %}
+{% if s == "draft" %}{% if planned %}{% firstof 2 as step %}{% else %}{% firstof 1 as step %}{% endif %}
+{% elif s == "packed" %}{% firstof 3 as step %}
+{% elif s == "dispatched" %}{% firstof 4 as step %}
+{% elif s == "received" %}{% firstof 5 as step %}
+{% elif shipment.packed_at %}{% firstof 3 as step %}
+{% else %}{% firstof 2 as step %}{% endif %}
+<section class="card mb-3 vr-progress-card" aria-labelledby="progress-heading">
+  <div class="card-header"><h2 class="card-title" id="progress-heading">Progress</h2>
+    {% if s == "cancelled" %}<span class="vr-count">Ended: cancelled</span>{% elif s == "received" %}<span class="vr-count">All steps done</span>{% endif %}
+  </div>
+  <div class="card-body">
+    {% if s == "cancelled" %}{% firstof "1" as ended %}{% endif %}
+    {% with st=step|add:0 %}
+    <ol class="vr-steps">
+      {% include "distribution/shipments/_progress_step.html" with n=1 label="Contents" %}
+      {% include "distribution/shipments/_progress_step.html" with n=2 label="Pack" %}
+      {% include "distribution/shipments/_progress_step.html" with n=3 label="Dispatch" %}
+      {% include "distribution/shipments/_progress_step.html" with n=4 label="Receipt" %}
+    </ol>
+    {% endwith %}
+    {% if s != "received" and s != "cancelled" %}
+    <p class="vr-steps-next{% if p.reason or s == 'packed' and dispatch_blockers %} is-blocked{% endif %}">
+      <span class="vr-steps-next-label">Next</span>
+      {% if s == "draft" and not planned %}Add picked specimens of the request with Contents.
+      {% elif s == "draft" %}Pack: declare the packaging, refrigerant and classification; packing freezes the contents.
+      {% elif s == "packed" %}Dispatch: record the courier and hand-over; every specimen is checked again.
+      {% else %}Receipt: entered once the recipient reports how the shipment arrived.{% endif %}
+      {% if p.reason %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>
+      {% elif s == "packed" and dispatch_blockers %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ dispatch_blockers|length }} specimen{{ dispatch_blockers|length|pluralize }} would be refused now (listed above).</span>{% endif %}
+    </p>
+    {% endif %}
+  </div>
+</section>
+{% endwith %}

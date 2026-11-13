@@ -1,0 +1,47 @@
+{
+  "id": "distribution-shipment-notify",
+  "routes": [
+    "distribution:shipment-notify"
+  ],
+  "title": "Record notification",
+  "purpose": "Record that the recipient was told about a shipment, or acknowledged it.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the shipment is not final. Nothing is sent by the software: this records what people did. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "What happened",
+          "description": "Required: We notified the recipient, or The recipient acknowledged."
+        },
+        {
+          "label": "When",
+          "description": "Required; repository local time, not in the future."
+        },
+        {
+          "label": "Note",
+          "description": "Optional, for example how and to whom. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "The entry is added to the timeline. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

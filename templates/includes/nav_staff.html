@@ -1,0 +1,59 @@
+{% load navigation %}{% comment %}
+Staff navigation, grouped by the repository's work. Labels, targets and the routes that mark each
+item current are declared in core/templatetags/navigation.py; this template only groups the items
+and hides those a role never uses. An unmounted route renders as "Planned". Storage and specimen sections sit between the dashboard and Setup.
+{% endcomment %}
+<ul class="vr-nav-list">
+  {% nav_item "dashboard" %}
+</ul>
+<div class="vr-nav-section">
+  <p class="vr-nav-heading" id="vr-nav-specimens">Specimens</p>
+  <ul class="vr-nav-list" aria-labelledby="vr-nav-specimens">
+    {% nav_item "specimens" %}
+    {% nav_item "specimen-disposals" %}
+    {% if "technician" in user_roles or "manager" in user_roles %}{% nav_item "specimen-imports" %}{% endif %}
+  </ul>
+</div>
+<div class="vr-nav-section">
+  <p class="vr-nav-heading" id="vr-nav-distribution">Distribution</p>
+  <ul class="vr-nav-list" aria-labelledby="vr-nav-distribution">
+    {% nav_item "distribution-requests" %}
+    {% nav_item "distribution-shipments" %}
+    {% nav_item "distribution-agreements" %}
+    {% nav_item "distribution-studies" %}
+    {% nav_item "distribution-consents" %}
+  </ul>
+</div>
+<div class="vr-nav-section">
+  <p class="vr-nav-heading" id="vr-nav-storage">Storage</p>
+  <ul class="vr-nav-list" aria-labelledby="vr-nav-storage">
+    {% nav_item "storage-overview" %}
+    {% nav_item "storage-units" %}
+    {% nav_item "storage-nodes" %}
+    {% nav_item "storage-boxes" %}
+    {% nav_item "storage-free" %}
+    {% nav_item "storage-sites" %}
+    {% nav_item "storage-rooms" %}
+  </ul>
+</div>
+<div class="vr-nav-section">
+  <p class="vr-nav-heading" id="vr-nav-equipment">Equipment</p>
+  <ul class="vr-nav-list" aria-labelledby="vr-nav-equipment">
+    {% nav_item "equipment" %}
+    {% nav_item "equipment-due" %}
+    {% nav_item "equipment-ln2" %}
+    {% nav_item "equipment-readings" %}
+    {% nav_item "equipment-excursions" %}
+  </ul>
+</div>
+<div class="vr-nav-section">
+  <p class="vr-nav-heading" id="vr-nav-setup">Setup</p>
+  <ul class="vr-nav-list" aria-labelledby="vr-nav-setup">
+    {% nav_item "storage-catalogues" %}
+    {% nav_item "specimen-catalogues" %}
+    {% nav_item "distribution-catalogues" %}
+    {% nav_item "record-retention" %}
+    {% if "admin" in user_roles %}{% nav_item "announcements" %}{% endif %}
+    {% if user.is_superuser %}{% nav_item "accounts-roles" %}{% endif %}
+  </ul>
+</div>

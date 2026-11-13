@@ -1,0 +1,51 @@
+{
+  "id": "equipment-reading-correct",
+  "routes": [
+    "equipment:reading-correct"
+  ],
+  "title": "Correct reading",
+  "purpose": "Replace the values of a temperature reading recorded wrongly, or withdraw it, keeping the original visible.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "The person who recorded the reading, and managers and administrators; anyone else is refused. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. A reading that was already corrected must be corrected through its newer version, and a withdrawn reading cannot be corrected.",
+        "The top shows the equipment, the reading, the limits recorded with it and who recorded it and when. The equipment cannot change. Imported readings can be corrected the same way and keep their import."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Entries are never edited or deleted. A correction adds a new entry that replaces the values of the old one, or withdraws it, and it always needs a reason; the original stays visible in the log marked Corrected and the new one is marked Correction (or Withdrawal). The limits recorded with the reading stay as they were; a corrected value is flagged against them."
+      ],
+      "items": [
+        {
+          "label": "Withdraw this reading",
+          "description": "Tick when it was recorded in error and should no longer count."
+        },
+        {
+          "label": "Reason for the correction",
+          "description": "Required, up to 4,000 characters. Do not enter donor, patient or participant names or other text that could identify a person."
+        },
+        {
+          "label": "Read at, Temperature, Probe position, Monitor, Note",
+          "description": "The same as Record reading, starting with the current values."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Submitting with no value changed is refused with Nothing to correct. A correction that would land on the same time and probe position as another effective reading is refused as a duplicate. Excursion pages and the readings list use the newer value from then on."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

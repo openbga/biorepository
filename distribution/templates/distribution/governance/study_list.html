@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load distribution %}
+{% comment %}Studies (List). Context: governance_views.grid_response for governance_lists.SPECS["study"] (page_obj rows annotated with current_links and consent_count).{% endcomment %}
+{% block page_intro %}<p class="vr-page-intro">Studies and the collections they govern: the consent basis that applies to each collection's specimens.</p>{% endblock %}
+{% block page_actions %}{% url 'distribution:study-create' as create_url %}{% include "distribution/governance/_list_actions.html" with create_label="New study" may_create=can_manage %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="studies-heading">
+  <h2 class="visually-hidden" id="studies-heading">Studies</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter studies" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.studies" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="distribution.studies" data-vr-grid-version="1" aria-labelledby="studies-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Study" asc="code" desc="-code" col="code" locked=True %}
+        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+        {% include "includes/sort_header.html" with label="Title" asc="title" desc="-title" col="title" %}
+        <th scope="col" data-vr-col="basis" data-vr-col-label="Consent basis">Consent basis</th>
+        <th scope="col" data-vr-col="pi" data-vr-col-label="Principal investigator">Principal investigator</th>
+        {% include "includes/sort_header.html" with label="Ethics approved until" asc="until" desc="-until" col="until" %}
+        <th scope="col" class="text-end" data-vr-col="collections" data-vr-col-label="Collections">Collections</th>
+        <th scope="col" class="text-end" data-vr-col="consents" data-vr-col-label="Consents">Consents</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:study-detail' row.pk %}">{{ row.code }}</a></th>
+          <td>{% distribution_status "study" row.status plain=True %}</td>
+          <td class="vr-wrap">{{ row.title }}</td>
+          <td>{{ row.get_consent_basis_display }}</td>
+          <td>{{ row.principal_investigator|default:"—" }}</td>
+          <td class="vr-nowrap">{% if row.ethics_approved_until %}<time datetime="{{ row.ethics_approved_until|date:'Y-m-d' }}">{{ row.ethics_approved_until|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="text-end vr-id">{{ row.current_links }}</td>
+          <td class="text-end vr-id">{% if row.consent_count %}<a href="{% url 'distribution:consent-list' %}?study={{ row.pk }}">{{ row.consent_count }}</a>{% else %}0{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% url 'distribution:study-create' as create_url %}
+  {% if can_manage %}{% include "storage/_list_states.html" with title_empty="No studies recorded" body_empty="Record a study, then link the collections it governs." create_url=create_url create_label="New study" %}{% else %}{% include "storage/_list_states.html" with title_empty="No studies recorded" body_empty="A repository manager records studies and the collections they govern." %}{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

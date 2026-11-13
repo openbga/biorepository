@@ -1,0 +1,133 @@
+{
+  "id": "distribution-request-list",
+  "routes": [
+    "distribution:request-list"
+  ],
+  "title": "Requests",
+  "purpose": "Find specimen requests from investigators and follow each one from draft through decision, allocation and shipment.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Each row is one specimen request, numbered RQ-000001 and up, newest first. Staff record requests as they arrive by email, letter, form or meeting; investigators do not sign in. A request moves from Draft to Awaiting decision, then Approved, Rejected or Returned for changes; an approved request is later Closed, and an unfinished one can be Cancelled. Requests are never deleted.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it and under More filters, and choose 25, 50 or 100 rows per page (25 by default). Active filters appear as chips you can remove one by one; Clear all removes them all. The sort and filters are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches the request number (RQ-000012, RQ12 or 12) or part of the title. The default sort is Request, newest first. Sortable columns are Request, Status, Title, Investigator, Needed by and Created."
+      ],
+      "items": [
+        {
+          "label": "Status",
+          "description": "Any status (the default), Open (not final: draft, awaiting decision, returned or approved), or one status."
+        },
+        {
+          "label": "Investigator",
+          "description": "One investigator from the distribution catalogues."
+        },
+        {
+          "label": "Institution",
+          "description": "One institution: the request takes its investigator's institution when it is created."
+        },
+        {
+          "label": "Specimen",
+          "description": "Under More filters. A specimen ID such as VP-000123 (case and outer spaces are ignored); lists the requests that ever allocated that specimen, whatever the allocation's state. The specimen record links here with this filter set."
+        },
+        {
+          "label": "Specimens to pick",
+          "description": "Under More filters. Requests with allocated specimens that are not yet picked. The dashboard queue \"Approved requests with specimens to pick\" links here with this filter and Status set to Approved."
+        },
+        {
+          "label": "Awaiting my decision",
+          "description": "Under More filters, only for people with the request decision permission. Requests awaiting a decision that you neither created nor submitted, so you may decide them."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Request",
+          "description": "The number; opens the request. Always shown."
+        },
+        {
+          "label": "Status",
+          "description": "Draft, Awaiting decision, Returned for changes, Approved, Rejected, Cancelled or Closed."
+        },
+        {
+          "label": "Title",
+          "description": "The request's title as recorded."
+        },
+        {
+          "label": "Investigator",
+          "description": "The requesting investigator's name and code."
+        },
+        {
+          "label": "Institution",
+          "description": "The institution the request is from."
+        },
+        {
+          "label": "Lines",
+          "description": "How many lines (kinds of material) the request has."
+        },
+        {
+          "label": "Allocated or picked (specimens)",
+          "description": "Specimens currently allocated to the request or picked from storage for it."
+        },
+        {
+          "label": "Shipped (specimens)",
+          "description": "Specimens of the request that have been dispatched."
+        },
+        {
+          "label": "Needed by",
+          "description": "The date the requester gave, if any."
+        },
+        {
+          "label": "Created",
+          "description": "When the request was recorded."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "New request",
+          "description": "Technicians, managers and administrators. Opens the form to record a request as it was received."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact amounts and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No specimen requests recorded",
+          "description": "None has been recorded yet. Technicians and above see a New request button."
+        },
+        {
+          "label": "Nothing matches these filters",
+          "description": "The search and filters exclude every request; change or clear them."
+        },
+        {
+          "label": "These filters cannot be applied",
+          "description": "A filter value is not valid; correct it. No rows are shown until every filter is valid."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_lists.py",
+    "distribution/exports.py",
+    "distribution/templates/distribution/requests/request_list.html"
+  ]
+}

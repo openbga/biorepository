@@ -1,0 +1,44 @@
+{
+  "id": "distribution-shipment-contents",
+  "routes": [
+    "distribution:shipment-contents"
+  ],
+  "title": "Change contents",
+  "purpose": "Choose which picked specimens of the request go in a draft shipment.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the shipment is a draft and the request has picked specimens not in another shipment. It opens in a wide dialog."
+      ]
+    },
+    {
+      "title": "The grid",
+      "paragraphs": [
+        "Each picked specimen of the request that is not in another shipment, with its line, type, amount and who holds it. Ticked ones are in this shipment; untick to take one out (it stays picked)."
+      ],
+      "items": [
+        {
+          "label": "Note",
+          "description": "Optional, kept in the timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Save contents records the specimens added and removed in the timeline. At most 200 specimens per shipment. Packing freezes the contents. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/shipments/contents.html",
+    "distribution/templates/distribution/requests/_grid_head.html",
+    "distribution/templates/distribution/requests/_grid_foot.html"
+  ]
+}

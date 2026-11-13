@@ -1,0 +1,53 @@
+{
+  "id": "specimens-hold-add",
+  "routes": [
+    "specimens:hold-add"
+  ],
+  "title": "Place hold",
+  "purpose": "Put a hold on a specimen to stop it being disposed of, to stop its use, or both.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "Any specimen that is not disposed can be held, including one already on hold and one that is distributed (outside the repository); holds stack and each is listed separately."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Kind of hold",
+          "description": "Required. Disposal hold blocks disposal only: a disposal cannot be requested, approved or recorded while it stands. Use hold blocks check-out, splitting, consumption, hand-over and dispatch in a shipment, but not disposal. All-use hold blocks both use and disposal."
+        },
+        {
+          "label": "Placed at",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Place hold adds the hold to the record, shown as a notice on the specimen. A hold never changes the amount or location. A hold placed here has no workflow reference. It stays until a repository manager (admin or manager) releases it; the release is recorded with who and why and the hold stays in the history. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again.",
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. The form starts at the current time."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

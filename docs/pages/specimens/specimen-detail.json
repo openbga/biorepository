@@ -1,0 +1,168 @@
+{
+  "id": "specimens-specimen-detail",
+  "routes": [
+    "specimens:specimen-detail"
+  ],
+  "title": "Specimen record",
+  "purpose": "See everything recorded about one specimen: what it is, how much is left, where it is (or that it was distributed outside the repository), who has it, its holds, disposal requests, custody and thaw records, and the full history. Start actions on it from here.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "All roles can read the record. Buttons appear only for roles that may use them: admin, manager and technician record work on the specimen; admin and manager also correct and adjust; a viewer sees no work buttons. A hidden or disabled button is never the only protection: every action is checked again on the server when it is submitted."
+      ]
+    },
+    {
+      "title": "Header and alerts",
+      "paragraphs": [
+        "The header shows the specimen ID with its status, type, amount on hand, location and custodian. Coloured notices above the facts call out what needs attention: a disposed specimen (the record is final and its history is kept); a distributed specimen, with when it was dispatched and where to; each active hold with its kind, what it blocks, who placed it, when and why, and the reference of the workflow that placed it; a check-out in progress with its destination and the running time out of storage; a returned specimen still in hand (“Returned, in hand of …”, with where it came back from), which is stored with Record check-in; and an open disposal request with a link to it.",
+        "Print label opens the label preview for this specimen and is available to every role. Request disposal, the primary button and the More menu are the work actions; an action that is blocked right now stays visible but disabled with the reason beside it (for example “An active disposal hold blocks disposal. A repository manager can release it.”, or “Distributed: it is outside the repository until its return is recorded.”). Actions that no role you hold could use are left out."
+      ]
+    },
+    {
+      "title": "Actions in the header",
+      "paragraphs": [
+        "Each action opens its own form, described on that form's help page. What the specimen's state allows decides which is the primary button."
+      ],
+      "items": [
+        {
+          "label": "Place in storage",
+          "description": "Primary button for an available specimen that has never been stored."
+        },
+        {
+          "label": "Record check-out",
+          "description": "Primary button while it is in a storage position. Disabled while a use hold or an all-use hold is active."
+        },
+        {
+          "label": "Record check-in",
+          "description": "Primary button while it is checked out, and after a return from outside the repository until it is stored."
+        },
+        {
+          "label": "Request disposal",
+          "description": "Starts the two-person disposal process. Disabled while a disposal hold or an all-use hold is active (a use hold does not block it), while another disposal request is open, and while the specimen is distributed."
+        },
+        {
+          "label": "Make aliquots or derivatives",
+          "description": "In More. Needs material on hand, no use hold or all-use hold, and the specimen in hand (checked out, returned and not yet stored, or never stored); disabled with a reason otherwise."
+        },
+        {
+          "label": "Record custody transfer",
+          "description": "In More. Hands responsibility to another person. Blocked by a use hold or an all-use hold."
+        },
+        {
+          "label": "Record consumption",
+          "description": "In More. Uses up some of the amount; same availability as aliquots."
+        },
+        {
+          "label": "Record observed thaw",
+          "description": "In More. Adds an observed thaw to the thaw records."
+        },
+        {
+          "label": "Place hold",
+          "description": "In More. Puts a disposal hold, a use hold or an all-use hold on the specimen. Also available while it is distributed."
+        },
+        {
+          "label": "Relocate",
+          "description": "In More. Moves it between storage positions; disabled when it is not in a position."
+        },
+        {
+          "label": "Correct specimen",
+          "description": "In More, admin and manager only. Corrects registration details with a reason; also the only action left on a disposed specimen, and available while it is distributed."
+        },
+        {
+          "label": "Adjust amount",
+          "description": "In More, admin and manager only. Adds a signed adjustment entry to the amount ledger with a reason."
+        }
+      ]
+    },
+    {
+      "title": "Specimen facts",
+      "paragraphs": [
+        "A distributed specimen was sent out of the repository in a shipment. Until its return is recorded (by the distribution workflow) it has no amount on hand, no position and no custodian, and every physical action (place, relocate, check-out, check-in, transfer, aliquots, consumption, adjustment, reversal, observed thaw and disposal) shows disabled with the reason. Holds, record corrections and corrections of custody and thaw records remain possible. After the return the specimen is in hand of the staff member who received it, like a check-out, until Record check-in stores it.",
+        "Amount on hand is the balance of the amount ledger; it changes only when a ledger entry is added, never by editing the number. Amounts are exact decimals with their unit, and the Initial amount is the first ledger entry.",
+        "Participant is a code only. Derived from links an aliquot or derivative to its parent and says which kind it is; primary specimens show their kind (Primary) and no parent. Processing shows the start and, when recorded, the finish of processing.",
+        "Time out of storage is computed from the custody events: the sum of every period in hand outside storage, from each check-out or return to its check-in (or to dispatch or disposal), and the period still open is counted up to now and marked running. Time away lists each period from dispatch to return (running while it is still away) with where it was sent; that time was outside the repository's custody and is not counted in time out of storage. It is never typed in. Registration to first storage appears when it applies and counts how long the specimen waited for its first placement, running while it is not yet stored.",
+        "Thaws counts observed thaws and the thaws a recipient reported for time away. A check-out is not counted as a thaw. When a recipient did not report thaws, it adds “unknown while away” with the dates of that period. If the thaw history before registration is unknown it says “Unknown before registration” and how many thaws were recorded here (including those inherited from parents); the unknown part is never guessed or counted as zero.",
+        "Temperature excursions links to the equipment excursion list filtered to this specimen ID: the excursions that recorded it as affected. An excursion records the specimens stored in its storage unit when it is closed, so an open excursion is not listed yet.",
+        "Distribution appears when the distribution module is installed: links to the distribution requests and the shipments that include this specimen, and, when the specimen has a participant, to that participant's consent records."
+      ],
+      "items": [
+        {
+          "label": "Status",
+          "description": "Available, Exhausted, Disposed or Distributed, with On hold when a hold is active."
+        },
+        {
+          "label": "Specimen type, Container",
+          "description": "Catalogue entries with their codes."
+        },
+        {
+          "label": "Collected",
+          "description": "When the specimen was collected, in repository time."
+        },
+        {
+          "label": "Registered",
+          "description": "When and by whom it was registered."
+        },
+        {
+          "label": "Custodian",
+          "description": "The person currently responsible for it; Outside the repository while it is distributed."
+        },
+        {
+          "label": "Location",
+          "description": "Full storage path; Checked out, Returned, in hand, Not in storage, Disposed, or Distributed: outside the repository (with where it was sent)."
+        }
+      ]
+    },
+    {
+      "title": "Sections",
+      "items": [
+        {
+          "label": "Aliquots and derivatives",
+          "description": "Specimens made from this one, each with its own ID, kind, type, amount and status; open one from its ID."
+        },
+        {
+          "label": "Amount ledger",
+          "description": "Every change to the amount, oldest first: the entry kind (Initial amount, Consumed, Used for aliquots or derivatives, Adjusted, Reversal, Disposed, Distributed, Returned), the change, the balance after it, the amount as it was entered, when, by whom and why. Entries are never edited. A Consumed or Adjusted entry that has not been reversed shows Reverse for admin and manager; a reversal adds a new entry that cancels it and marks the old one Reversed."
+        },
+        {
+          "label": "Holds",
+          "description": "Each hold with its kind, when it was placed, by whom, why and whether it was released. A disposal hold blocks disposal; a use hold blocks check-out, splitting, consumption, hand-over and dispatch but not disposal; an all-use hold blocks both. A hold placed by another workflow shows its reference (“For …”) and “Released through its workflow” instead of Release. Release is for admin and manager on manual holds; releasing records who and why and the hold stays listed."
+        },
+        {
+          "label": "Disposal requests",
+          "description": "Every request for this specimen with its state, method, destination, requester and decider; open one for its detail."
+        },
+        {
+          "label": "Custody events",
+          "description": "Registration, placement, relocation, check-out, check-in, transfer, dispatch, return, disposal and corrections, oldest first, with when, who had it, destination and the position recorded at the time. A dispatch reads from the person who had it to Outside the repository, with where it was sent; a return reads from Outside the repository to the person who received it, with Returned from and where it came back from. Events are never edited; admin and manager can add a correction, and the corrected event is marked Corrected."
+        },
+        {
+          "label": "Thaw records",
+          "description": "Thaw history at registration, observed thaws and thaws while away (reported by the recipient with a return) with counts (Unknown where the count was not known or reported) and the reason. Admin and manager can correct a record on a specimen that is not disposed; the original stays and is marked Corrected."
+        },
+        {
+          "label": "History",
+          "description": "Every recorded change to this specimen, newest at the bottom of the list, with who made it, when, why and what changed."
+        }
+      ]
+    },
+    {
+      "title": "Rules to know",
+      "paragraphs": [
+        "Records are not deleted. A status change or correction always carries a reason, and corrections add a record beside the original. A disposed specimen keeps its record, ledger and history; no further work can be recorded on it except a manager's correction.",
+        "Nobody can approve their own disposal request, and disposal and all-use holds block disposal until they are released. A hold placed by another workflow is released only through that workflow."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/specimen_detail.html",
+    "specimens/templatetags/specimens.py",
+    "specimens/tests/test_views_records.py",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

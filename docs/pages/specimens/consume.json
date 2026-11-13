@@ -1,0 +1,53 @@
+{
+  "id": "specimens-consume",
+  "routes": [
+    "specimens:consume"
+  ],
+  "title": "Record consumption",
+  "purpose": "Record that part of a specimen's amount was used up.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is available only when something is left on hand, there is no use hold or all-use hold (a disposal hold does not block it), and the specimen is in hand: checked out, returned and not yet stored, or never stored. A stored specimen must be checked out first. A distributed specimen (sent out of the repository in a shipment) is refused until its return is recorded."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Amount used",
+          "description": "Required. An exact decimal in the specimen's own unit (shown beside the box), for example 0.25, typed as text and kept exactly as typed. It must be above zero, suit the unit and not exceed the amount on hand."
+        },
+        {
+          "label": "Used at",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Record consumption adds a Consumed entry to the amount ledger and lowers the amount on hand; the amount is never edited directly. When nothing is left the specimen becomes Exhausted. A manager can reverse a consumption from the record. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again.",
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. The form starts at the current time."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

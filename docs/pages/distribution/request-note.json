@@ -1,0 +1,39 @@
+{
+  "id": "distribution-request-note",
+  "routes": [
+    "distribution:request-note"
+  ],
+  "title": "Add note",
+  "purpose": "Add a note to a request's timeline at any stage.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, in any status. Notes never change the request and cannot be edited or deleted. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Note",
+          "description": "Required, up to 4,000 characters. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Add note adds the note to the timeline with your name and the time and returns to the timeline."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "id": "equipment-excursion-detail",
+  "routes": [
+    "equipment:excursion-detail"
+  ],
+  "title": "Temperature excursion",
+  "purpose": "Review one excursion: its facts, the specimens that were in the unit, the readings, the timeline and its history, and take the next step in its review.",
+  "sections": [
+    {
+      "title": "Life of an excursion",
+      "paragraphs": [
+        "Open: the details are being completed. A technician submits it for review once it has an end time, a cause, an action taken and an impact assessment. Awaiting review: a manager or administrator either returns it for more work with a note (back to Open) or closes it. The person who submitted it cannot close it; another manager or administrator must. Closed: it can be reopened by a manager or administrator with a reason. Notes and attachments can be added in any state. Vapor Phase records the review; it does not decide the outcome or tell you what to do about the specimens. Holds on affected specimens are placed from the specimen records."
+      ]
+    },
+    {
+      "title": "Excursion",
+      "items": [
+        {
+          "label": "Period",
+          "description": "Start and end, or ongoing."
+        },
+        {
+          "label": "Extreme reached",
+          "description": "The extreme in °C and when, or Not recorded."
+        },
+        {
+          "label": "Limits in force",
+          "description": "The limits your repository had set on the equipment when the excursion was opened, kept as they were."
+        },
+        {
+          "label": "Equipment, Storage unit",
+          "description": "Both link to their records."
+        },
+        {
+          "label": "Detected by, Cause category, Cause, Action taken, Impact assessment",
+          "description": "As entered; Not yet described where empty."
+        },
+        {
+          "label": "Opened",
+          "description": "Who opened it and when."
+        }
+      ]
+    },
+    {
+      "title": "Specimens in the unit during the excursion",
+      "paragraphs": [
+        "While the excursion is Open or Awaiting review the list is computed each time the page opens from recorded storage movements (placements, check-outs, check-ins, and box and rack moves) between the start and the end, or now when it is ongoing. It reflects the movements recorded so far, so a movement recorded later with an earlier time can change it. When the excursion is closed the list is captured with the closing entry and stays fixed, with who captured it and when. Reopening keeps that capture on the record, and closing again captures a new list. If the equipment had no storage unit when the excursion was opened, no specimens are listed.",
+        "Each row shows the specimen ID (opens the specimen), the time it was first present, the last time it was present within the period, and its recorded location. Use the rows-per-page control for 25, 50 or 100."
+      ]
+    },
+    {
+      "title": "Readings during the excursion",
+      "paragraphs": [
+        "Effective readings of the equipment from the start to the end (or now), up to the first 200, with the limits recorded with each. Readings of these days opens the readings list for the equipment and dates."
+      ]
+    },
+    {
+      "title": "Timeline",
+      "paragraphs": [
+        "Every step, oldest first: Opened, Details updated (each value before and after), Submitted for review, Returned for more work, Reviewed and closed (with how many specimens were captured), Reopened, and notes, each with who, when, the note and any attached file."
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 audit events for this record, shown oldest to newest."
+      ]
+    },
+    {
+      "title": "Actions",
+      "paragraphs": [
+        "Which buttons appear depends on the state and your role. Attachments are downloaded as files, available to everyone who can read the page."
+      ],
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Open excursions; technicians, managers and administrators."
+        },
+        {
+          "label": "Submit for review",
+          "description": "Open excursions; technicians, managers and administrators."
+        },
+        {
+          "label": "Review excursion",
+          "description": "Awaiting review; managers and administrators. If you submitted it, you are told you can only return it."
+        },
+        {
+          "label": "Reopen excursion",
+          "description": "Closed; managers and administrators."
+        },
+        {
+          "label": "Add note",
+          "description": "Any state; technicians, managers and administrators."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/queries.py",
+    "equipment/occupancy.py",
+    "equipment/models.py",
+    "equipment/templates/equipment/excursion_detail.html",
+    "equipment/templates/equipment/_event_extra.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

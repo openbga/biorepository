@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load distribution specimens %}
+{% comment %}
+Entry grid: allocate specimens to one line of an approved request. Candidates are the available
+specimens of the line's type (and study) from queries.candidates, one page at a time; a blocked
+candidate's checkbox is disabled with its recorded reasons beside it. Each checkbox carries the
+specimen's revision as read for this page (value "id:revision"); the service rechecks it, every
+blocker and the line's count under lock. The search form above the grid is a GET form; changing
+it or the page drops ticks not yet saved. Context (request_views.allocate): form (AllocateForm),
+request_obj, line, taken, remaining, candidates [{specimen, value, blockers, path, remaining
+(same-type specimens available for the participant), restrictions, study, below_minimum, chosen,
+errors}], unlisted_blockers, page_obj (Paginator over the candidate count), filters, blocked,
+submit_label, back_url, crumbs, facts.
+{% endcomment %}
+{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block content %}
+<form class="vr-form vr-form-wide mb-3" method="get" role="search" aria-label="Find candidates">
+  <fieldset class="vr-form-section">
+    <legend>Find specimens</legend>
+    <div class="row g-3">
+      <div class="col-md"><div class="vr-field"><label class="form-label" for="cand-q">Specimen ID contains</label><input class="form-control" type="search" id="cand-q" name="q" value="{{ filters.q|default:'' }}" maxlength="40"></div></div>
+      <div class="col-md"><div class="vr-field"><label class="form-label" for="cand-participant">Participant code</label><input class="form-control" type="search" id="cand-participant" name="participant" value="{{ filters.participant|default:'' }}" maxlength="40"></div></div>
+      <div class="col-md"><div class="vr-field"><label class="form-label" for="cand-collection">Collection code</label><input class="form-control" type="search" id="cand-collection" name="collection" value="{{ filters.collection|default:'' }}" maxlength="40"></div></div>
+    </div>
+    <div class="vr-filter-actions"><button class="btn btn-outline-secondary" type="submit">Apply</button>{% if filters %}<a class="btn btn-link" href="{{ request.path }}">Clear all</a>{% endif %}</div>
+  </fieldset>
+</form>
+<form class="vr-form vr-form-wide" method="post" novalidate>
+  {% csrf_token %}
+  {% include "distribution/requests/_grid_head.html" with note="Allocation reserves the specimen, not its position: it stays where it is, cannot be disposed of meanwhile, and is checked again when picked." %}
+  {% if unlisted_blockers %}<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Refused" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for accession, labels in unlisted_blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul></div>{% endif %}
+  <fieldset class="vr-form-section">
+    <legend>Candidates</legend>
+    <p class="vr-form-note">Available specimens of {{ line.specimen_type }}{% if line.study %} in study {{ line.study.code }}{% endif %}. Tick up to {{ remaining }}. Same type left counts the participant's available specimens of this type, this one included: allocating the last ones depletes the participant's material.</p>
+    {% if candidates %}
+    <div class="vr-table-wrap">
+      <table class="table vr-table" id="candidates-grid">
+        <thead><tr>
+          <th scope="col"><span class="visually-hidden">Choose</span></th>
+          <th scope="col">Specimen</th>
+          <th scope="col">Participant</th>
+          <th scope="col">Study</th>
+          <th scope="col" class="text-end">Amount</th>
+          <th scope="col">Location</th>
+          <th scope="col" class="text-end">Same type left (specimens)</th>
+          <th scope="col">Consent restrictions</th>
+          <th scope="col">Cannot be allocated</th>
+        </tr></thead>
+        <tbody>
+          {% for c in candidates %}
+          <tr{% if c.errors %} class="table-danger"{% endif %}>
+            <td><input class="form-check-input" type="checkbox" name="specimen" value="{{ c.value }}" id="choose-{{ forloop.counter }}"{% if c.chosen %} checked{% endif %}{% if c.blockers or blocked %} disabled aria-describedby="why-{{ forloop.counter }}"{% endif %}><label class="visually-hidden" for="choose-{{ forloop.counter }}">Allocate {{ c.specimen.accession }}</label></td>
+            <th scope="row"><a class="vr-id" href="{% url 'specimens:specimen-detail' c.specimen.pk %}">{{ c.specimen.accession }}</a></th>
+            <td class="vr-id">{{ c.specimen.participant.code|default:"—" }}</td>
+            <td class="vr-id">{{ c.study.code|default:"—" }}</td>
+            <td class="text-end vr-id">{{ c.specimen.quantity_on_hand|amount:c.specimen.unit }}{% if c.below_minimum %}<span class="d-block small">{% include "includes/status.html" with label="Below the minimum" tone="warning" plain=True %}</span>{% endif %}</td>
+            <td class="vr-id">{{ c.path|default:"Not in storage" }}</td>
+            <td class="text-end vr-id">{{ c.remaining }}{% if c.remaining <= 1 and c.specimen.participant %}<span class="d-block small">{% include "includes/status.html" with label="Last one" tone="warning" plain=True %}</span>{% endif %}</td>
+            <td class="vr-wrap small">{{ c.restrictions|default:"—" }}</td>
+            <td id="why-{{ forloop.counter }}">{% for b in c.blockers %}{% blocker_status b %}<span class="d-block small">{{ b.message }}</span>{% endfor %}{% for label in c.errors %}<span class="d-block small">Refused: {{ label }}</span>{% endfor %}{% if not c.blockers and not c.errors %}<span class="vr-muted">—</span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "includes/pagination.html" with page_obj=page_obj noun="candidates" %}
+    {% else %}
+    {% if filters %}{% include "includes/empty_state.html" with kind="no-results" title="No candidates match" body="Change or clear the search." clear_url=request.path %}{% else %}{% include "includes/empty_state.html" with title="No available specimens of this type" body="Only available specimens of the line's type, in the studies the line or request names, are offered." %}{% endif %}
+    {% endif %}
+  </fieldset>
+  {% include "distribution/requests/_grid_foot.html" %}
+</form>
+{% endblock %}

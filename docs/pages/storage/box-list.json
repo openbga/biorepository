@@ -1,0 +1,122 @@
+{
+  "id": "storage-box-list",
+  "routes": [
+    "storage:box-list"
+  ],
+  "title": "Boxes",
+  "purpose": "Find boxes, see where each stands and how many of its positions are free.",
+  "sections": [
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the box code or name, ignoring capitals.",
+        "Without a status filter only active boxes are listed.",
+        "Click a sortable column heading to sort by it; click again to reverse. Ties keep a stable order. Choose 25, 50 or 100 rows per page; the default is 25."
+      ],
+      "items": [
+        {
+          "label": "Storage unit",
+          "description": "Limit to one unit."
+        },
+        {
+          "label": "Rack or shelf",
+          "description": "Limit to a rack or shelf and everything inside it."
+        },
+        {
+          "label": "Free positions",
+          "description": "Any, Has free positions, or No free positions."
+        },
+        {
+          "label": "Container type",
+          "description": "The box grid, by code and version."
+        },
+        {
+          "label": "Site, Room",
+          "description": "Limit by where the unit stands."
+        },
+        {
+          "label": "Status",
+          "description": "Active (the default), Retired, or Active and retired."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Immutable box code; opens the box. Always shown."
+        },
+        {
+          "label": "Name",
+          "description": "Optional name; the code by default. Hidden until chosen in the column menu."
+        },
+        {
+          "label": "Storage unit",
+          "description": "The unit it stands in."
+        },
+        {
+          "label": "Rack or shelf",
+          "description": "Path to the node holding it. Sortable by location."
+        },
+        {
+          "label": "Slot",
+          "description": "Its box slot in that node."
+        },
+        {
+          "label": "Container type",
+          "description": "Grid code and version. Sortable."
+        },
+        {
+          "label": "Positions, Occupied, Free",
+          "description": "Counts for this box. Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it."
+        },
+        {
+          "label": "Status",
+          "description": "Active, or Retired once the record has been retired."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file. Any role that can read this list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe, and numbers are exact decimals. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+        },
+        {
+          "label": "New box",
+          "description": "Opens the create form. Shown only to the admin and manager roles."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No records yet",
+          "description": "Shown when nothing has been defined. Users who may create records see the create button in the message."
+        },
+        {
+          "label": "Nothing matches these filters",
+          "description": "The search or filters exclude every row. Change or clear them."
+        },
+        {
+          "label": "These filters cannot be applied",
+          "description": "A filter value was not valid. The list shows no rows rather than all rows; correct the highlighted filter."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/exports.py",
+    "storage/templates/storage/box_list.html",
+    "storage/templates/storage/_list_actions.html",
+    "storage/templates/storage/_list_states.html",
+    "storage/tests/test_views.py"
+  ]
+}

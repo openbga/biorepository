@@ -1,0 +1,48 @@
+<!doctype html>
+{% comment %}
+Pick list PDF for WeasyPrint (distribution/documents.py render_pick_list): one request's allocated
+specimens in walking order, with a sign-off block for the picker and checker. A printout, not a
+record: each pick is recorded in the application. The stylesheet (distribution/documents.css)
+is passed by the renderer, so this document links nothing. Context: request_obj, rows
+(queries.PickRow: allocation, specimen, path, restrictions, blockers), blocked_count,
+repository_name, generated_at.
+{% endcomment %}
+{% load specimens %}
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pick list {{ request_obj.number }}</title>
+</head>
+<body>
+<h1>Pick list {{ request_obj.number }}</h1>
+<p class="sub">{{ repository_name }} · {{ request_obj.title }} · {{ rows|length }} specimen{{ rows|length|pluralize }} allocated, in walking order</p>
+{% if blocked_count %}<p class="notice">{{ blocked_count }} specimen{{ blocked_count|pluralize }} cannot be picked now; the reasons are listed on the row. Picking checks every specimen again.</p>{% endif %}
+<table>
+  <thead><tr><th class="check">Got</th><th>#</th><th>Specimen ID</th><th>Type</th><th class="num">Amount</th><th>Location</th><th>Notes</th></tr></thead>
+  <tbody>
+  {% for row in rows %}
+  <tr>
+    <td class="check"><span class="box"></span></td>
+    <td class="num">{{ forloop.counter }}</td>
+    <td class="id">{{ row.specimen.accession }}</td>
+    <td>{{ row.specimen.specimen_type.code }}</td>
+    <td class="num">{{ row.specimen.quantity_on_hand|amount:row.specimen.unit }}</td>
+    <td class="mono">{% if row.path %}{{ row.path.display }}{% else %}Not in storage{% endif %}</td>
+    <td class="small">{% if row.restrictions %}Consent restrictions: {{ row.restrictions }}{% endif %}{% for blocker in row.blockers %}<div>Cannot pick: {{ blocker.message }}</div>{% endfor %}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="7">No specimens are allocated and waiting to be picked.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h2>Sign-off</h2>
+<table class="handwrite">
+  <tbody>
+  <tr><th>Picked by</th><td></td></tr>
+  <tr><th>Checked by</th><td></td></tr>
+  <tr><th>Date and time</th><td></td></tr>
+  </tbody>
+</table>
+<p class="foot">Generated {{ generated_at|date:"Y-m-d H:i T" }}. Locations are as recorded when the list was generated; record each pick in the application, which checks the specimens again.</p>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{
+  "id": "distribution-agreement-document",
+  "routes": [
+    "distribution:agreement-document"
+  ],
+  "title": "Add document",
+  "purpose": "Attach a document to an agreement: the executed copy, an amendment, a draft or correspondence.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Kind",
+          "description": "Executed agreement, Amendment, Draft, Correspondence or Other. An attached executed copy lets the agreement be executed without a filing reference."
+        },
+        {
+          "label": "Title",
+          "description": "Required."
+        },
+        {
+          "label": "File",
+          "description": "Required. PDF, PNG, JPEG, TXT or CSV up to 10 MiB, checked by its content; downloaded only as a file. Do not upload consent forms, signatures or any document that identifies a participant."
+        },
+        {
+          "label": "Supersedes",
+          "description": "Optional earlier document of this agreement that this one replaces; both stay listed."
+        },
+        {
+          "label": "Note",
+          "description": "Optional. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "Documents cannot be edited or removed; add a newer one that supersedes it. Signed agreements carry institution officials' names; that is professional data. Uploads are kept as data and never displayed in the page."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html",
+    "core/attachments.py"
+  ]
+}

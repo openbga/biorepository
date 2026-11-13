@@ -1,0 +1,79 @@
+{
+  "id": "admin-repository-form",
+  "routes": [
+    "admin:core_repository_change"
+  ],
+  "title": "Repository retention statement",
+  "purpose": "Record or clear the repository’s own electronic record-retention statement with a reason.",
+  "sections": [
+    {
+      "title": "Access and fields",
+      "paragraphs": [
+        "Requires an active staff superuser with the admin role."
+      ],
+      "items": [
+        {
+          "label": "Name",
+          "description": "Read-only configured repository name."
+        },
+        {
+          "label": "Timezone",
+          "description": "Read-only recorded setup timezone. Dates are parsed and shown using deployment TIME_ZONE, not an editable override here."
+        },
+        {
+          "label": "Record retention statement",
+          "description": "Optional maximum 8000-character statement; whitespace is trimmed. Blank clears it to Not recorded. It configures no automatic electronic deletion or physical specimen disposal schedule."
+        },
+        {
+          "label": "Reason",
+          "description": "Required nonblank explanation, maximum 2000 characters; retained with actor and before/after evidence."
+        },
+        {
+          "label": "Revision check",
+          "description": "Hidden expected revision, prefilled from the opened record. The current record is locked and rechecked; a stale save requires reloading and reviewing the new statement."
+        }
+      ]
+    },
+    {
+      "title": "Saving rules",
+      "paragraphs": [
+        "The statement must actually change after trimming. Statement, incremented revision and attributed retention audit event commit together. Validation failures keep the form open. Repository name and timezone cannot be edited here, and repository creation and deletion are unavailable. Physical specimen retention is a separate matter."
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Save",
+          "description": "Saves a valid changed statement and returns to the repository list."
+        },
+        {
+          "label": "Save and continue editing",
+          "description": "Saves and reopens the repository form with its new revision."
+        },
+        {
+          "label": "History",
+          "description": "Opens the separate Django administration log; the full retention reason and before/after statement are in the audit event."
+        },
+        {
+          "label": "Save and add another / Delete",
+          "description": "Not offered: adding and deleting repositories are disabled."
+        },
+        {
+          "label": "Home / Core / Repositories / View site",
+          "description": "Breadcrumbs return through maintenance; View site returns to the operational application."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "accounts/admin.py",
+    "accounts/models.py",
+    "accounts/roles.py",
+    "core/admin.py",
+    "config/settings.py",
+    "uv.lock",
+    "core/models.py",
+    "core/retention.py"
+  ]
+}

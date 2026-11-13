@@ -1,0 +1,114 @@
+{
+  "id": "equipment-excursion-list",
+  "routes": [
+    "equipment:excursion-list"
+  ],
+  "title": "Temperature excursions",
+  "purpose": "Track the times a tank or freezer went outside the limits your repository set, from first record through review and closure.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Each row is one excursion (numbered EX-000001 and up). An excursion is recorded by people; nothing opens one automatically when a reading is outside the limits. It moves from Open to Awaiting review to Closed, and a closed one can be reopened. Excursions are never deleted.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches the excursion number (EX-000012, EX12 or 12) or part of the asset ID or equipment name. The default sort is Started, newest first. Sortable columns are Excursion, Status, Equipment, Started, Ended and Extreme (°C)."
+      ],
+      "items": [
+        {
+          "label": "Status",
+          "description": "Any status (the default), Open or awaiting review, Open, Awaiting review or Closed."
+        },
+        {
+          "label": "Equipment",
+          "description": "One piece of equipment."
+        },
+        {
+          "label": "Cause",
+          "description": "Any cause, or one cause category."
+        },
+        {
+          "label": "Awaiting my review",
+          "description": "Under the More control, for managers and administrators only. Excursions awaiting review that somebody else submitted, which you can close."
+        },
+        {
+          "label": "Affected specimen",
+          "description": "Under the More control. A specimen ID; lists closed excursions whose captured specimen list includes it. Open excursions are not searched because their list is computed on their own page."
+        },
+        {
+          "label": "From, To",
+          "description": "Under the More control. Excursions that started on or after the first date and on or before the second."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Excursion",
+          "description": "The number; opens the excursion. Always shown."
+        },
+        {
+          "label": "Status",
+          "description": "Open, Awaiting review or Closed."
+        },
+        {
+          "label": "Equipment",
+          "description": "Opens the equipment record."
+        },
+        {
+          "label": "Storage unit",
+          "description": "The unit the equipment enclosed when the excursion was opened."
+        },
+        {
+          "label": "Started, Ended",
+          "description": "Times; Ongoing while there is no end time."
+        },
+        {
+          "label": "Extreme (°C)",
+          "description": "The extreme temperature recorded, if any."
+        },
+        {
+          "label": "Cause",
+          "description": "The cause category."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "New excursion",
+          "description": "Technicians, managers and administrators. Opens the form."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact decimal values and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No temperature excursions recorded",
+          "description": "None has been recorded. Technicians and above see a New excursion button."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/lists.py",
+    "equipment/queries.py",
+    "equipment/exports.py",
+    "equipment/templates/equipment/excursion_list.html"
+  ]
+}

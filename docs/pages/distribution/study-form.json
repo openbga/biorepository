@@ -1,0 +1,70 @@
+{
+  "id": "distribution-study-form",
+  "routes": [
+    "distribution:study-create",
+    "distribution:study-edit"
+  ],
+  "title": "New study or Edit study",
+  "purpose": "Record a study or change its recorded approval, consent basis and status.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Required. Letters, digits, '.', '_' or '-', stored in capitals, unique. Fixed once the study has consent forms, collections or consents (shown read-only with that reason)."
+        },
+        {
+          "label": "Status",
+          "description": "Active, Suspended or Closed. Suspending or closing blocks distribution of the study's material; allocations already picked stay, and the gate blocks packing and dispatch."
+        },
+        {
+          "label": "Title",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Description",
+          "description": "Optional. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Principal investigator",
+          "description": "Optional professional name."
+        },
+        {
+          "label": "Ethics reference, Ethics approved until",
+          "description": "Optional. The date is shown on the study and never enforced."
+        },
+        {
+          "label": "Consent basis",
+          "description": "Consent records or Study-level determination."
+        },
+        {
+          "label": "Determination reference",
+          "description": "Required for a study-level determination: the committee's letter or reference."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only; required and kept in the history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "After saving you are taken to the study. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first.",
+        "The study records what its ethics approval says; the software does not judge it."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

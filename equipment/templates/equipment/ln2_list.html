@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load equipment %}
+{% comment %}Effective LN2 level checks and fills, with the change since the vessel's previous entry (derived, not stored). Entries have no page of their own: the time is plain text, and Correct is the row action for the person who recorded the entry and for managers. Context: equipment.views.grid_response for lists.SPECS["ln2"].{% endcomment %}
+{% block page_actions %}{% include "equipment/_list_actions.html" with create_label="Record LN2 entry" may_create=can_operate %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="ln2-heading">
+  <h2 class="visually-hidden" id="ln2-heading">LN2 log</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter the LN2 log" q=q placeholder="Asset ID or reference" inline=inline more=more more_open=more_open grid="equipment.ln2" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="equipment.ln2" data-vr-grid-version="1" aria-labelledby="ln2-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="When" asc="when" desc="-when" first="desc" col="when" locked=True %}
+        {% include "includes/sort_header.html" with label="Vessel" asc="equipment" desc="-equipment" col="equipment" %}
+        {% include "includes/sort_header.html" with label="Entry" asc="kind" desc="-kind" col="kind" %}
+        <th scope="col" class="text-end" data-vr-col="before" data-vr-col-label="Level before">Level before</th>
+        <th scope="col" class="text-end" data-vr-col="level" data-vr-col-label="Level">Level</th>
+        <th scope="col" class="text-end" data-vr-col="change" data-vr-col-label="Change since previous">Change since previous</th>
+        <th scope="col" class="text-end" data-vr-col="amount" data-vr-col-label="Amount added">Amount added</th>
+        <th scope="col" data-vr-col="supply" data-vr-col-label="Supply dewar">Supply dewar</th>
+        <th scope="col" data-vr-col="method" data-vr-col-label="Method">Method</th>
+        <th scope="col" data-vr-col="by" data-vr-col-label="Recorded by">Recorded by</th>
+        {% if can_operate %}<th scope="col" data-vr-col="actions" data-vr-col-locked data-vr-col-label="Actions"><span class="visually-hidden">Actions</span></th>{% endif %}
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row" class="vr-nowrap"><time datetime="{{ row.occurred_at|date:'c' }}">{{ row.occurred_at|date:"Y-m-d H:i" }}</time>{% if row.corrects_id %} <span class="vr-muted small">corrected</span>{% endif %}</th>
+          <td><a class="vr-id" href="{% url 'equipment:equipment-detail' row.equipment_id %}">{{ row.equipment.code }}</a></td>
+          <td>{{ row.get_kind_display }}</td>
+          <td class="text-end vr-id vr-nowrap">{% if row.level_before is not None %}{{ row.level_before }} {{ row.level_unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="text-end vr-id vr-nowrap">{% if row.level is not None %}{{ row.level }} {{ row.level_unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="text-end vr-id vr-nowrap">{% with change=row|level_change %}{% if change is not None %}{{ change|signed }} {{ row.level_unit }}{% else %}<span class="vr-muted">—</span>{% endif %}{% endwith %}</td>
+          <td class="text-end vr-id vr-nowrap">{% if row.amount_added is not None %}{{ row.amount_added }} {{ row.amount_unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td>{% if row.supply %}<a class="vr-id" href="{% url 'equipment:equipment-detail' row.supply_id %}">{{ row.supply.code }}</a>{% else %}<span class="vr-muted">{{ row.performed_by_external|default:"—" }}</span>{% endif %}</td>
+          <td>{{ row.get_method_display|default:"—" }}</td>
+          <td>{{ row.recorded_by|person }}</td>
+          {% if can_operate %}<td>{% if can_manage or row.recorded_by_id == user.pk %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:ln2-correct' row.pk %}">Correct</a>{% endif %}</td>{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No LN2 entries yet" body_empty="Record each level check and fill of an LN2 tank or supply dewar. The change since the previous entry is worked out from the levels." create_url=create_url create_label="Record LN2 entry" %}{% else %}{% include "storage/_list_states.html" with title_empty="No LN2 entries yet" body_empty="Level checks and fills of LN2 tanks and supply dewars appear here." %}{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,66 @@
+{
+  "id": "distribution-institution-form",
+  "routes": [
+    "distribution:institution-create",
+    "distribution:institution-edit"
+  ],
+  "title": "New institution or Edit institution",
+  "purpose": "Record a recipient organization.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Required, unique; stored in capitals."
+        },
+        {
+          "label": "Country",
+          "description": "Optional ISO two-letter code, e.g. US."
+        },
+        {
+          "label": "Name",
+          "description": "Required."
+        },
+        {
+          "label": "Shipping address",
+          "description": "Optional, up to 500 characters: the organization's address for shipments."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Clear to stop offering the entry for new records; existing records keep it."
+        },
+        {
+          "label": "Reason",
+          "description": "Required when changing, optional when creating. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Fixed once used",
+      "paragraphs": [
+        "Once a request or agreement names the institution, its code is fixed. Fixed fields are shown read-only with the reason Fixed: recorded data already uses this entry; create a new entry instead."
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "A new entry may carry an optional reason (blank reads Initial definition); a change needs a reason, kept in the history shown under the form. After saving you return to the list. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first.",
+        "Entries are never deleted; clear Active to stop offering one."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html",
+    "distribution/templates/distribution/governance/catalogue_form.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

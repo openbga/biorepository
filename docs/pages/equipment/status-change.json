@@ -1,0 +1,49 @@
+{
+  "id": "equipment-status-change",
+  "routes": [
+    "equipment:status-change"
+  ],
+  "title": "Change status",
+  "purpose": "Put equipment out of service, retire it, or return it to service, from a stated time and with a reason.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Managers and administrators only. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "If someone else changed the record after you opened this form, the save is refused with a message that it changed since you opened it. Nothing is saved; reload, check the current values and enter the change again."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "New status",
+          "description": "Required. In service, Out of service or Retired, except the current status. Out of service and retired equipment stays in the register with its history. Retired equipment takes no new entries (service events, LN2 entries, readings, excursions, or import rows); out of service equipment still does. Retired equipment is hidden from the equipment list by default and from the Maintenance due list."
+        },
+        {
+          "label": "Effective from",
+          "description": "Required. Repository local time to the second; not in the future and not before the equipment's last status change. Times are repository local time, to the second, and cannot be in the future."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 4,000 characters. Kept in the status history, for example the fault, the repair or the expected return date. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Retiring needs every excursion of the equipment to be closed first. When a tank or freezer is returned to service while another tank or freezer that is not retired is linked to the same storage unit, the change is refused: retire or unlink the other one first.",
+        "The change is recorded in the Status history and the audit trail together, and cannot be edited afterwards; record a further change to correct it."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load distribution distribution_governance %}
+{% comment %}
+Consent record of one coded participant in one study. Order: alerts that need action, the current
+record's facts, its answer per scope category, the participant's specimens in custody (held or not
+by the withdrawal in effect), open allocations, distributed material with its follow-ups, the
+records history (corrections show prior values struck through), withdrawals and reinstatements,
+then the audit history. Header actions for managers (governance_views._consent_actions): Withdraw
+consent (destructive), Correct consent, Record consent, More (Hold withdrawn specimens, Request
+disposal of held specimens, Reinstate consent), and the next step for the state as primary.
+Context: consent, current (the current ConsentRecord), answers [(category, label, tone)], records,
+withdrawals (with follow_ups, reinstated), open_withdrawal, impact (queries.Impact),
+distributed [{shipment, items, follow_ups}], destructive, secondary, more, primary, toc, history,
+can_manage.
+{% endcomment %}
+{% block breadcrumbs %}{% url 'distribution:consent-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Consent" section_url=list_url current=page_title %}{% endblock %}
+{% block page_heading %}<span class="vr-id">{{ page_title }}</span>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "consent" consent.status %}</li><li>Participant <span class="vr-id">{{ consent.participant.code }}</span></li><li>Study <a class="vr-id" href="{% url 'distribution:study-detail' consent.study_id %}">{{ consent.study.code }}</a></li>{% if consent.no_contact %}<li>Do not contact</li>{% endif %}</ul>{% endblock %}
+{% block page_actions %}{% include "distribution/governance/_header_actions.html" %}{% endblock %}
+{% block content %}
+{% include "includes/page_toc.html" with items=toc %}
+{% if open_withdrawal %}
+<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Withdrawn" tone="hold" plain=True %}<div>{{ open_withdrawal.get_kind_display }}, effective <time datetime="{{ open_withdrawal.effective_on|date:'Y-m-d' }}">{{ open_withdrawal.effective_on|date:"Y-m-d" }}</time>, recorded by {{ open_withdrawal.actor|person }}. The participant's specimens in this study's collections carry a use hold; nothing has been disposed or deleted.</div></div>
+{% endif %}
+{% if open_withdrawal and impact.unheld %}
+<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Not held" tone="danger" plain=True %}<div>{{ impact.unheld|length }} specimen{{ impact.unheld|pluralize }} in custody without a hold from the withdrawal (for example registered after it). The distribution gate still blocks them; {% if can_manage %}use Hold withdrawn specimens to hold them.{% else %}a manager can hold them.{% endif %}</div></div>
+{% endif %}
+
+<section class="card mb-3" aria-labelledby="facts-heading">
+  <div class="card-header"><h2 class="card-title" id="facts-heading">Consent</h2></div>
+  <div class="card-body">
+  {% if current %}
+  <dl class="vr-facts">
+    <div><dt>Status</dt><dd>{% distribution_status "consent" consent.status plain=True %}</dd></div>
+    <div><dt>Form</dt><dd class="vr-id">{{ current.form }}<span class="d-block vr-muted small">{{ current.form.title }} · {{ current.form.get_kind_display }}</span></dd></div>
+    <div><dt>Decision recorded</dt><dd>{{ current.get_decision_display }}</dd></div>
+    <div><dt>Date of the decision</dt><dd><time datetime="{{ current.consented_on|date:'Y-m-d' }}">{{ current.consented_on|date:"Y-m-d" }}</time></dd></div>
+    <div><dt>Who decided</dt><dd>{{ current.get_signer_display }}</dd></div>
+    <div><dt>How it was documented</dt><dd>{{ current.get_documentation_display }}</dd></div>
+    <div><dt>Where the original is filed</dt><dd>{{ current.source_reference|default:"Not recorded" }}</dd></div>
+    <div><dt>Expires</dt><dd>{% if current.expires_on %}<time datetime="{{ current.expires_on|date:'Y-m-d' }}">{{ current.expires_on|date:"Y-m-d" }}</time>{% else %}No end date recorded{% endif %}</dd></div>
+    <div><dt>Do not contact</dt><dd>{{ consent.no_contact|yesno:"Yes,No" }}</dd></div>
+    <div><dt>Recorded</dt><dd><time datetime="{{ current.recorded_at|date:'c' }}">{{ current.recorded_at|date:"Y-m-d H:i" }}</time> by {{ current.recorded_by|person }}</dd></div>
+    <div><dt>Restrictions</dt><dd>{% if current.restrictions %}<details><summary>Restrictions recorded</summary><p class="mb-0">{{ current.restrictions|linebreaksbr }}</p></details>{% else %}None recorded{% endif %}<span class="d-block vr-muted small">Shown to reviewers, allocators and pickers; the software does not interpret them.</span></dd></div>
+  </dl>
+  {% else %}
+  {% include "includes/empty_state.html" with title="No consent record" body="Record the participant's consent from the filed original." %}
+  {% endif %}
+  </div>
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="answers-heading">
+  <div class="card-header"><h2 class="card-title" id="answers-heading">Answers per category</h2><span class="vr-count">{{ answers|length }}</span></div>
+  {% if answers %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Category</th><th scope="col">Name</th><th scope="col">Answer recorded</th><th scope="col">Governs use</th></tr></thead>
+    <tbody>{% for category, label, tone in answers %}
+      <tr>
+        <th scope="row"><span class="vr-id">{{ category.code }}</span></th>
+        <td>{{ category.name }}</td>
+        <td>{% answer_status label %}</td>
+        <td>{{ category.gates_use|yesno:"Yes,No" }}</td>
+      </tr>{% endfor %}
+    </tbody>
+  </table></div>
+  <div class="card-body pt-0"><p class="vr-muted small mb-0">As recorded on {{ current.form }}. A category the form does not ask is not addressed and does not permit a use.{% if current.decision == "refused" %} The participant refused the whole form, so no category is answered.{% endif %}</p></div>
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No categories answered" body="A refusal answers no categories; a consent answers each category its form asks." %}</div>{% endif %}
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="impact-heading">
+  <div class="card-header"><h2 class="card-title" id="impact-heading">Specimens in custody</h2><span class="vr-count">{{ impact.held|length }} held, {{ impact.unheld|length }} not held by a withdrawal</span></div>
+  {% if impact.held or impact.unheld %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Specimen ID</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Withdrawal hold</th></tr></thead>
+    <tbody>
+      {% for s in impact.held %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td>{{ s.get_status_display }}</td><td>{% include "includes/status.html" with label="Held" tone="hold" plain=True %}</td></tr>{% endfor %}
+      {% for s in impact.unheld %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td>{{ s.get_status_display }}</td><td>{% if open_withdrawal %}{% include "includes/status.html" with label="Not held" tone="danger" plain=True %}{% else %}<span class="vr-muted">—</span>{% endif %}</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  <div class="card-body pt-0"><p class="vr-muted small mb-0">Available or exhausted specimens of {{ consent.participant.code }} in the collections {{ consent.study.code }} governs now.</p></div>
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No specimens in custody" body="No available or exhausted specimen of this participant is in a collection the study governs." %}</div>{% endif %}
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="allocations-heading">
+  <div class="card-header"><h2 class="card-title" id="allocations-heading">Open allocations</h2><span class="vr-count">{{ impact.open_allocations|length }}</span></div>
+  {% if impact.open_allocations %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Request</th><th scope="col">Specimen ID</th><th scope="col">Allocation</th></tr></thead>
+    <tbody>{% for a in impact.open_allocations %}
+      <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:request-detail' a.request_id %}">{{ a.request.number }}</a></th><td><a class="vr-id" href="{% url 'specimens:specimen-detail' a.specimen_id %}">{{ a.specimen.accession }}</a></td><td>{% distribution_status "allocation" a.state plain=True %}</td></tr>{% endfor %}
+    </tbody>
+  </table></div>
+  {% if open_withdrawal %}<div class="card-body pt-0"><p class="vr-muted small mb-0">Picked specimens stay picked after a withdrawal; the use hold blocks packing and dispatch until staff put them back.</p></div>{% endif %}
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No open allocations" body="None of these specimens is allocated or picked for a request." %}</div>{% endif %}
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="distributed-heading">
+  <div class="card-header"><h2 class="card-title" id="distributed-heading">Distributed material</h2><span class="vr-count">{{ impact.distributed|length }} item{{ impact.distributed|length|pluralize }}</span></div>
+  {% if distributed %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Shipment</th><th scope="col">Recipient</th><th scope="col">Specimens</th><th scope="col">Agreement</th><th scope="col">At the end of use</th><th scope="col">Onward transfer</th><th scope="col">Follow-up</th>{% if can_manage and open_withdrawal %}<th scope="col"><span class="visually-hidden">Actions</span></th>{% endif %}</tr></thead>
+    <tbody>{% for group in distributed %}{% with shipment=group.shipment agreement=group.shipment.request.agreement %}
+      <tr>
+        <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:shipment-detail' shipment.pk %}">{{ shipment.number }}</a></th>
+        <td>{{ shipment.ship_to_institution }}<span class="d-block vr-muted small">{{ shipment.ship_to_name }}</span></td>
+        <td class="vr-id vr-wrap">{% for item in group.items %}{{ item.accession }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+        <td>{% if agreement %}<a class="vr-id" href="{% url 'distribution:agreement-detail' agreement.pk %}">{{ agreement.number }}</a>{% else %}<span class="vr-muted">None linked</span>{% endif %}</td>
+        <td>{{ agreement.get_end_disposition_display|default:"—" }}</td>
+        <td>{{ agreement.get_onward_transfer_display|default:"—" }}</td>
+        <td class="vr-wrap">{% for f in group.follow_ups %}<div>{{ f.get_action_display }}, <time datetime="{{ f.occurred_at|date:'c' }}">{{ f.occurred_at|date:"Y-m-d H:i" }}</time>, {{ f.actor|person }}: {{ f.note }}{% if f.attachment_id %} {% include "distribution/governance/_attachment.html" with item=f kind="follow-up" %}{% endif %}</div>{% empty %}<span class="vr-muted">None recorded</span>{% endfor %}</td>
+        {% if can_manage and open_withdrawal %}<td><a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:withdrawal-follow-up' open_withdrawal.pk %}?shipment={{ shipment.pk }}">Record follow-up</a></td>{% endif %}
+      </tr>{% endwith %}{% endfor %}
+    </tbody>
+  </table></div>
+  <div class="card-body pt-0"><p class="vr-muted small mb-0">Material that left the repository in dispatched shipments, with the agreement terms it went under. The software sends nothing and recalls nothing; record what was done as follow-up.</p></div>
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="Nothing distributed" body="No shipment has carried this participant's material in this study." %}</div>{% endif %}
+</section>
+
+<section class="card mb-3" aria-labelledby="records-heading">
+  <div class="card-header"><h2 class="card-title" id="records-heading">Records</h2><span class="vr-count">{{ records|length }}, oldest first</span></div>
+  <div class="card-body">{% if records %}<ol class="vr-timeline">
+    {% for r in records %}{% with summary=r.get_decision_display|add:" on "|add:r.form.code|add:" v"|add:r.form.version %}{% include "includes/history_item.html" with title=r.title at=r.recorded_at actor=r.recorded_by by="Recorded by" reason=r.reason changes=r.change_rows detail=r.answer_text|default:summary %}{% endwith %}{% endfor %}
+  </ol>{% else %}{% include "includes/empty_state.html" with title="No records" %}{% endif %}</div>
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="withdrawals-heading">
+  <div class="card-header"><h2 class="card-title" id="withdrawals-heading">Withdrawals and reinstatements</h2><span class="vr-count">{{ withdrawals|length }}</span></div>
+  {% if withdrawals %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Withdrawal</th><th scope="col">State</th><th scope="col">Effective</th><th scope="col">Received</th><th scope="col" class="text-end vr-th-wrap">Held (specimens)</th><th scope="col" class="text-end vr-th-wrap">Allocations released (count)</th><th scope="col" class="text-end vr-th-wrap">Distributed (specimens)</th><th scope="col">Recorded</th><th scope="col">Reinstated</th></tr></thead>
+    <tbody>{% for w in withdrawals %}
+      <tr>
+        <th scope="row">{{ w.get_kind_display }}</th>
+        <td>{% withdrawal_status w %}</td>
+        <td class="vr-nowrap"><time datetime="{{ w.effective_on|date:'Y-m-d' }}">{{ w.effective_on|date:"Y-m-d" }}</time></td>
+        <td class="vr-nowrap"><time datetime="{{ w.occurred_at|date:'c' }}">{{ w.occurred_at|date:"Y-m-d H:i" }}</time><span class="d-block vr-muted small">{{ w.received_via }}</span></td>
+        <td class="text-end vr-id">{{ w.held_count }}</td>
+        <td class="text-end vr-id">{{ w.released_count }}</td>
+        <td class="text-end vr-id">{{ w.distributed_count }}</td>
+        <td class="vr-wrap">{{ w.actor|person }}, <time datetime="{{ w.recorded_at|date:'c' }}">{{ w.recorded_at|date:"Y-m-d H:i" }}</time><span class="d-block vr-muted small">{{ w.reason }}</span></td>
+        <td class="vr-wrap">{% if w.reinstated %}{{ w.reinstated.actor|person }}, <time datetime="{{ w.reinstated.occurred_at|date:'c' }}">{{ w.reinstated.occurred_at|date:"Y-m-d H:i" }}</time><span class="d-block vr-muted small">{% if w.reinstated.record_id %}New consent recorded.{% else %}Withdrawal recorded in error.{% endif %} {{ w.reinstated.reason }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+      </tr>{% endfor %}
+    </tbody>
+  </table></div>
+  <div class="card-body pt-0"><p class="vr-muted small mb-0">Counts are what the withdrawal did when it was recorded.</p></div>
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No withdrawals recorded" %}</div>{% endif %}
+</section>
+
+{% include "storage/_history.html" %}
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}

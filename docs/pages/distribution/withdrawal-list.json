@@ -1,0 +1,98 @@
+{
+  "id": "distribution-withdrawal-list",
+  "routes": [
+    "distribution:withdrawal-list"
+  ],
+  "title": "Withdrawals",
+  "purpose": "See every recorded withdrawal of consent and which still need follow-up.",
+  "sections": [
+    {
+      "title": "Tabs",
+      "paragraphs": [
+        "Consents lists the consents; Withdrawals lists the withdrawals. Withdrawals are recorded from the consent page, so this tab has no New button."
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Consent",
+          "description": "Participant and study; opens the consent at its withdrawals."
+        },
+        {
+          "label": "State",
+          "description": "In effect (use stopped), Do not contact (contact only) or Reinstated."
+        },
+        {
+          "label": "Withdrawal",
+          "description": "No further contact, No further use, or No further use and destroy."
+        },
+        {
+          "label": "Effective, Received",
+          "description": "The effective date, and when it reached the repository."
+        },
+        {
+          "label": "Held (specimens), Allocations released (count), Distributed (specimens)",
+          "description": "What the withdrawal did when it was recorded."
+        },
+        {
+          "label": "Follow-ups (count)",
+          "description": "Follow-ups recorded for distributed material."
+        },
+        {
+          "label": "Recorded by",
+          "description": "Who recorded it."
+        }
+      ]
+    },
+    {
+      "title": "Finding withdrawals",
+      "items": [
+        {
+          "label": "Search",
+          "description": "Participant code or study code."
+        },
+        {
+          "label": "Withdrawal, Study, State",
+          "description": "Filters; default all."
+        },
+        {
+          "label": "More filters: Needs follow-up",
+          "description": "In effect and stopping use, with specimens in custody that have no hold from it, or with a shipment of the participant's material without a recorded follow-up. The dashboard's withdrawals queue opens this filter."
+        },
+        {
+          "label": "Search, filters, Apply, Clear all",
+          "description": "Search and the filters narrow the rows on the server; Apply runs them and Clear all removes every filter and the search. Active filters show as chips you can remove one by one. An invalid filter shows an error and no rows rather than everything."
+        },
+        {
+          "label": "Columns",
+          "description": "Shows or hides columns for you; the first column stays."
+        },
+        {
+          "label": "Sorting and paging",
+          "description": "Click a sortable heading to sort; click again to reverse. Rows per page: 25, 50 or 100. The count under the table is the number of rows matching the filters."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "Access",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_lists.py",
+    "core/grids.py",
+    "distribution/templates/distribution/governance/withdrawal_list.html",
+    "distribution/templatetags/distribution_governance.py"
+  ]
+}

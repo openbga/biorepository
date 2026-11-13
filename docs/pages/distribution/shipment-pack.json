@@ -1,0 +1,92 @@
+{
+  "id": "distribution-shipment-pack",
+  "routes": [
+    "distribution:shipment-pack"
+  ],
+  "title": "Pack",
+  "purpose": "Record that a draft shipment was packed, with the declarations the shipper made, and freeze its contents.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, while the shipment is a draft with at least one picked specimen. The form shows the request's agreement data level. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Temperature class",
+          "description": "Required: Ambient, 2 to 8 °C, −20 °C, −80 °C, Cryogenic (vapor phase) or Other."
+        },
+        {
+          "label": "Refrigerant",
+          "description": "Required: None, Gel packs, Dry ice, Dry shipper or Other."
+        },
+        {
+          "label": "Dry ice (kg)",
+          "description": "Required with dry ice and refused otherwise: the net mass, above 0 with at most two decimals."
+        },
+        {
+          "label": "Temperature loggers",
+          "description": "Optional logger IDs."
+        },
+        {
+          "label": "Classification as declared by the shipper",
+          "description": "Required: Not restricted, Exempt specimen, Category B (UN3373), Category A or Other. The software records the shipper's declaration; it does not classify the shipment or check the declaration."
+        },
+        {
+          "label": "Classification note",
+          "description": "Optional, for example the UN number or packing instruction. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Packer confirmed current shipping training",
+          "description": "Required Yes or No, as stated by the packer; training records are not checked."
+        },
+        {
+          "label": "Packages",
+          "description": "Required, 1 to 99."
+        },
+        {
+          "label": "Emergency contact",
+          "description": "Required: a staff name or duty phone printed on the manifest."
+        },
+        {
+          "label": "Storage instructions",
+          "description": "Optional, printed on the manifest. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Print participant codes on the manifest",
+          "description": "Optional, off by default. Only coded participant identifiers are printed, never collection dates. Packing with it ticked is refused unless the request's agreement is at data level coded or limited data set; dispatch checks this again, because the agreement can change after packing."
+        },
+        {
+          "label": "Checked by",
+          "description": "Optional second person who checked the packing: another active technician, manager or administrator, never yourself."
+        },
+        {
+          "label": "Packed at",
+          "description": "Required; repository local time, not in the future and not before the latest pick of its specimens."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "Every specimen is checked again (status, holds, consent, study, and that it is still checked out from its pick: one checked in, or checked out again, from the specimen record since is refused with Not in the pick's custody; put it back on the request and pick it again) and its current record version is stored. The shipment becomes Packed with you as packer. A specimen whose record changes after packing stops the dispatch until the shipment is unpacked and packed again. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

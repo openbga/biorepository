@@ -1,0 +1,40 @@
+{
+  "id": "distribution-request-cancel",
+  "routes": [
+    "distribution:request-cancel"
+  ],
+  "title": "Cancel request",
+  "purpose": "End a request that will not be fulfilled.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the request is not final and none of its specimens is picked or shipped. A request with shipped material is closed instead. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline and history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The request becomes Cancelled (final). Its allocated specimens are released with their allocation holds, and its draft shipments are cancelled. The request and its history stay.",
+        "If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

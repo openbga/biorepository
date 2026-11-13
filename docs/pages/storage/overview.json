@@ -1,0 +1,113 @@
+{
+  "id": "storage-overview",
+  "routes": [
+    "storage:overview"
+  ],
+  "title": "Storage overview",
+  "purpose": "See at a glance where there is room: repository-wide position counts, occupancy of each active storage unit and the most recent box and rack moves. Every count links to the list it counts.",
+  "sections": [
+    {
+      "title": "All active storage",
+      "paragraphs": [
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it.",
+        "Nominal temperature is a stated set point, not a measurement."
+      ],
+      "items": [
+        {
+          "label": "Storage units",
+          "description": "Number of active storage units; links to the Storage units list."
+        },
+        {
+          "label": "Boxes",
+          "description": "Number of active boxes; links to the Boxes list."
+        },
+        {
+          "label": "Positions",
+          "description": "All installed positions in active boxes under active structure."
+        },
+        {
+          "label": "Occupied",
+          "description": "Positions with an item stored."
+        },
+        {
+          "label": "Blocked",
+          "description": "Positions held out of use."
+        },
+        {
+          "label": "Free",
+          "description": "Positions neither blocked nor occupied; links to the Free positions list."
+        }
+      ]
+    },
+    {
+      "title": "Occupancy by storage unit",
+      "paragraphs": [
+        "One row per active storage unit, ordered by site, room, then unit code. Retired units are not listed here."
+      ],
+      "items": [
+        {
+          "label": "Storage unit",
+          "description": "Unit code and name; opens the unit."
+        },
+        {
+          "label": "Site and room",
+          "description": "Where the unit stands."
+        },
+        {
+          "label": "Storage class",
+          "description": "The class named when the unit was set up."
+        },
+        {
+          "label": "Nominal (°C)",
+          "description": "The unit's stated set point in degrees Celsius. A definition, not a measurement; it never blocks storing an item."
+        },
+        {
+          "label": "Positions, Occupied",
+          "description": "Counts as defined above."
+        },
+        {
+          "label": "Free",
+          "description": "Links to the Free positions list filtered to that unit. A unit whose positions are all taken shows Full; a unit with no boxes yet shows No positions."
+        }
+      ]
+    },
+    {
+      "title": "Recent box and rack moves",
+      "paragraphs": [
+        "The ten most recently recorded moves of a box or a rack, newest recorded first. A Correction tag marks a record that corrects an earlier move. Moves of single specimens are not listed here."
+      ],
+      "items": [
+        {
+          "label": "Moved",
+          "description": "The box or rack that moved; opens it."
+        },
+        {
+          "label": "Moved at",
+          "description": "When the move happened, in repository local time (not when it was recorded)."
+        },
+        {
+          "label": "From, To",
+          "description": "Location and slot before and after, as recorded at the time."
+        },
+        {
+          "label": "By",
+          "description": "The person who recorded the move."
+        }
+      ]
+    },
+    {
+      "title": "Empty state",
+      "paragraphs": [
+        "With no active storage unit the page offers New storage unit to users who may manage storage; other roles see the message only."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/templates/storage/overview.html",
+    "storage/tests/test_views.py"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "specimens-import-upload",
+  "routes": [
+    "specimens:import-upload"
+  ],
+  "title": "Upload CSV",
+  "purpose": "Check a CSV file of new specimens against the catalogues and storage positions before anything is registered.",
+  "sections": [
+    {
+      "title": "Steps",
+      "paragraphs": [
+        "1. Download the CSV template. It holds the header row and one obviously synthetic example row. 2. Fill one row per specimen. 3. Upload the file here with Validate file. 4. Review the result on the import page and, if it is valid, commit it. Admin, manager and technician can upload."
+      ],
+      "items": [
+        {
+          "label": "Download the CSV template",
+          "description": "Downloads specimen-import-template.csv with the accepted columns in order."
+        },
+        {
+          "label": "CSV file",
+          "description": "Required. A UTF-8 CSV (.csv) with exactly the template's header row, at most 2 MiB and 1,000 rows. Every nonblank line after the header counts as a row, including lines with the wrong number of cells; a longer file is refused as a whole. Other file types, unknown or missing columns and a repeated column are refused."
+        },
+        {
+          "label": "Validate file",
+          "description": "Reads and checks the whole file and opens the import page, even when errors were found. Nothing is registered, no specimen ID is used and no position is claimed. Cancel returns to Imports."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "paragraphs": [
+        "Blank lines are skipped. Times are ISO 8601, for example 2026-11-01T09:30:00-05:00; a time without an offset is read in repository time, and no time may be in the future. Catalogue values are given by code, and the code must exist and be active. Unit codes keep their case (mL)."
+      ],
+      "items": [
+        {
+          "label": "row_key",
+          "description": "Required. Your own reference for the row, up to 40 characters, unique in the file. The system assigns the real specimen ID."
+        },
+        {
+          "label": "specimen_type, container_type",
+          "description": "Required. Catalogue codes."
+        },
+        {
+          "label": "quantity, unit",
+          "description": "Required. The initial amount as an exact decimal in the unit given. It must fit the unit (whole numbers for count units)."
+        },
+        {
+          "label": "collected_at",
+          "description": "Required. When the specimen was collected."
+        },
+        {
+          "label": "processing_started_at, processing_completed_at",
+          "description": "Optional. The start cannot be before collection, the completion cannot be before the start, and a completion needs a start."
+        },
+        {
+          "label": "participant_code",
+          "description": "Optional. A coded participant identifier such as P-000123 that already exists in the Participants catalogue. Never a name, record number or other identifying text."
+        },
+        {
+          "label": "collection_code",
+          "description": "Optional. A collection code."
+        },
+        {
+          "label": "box_code, position_label",
+          "description": "Give both to store the specimen in that free position, or neither to register it unplaced. The position must exist, be in an active box, not be blocked or occupied and not be used by another row in the file."
+        },
+        {
+          "label": "baseline_thaws",
+          "description": "Optional. How many times the specimen was thawed before registration, from 0 to 1,000. Leave blank or write unknown if the history is not known; unknown stays unknown and is never counted as zero."
+        }
+      ]
+    },
+    {
+      "title": "Errors on this page",
+      "paragraphs": [
+        "A file that is too large, not UTF-8 or not a CSV is refused on this page and nothing is saved. Problems inside the file are shown on the import page with their line, row key, column and reason."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/importing.py",
+    "specimens/list_forms.py",
+    "specimens/templates/specimens/import_upload.html",
+    "specimens/tests/test_registration.py"
+  ]
+}

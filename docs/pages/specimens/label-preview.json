@@ -1,0 +1,46 @@
+{
+  "id": "specimens-label-preview",
+  "routes": [
+    "specimens:label-preview"
+  ],
+  "title": "Labels",
+  "purpose": "Check the labels for the chosen specimens before downloading them as a PDF.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Each label shows the specimen ID as text and as a Code 128 barcode, and nothing else: no participant, collection, location or date. The ID is the only link between the physical tube and the record. The page header shows the number of labels and the label stock (name, version and size in millimetres) the PDF will use; print at actual size.",
+        "Every role can preview and download labels. Open the preview with Print label on a specimen record, with Print labels on the specimen list, or from a committed import."
+      ],
+      "items": [
+        {
+          "label": "Download PDF",
+          "description": "Produces one page per label, in the order shown. A specimen listed twice is printed twice (a reprint). Each successful download is logged with the specimen IDs, count and label stock. Printing a label changes nothing about the specimen and does not record that a label was attached to a tube. If the PDF cannot be produced you return here with a message."
+        },
+        {
+          "label": "Specimen ID link",
+          "description": "Opens the specimen record."
+        }
+      ]
+    },
+    {
+      "title": "Limits and errors",
+      "paragraphs": [
+        "Between 1 and 200 labels can be previewed at a time. With none selected, more than 200, or a specimen that does not exist, the page says “No labels to preview” with the reason and Choose specimens to go back to the list.",
+        "A label whose ID cannot fit the stock is marked Does not fit with the reason, and Download PDF is not offered until the problem is solved; this means a larger label stock is needed, which is a deployment setting."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/views.py",
+    "specimens/services.py",
+    "specimens/queries.py",
+    "accounts/roles.py",
+    "specimens/labels.py",
+    "specimens/list_forms.py",
+    "specimens/templates/specimens/label_preview.html",
+    "specimens/templates/specimens/pdf/labels.html",
+    "specimens/tests/test_outputs.py"
+  ]
+}

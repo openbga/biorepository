@@ -1,0 +1,47 @@
+{
+  "id": "distribution-allocation-release",
+  "routes": [
+    "distribution:allocation-release"
+  ],
+  "title": "Release allocations",
+  "purpose": "Take allocated specimens back out of a request before they are picked.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the request has specimens allocated and not yet picked. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Allocated specimens to release",
+          "description": "Required: tick one or more."
+        },
+        {
+          "label": "Released at",
+          "description": "Required; repository local time, not in the future."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept in each specimen's allocation history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The allocations become Released and their allocation holds are released, so the specimens can be allocated again. They stay where they are in storage. Picked specimens are released through Put back with Release ticked. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

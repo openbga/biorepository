@@ -1,0 +1,7 @@
+{% comment %}One step of _progress.html. Parameters: n, label; context st (current step, 7 = all done, 0 = not reached), s (status), counts, items.{% endcomment %}<li data-state="{% if st == 0 %}todo{% elif n < st %}done{% elif n == st %}{% if s == 'rejected' %}ended{% else %}current{% endif %}{% else %}todo{% endif %}"{% if n == st and s != "rejected" %} aria-current="step"{% endif %}>
+  <span class="vr-steps-mark" aria-hidden="true">{% if st and n < st %}✓{% elif n == st and s == "rejected" %}✕{% else %}{{ n }}{% endif %}</span>
+  <span class="vr-steps-text">
+    <span class="vr-steps-label">{{ label }}<span class="visually-hidden">{% if st == 0 %}, not reached{% elif n < st %}, done{% elif n == st %}{% if s == "rejected" %}, rejected{% else %}, current step{% endif %}{% else %}, to do{% endif %}</span></span>
+    <span class="vr-steps-detail">{% if n == 1 %}{{ items|length }} line{{ items|length|pluralize }}{% elif n == 2 %}{% if s == "submitted" %}Awaiting decision{% elif s == "rejected" %}Rejected{% elif st > 2 %}Approved{% endif %}{% elif n == 3 and st >= 3 %}{{ counts.allocated|add:counts.picked|add:counts.shipped }} allocated{% elif n == 4 and st >= 4 %}{{ counts.picked|add:counts.shipped }} picked{% elif n == 5 %}{% if counts.shipped or st >= 5 %}{{ counts.shipped }} shipped{% endif %}{% if counts.preparing %}{% if counts.shipped or st >= 5 %}, {% endif %}{{ counts.preparing }} shipment{{ counts.preparing|pluralize }} in preparation{% endif %}{% endif %}</span>
+  </span>
+</li>

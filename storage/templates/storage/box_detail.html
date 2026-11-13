@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load storage_labels %}
+{% comment %}A box: facts, the position grid with its occupancy counts (as seen from the labelled top-left corner), occupied positions with their specimen IDs (when the specimens app is installed) or storage keys, moves, history. Context: box (annotated), chain, grid_rows [(row, [Position with .claim])], columns, occupied, status_label, status_tone, retire_blocked, moves, history, can_manage, can_operate. Storage imports nothing from specimens: _attach_specimens.html (included only when specimens is installed) sets p.claim.specimen through the specimens tag library; without it the storage key shows.{% endcomment %}
+{% block breadcrumbs %}{% url 'storage:box-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Boxes" section_url=list_url current=box.code %}{% endblock %}
+{% block page_heading %}<span class="vr-id">{{ box.code }}</span>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% include "includes/status.html" with label=status_label tone=status_tone %}</li><li>{{ box.container_type }}</li><li class="vr-id">{{ box.node.unit.code }}</li><li>{{ box.occupied }} of {{ box.installed }} occupied</li></ul>{% endblock %}
+{% block page_actions %}
+{% if box.is_active %}
+{% if can_manage %}
+{% if retire_blocked %}<button class="btn btn-outline-danger" type="button" disabled aria-describedby="retire-why">Retire box</button><span class="vr-action-note" id="retire-why">{{ retire_blocked }}</span>{% else %}<a class="btn btn-outline-danger" href="{% url 'storage:retire' 'box' box.pk %}">Retire box</a>{% endif %}
+<a class="btn btn-outline-secondary" href="{% url 'storage:box-edit' box.pk %}">Edit</a>
+{% endif %}
+{% if can_operate %}<a class="btn btn-primary" href="{% url 'storage:container-move' 'box' box.pk %}">Move box</a>{% endif %}
+{% endif %}
+{% endblock %}
+{% block content %}
+{% if not box.is_active %}<div class="alert alert-secondary" role="status">{% include "includes/status.html" with label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ box.retired_at|date:'c' }}">{{ box.retired_at|date:"Y-m-d H:i" }}</time> by {{ box.retired_by.get_full_name|default:box.retired_by.get_username }}: {{ box.retirement_reason }}</div></div>{% endif %}
+<section class="card mb-3" aria-labelledby="box-facts">
+  <div class="card-header"><h2 class="card-title" id="box-facts">Box</h2></div>
+  <div class="card-body"><dl class="vr-facts">
+    <div><dt>Code</dt><dd class="vr-id">{{ box.code }}</dd></div>
+    <div><dt>Name</dt><dd>{{ box.name }}</dd></div>
+    <div><dt>Location</dt><dd><a class="vr-id" href="{% url 'storage:unit-detail' box.node.unit_id %}">{{ box.node.unit.code }}</a>{% for n in chain %} / <a class="vr-id" href="{% url 'storage:node-detail' n.pk %}">{{ n.code }}</a>{% endfor %}</dd></div>
+    <div><dt>Box slot</dt><dd class="vr-id">{{ box.slot }}</dd></div>
+    <div><dt>Container type</dt><dd><a class="vr-id" href="{% url 'storage:container-type-detail' box.container_type_id %}">{{ box.container_type }}</a>: {{ box.container_type.rows }} × {{ box.container_type.columns }}, {{ box.container_type.get_label_scheme_display }}</dd></div>
+    <div><dt>Unit conditions</dt><dd>{{ box.node.unit.get_technology_display }}, {{ box.node.unit.nominal_temperature }} {{ box.node.unit.temperature_unit }} nominal</dd></div>
+  </dl></div>
+</section>
+<section class="card mb-3" aria-labelledby="box-grid">
+  <div class="card-header"><h2 class="card-title" id="box-grid">Positions</h2><span class="vr-count">{{ box.container_type.rows }} × {{ box.container_type.columns }}, seen from the labelled top-left corner ({{ grid_rows.0.1.0.label }})</span></div>
+  <div class="card-body">
+    {% if "specimens"|app_installed %}{% include "storage/_attach_specimens.html" with positions=occupied %}{% endif %}
+    <dl class="vr-facts vr-boxmap-legend">
+      <div><dt><span class="vr-boxmap-swatch" data-state="occupied"></span>Occupied</dt><dd class="vr-id">{{ box.occupied }}</dd></div>
+      <div><dt><span class="vr-boxmap-swatch" data-state="free"></span>Free</dt><dd class="vr-id">{{ box.free }}</dd></div>
+      <div><dt><span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked</dt><dd class="vr-id">{% firstof box.blocked_count 0 %}</dd></div>
+      <div><dt>Positions</dt><dd class="vr-id">{{ box.installed }}</dd></div>
+    </dl>
+    <div class="vr-boxmap-wrap">
+      <table class="vr-boxmap">
+        <caption class="visually-hidden">Row by column grid of {{ box.code }}. Each cell gives the position label and whether it is occupied, blocked or free.{% if can_manage and box.is_active %} Select a free or blocked position to block or unblock it.{% endif %}</caption>
+        <thead><tr><td></td>{% for c in columns %}<th scope="col">{{ c }}</th>{% endfor %}</tr></thead>
+        <tbody>
+          {% for row, cells in grid_rows %}
+          <tr>
+            <th scope="row">{% if box.container_type.label_scheme == "alpha_numeric" %}{{ cells.0.label|slice:":-1"|default:row }}{% else %}{{ row }}{% endif %}</th>
+            {% for p in cells %}{% if p.claim %}{% firstof "occupied" as state %}{% elif p.blocked %}{% firstof "blocked" as state %}{% else %}{% firstof "free" as state %}{% endif %}
+            <td id="position-{{ p.pk }}" data-state="{{ state }}"{% if p.claim.specimen %} title="{{ p.claim.specimen.accession }} · {{ p.claim.specimen.type_code }}"{% elif p.claim %} title="Occupied, storage key {{ p.claim.pk|stringformat:'s'|slice:':8' }}"{% elif p.blocked %} title="Blocked{% if p.block_reason %}: {{ p.block_reason }}{% endif %}"{% endif %}>
+              {% if p.claim.specimen %}<a class="vr-boxmap-cell" href="{{ p.claim.specimen.url }}"><span class="vr-boxmap-label">{{ p.label }}</span><span class="visually-hidden">, {{ state }}: {{ p.claim.specimen.accession }}</span></a>{% else %}{% if can_manage and box.is_active and not p.claim %}<a class="vr-boxmap-cell" href="{% url 'storage:position-block' p.pk %}">{% else %}<span class="vr-boxmap-cell">{% endif %}<span class="vr-boxmap-label">{{ p.label }}</span><span class="visually-hidden">, {{ state }}</span>{% if can_manage and box.is_active and not p.claim %}</a>{% else %}</span>{% endif %}{% endif %}
+            </td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="vr-muted small mt-2 mb-0">A checked-out item's position counts as free; free positions are not reserved.</p>
+  </div>
+</section>
+<section class="card vr-table-card mb-3" aria-labelledby="box-occupied">
+  <div class="card-header"><h2 class="card-title" id="box-occupied">Occupied positions</h2><span class="vr-count">{{ occupied|length }}</span>{% if occupied and "specimens"|app_installed %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:specimen-list' %}?box={{ box.code|urlencode }}">Specimens in this box</a>{% endif %}</div>
+  {% if occupied %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Position</th><th scope="col">Specimen</th><th scope="col">Storage key</th><th scope="col" class="text-end">Revision</th></tr></thead>
+    <tbody>{% for p in occupied %}
+      <tr><th scope="row" class="vr-id">{{ p.label }}</th><td>{% if p.claim.specimen %}<a class="vr-id" href="{{ p.claim.specimen.url }}">{{ p.claim.specimen.accession }}</a> <span class="vr-muted small">{{ p.claim.specimen.type_code }}</span>{% else %}—{% endif %}</td><td class="vr-id" title="{{ p.claim.pk }}">{{ p.claim.pk|stringformat:"s"|slice:":8" }}</td><td class="text-end vr-id">{{ p.claim.revision }}</td></tr>
+    {% endfor %}</tbody></table></div>
+  <p class="vr-muted small px-3 pb-3 mb-0">Storage records each item by an opaque storage key; the Specimen column and the wells name the specimen in it.</p>
+  {% else %}{% include "includes/empty_state.html" with title="The box is empty" body="Specimens are stored in its positions from the specimen pages." %}{% endif %}
+</section>
+{% include "storage/_moves.html" with noun="box" kind="box" obj=box %}
+{% include "storage/_history.html" %}
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=box.code %}{% endblock %}

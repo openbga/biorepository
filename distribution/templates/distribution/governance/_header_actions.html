@@ -1,0 +1,22 @@
+{% comment %}
+Record header actions built by the view: destructive (outline danger, first), secondary (up to
+two), more (the More dropdown) and primary (last). Each action is {label, url, reason}; an action
+unavailable in the record's current state is a disabled button (a disabled menu item in More) with
+its reason in text beside it. Nothing renders for a role that can never use the actions.
+{% endcomment %}
+{% if destructive %}{% include "distribution/governance/_header_action.html" with action=destructive css="btn-outline-danger" id="destructive" %}{% endif %}
+{% for action in secondary %}{% include "distribution/governance/_header_action.html" with action=action css="btn-outline-secondary" id=forloop.counter %}{% endfor %}
+{% if more %}
+<div class="dropdown">
+  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">More</button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    {% for item in more %}
+    <li>{% if item.reason %}<span class="dropdown-item disabled text-wrap" aria-disabled="true">{{ item.label }}<span class="d-block small">{{ item.reason }}</span></span>{% else %}<a class="dropdown-item" href="{{ item.url }}">{{ item.label }}</a>{% endif %}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% if primary %}{% include "distribution/governance/_header_action.html" with action=primary css="btn-primary" id="primary" %}{% endif %}
+{% if destructive.reason %}<span class="vr-action-note" id="action-destructive-why">{{ destructive.label }}: {{ destructive.reason }}</span>{% endif %}
+{% for action in secondary %}{% if action.reason %}<span class="vr-action-note" id="action-{{ forloop.counter }}-why">{{ action.label }}: {{ action.reason }}</span>{% endif %}{% endfor %}
+{% if primary.reason %}<span class="vr-action-note" id="action-primary-why">{{ primary.label }}: {{ primary.reason }}</span>{% endif %}

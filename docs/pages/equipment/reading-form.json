@@ -1,0 +1,61 @@
+{
+  "id": "equipment-reading-form",
+  "routes": [
+    "equipment:reading-create"
+  ],
+  "title": "Record reading",
+  "purpose": "Record one temperature reading of a tank, freezer or other equipment, kept with the limits set on it now.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Technicians, managers and administrators. Viewers are refused. Equipment that is retired, and temperature monitors, are not offered: record the reading against the tank or freezer the monitor watches and name the monitor in the Monitor field. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "Times are repository local time, to the second, and cannot be in the future."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Equipment",
+          "description": "Required. The tank or freezer read, not the monitor. A preselected value comes from the record or filtered list you came from, and its limits are quoted beside the form."
+        },
+        {
+          "label": "Read at",
+          "description": "Required. When the temperature was read; defaults to now."
+        },
+        {
+          "label": "Temperature",
+          "description": "Required, in °C, with up to two decimals, not below absolute zero (-273.15)."
+        },
+        {
+          "label": "Probe position",
+          "description": "Optional, up to 80 characters: where it was read, as stated, for example top of rack or display. Vapor-phase temperature varies with height, so record it when it matters."
+        },
+        {
+          "label": "Monitor",
+          "description": "Optional: the registered temperature monitor that produced the value."
+        },
+        {
+          "label": "Note",
+          "description": "Optional, up to 4,000 characters. Do not enter donor, patient or participant names or other text that could identify a person."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "The limits set on the equipment at this moment are stored with the reading, and the success message says when the reading is outside them. A reading at the same time and probe position as one already recorded for that equipment is refused as a duplicate: correct the existing one instead.",
+        "Record reading adds the reading and an audit event together and returns to the readings list for that equipment. A reading cannot be edited; use Correct."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

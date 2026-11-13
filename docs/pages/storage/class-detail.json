@@ -1,0 +1,60 @@
+{
+  "id": "storage-class-detail",
+  "routes": [
+    "storage:class-detail"
+  ],
+  "title": "Storage class",
+  "purpose": "Review one storage class and the units that use it.",
+  "sections": [
+    {
+      "title": "Storage class",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Immutable, never reused."
+        },
+        {
+          "label": "Name",
+          "description": "Class name."
+        },
+        {
+          "label": "Description",
+          "description": "Optional text."
+        },
+        {
+          "label": "Active storage units",
+          "description": "Number of active units of this class."
+        }
+      ]
+    },
+    {
+      "title": "Storage units",
+      "paragraphs": [
+        "Up to the first 100 units of this class, by code, active and retired alike (the header says when more exist). Each shows code, name, room and status."
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Admin and manager roles. Opens the class form."
+        }
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/templates/storage/class_detail.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

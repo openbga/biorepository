@@ -1,0 +1,70 @@
+{
+  "id": "distribution-consent-form-form",
+  "routes": [
+    "distribution:consent-form-create",
+    "distribution:consent-form-edit"
+  ],
+  "title": "New consent form or Edit consent form",
+  "purpose": "Record a version of a study's consent form and the categories it asks.",
+  "sections": [
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Study",
+          "description": "Required; opened from a study it is chosen."
+        },
+        {
+          "label": "Code, Version",
+          "description": "Required; the study, code and version together are unique. A changed form is a new version."
+        },
+        {
+          "label": "Title",
+          "description": "Required."
+        },
+        {
+          "label": "Kind",
+          "description": "Study consent, Broad consent, Authorization or Other."
+        },
+        {
+          "label": "Categories asked",
+          "description": "Required: the uses the version asks about. Each consent recorded on it answers every one."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Clear to stop offering the entry for new records; existing records keep it."
+        },
+        {
+          "label": "Reason",
+          "description": "Required when changing, optional when creating. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Fixed once used",
+      "paragraphs": [
+        "Once a consent is recorded on the version, its study, code, version and categories are fixed. Fixed fields are shown read-only with the reason Fixed: recorded data already uses this entry; create a new entry instead."
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "A new entry may carry an optional reason (blank reads Initial definition); a change needs a reason, kept in the history shown under the form. After saving you return to the list. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first.",
+        "Entries are never deleted; clear Active to stop offering one."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html",
+    "distribution/templates/distribution/governance/catalogue_form.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

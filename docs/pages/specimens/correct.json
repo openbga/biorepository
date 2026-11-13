@@ -1,0 +1,63 @@
+{
+  "id": "specimens-correct",
+  "routes": [
+    "specimens:correct"
+  ],
+  "title": "Correct specimen",
+  "purpose": "Correct the registration details of a specimen: type, container, participant, collection and times.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Only admin and manager can use this form; a technician or viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is the only action left on a disposed specimen. After disposal the record itself is not changed: the correction is kept as an annotation in the history and the form says so."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the fields you change are corrected; if nothing differs from the record the save is refused. The earlier and new values are kept in the history."
+      ],
+      "items": [
+        {
+          "label": "Specimen type, Specimen container",
+          "description": "Active catalogue entries; the current one stays selectable even if it is now inactive."
+        },
+        {
+          "label": "Participant",
+          "description": "A coded identifier only. Never enter names or other identifying text."
+        },
+        {
+          "label": "Collection",
+          "description": "Optional grouping."
+        },
+        {
+          "label": "Collected, Processing started, Processing completed",
+          "description": "Repository local time. Collection and processing must be before registration, collection and processing cannot be in the future, and a completion needs a start."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Why the details were wrong. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Amount, location, custody and status are not corrected here; use Adjust amount, Relocate and the other actions. An aliquot or derivative takes participant, collection and collection time from its parent, so those fields are locked and the parent is corrected instead. Once aliquots or derivatives exist, the parent's type, participant, collection and times can no longer be corrected here and the owner must review the lineage. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

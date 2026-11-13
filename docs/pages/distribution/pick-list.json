@@ -1,0 +1,50 @@
+{
+  "id": "distribution-pick-list",
+  "routes": [
+    "distribution:pick-list"
+  ],
+  "title": "Pick list",
+  "purpose": "Preview and print the list of a request's allocated specimens in the order to walk the store.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "Every role can read it. The specimens allocated to the request and not yet picked, in walking order: site, room, storage unit, rack slots, box and position, with specimens not in storage last. Each row shows the specimen ID, type, amount on hand, location, the consent restrictions text and anything that would refuse picking it now. Locations are as recorded when the page is shown.",
+        "A pick list is a printout, not a record. Picking is recorded with Pick specimens, which checks every specimen again.",
+        "The PDF ends with a Sign-off block (Picked by, Checked by, Date and time) to complete by hand; it is a printout, and each pick is still recorded in the application."
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Download PDF",
+          "description": "Produces an A4 PDF of the same list with a tick box per specimen. Each PDF produced is recorded on the request with who generated it and how many specimens it lists; printing itself is not recorded. If the PDF cannot be produced on the server, the page says so."
+        },
+        {
+          "label": "Pick specimens",
+          "description": "Technicians and above: opens the pick grid."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "Nothing to pick",
+          "description": "No specimens of the request are allocated and waiting to be picked."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/documents.py",
+    "distribution/queries.py",
+    "distribution/templates/distribution/requests/pick_list.html",
+    "distribution/templates/distribution/pdf/pick_list.html",
+    "distribution/documents.css"
+  ]
+}

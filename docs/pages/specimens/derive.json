@@ -1,0 +1,85 @@
+{
+  "id": "specimens-derive",
+  "routes": [
+    "specimens:derive"
+  ],
+  "title": "Make aliquots or derivatives",
+  "purpose": "Split a specimen into new aliquots or derivatives, each with its own ID, amount and optional storage position.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is available only when something is left on hand, there is no use hold or all-use hold (a disposal hold does not block it), and the parent is in hand (checked out, returned and not yet stored, or never stored). A stored specimen is checked out first. A distributed specimen (sent out of the repository in a shipment) is refused until its return is recorded."
+      ]
+    },
+    {
+      "title": "What you are making",
+      "paragraphs": [
+        "Aliquots are portions of the same material: each keeps the parent's specimen type and unit, and their amounts must add up exactly to the amount taken from the parent. Record any loss in processing separately as consumption. Derivatives are a different material: choose any type, container and unit for each, and the amounts need not add up to anything. In both cases the amount you take from the parent is taken in the parent's unit and cannot exceed the amount on hand.",
+        "Each new specimen gets its own opaque ID and its own initial amount. It keeps the parent's participant, collection, collection time, custodian and thaw history, and is linked to the parent, which lists it under Aliquots and derivatives. All new specimens are saved together or none are."
+      ],
+      "items": [
+        {
+          "label": "What are you making?",
+          "description": "Required. Aliquots (the preset) or Derivatives."
+        },
+        {
+          "label": "Taken from the parent",
+          "description": "Required. Exact decimal in the parent's unit (shown beside the box). For aliquots the rows' amounts must add up to it."
+        },
+        {
+          "label": "Procedure",
+          "description": "Optional, up to 160 characters."
+        },
+        {
+          "label": "Made at",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "New specimens grid",
+      "paragraphs": [
+        "One row per new specimen, from 1 to 50; two rows are preset. Add specimen adds a row and Remove deletes that row; both work without JavaScript by reloading the grid with your entries kept and recording nothing. The last row cannot be removed. Press Enter safely: it saves rather than removing a row. Errors for a row appear under that row, with its number."
+      ],
+      "items": [
+        {
+          "label": "Specimen type, Specimen container, Unit",
+          "description": "Required for each row. Rows start with the parent's values; for aliquots the type and unit must stay the same as the parent's."
+        },
+        {
+          "label": "Amount",
+          "description": "Required. Exact decimal in the row's unit; above zero."
+        },
+        {
+          "label": "Box, Position",
+          "description": "Optional: give both to store that new specimen now in a free position, or neither. Two rows cannot use the same position; an occupied position is reported on that row."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Record split creates the new specimens, lowers the parent's amount and records the derivation in the history, then returns to the parent and lists the new IDs. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again.",
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. The form starts at the current time."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

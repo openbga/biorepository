@@ -1,0 +1,57 @@
+{
+  "id": "specimens-check-out",
+  "routes": [
+    "specimens:check-out"
+  ],
+  "title": "Record check-out",
+  "purpose": "Record that a stored specimen left its storage position, who took it and where it is going.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Admin, manager and technician can use this form; a viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "It is available only for a specimen in a storage position that has no use hold or all-use hold (a disposal hold does not block it). A specimen already out, or in hand after a return, cannot be checked out again; one that was never stored is handed over with a custody transfer. A distributed specimen (sent out of the repository in a shipment) is refused until its return is recorded. The notice for a hold names it and, for a hold placed by another workflow, its reference; such a hold is released through that workflow."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Taken by",
+          "description": "Required. The active staff member who takes custody; starts as you."
+        },
+        {
+          "label": "Destination",
+          "description": "Required, up to 160 characters. Where it is going, for example Processing bench 2."
+        },
+        {
+          "label": "Checked out at",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Record check-out frees the position and starts the time-out-of-storage clock. Time out of storage is calculated from the check-out and the later check-in, never typed. Leaving storage is not counted as a thaw. The position is not kept for the specimen, so a free position is chosen at check-in. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again.",
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. The form starts at the current time."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

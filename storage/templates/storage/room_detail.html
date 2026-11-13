@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% comment %}A room: facts, occupancy, storage units, history. Context: room, units (annotated), capacity, status_label, status_tone, history, can_manage.{% endcomment %}
+{% block breadcrumbs %}{% url 'storage:room-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Rooms" section_url=list_url current=page_title %}{% endblock %}
+{% block page_heading %}<span class="vr-id">{{ page_title }}</span>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% include "includes/status.html" with label=status_label tone=status_tone %}</li><li>{{ room.name }}</li></ul>{% endblock %}
+{% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:room-edit' room.pk %}">Edit</a>{% endif %}{% endblock %}
+{% block content %}
+<section class="card mb-3" aria-labelledby="room-facts">
+  <div class="card-header"><h2 class="card-title" id="room-facts">Room</h2></div>
+  <div class="card-body"><dl class="vr-facts">
+    <div><dt>Site</dt><dd><a class="vr-id" href="{% url 'storage:site-detail' room.site_id %}">{{ room.site.code }}</a> {{ room.site.name }}</dd></div>
+    <div><dt>Code</dt><dd class="vr-id">{{ room.code }}</dd></div>
+    <div><dt>Name</dt><dd>{{ room.name }}</dd></div>
+  </dl></div>
+</section>
+{% include "storage/_capacity.html" with c=capacity %}
+<section class="card vr-table-card mb-3" aria-labelledby="room-units">
+  <div class="card-header"><h2 class="card-title" id="room-units">Storage units</h2><span class="vr-count">{{ units|length }}</span>{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:unit-create' %}?room={{ room.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Add storage unit</a>{% endif %}</div>
+  {% if units %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Technology</th><th scope="col" class="text-end">Nominal (°C)</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th><th scope="col">Status</th></tr></thead>
+    <tbody>{% for row in units %}
+      <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' row.pk %}">{{ row.code }}</a></th><td>{{ row.name }}</td><td>{{ row.get_technology_display }}</td><td class="text-end vr-id">{{ row.nominal_temperature }}</td><td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{{ row.free }}</td><td>{% include "storage/_status.html" with obj=row plain=True %}</td></tr>
+    {% endfor %}</tbody></table></div>
+  {% else %}{% include "includes/empty_state.html" with title="No storage units in this room" body="Add a freezer or tank, or apply a storage template." %}{% endif %}
+</section>
+{% include "storage/_history.html" %}
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}

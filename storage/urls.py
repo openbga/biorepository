@@ -1,0 +1,48 @@
+from django.urls import path
+
+from . import views
+
+app_name = "storage"
+
+urlpatterns = [
+    path("", views.overview, name="overview"),
+    path("units/", views.unit_list, name="unit-list"),
+    path("units/new/", views.unit_edit, name="unit-create"),
+    path("units/<uuid:pk>/", views.unit_detail, name="unit-detail"),
+    path("units/<uuid:pk>/edit/", views.unit_edit, name="unit-edit"),
+    path("racks/", views.node_list, name="node-list"),
+    path("racks/new/", views.node_edit, name="node-create"),
+    path("racks/<uuid:pk>/", views.node_detail, name="node-detail"),
+    path("racks/<uuid:pk>/edit/", views.node_edit, name="node-edit"),
+    path("boxes/", views.box_list, name="box-list"),
+    path("boxes/new/", views.box_edit, name="box-create"),
+    path("boxes/<uuid:pk>/", views.box_detail, name="box-detail"),
+    path("boxes/<uuid:pk>/edit/", views.box_edit, name="box-edit"),
+    path("free-positions/", views.free_position_list, name="free-position-list"),
+    path("sites/", views.site_list, name="site-list"),
+    path("sites/new/", views.site_edit, name="site-create"),
+    path("sites/<uuid:pk>/", views.site_detail, name="site-detail"),
+    path("sites/<uuid:pk>/edit/", views.site_edit, name="site-edit"),
+    path("rooms/", views.room_list, name="room-list"),
+    path("rooms/new/", views.room_edit, name="room-create"),
+    path("rooms/<uuid:pk>/", views.room_detail, name="room-detail"),
+    path("rooms/<uuid:pk>/edit/", views.room_edit, name="room-edit"),
+    path("classes/", views.class_list, name="class-list"),
+    path("classes/new/", views.class_edit, name="class-create"),
+    path("classes/<uuid:pk>/", views.class_detail, name="class-detail"),
+    path("classes/<uuid:pk>/edit/", views.class_edit, name="class-edit"),
+    path("container-types/", views.container_type_list, name="container-type-list"),
+    path("container-types/new/", views.container_type_edit, name="container-type-create"),
+    path("container-types/<uuid:pk>/", views.container_type_detail, name="container-type-detail"),
+    path("container-types/<uuid:pk>/edit/", views.container_type_edit, name="container-type-edit"),
+    path("templates/", views.template_list, name="template-list"),
+    path("templates/new/", views.template_edit, name="template-create"),
+    path("templates/<uuid:pk>/", views.template_detail, name="template-detail"),
+    path("templates/<uuid:pk>/edit/", views.template_edit, name="template-edit"),
+    path("templates/<uuid:pk>/apply/", views.template_apply, name="template-apply"),
+    path("move/<str:kind>/<uuid:pk>/", views.container_move, name="container-move"),
+    path("positions/<uuid:pk>/block/", views.position_block, name="position-block"),
+    path("retire/<str:kind>/<uuid:pk>/", views.retire, name="retire"),
+    path("export/<str:kind>/", views.export, name="export"),
+    path("catalogues/export/<str:kind>/", views.catalogue_export, name="catalogue-export"),
+]

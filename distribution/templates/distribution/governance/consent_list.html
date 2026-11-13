@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load navigation distribution %}
+{% comment %}Consent tab of the Consent section (List with tabs Consents | Withdrawals). Context: governance_views.grid_response for governance_lists.SPECS["consent"]. ?participant=<code> filters to one coded participant (the specimen record links here).{% endcomment %}
+{% block page_intro %}<p class="vr-page-intro">Recorded consent per coded participant and study, as transcribed from the filed originals.</p>{% endblock %}
+{% block page_actions %}{% url 'distribution:consent-create' as create_url %}{% include "distribution/governance/_list_actions.html" with create_label="Record consent" may_create=can_manage %}{% endblock %}
+{% block content %}
+{% section_tabs "distribution-consents" %}
+<section class="card vr-table-card" aria-labelledby="consents-heading">
+  <h2 class="visually-hidden" id="consents-heading">Consents</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter consents" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.consents" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="distribution.consents" data-vr-grid-version="1" aria-labelledby="consents-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Consent" asc="participant" desc="-participant" col="participant" locked=True %}
+        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+        {% include "includes/sort_header.html" with label="Study" asc="study" desc="-study" col="study" %}
+        <th scope="col" data-vr-col="form" data-vr-col-label="Form">Form</th>
+        {% include "includes/sort_header.html" with label="Date of the decision" asc="decided" desc="-decided" first="desc" col="decided" %}
+        <th scope="col" data-vr-col="expires" data-vr-col-label="Expires">Expires</th>
+        <th scope="col" data-vr-col="contact" data-vr-col-label="Do not contact">Do not contact</th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:consent-detail' row.pk %}">{{ row.participant.code }} · {{ row.study.code }}</a></th>
+          <td>{% distribution_status "consent" row.status plain=True %}</td>
+          <td><a class="vr-id" href="{% url 'distribution:study-detail' row.study_id %}">{{ row.study.code }}</a></td>
+          <td class="vr-id">{{ row.current_record.form|default:"—" }}</td>
+          <td class="vr-nowrap">{% if row.current_record %}<time datetime="{{ row.current_record.consented_on|date:'Y-m-d' }}">{{ row.current_record.consented_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-nowrap">{% if row.current_record.expires_on %}<time datetime="{{ row.current_record.expires_on|date:'Y-m-d' }}">{{ row.current_record.expires_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">No end date</span>{% endif %}</td>
+          <td>{% if row.no_contact %}Yes{% else %}<span class="vr-muted">No</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% url 'distribution:consent-create' as create_url %}
+  {% if can_manage %}{% include "storage/_list_states.html" with title_empty="No consent recorded" body_empty="Record a participant's consent from the filed original." create_url=create_url create_label="Record consent" %}{% else %}{% include "storage/_list_states.html" with title_empty="No consent recorded" body_empty="A repository manager records consent from the filed originals." %}{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

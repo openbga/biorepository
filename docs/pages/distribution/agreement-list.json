@@ -1,0 +1,92 @@
+{
+  "id": "distribution-agreement-list",
+  "routes": [
+    "distribution:agreement-list"
+  ],
+  "title": "Agreements",
+  "purpose": "Find material transfer and data use agreements and see which are in effect today.",
+  "sections": [
+    {
+      "title": "What is recorded",
+      "paragraphs": [
+        "An agreement records its kind, parties, dates and the terms as the agreement states them. The software does not draft or interpret agreements. Dispatch needs an agreement with the request's institution that is in effect on the dispatch date and on the day the dispatch is recorded."
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Agreement",
+          "description": "AG- number; opens the agreement."
+        },
+        {
+          "label": "Status",
+          "description": "Draft, Executed or Terminated."
+        },
+        {
+          "label": "Today",
+          "description": "Computed for today from the recorded dates: Not executed, Valid, Not yet in effect, Expired or Terminated."
+        },
+        {
+          "label": "Kind, Title, Institution, Investigator",
+          "description": "As recorded."
+        },
+        {
+          "label": "Expires, Reporting due",
+          "description": "As recorded; shown, not enforced except validity at dispatch."
+        }
+      ]
+    },
+    {
+      "title": "Finding agreements",
+      "items": [
+        {
+          "label": "Search",
+          "description": "AG- number, title, references or institution code."
+        },
+        {
+          "label": "Status, Institution, Kind",
+          "description": "Filters; default any."
+        },
+        {
+          "label": "More filters: Expiring or reporting due within 60 days",
+          "description": "Executed agreements expiring in the next 60 days, or with a reporting date that has passed or falls in the next 60 days. A display horizon, not a rule; the dashboard queue opens this filter."
+        },
+        {
+          "label": "Search, filters, Apply, Clear all",
+          "description": "Search and the filters narrow the rows on the server; Apply runs them and Clear all removes every filter and the search. Active filters show as chips you can remove one by one. An invalid filter shows an error and no rows rather than everything."
+        },
+        {
+          "label": "Columns",
+          "description": "Shows or hides columns for you; the first column stays."
+        },
+        {
+          "label": "Sorting and paging",
+          "description": "Click a sortable heading to sort; click again to reverse. Rows per page: 25, 50 or 100. The count under the table is the number of rows matching the filters."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "Actions and access",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else.",
+        "New agreement (admin and manager) records a draft."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_lists.py",
+    "core/grids.py",
+    "distribution/templates/distribution/governance/agreement_list.html",
+    "distribution/templatetags/distribution.py",
+    "distribution/queries.py"
+  ]
+}

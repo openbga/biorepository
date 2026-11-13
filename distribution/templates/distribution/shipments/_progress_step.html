@@ -1,0 +1,7 @@
+{% comment %}One step of shipments/_progress.html (the .vr-steps markup of requests/_progress_step.html). Parameters: n, label; context st (current step, 5 = all done), ended (cancelled at step st), shipment, planned, items, effective.{% endcomment %}<li data-state="{% if n < st %}done{% elif n == st %}{% if ended %}ended{% else %}current{% endif %}{% else %}todo{% endif %}"{% if n == st and not ended %} aria-current="step"{% endif %}>
+  <span class="vr-steps-mark" aria-hidden="true">{% if n < st %}✓{% elif n == st and ended %}✕{% else %}{{ n }}{% endif %}</span>
+  <span class="vr-steps-text">
+    <span class="vr-steps-label">{{ label }}<span class="visually-hidden">{% if n < st %}, done{% elif n == st %}{% if ended %}, cancelled{% else %}, current step{% endif %}{% else %}, to do{% endif %}</span></span>
+    <span class="vr-steps-detail">{% if n == 1 %}{% if shipment.is_sent %}{{ items|length }} specimen{{ items|length|pluralize }} sent{% else %}{{ planned|length }} specimen{{ planned|length|pluralize }}{% endif %}{% elif n == 2 and shipment.packed_at %}<time datetime="{{ shipment.packed_at|date:'c' }}">{{ shipment.packed_at|date:"Y-m-d H:i" }}</time>{% elif n == 3 and shipment.dispatched_at %}<time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time>{% elif n == 4 and effective %}<time datetime="{{ effective.received_at|date:'c' }}">{{ effective.received_at|date:"Y-m-d H:i" }}</time>{% endif %}</span>
+  </span>
+</li>

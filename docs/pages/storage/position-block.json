@@ -1,0 +1,51 @@
+{
+  "id": "storage-position-block",
+  "routes": [
+    "storage:position-block"
+  ],
+  "title": "Block or unblock a position",
+  "purpose": "Take one position in a box out of use, or return it, with a recorded reason.",
+  "sections": [
+    {
+      "title": "Who and when",
+      "paragraphs": [
+        "Admin and manager roles. Reached from a position label on the box page while the box is active. A blocked position is never offered as free. An occupied position cannot be blocked: move the item out first. Blocking a position in a retired box is refused. The page title says Block position or Unblock position by the current state; unblocking shows why it was blocked."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason for the change",
+          "description": "Required, up to 2000 characters. Kept in the history. When blocking, it is also stored as the block reason and shown on hover over the Blocked tag."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "If the position changed since you opened the page the save is refused with a message to reload. Blocking and unblocking are audited with the reason."
+      ],
+      "items": [
+        {
+          "label": "Block position / Unblock position",
+          "description": "Applies the change and returns to the box."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns to the box without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/templates/storage/box_detail.html"
+  ]
+}

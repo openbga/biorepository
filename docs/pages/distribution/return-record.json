@@ -1,0 +1,64 @@
+{
+  "id": "distribution-return-record",
+  "routes": [
+    "distribution:return-record"
+  ],
+  "title": "Record return",
+  "purpose": "Record that a specimen sent in a shipment came back to the repository.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, for an item of a dispatched shipment that has not already been returned. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Amount returned",
+          "description": "Required, in the specimen's unit (shown beside the field) as an exact decimal; 0 when nothing is left. The text you enter is kept."
+        },
+        {
+          "label": "Thaws reported while away",
+          "description": "Optional whole number as the recipient reported it. Left empty, it is recorded as not known."
+        },
+        {
+          "label": "Condition",
+          "description": "Optional, as found on return. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Received by (custodian)",
+          "description": "Required: the operating staff member who holds it until it is checked in; you by default."
+        },
+        {
+          "label": "Returned at",
+          "description": "Required; repository local time, not before dispatch and not in the future."
+        },
+        {
+          "label": "Attachment",
+          "description": "Optional: PDF, PNG, JPEG, TXT or CSV, up to 10 MiB. Do not upload consent forms, signatures or any document that identifies a participant."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept in the specimen's history. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The specimen comes back into the custody of the person receiving it, with the measured amount and the reported thaws; it becomes available (or exhausted when nothing is left) and gets a use hold referring to the shipment until a manager reviews it. Store it afterwards with the specimen's Check in. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "core/attachments.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "equipment-ln2-correct",
+  "routes": [
+    "equipment:ln2-correct"
+  ],
+  "title": "Correct LN2 entry",
+  "purpose": "Replace the values of an LN2 entry recorded wrongly, or withdraw it, keeping the original visible.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "The person who recorded the entry, and managers and administrators; anyone else is refused. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee. An entry that was already corrected must be corrected through its newer version, and a withdrawn entry cannot be corrected.",
+        "The top of the form shows the vessel, the entry and who recorded it and when. The vessel and the kind of entry cannot change."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Entries are never edited or deleted. A correction adds a new entry that replaces the values of the old one, or withdraws it, and it always needs a reason; the original stays visible in the log marked Corrected and the new one is marked Correction (or Withdrawal)."
+      ],
+      "items": [
+        {
+          "label": "Withdraw this entry",
+          "description": "Tick when it was recorded in error and should no longer count. The values below are then ignored."
+        },
+        {
+          "label": "Reason for the correction",
+          "description": "Required, up to 4,000 characters. Do not enter donor, patient or participant names or other text that could identify a person."
+        },
+        {
+          "label": "Entry fields",
+          "description": "The same fields as Record LN2 entry for that kind (When, How the level was read, levels and units, amount, supply dewar, delivery reference, outside provider, note) start with the current values."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Submitting with no value changed is refused with Nothing to correct. The corrected entry replaces the old one in the log and in the change since previous; the original stays in the audit trail with the reason."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html"
+  ]
+}

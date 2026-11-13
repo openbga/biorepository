@@ -1,0 +1,99 @@
+{
+  "id": "distribution-study-list",
+  "routes": [
+    "distribution:study-list"
+  ],
+  "title": "Studies",
+  "purpose": "Find a study and see which consent basis governs the specimens of its collections.",
+  "sections": [
+    {
+      "title": "What a study is",
+      "paragraphs": [
+        "A study records the ethics approval and the consent basis under which specimens of its linked collections may be distributed. A collection is governed by at most one study at a time. Specimens whose collection is not linked to an active study cannot be allocated, picked, packed or dispatched."
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Study",
+          "description": "The study code; opens the study."
+        },
+        {
+          "label": "Status",
+          "description": "Active, Suspended or Closed. Material of a suspended or closed study cannot be distributed."
+        },
+        {
+          "label": "Title",
+          "description": "As recorded."
+        },
+        {
+          "label": "Consent basis",
+          "description": "Consent records (each participant's recorded consent governs) or Study-level determination (a committee's determination covers the study; recorded refusals still block)."
+        },
+        {
+          "label": "Principal investigator",
+          "description": "As recorded."
+        },
+        {
+          "label": "Ethics approved until",
+          "description": "Shown only; nothing is blocked when it passes."
+        },
+        {
+          "label": "Collections",
+          "description": "Collections governed now."
+        },
+        {
+          "label": "Consents",
+          "description": "Consent records of the study; the number opens the consent list filtered to the study."
+        }
+      ]
+    },
+    {
+      "title": "Finding studies",
+      "items": [
+        {
+          "label": "Search",
+          "description": "Code, title, principal investigator or ethics reference."
+        },
+        {
+          "label": "Status, Consent basis",
+          "description": "Filters; default any."
+        },
+        {
+          "label": "Search, filters, Apply, Clear all",
+          "description": "Search and the filters narrow the rows on the server; Apply runs them and Clear all removes every filter and the search. Active filters show as chips you can remove one by one. An invalid filter shows an error and no rows rather than everything."
+        },
+        {
+          "label": "Columns",
+          "description": "Shows or hides columns for you; the first column stays."
+        },
+        {
+          "label": "Sorting and paging",
+          "description": "Click a sortable heading to sort; click again to reverse. Rows per page: 25, 50 or 100. The count under the table is the number of rows matching the filters."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "Actions and access",
+      "paragraphs": [
+        "Every staff role (admin, manager, technician, viewer) can open this page. Only admin and manager see and can use the buttons that change records; the server refuses the change to anyone else.",
+        "New study (admin and manager) opens the study form. With no studies the page says so and offers New study to those who may create one."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_lists.py",
+    "core/grids.py",
+    "distribution/templates/distribution/governance/study_list.html",
+    "distribution/templates/distribution/governance/_list_actions.html"
+  ]
+}

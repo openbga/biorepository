@@ -1,0 +1,76 @@
+{
+  "id": "distribution-shipment-receipt",
+  "routes": [
+    "distribution:shipment-receipt"
+  ],
+  "title": "Record receipt",
+  "purpose": "Transcribe the recipient's report that a dispatched shipment arrived, or was lost.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators, once, while the shipment is dispatched. A recorded receipt is corrected by a manager. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Received at",
+          "description": "Required, as the recipient reported it; repository local time, not before dispatch and not in the future. For a lost shipment, when the loss was confirmed."
+        },
+        {
+          "label": "Received by, Unpacked by",
+          "description": "Received by is required: the person at the recipient's site."
+        },
+        {
+          "label": "Condition",
+          "description": "Required: As expected, With discrepancies, Damaged or Lost in transit."
+        },
+        {
+          "label": "Refrigerant on arrival",
+          "description": "Required: Refrigerant remaining, Refrigerant depleted, Not applicable or Not reported."
+        },
+        {
+          "label": "Temperature note",
+          "description": "Optional, for example the logger reading on arrival. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Discrepancies",
+          "description": "Required unless the condition is As expected. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Reported by",
+          "description": "Required: Email, Signed receipt document, Phone call or Other."
+        },
+        {
+          "label": "Exceptions per item",
+          "description": "Optional, one per item sent: Missing, Damaged, Arrived thawed, Does not match the manifest or Other, with a note. A note needs an outcome. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        },
+        {
+          "label": "Attachment",
+          "description": "Optional: PDF, PNG, JPEG, TXT or CSV, up to 10 MiB, checked by content and downloaded as a file. Do not upload consent forms, signatures or any document that identifies a participant. If the repository's storage for attached files is full, nothing is recorded."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, kept in the timeline. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The receipt and its exceptions are recorded and the shipment becomes Receipt recorded (final). Nothing changes on the specimens: they are outside the repository, and the exceptions are facts on the record. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "core/attachments.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

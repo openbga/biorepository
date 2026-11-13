@@ -1,0 +1,59 @@
+{
+  "id": "specimens-thaw-correct",
+  "routes": [
+    "specimens:thaw-correct"
+  ],
+  "title": "Correct thaw record",
+  "purpose": "Correct the count of a thaw record by adding a new version, leaving the earlier record in the history.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Only admin and manager can use this form; a technician or viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "The form shows the record, its count, who recorded it and when, and why. Only the latest version of a record can be corrected."
+      ]
+    },
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "The question depends on the record. For an observed thaw you answer whether it happened; for the thaw history at registration, and for thaws while away (reported by the recipient when a distributed specimen comes back), you give a number or Unknown."
+      ],
+      "items": [
+        {
+          "label": "Did this thaw happen?",
+          "description": "Observed thaws only. Yes counts 1; No counts 0."
+        },
+        {
+          "label": "Thaws before registration, Unknown",
+          "description": "Thaw history at registration only. A whole number from 0 to 1,000, or tick Unknown (clear the number first). One is required. Unknown means the history is not known."
+        },
+        {
+          "label": "Thaws while away, Unknown",
+          "description": "Thaws while away only. The number of thaws the recipient reported for the time away, a whole number from 0 to 1,000, or tick Unknown when it was not reported. Unknown makes the specimen's thaw total read “unknown while away” for that period."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Why the count was wrong. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Correct thaw record adds a correction that replaces the count in the totals; the original is kept and marked Corrected. A correction that leaves the count unchanged is refused. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

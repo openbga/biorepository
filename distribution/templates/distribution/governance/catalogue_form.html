@@ -1,0 +1,11 @@
+{% extends "distribution/governance/form.html" %}
+{% comment %}
+Create or edit one distribution catalogue entry (scope category, consent form, institution,
+investigator; form dialog; managers). A catalogue entry has no record page, so this form shows its
+history under the form. Context: as form.html, plus obj (the entry or None) and history (its
+AuditEvents, newest first).
+{% endcomment %}
+{% block content %}
+{{ block.super }}
+{% if obj %}{% include "storage/_history.html" %}{% endif %}
+{% endblock %}

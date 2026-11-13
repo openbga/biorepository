@@ -1,0 +1,74 @@
+{
+  "id": "storage-unit-form",
+  "routes": [
+    "storage:unit-create",
+    "storage:unit-edit"
+  ],
+  "title": "Storage unit form",
+  "purpose": "Create a freezer, tank or other storage unit, or change the name, storage class or nominal temperature of an existing one.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form.",
+        "Nominal temperature is the unit's stated set point; it is not a measurement and never blocks storing an item. A retired unit cannot be edited."
+      ],
+      "items": [
+        {
+          "label": "Room",
+          "description": "Create only. Required; active rooms, shown as site / room. Preselected when opened from a room page."
+        },
+        {
+          "label": "Code",
+          "description": "Create only. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Technology",
+          "description": "Create only. LN2 vapor phase, LN2 liquid phase, Mechanical freezer or refrigerator, or Ambient."
+        },
+        {
+          "label": "Storage class",
+          "description": "Required. Describes the storage conditions. New units offer active classes only; when editing, the unit's current class stays selectable even if it has since been deactivated."
+        },
+        {
+          "label": "Nominal temperature (°C)",
+          "description": "Required exact decimal from -273.15 to 9999.99 with at most two decimal places, for example -160.00."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create storage unit / Save changes",
+          "description": "Saves and opens the unit. A new unit has no racks yet; add them from its page."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}

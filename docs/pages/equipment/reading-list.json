@@ -1,0 +1,124 @@
+{
+  "id": "equipment-reading-list",
+  "routes": [
+    "equipment:reading-list"
+  ],
+  "title": "Temperature readings",
+  "purpose": "Review recorded temperature readings, with the limits recorded with each, and find those outside the limits.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "This is the Readings tab; the Imports tab lists CSV imports. Only effective readings are listed: a corrected or withdrawn reading is replaced by its newer version, marked corrected. Readings are for tanks, freezers, supply dewars and other equipment; a temperature monitor is named as the source device on a reading.",
+        "Each reading keeps the lower and upper limit that were set on its equipment when it was recorded, and is flagged against those, so later limit changes do not alter past readings. Where no limit was set the reading is never flagged. Recording a reading outside its limits does not open an excursion; open one from the excursions page.",
+        "Every role that can sign in to the workspace can read this list, including viewers.",
+        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+      ]
+    },
+    {
+      "title": "Search, filters and sorting",
+      "paragraphs": [
+        "Search matches part of the asset ID, equipment name or probe position. The default sort is Read at, newest first. Sortable columns are Read at, Equipment and Temperature (°C)."
+      ],
+      "items": [
+        {
+          "label": "Equipment",
+          "description": "One piece of equipment."
+        },
+        {
+          "label": "Limits",
+          "description": "All readings (the default), Outside the recorded limits, or Outside, without an excursion: outside readings on equipment that is not retired that no excursion on the same equipment covers (an excursion covers readings from its start to its end, or from its start while it is ongoing)."
+        },
+        {
+          "label": "Source",
+          "description": "Under the More control. Entered (by hand) or Imported (from a CSV)."
+        },
+        {
+          "label": "From, To",
+          "description": "Under the More control. Read on or after the first date and on or before the second, in repository local time."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Read at",
+          "description": "When the temperature was read. Always shown."
+        },
+        {
+          "label": "Equipment",
+          "description": "Opens the equipment record."
+        },
+        {
+          "label": "Temperature (°C)",
+          "description": "The exact value in degrees Celsius."
+        },
+        {
+          "label": "Limits",
+          "description": "Above upper limit, Below lower limit, or Within."
+        },
+        {
+          "label": "Limits recorded (°C)",
+          "description": "The lower to upper limit recorded with the reading, or None set."
+        },
+        {
+          "label": "Probe position",
+          "description": "Where it was read, as stated."
+        },
+        {
+          "label": "Monitor",
+          "description": "The temperature monitor it came from, if any."
+        },
+        {
+          "label": "Source",
+          "description": "Entered, or Imported linking to the import."
+        },
+        {
+          "label": "Recorded by",
+          "description": "Who entered or imported it."
+        },
+        {
+          "label": "Correct",
+          "description": "Technicians on readings they recorded; managers and administrators on any reading. Opens the correction form."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Record reading",
+          "description": "Technicians, managers and administrators. Opens the form; when the list is filtered to one piece of equipment it is preselected."
+        },
+        {
+          "label": "Readings, Imports tabs",
+          "description": "Switch between this list and the imports list."
+        },
+        {
+          "label": "Export CSV",
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact decimal values and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+        }
+      ]
+    },
+    {
+      "title": "States",
+      "items": [
+        {
+          "label": "No temperature readings yet",
+          "description": "Nothing was entered or imported. Technicians and above see Record reading; imports are under the Imports tab."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/lists.py",
+    "equipment/queries.py",
+    "equipment/exports.py",
+    "equipment/templates/equipment/reading_list.html",
+    "core/templatetags/navigation.py"
+  ]
+}

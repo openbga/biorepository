@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load distribution specimens %}
+{% comment %}
+Entry grid: retrieve a request's allocated specimens, one row per allocation in pick-list
+(walking) order. Each row posts the specimen and occupancy revisions read when the page was
+rendered; Picked checks the specimen out to the custodian chosen below (destination "Request
+RQ-…"), Not found records that only, Not now leaves it allocated. Rows whose specimen the gate
+would refuse now start on Not now and show the reasons. Context (request_views.pick): form
+(PickForm), formset (prefix "lines", PickRowForm rows with row.info = queries.PickRow and
+row.errors_for_row), request_obj, blocked, submit_label, back_url, crumbs, facts.
+{% endcomment %}
+{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block content %}
+<form class="vr-form vr-form-wide" method="post" novalidate>
+  {% csrf_token %}
+  {% include "distribution/requests/_grid_head.html" with formset_label="specimens" note="Picking is an ordinary check-out: the position becomes free and the time-out-of-storage clock starts. Locations and reasons are checked again when you save." %}
+  <fieldset class="vr-form-section">
+    <legend>Specimens to pick</legend>
+    {{ formset.management_form }}
+    <div class="vr-table-wrap">
+      <table class="table vr-table" id="pick-grid">
+        <thead><tr>
+          <th scope="col">#</th>
+          <th scope="col">Specimen</th>
+          <th scope="col">Location</th>
+          <th scope="col" class="text-end">Amount</th>
+          <th scope="col">Consent restrictions</th>
+          <th scope="col">Cannot be picked now</th>
+          <th scope="col">Outcome<span class="vr-req" aria-hidden="true">*</span></th>
+          <th scope="col">Note</th>
+        </tr></thead>
+        <tbody>
+          {% for row in formset %}{% with info=row.info %}
+          <tr id="row-{{ row.prefix }}"{% if row.errors or row.errors_for_row %} class="table-danger"{% endif %}>
+            <td class="font-monospace">{{ forloop.counter }}{% for field in row.hidden_fields %}{{ field }}{% endfor %}</td>
+            <th scope="row">{% if info %}<a class="vr-id" href="{% url 'specimens:specimen-detail' info.specimen.pk %}">{{ info.specimen.accession }}</a> <span class="d-block small">{{ info.specimen.specimen_type.code }}</span>{% else %}<span class="vr-muted">No longer allocated</span>{% endif %}</th>
+            <td class="vr-id vr-path">{% if info.path %}{% include "storage/_path.html" with p=info.path %}{% elif info %}Not in storage{% endif %}</td>
+            <td class="text-end vr-id">{% if info %}{{ info.specimen.quantity_on_hand|amount:info.specimen.unit }}{% endif %}</td>
+            <td class="vr-wrap small">{{ info.restrictions|default:"—" }}</td>
+            <td>{% for b in info.blockers %}{% blocker_status b %}<span class="d-block small">{{ b.message }}</span>{% endfor %}{% for label in row.errors_for_row %}<span class="d-block small">Refused: {{ label }}</span>{% endfor %}{% if not info.blockers and not row.errors_for_row %}<span class="vr-muted">—</span>{% endif %}</td>
+            <td><fieldset><legend class="visually-hidden">Outcome for row {{ forloop.counter }}</legend>{{ row.outcome }}</fieldset>{% if row.outcome.errors %}<ul class="vr-field-errors">{% for error in row.outcome.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</td>
+            <td><label class="visually-hidden" for="{{ row.note.id_for_label }}">Note, row {{ forloop.counter }}</label>{{ row.note }}{% if row.note.errors %}<ul class="vr-field-errors">{% for error in row.note.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</td>
+          </tr>
+          {% if row.non_field_errors %}<tr class="table-danger"><td colspan="8"><ul class="vr-field-errors mb-0">{% for error in row.non_field_errors %}<li>Row {{ forloop.parentloop.counter }}: {{ error }}</li>{% endfor %}</ul></td></tr>{% endif %}
+          {% endwith %}{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p class="vr-form-note">Notes explain a not-found line: where it was looked for. Do not enter names, signatures, record numbers, birth dates or contact details of a participant.</p>
+  </fieldset>
+  {% include "distribution/requests/_grid_foot.html" %}
+</form>
+{% endblock %}

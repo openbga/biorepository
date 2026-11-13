@@ -1,0 +1,4 @@
+{% comment %}Included by box_detail.html only when the specimens app is installed, so storage needs no
+specimens import and no specimens tag library to render. The specimens tag sets p.claim.specimen
+(pk, accession, type_code, url) on the positions it resolves and renders nothing.
+Parameter: positions.{% endcomment %}{% load specimen_wells %}{% attach_specimens positions request.user %}

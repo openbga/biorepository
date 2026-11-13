@@ -1,0 +1,79 @@
+{
+  "id": "storage-container-move",
+  "routes": [
+    "storage:container-move"
+  ],
+  "title": "Move or correct a move of a box, rack or shelf",
+  "purpose": "Record that a box, rack, tower, shelf or canister has moved to another place, carrying everything inside it in one event.",
+  "sections": [
+    {
+      "title": "Who and what",
+      "paragraphs": [
+        "Admin, manager and technician roles. Only active boxes and nodes can move; a retired one returns to its page with a message. Boxes move to a node with box slots. Nodes move to the top level of a unit or into another node with node slots, but never into themselves or what is inside them."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Move to",
+          "description": "Required. Boxes: active racks or shelves offering box slots. Nodes: the top level of an active unit, or an active node offering node slots (not itself or its contents). A shelf can go only into a rack, and a rack, tower or canister only into a shelf; layouts stay within 4 levels. Each choice shows how many of its slots are free."
+        },
+        {
+          "label": "Slot",
+          "description": "Required whole number from 1 to the destination's slot count (any number from 1 at a unit's top level). It must be free, and different from the current place."
+        },
+        {
+          "label": "Moved at",
+          "description": "Required. Repository local time, to the minute; defaults to now. It cannot be in the future and cannot be earlier than the last recorded movement of anything inside it, of any item that has since left it (for example a later check-out from the box), or of the containers involved."
+        },
+        {
+          "label": "Reason for the move",
+          "description": "Required, up to 2000 characters. Kept in the history of the container and of every item inside it."
+        }
+      ]
+    },
+    {
+      "title": "Correct move",
+      "paragraphs": [
+        "Admin and manager roles only; a technician who opens a correction is refused, and records a correct location with an ordinary move instead. Opened from Correct move on the latest move in the Moves table of the box or rack page. Only the container's latest move, and only one not already corrected, can be corrected; anything else returns to the record with a message.",
+        "Give where the container really is now and when; the correction is a compensating move recorded now, with the same checks as any move. The wrong record stays in the history and is linked to the correction, which is marked Correction. Items inside get the correction in their movement history too."
+      ],
+      "items": [
+        {
+          "label": "Correct move",
+          "description": "Title and button of the form in correction mode. Records the compensating move and returns to the record page."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "The page states the current location and how many stored items will move with the container. Positions and their labels do not change. The move, its checks and its audit entries are saved together; one recorded move lists each item carried.",
+        "If storage changed after you opened the form (another placement or move was recorded) the move is refused as stale. The form reloads with current values and your entries; check the contents, then submit again.",
+        "A move is a location update, not a record of time out of storage; use check-out for material that leaves storage. Recorded moves are never edited or deleted; a wrong move is corrected by a new one."
+      ],
+      "items": [
+        {
+          "label": "Move box / Move <kind>",
+          "description": "Records the move and returns to the page with a summary naming the new place, slot and item count."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/templates/storage/_moves.html",
+    "storage/tests/test_moves.py"
+  ]
+}

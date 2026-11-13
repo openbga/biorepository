@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load distribution distribution_governance %}
+{% comment %}
+Study record: facts, the collections it governs (current links with End link for managers; ended
+links kept), its consent form versions, consent counts by status (each links to the filtered
+consent list) and the audit history. Header: Edit (managers). Card headers: Link collection, Add
+consent form (managers). Context: study, current_links, ended_links, consent_forms (with
+categories), consent_counts [(status, label, count)], consent_total, toc, history, can_manage.
+{% endcomment %}
+{% block breadcrumbs %}{% url 'distribution:study-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Studies" section_url=list_url current=study.code %}{% endblock %}
+{% block page_heading %}<span class="vr-id">{{ study.code }}</span>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "study" study.status %}</li><li>{{ study.title }}</li><li>{{ study.get_consent_basis_display }}</li>{% if study.ethics_reference %}<li class="vr-id">{{ study.ethics_reference }}</li>{% endif %}</ul>{% endblock %}
+{% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'distribution:study-edit' study.pk %}">Edit</a>{% endif %}{% endblock %}
+{% block content %}
+{% include "includes/page_toc.html" with items=toc %}
+{% if study.status != "active" %}
+<div class="alert alert-warning" role="status">{% distribution_status "study" study.status plain=True %}<div>Material governed by this study cannot be allocated, picked, packed or dispatched while the study is {{ study.get_status_display|lower }}.</div></div>
+{% endif %}
+
+<section class="card mb-3" aria-labelledby="facts-heading">
+  <div class="card-header"><h2 class="card-title" id="facts-heading">Study</h2></div>
+  <div class="card-body"><dl class="vr-facts">
+    <div><dt>Code</dt><dd class="vr-id">{{ study.code }}</dd></div>
+    <div><dt>Title</dt><dd>{{ study.title }}</dd></div>
+    <div><dt>Status</dt><dd>{% distribution_status "study" study.status plain=True %}</dd></div>
+    <div><dt>Principal investigator</dt><dd>{{ study.principal_investigator|default:"Not recorded" }}</dd></div>
+    <div><dt>Ethics reference</dt><dd>{% if study.ethics_reference %}<span class="vr-id">{{ study.ethics_reference }}</span>{% else %}Not recorded{% endif %}</dd></div>
+    <div><dt>Ethics approved until</dt><dd>{% if study.ethics_approved_until %}<time datetime="{{ study.ethics_approved_until|date:'Y-m-d' }}">{{ study.ethics_approved_until|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}<span class="d-block vr-muted small">Shown, not enforced.</span></dd></div>
+    <div><dt>Consent basis</dt><dd>{{ study.get_consent_basis_display }}{% if study.consent_basis == "determination" %}: <span class="vr-id">{{ study.determination_reference }}</span>{% endif %}<span class="d-block vr-muted small">{% if study.consent_basis == "records" %}Each participant's recorded consent governs their material.{% else %}A study-level determination covers the material; recorded refusals still apply.{% endif %}</span></dd></div>
+    <div><dt>Recorded</dt><dd><time datetime="{{ study.created_at|date:'c' }}">{{ study.created_at|date:"Y-m-d H:i" }}</time> by {{ study.created_by|person }}</dd></div>
+  </dl>
+  {% if study.description %}<details class="mt-3"><summary>Description</summary><p class="mb-0">{{ study.description|linebreaksbr }}</p></details>{% endif %}
+  </div>
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="collections-heading">
+  <div class="card-header"><h2 class="card-title" id="collections-heading">Collections governed</h2><span class="vr-count">{{ current_links|length }} current{% if ended_links %}, {{ ended_links|length }} ended{% endif %}</span>{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:study-collection-link' study.pk %}">Link collection</a>{% endif %}</div>
+  {% if current_links or ended_links %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Collection</th><th scope="col">Name</th><th scope="col">Linked</th><th scope="col">Ended</th><th scope="col">Reason</th>{% if can_manage %}<th scope="col"><span class="visually-hidden">Actions</span></th>{% endif %}</tr></thead>
+    <tbody>
+      {% for link in current_links %}{% include "distribution/governance/_link_row.html" %}{% endfor %}
+      {% for link in ended_links %}{% include "distribution/governance/_link_row.html" %}{% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No collection is governed by this study" body="Link the collections whose specimens this study's consent basis governs. Unlinked material cannot be distributed." %}</div>{% endif %}
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="forms-heading">
+  <div class="card-header"><h2 class="card-title" id="forms-heading">Consent forms</h2><span class="vr-count">{{ consent_forms|length }}</span>{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:consent-form-create' %}?study={{ study.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Add consent form</a>{% endif %}</div>
+  {% if consent_forms %}
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Form</th><th scope="col">Version</th><th scope="col">Title</th><th scope="col">Kind</th><th scope="col">Categories asked</th><th scope="col">Status</th></tr></thead>
+    <tbody>{% for f in consent_forms %}
+      <tr>
+        <th scope="row">{% if can_manage %}<a class="vr-row-link vr-id" href="{% url 'distribution:consent-form-edit' f.pk %}">{{ f.code }}</a>{% else %}<span class="vr-id">{{ f.code }}</span>{% endif %}</th>
+        <td class="vr-id">{{ f.version }}</td>
+        <td>{{ f.title }}</td>
+        <td>{{ f.get_kind_display }}</td>
+        <td class="vr-id vr-wrap">{% for c in f.categories.all %}{{ c.code }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+        <td>{% if f.is_active %}{% include "includes/status.html" with label="Active" tone="success" plain=True %}{% else %}{% include "includes/status.html" with label="Inactive" tone="neutral" plain=True %}{% endif %}</td>
+      </tr>{% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No consent forms recorded" body="Add each version of the consent form participants decide on, with the categories it asks." %}</div>{% endif %}
+</section>
+
+<section class="card vr-table-card mb-3" aria-labelledby="consents-heading">
+  <div class="card-header"><h2 class="card-title" id="consents-heading">Consents</h2><span class="vr-count">{{ consent_total }}</span></div>
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col">Status</th><th scope="col" class="text-end">Participants</th></tr></thead>
+    <tbody>{% for value, label, count in consent_counts %}
+      <tr>
+        <th scope="row">{% if count %}<a class="vr-row-link" href="{% url 'distribution:consent-list' %}?study={{ study.pk }}&amp;status={{ value }}">{{ label }}</a>{% else %}{{ label }}{% endif %}</th>
+        <td class="text-end vr-id">{{ count }}</td>
+      </tr>{% endfor %}
+    </tbody>
+  </table></div>
+</section>
+
+{% include "storage/_history.html" %}
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=study.code %}{% endblock %}

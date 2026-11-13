@@ -1,0 +1,53 @@
+{
+  "id": "accounts-reauthentication-code",
+  "routes": [
+    "account_request_reauthentication_code",
+    "account_confirm_reauthentication_code"
+  ],
+  "title": "Confirm access with an emailed code",
+  "purpose": "Reconfirm your identity before an account-sensitive action by entering a one-time code sent to one of your verified email addresses.",
+  "sections": [
+    {
+      "title": "Request the code",
+      "items": [
+        {
+          "label": "Recipient",
+          "description": "Choose which of your verified email addresses receives the code. Only verified addresses are offered; verify an address on the Email addresses page first if none appears."
+        },
+        {
+          "label": "Request Code",
+          "description": "Sends a one-time code to the chosen address and opens the code entry page. Requests are rate limited; a field error appears when the limit is reached."
+        }
+      ]
+    },
+    {
+      "title": "Enter the code",
+      "items": [
+        {
+          "label": "Code",
+          "description": "Required one-time code from the latest email. Enter it in this browser window within five minutes of the request. An incorrect code shows a field error, and repeated unsuccessful submissions abandon the attempt."
+        },
+        {
+          "label": "Confirm",
+          "description": "Records a recent successful identity check, verifies the address the code was sent to and resumes the protected operation or returns to the application destination."
+        },
+        {
+          "label": "Request new code",
+          "description": "Emails a replacement to the same address and invalidates earlier codes. The number of replacements is limited, and resending does not restart the five-minute deadline."
+        }
+      ]
+    },
+    {
+      "title": "Availability",
+      "paragraphs": [
+        "Requires sign-in. This is an alternative to confirming your password for actions that need a recent identity check, such as managing two-factor authentication; a recent check lasts five minutes. If no code attempt is pending in the current browser session, the code entry page returns to the request page. The page is refused if email-code reauthentication is not enabled for the deployment. The code proves access to the address; it does not change roles or permissions."
+      ]
+    }
+  ],
+  "sources": [
+    "config/settings.py",
+    "templates/allauth/layouts/base.html",
+    "templates/allauth/layouts/manage.html",
+    "uv.lock"
+  ]
+}

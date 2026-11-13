@@ -1,0 +1,78 @@
+{
+  "id": "equipment-excursion-form",
+  "routes": [
+    "equipment:excursion-create",
+    "equipment:excursion-edit"
+  ],
+  "title": "Excursion form",
+  "purpose": "Record a new temperature excursion, or change the details of one that is still open.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Technicians, managers and administrators. Viewers are refused. A new excursion is for a tank, freezer or other equipment that is not retired; temperature monitors are not offered. Editing is possible only while the excursion is Open: when it is awaiting review or closed the form opens as Not available, and a manager returns it for more work or reopens it first. When the action is not possible right now, the form opens with a Not available notice that gives the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "Times are repository local time, to the second, and cannot be in the future. If someone else changed the record after you opened this form, the save is refused with a message that it changed since you opened it. Nothing is saved; reload, check the current values and enter the change again."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Equipment",
+          "description": "New only, required. The tank or freezer. Its storage unit and the limits set on it when you save are stored with the excursion and do not change later. When it has no storage unit, no specimens can be listed."
+        },
+        {
+          "label": "Started",
+          "description": "Required. When the temperature went outside the limits. Defaults to now."
+        },
+        {
+          "label": "Ended",
+          "description": "Optional while it is ongoing. Not before the start. It is required before submitting for review."
+        },
+        {
+          "label": "Extreme reached, Extreme reached at",
+          "description": "Optional. The extreme temperature in °C (up to two decimals) and when it was reached, which must fall within the excursion."
+        },
+        {
+          "label": "Detected by",
+          "description": "Required: Alarm, Temperature reading, Inspection or level check, or Other."
+        },
+        {
+          "label": "Cause category",
+          "description": "Required: Power failure, LN2 supply or fill, Equipment fault, Door or lid left open, Sensor or probe fault, Handling or access, Not yet known (the default) or Other."
+        },
+        {
+          "label": "Cause",
+          "description": "Up to 4,000 characters; required before submitting for review."
+        },
+        {
+          "label": "Action taken",
+          "description": "Up to 4,000 characters; required before submitting for review."
+        },
+        {
+          "label": "Impact assessment",
+          "description": "Up to 4,000 characters; required before submitting. The effect on the specimens stored in the unit. Do not enter donor, patient or participant names or other text that could identify a person."
+        },
+        {
+          "label": "Note, Attachment",
+          "description": "New only, optional. The first timeline note and a file (PDF, PNG, JPEG, TXT or CSV, up to 10 MiB, checked by content), downloaded as a file. If the repository has set a limit on the total size of attached files and it would be exceeded, the file is refused and nothing is recorded."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Create excursion opens it as Open and shows its record. Save changes keeps the new values, bumps its revision and adds a Details updated entry to the timeline showing each value before and after; saving with no change is refused. Editing never needs a reason because the timeline keeps every earlier value."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/action_views.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/form.html",
+    "core/attachments.py"
+  ]
+}

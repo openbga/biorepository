@@ -1,0 +1,65 @@
+{
+  "id": "storage-class-form",
+  "routes": [
+    "storage:class-create",
+    "storage:class-edit"
+  ],
+  "title": "Storage class form",
+  "purpose": "Create a storage class or change the name, description or active state of an existing one.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form."
+      ],
+      "items": [
+        {
+          "label": "Code",
+          "description": "Create only. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement."
+        },
+        {
+          "label": "Name",
+          "description": "Required, up to 160 characters."
+        },
+        {
+          "label": "Description",
+          "description": "Optional, up to 500 characters."
+        },
+        {
+          "label": "Active",
+          "description": "Edit only. Inactive classes stay on existing units but cannot be chosen for new ones or when editing a unit."
+        },
+        {
+          "label": "Reason for the change",
+          "description": "Edit only. Required, up to 2000 characters. Kept in the history."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "Editing needs a reason (up to 2000 characters), which is kept in the history with the values before and after. Creating records the setup without asking for a reason. If the record changed since you opened the form, the save is refused with a message to reload; your entries stay on the page, but check the current values before saving again. A save with nothing changed is refused."
+      ],
+      "items": [
+        {
+          "label": "Create storage class / Save changes",
+          "description": "Saves and opens the class."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}

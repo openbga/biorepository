@@ -1,0 +1,42 @@
+{
+  "id": "distribution-consent-hold",
+  "routes": [
+    "distribution:consent-hold"
+  ],
+  "title": "Hold withdrawn specimens",
+  "purpose": "Place the withdrawal's use hold on specimens of the participant that do not have it yet.",
+  "sections": [
+    {
+      "title": "When to use it",
+      "paragraphs": [
+        "Specimens registered after a withdrawal are not held automatically. This places a use hold on each available or exhausted specimen of the participant in every collection the study governs or has governed (including one since linked to another study) without an active hold from the withdrawal in effect, and releases their allocations not yet picked. The form lists the specimens it will hold. Repeating it holds nothing twice."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason",
+          "description": "Required; kept in the history and on the holds. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "Rules",
+      "paragraphs": [
+        "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
+        "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
+        "Not available when no withdrawal that stops use is in effect, or every specimen already holds it. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/governance_views.py",
+    "distribution/models.py",
+    "distribution/governance_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

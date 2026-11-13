@@ -1,0 +1,50 @@
+{
+  "id": "specimens-hold-release",
+  "routes": [
+    "specimens:hold-release"
+  ],
+  "title": "Release hold",
+  "purpose": "End a hold on a specimen so that the work it blocked can proceed.",
+  "sections": [
+    {
+      "title": "Who can use it and when",
+      "paragraphs": [
+        "Only admin and manager can use this form; a technician or viewer is refused.",
+        "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
+        "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
+        "The form shows the hold: its kind, what it was placed for (when another workflow placed it), who placed it and when, and why. A hold that was already released cannot be released again.",
+        "A hold placed by another workflow (for example an allocation to a distribution request) shows that workflow's reference and is released only through that workflow: this form opens with a Not available notice saying so, and the specimen record shows “Released through its workflow” instead of a Release button."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "When it happened",
+          "description": "Required. Repository local time to the second; not in the future and not before the specimen's last recorded event."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 2,000 characters. Kept in the history with the change. Why the hold is no longer needed. Do not enter names, record numbers, birth dates, contact details or other text that could identify a donor."
+        }
+      ]
+    },
+    {
+      "title": "Saving and rules",
+      "paragraphs": [
+        "Release hold records the release; the hold is not deleted and stays visible in the Holds list with who released it and why. The time cannot be before the hold was placed or the specimen's latest event. If other holds remain, they still block. Hidden revision numbers are captured when the form opens. If the specimen was changed by someone else meanwhile, the save is refused with “Specimen VP-… changed since you opened it. Reload it, check the current state and try again” (or, for storage changes, “The specimen's storage location changed since you opened this page… Reload it and try again”). Nothing is saved; reopen the form from the specimen record to pick up the current state before entering the action again.",
+        "Times are repository local time, entered to the second. A time cannot be in the future or before the specimen's latest recorded event (the message names that event's time). A time within the same second as that event is taken as that event's own time, so recording straight after another event keeps the order. The form starts at the current time."
+      ]
+    }
+  ],
+  "sources": [
+    "specimens/urls.py",
+    "specimens/action_views.py",
+    "specimens/forms.py",
+    "specimens/services.py",
+    "accounts/roles.py",
+    "specimens/templates/specimens/actions/form.html",
+    "specimens/templates/specimens/actions/_context.html",
+    "specimens/tests/test_views_actions.py"
+  ]
+}

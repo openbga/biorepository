@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load equipment %}
+{% comment %}
+One validated readings CSV (Document page): warnings, errors by row, the readings as read, then
+either the commit form (valid, unexpired, not committed; operators) or the commit that recorded
+them. Context: batch, state (validated | rejected | committed | expired), commit, rows (first
+`shown` normalized rows with measured, number, device_code), row_total, shown, readings_url,
+form (ImportCommitForm), crumbs, can_operate.
+{% endcomment %}
+{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% import_status state %}</li><li>{{ batch.row_count }} reading{{ batch.row_count|pluralize }}</li>{% if batch.equipment %}<li><a class="vr-id" href="{% url 'equipment:equipment-detail' batch.equipment_id %}">{{ batch.equipment.code }}</a></li>{% endif %}<li>Validated <time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor|person }}</li></ul>{% endblock %}
+{% block content %}
+{% for warning in batch.warnings %}
+<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Check" tone="warning" plain=True %}<div>{{ warning }}</div></div>
+{% endfor %}
+{% if state == "rejected" %}
+<div class="alert alert-danger" role="alert">{% import_status state plain=True %}<div>{% if batch.errors %}Nothing can be recorded from this file. Correct the errors below in your file and upload it again.{% else %}The file has no readings.{% endif %}</div></div>
+{% elif state == "expired" %}
+<div class="alert alert-secondary" role="status">{% import_status state plain=True %}<div>This check expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to check it against the current register.</div></div>
+{% endif %}
+
+{% if batch.errors %}
+<section class="card vr-table-card mb-3" aria-labelledby="errors-heading">
+  <div class="card-header"><h2 class="card-title" id="errors-heading">Errors</h2><span class="vr-count">{{ batch.errors|length }}</span></div>
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col" class="text-end">Row</th><th scope="col">Column</th><th scope="col">Problem</th></tr></thead>
+    <tbody>{% for e in batch.errors %}
+      <tr><th scope="row" class="text-end vr-id">{{ e.row }}</th><td class="vr-id">{{ e.field }}</td><td class="vr-wrap">{{ e.message }}</td></tr>
+    {% endfor %}</tbody></table></div>
+</section>
+{% endif %}
+
+{% if commit %}
+<section class="card mb-3" aria-labelledby="commit-heading">
+  <div class="card-header"><h2 class="card-title" id="commit-heading">Recorded</h2></div>
+  <div class="card-body"><p class="mb-0">{{ commit.reading_count }} reading{{ commit.reading_count|pluralize }} recorded <time datetime="{{ commit.recorded_at|date:'c' }}">{{ commit.recorded_at|date:"Y-m-d H:i" }}</time> by {{ commit.actor|person }}: {{ commit.reason }}</p><p class="mb-0 mt-2"><a href="{{ readings_url }}?source=import">Imported readings</a></p></div>
+</section>
+{% endif %}
+
+{% if rows %}
+<section class="card vr-table-card mb-3" aria-labelledby="preview-heading">
+  <div class="card-header"><h2 class="card-title" id="preview-heading">Readings as read</h2><span class="vr-count">{{ row_total }}{% if row_total > shown %}, first {{ shown }} shown{% endif %}</span></div>
+  <div class="vr-table-wrap"><table class="table vr-table">
+    <thead><tr><th scope="col" class="text-end">Row</th><th scope="col">Equipment</th><th scope="col">Read at</th><th scope="col" class="text-end">Temperature (°C)</th><th scope="col">Probe position</th><th scope="col">Monitor</th><th scope="col">Note</th></tr></thead>
+    <tbody>{% for row in rows %}
+      <tr>
+        <th scope="row" class="text-end vr-id">{{ row.row }}</th>
+        <td class="vr-id">{{ row.equipment_code }}</td>
+        <td class="vr-nowrap">{% if row.measured %}<time datetime="{{ row.measured|date:'c' }}">{{ row.measured|date:"Y-m-d H:i:s" }}</time>{% else %}—{% endif %}</td>
+        <td class="text-end vr-id">{{ row.number }}</td>
+        <td>{{ row.probe_position|default:"—" }}</td>
+        <td class="vr-id">{{ row.device_code|default:"—" }}</td>
+        <td class="vr-wrap">{{ row.note|default:"—" }}</td>
+      </tr>
+    {% endfor %}</tbody></table></div>
+</section>
+{% endif %}
+
+{% if state == "validated" %}
+<section class="card mb-3" aria-labelledby="record-heading">
+  <div class="card-header"><h2 class="card-title" id="record-heading">Record these readings</h2></div>
+  <div class="card-body">
+    {% if can_operate %}
+    <form class="vr-form" method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_errors.html" with form=form %}
+      <p class="vr-form-note">All {{ batch.row_count }} readings are recorded together, or none if anything changed since the check. Each keeps the limits set on its equipment when it is recorded. The check expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.</p>
+      <fieldset class="vr-form-section">{{ form.reason.as_field_group }}</fieldset>
+      <div class="vr-form-actions"><button class="btn btn-primary" type="submit">Record {{ batch.row_count }} reading{{ batch.row_count|pluralize }}</button></div>
+    </form>
+    {% else %}
+    <p class="mb-0">A technician, manager or administrator records the readings from a valid file.</p>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}

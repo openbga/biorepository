@@ -1,0 +1,106 @@
+{
+  "id": "storage-node-detail",
+  "routes": [
+    "storage:node-detail"
+  ],
+  "title": "Rack, tower, shelf or canister",
+  "purpose": "Review one node of a unit: its facts, occupancy, its slots (child nodes or boxes), recorded moves and history, and reach the actions to change or move it.",
+  "sections": [
+    {
+      "title": "Facts",
+      "paragraphs": [
+        "A retired record shows a banner with when it was retired, by whom and the reason. Its Edit, Retire and Move buttons are gone."
+      ],
+      "items": [
+        {
+          "label": "Code",
+          "description": "Immutable, never reused."
+        },
+        {
+          "label": "Name",
+          "description": "Free-text name."
+        },
+        {
+          "label": "Location",
+          "description": "Unit and the chain of nodes above it; each opens its page."
+        },
+        {
+          "label": "Slot",
+          "description": "Numbered place in its parent or at the top level of the unit."
+        },
+        {
+          "label": "Holds",
+          "description": "Either node slots (it holds shelves or racks) or box slots (it holds boxes), never both."
+        },
+        {
+          "label": "Unit conditions",
+          "description": "Technology and the unit's stated nominal temperature; a set point, not a measurement."
+        }
+      ]
+    },
+    {
+      "title": "Occupancy",
+      "paragraphs": [
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it. For a node the counts include everything beneath it."
+      ]
+    },
+    {
+      "title": "Node slots or Box slots",
+      "paragraphs": [
+        "Every slot from 1 to the number offered, with what occupies it or Empty slot. Only active children are shown. A shelf holds racks; a rack, tower or canister holds shelves; a node holds child nodes or boxes, never both; layouts are at most 4 levels deep."
+      ],
+      "items": [
+        {
+          "label": "Add box / Add shelf / Add rack",
+          "description": "Shown to admin and manager roles while the node is active and has a free slot. Add box opens the box form for this node with the first free slot chosen; Add rack (on a shelf) or Add shelf opens the rack or shelf form with this node as parent."
+        }
+      ]
+    },
+    {
+      "title": "Moves",
+      "paragraphs": [
+        "Recorded moves of this node, newest first, up to 20. Columns: Moved at (with a Correction tag where it corrects an earlier move), From, To, Items carried, By, Reason."
+      ],
+      "items": [
+        {
+          "label": "Correct move",
+          "description": "Row action on the latest move, for admin and manager roles only, while that move has not been corrected. Opens the move form in correction mode; the wrong move stays in the list, and the correction is marked Correction."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Admin and manager roles, active node. Opens the form to change the name."
+        },
+        {
+          "label": "Move rack / shelf / tower / canister",
+          "description": "Admin, manager and technician roles, active node. Opens the move form."
+        },
+        {
+          "label": "Retire ...",
+          "description": "Admin and manager roles, active node. Disabled, with the reason beside it, while the node still holds active child nodes or boxes."
+        }
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/services.py",
+    "storage/templates/storage/node_detail.html",
+    "storage/templates/storage/_capacity.html",
+    "storage/templates/storage/_moves.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "storage-template-apply",
+  "routes": [
+    "storage:template-apply"
+  ],
+  "title": "Apply template",
+  "purpose": "Create a new storage unit with its racks, shelves and boxes (and every position) from an active template version.",
+  "sections": [
+    {
+      "title": "Fields",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form. Inactive templates cannot be applied; opening this page for one returns to the template with a message.",
+        "Everything is created in one step. If any part fails, nothing is created and the form shows the error."
+      ],
+      "items": [
+        {
+          "label": "Room",
+          "description": "Required; active rooms, shown as site / room."
+        },
+        {
+          "label": "Unit code",
+          "description": "Required. Up to 40 letters, digits, '.', '_' or '-', starting with a letter or digit. Stored in capitals. It can never be changed or reused, even after retirement. Prefix of every generated code: rack T01 in unit VP-02 becomes VP-02-T01. A generated code over 40 characters is refused; use a shorter unit code."
+        },
+        {
+          "label": "Unit name",
+          "description": "Required, up to 160 characters."
+        }
+      ]
+    },
+    {
+      "title": "What is created",
+      "paragraphs": [
+        "The unit takes its storage class, technology and nominal temperature from the recipe, and records the template version it came from. Racks, shelves and boxes are created exactly as the template describes, with all positions. The audit trail records the application."
+      ],
+      "items": [
+        {
+          "label": "Apply template",
+          "description": "Creates the unit and opens it."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns to the template."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py",
+    "storage/recipes.py"
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "id": "equipment-equipment-detail",
+  "routes": [
+    "equipment:equipment-detail"
+  ],
+  "title": "Equipment record",
+  "purpose": "Review one piece of equipment: its details, limits, due dates, service events, recent LN2 entries and readings, excursions and status history, and reach the actions to record against it.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "A table of contents at the top jumps to each section. The header shows the status, kind, storage unit, Critical equipment and location. When excursions are open or awaiting review a red notice says how many and links to them. Sections for LN2 entries appear only for LN2 tanks and supply dewars; sections for readings and excursions appear for everything except temperature monitors.",
+        "Retired equipment takes no new entries: the record buttons are disabled with a note, until a manager changes its status back to in service or out of service."
+      ]
+    },
+    {
+      "title": "Equipment and Limits",
+      "paragraphs": [
+        "Vapor Phase has no default limits, refill levels or service intervals and never works out a due date: every one of them is entered by your repository, and what the page shows is what was entered. Each reading and excursion keeps the limits in force when it was recorded."
+      ],
+      "items": [
+        {
+          "label": "Equipment section",
+          "description": "Asset ID, name, kind, status, whether it is critical, storage unit (linked), location, manufacturer and model, serial number, installed date, service provider, who registered it and when, and notes."
+        },
+        {
+          "label": "Lower limit, Upper limit",
+          "description": "The temperature limits in °C, or No limit set."
+        },
+        {
+          "label": "Level unit, Low level",
+          "description": "LN2 tanks and supply dewars only: the unit levels are read in and the level your repository refills at."
+        }
+      ]
+    },
+    {
+      "title": "Due dates",
+      "paragraphs": [
+        "One row for each of maintenance, calibration, mapping and qualification. A row shows the next due date entered on the latest effective event of that kind. A later event without a next due date clears the date; a repair never has one. Nothing is calculated from an interval. Overdue means the date is before today, Due today is today, Scheduled is later. Days is the number of days from today, negative when overdue. Last performed links to the service event."
+      ]
+    },
+    {
+      "title": "Service events",
+      "paragraphs": [
+        "The latest 200 events, newest first, with the count. Entries are never edited or deleted. A correction adds a new entry that replaces the values of the old one, or withdraws it, and it always needs a reason; the original stays visible in the log marked Corrected and the new one is marked Correction (or Withdrawal)."
+      ],
+      "items": [
+        {
+          "label": "Performed, Service, Outcome",
+          "description": "The date performed, the kind of event with its description under Description, and its outcome."
+        },
+        {
+          "label": "Performed by, Reference",
+          "description": "The staff member or outside provider, and the certificate, work order or procedure reference with any reference device."
+        },
+        {
+          "label": "As found, As left, Next due",
+          "description": "Calibration readings before and after, and the date your repository set for the next one."
+        },
+        {
+          "label": "Attachment",
+          "description": "The certificate or report, downloaded as a file. Anyone who can read the record can download it."
+        },
+        {
+          "label": "Entry",
+          "description": "Effective, Correction, Corrected or Withdrawal, with the correction reason, links between the old and new entry, and who recorded it and when."
+        },
+        {
+          "label": "Correct",
+          "description": "Opens the correction form. Shown to the person who recorded the event and to managers and administrators, and not on an entry that was already corrected or withdrawn."
+        }
+      ]
+    },
+    {
+      "title": "LN2 log and Temperature readings",
+      "paragraphs": [
+        "Each shows the latest 20 effective entries with a link to the full list for this equipment (All entries in the LN2 log, All readings). Record LN2 entry and Record reading open the forms with this equipment preselected. A reading is flagged Above upper limit or Below lower limit against the limits recorded with it, otherwise Within. Change since previous is worked out from the levels and not entered."
+      ]
+    },
+    {
+      "title": "Excursions",
+      "paragraphs": [
+        "Every excursion on this equipment, newest first, linked to its record. New excursion opens the form with this equipment preselected."
+      ]
+    },
+    {
+      "title": "Status history",
+      "paragraphs": [
+        "Each status change with the time it took effect, the change, the reason, and who recorded it and when. Equipment registered and never changed shows In service since it was registered."
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record (registration, edits, status changes, service events, entries and exports), shown oldest to newest with the person and the reason. It cannot be edited or deleted."
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Managers and administrators. Opens the equipment form."
+        },
+        {
+          "label": "Change status",
+          "description": "Managers and administrators. Opens the status form."
+        },
+        {
+          "label": "Record service event",
+          "description": "Technicians, managers and administrators. Opens the service event form. Disabled with a note when the equipment is retired."
+        },
+        {
+          "label": "Record LN2 entry, Record reading, New excursion",
+          "description": "Technicians, managers and administrators; in the LN2 log, Temperature readings and Excursions sections, hidden when the equipment is retired."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/queries.py",
+    "equipment/models.py",
+    "equipment/templates/equipment/equipment_detail.html",
+    "equipment/templates/equipment/_attachment.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "id": "distribution-request-detail",
+  "routes": [
+    "distribution:request-detail"
+  ],
+  "title": "Specimen request",
+  "purpose": "Read one specimen request and start its next step: lines, submission and decision, allocation, picking and shipments.",
+  "sections": [
+    {
+      "title": "What the page shows",
+      "paragraphs": [
+        "The header shows the request number, its status stamp, title, investigator and institution. Every role can read the page; buttons appear only for roles that may use them. An action that the request's current state does not allow is shown disabled with the reason beside it.",
+        "Alerts at the top say what the request is waiting for: a decision (and, if you created or submitted it, that another person must decide it), changes after it was returned, a new decision after it was reopened, or an agreement still to be linked before anything can be dispatched."
+      ]
+    },
+    {
+      "title": "Header actions by status",
+      "items": [
+        {
+          "label": "Draft or Returned for changes",
+          "description": "Edit and Edit lines (technicians and above); Submit for decision (primary; disabled until the request has a line)."
+        },
+        {
+          "label": "Awaiting decision",
+          "description": "Decide request (primary) for people with the request decision permission and an operating role. If you created the request or made its latest submission the button is disabled with the sentence: You created or submitted this request. Another person with request decision permission must decide it. Superuser status alone does not give the permission."
+        },
+        {
+          "label": "Approved",
+          "description": "The primary button is the next step for your role: Pick specimens when specimens wait to be picked, New shipment when picked specimens are not yet in a shipment, Allocate (managers) when a line still needs specimens, otherwise Close request (managers). Pick list, Put back, Release allocations, Reopen request and the other steps are under More or beside it."
+        },
+        {
+          "label": "Cancel request",
+          "description": "Managers and administrators, while the request is not final. Disabled while specimens are picked or shipped: put picked ones back first; a request with shipped material is closed instead."
+        },
+        {
+          "label": "Link agreement",
+          "description": "Managers and administrators, while the request is not final."
+        },
+        {
+          "label": "Add note",
+          "description": "Technicians, managers and administrators, in any status."
+        }
+      ]
+    },
+    {
+      "title": "Progress",
+      "paragraphs": [
+        "The Progress panel, under any notice and above the request facts, shows the request's six steps: Prepare (the lines), Decision, Allocate, Pick, Ship and Close. Finished steps carry a tick, the current step is highlighted, and later steps are open. Under each step a short count says how far it has got: lines, the decision, specimens allocated, picked and shipped, and shipments in preparation.",
+        "Next names what the request needs now. When you can do it, it is the same words as the main button in the header; when that button is unavailable, a Blocked note gives the reason, for example lines still to add or specimens still allocated. Awaiting a decision, it says who may decide. A closed request shows All steps done; a rejected or cancelled one shows where it ended. The panel is a summary of the record and the counts below it; it changes nothing."
+      ]
+    },
+    {
+      "title": "Request",
+      "paragraphs": [
+        "The facts as recorded: title, investigator and institution, purpose, the uses requested (scope categories each specimen's consent must permit), the studies named (none means any study), the requester's ethics approval reference and date (a past date is marked, not enforced), data requested, needed-by date, how it was received, the linked agreement with its validity today (Valid, Not executed, Not yet in effect, Expired or Terminated, computed from its dates) and its data level, and who created it."
+      ]
+    },
+    {
+      "title": "Lines",
+      "paragraphs": [
+        "Each line asks for a number of specimens of one type, optionally from one study and with a minimum amount each. The Allocated, Picked and Shipped columns count the line's specimens in each state. Edit lines appears while the request is a draft or returned.",
+        "On an approved request, managers see Allocate on each line that still needs specimens; a full line reads All allocated."
+      ]
+    },
+    {
+      "title": "Allocations",
+      "paragraphs": [
+        "Every specimen ever allocated to the request with its state (Allocated, Picked, Shipped or Released), line, type, amount on hand, current location and shipment. The specimen ID opens the specimen. Allocation reserves the specimen, not its storage position. For specimens waiting to be picked, Cannot be picked now lists what the recorded facts would refuse today (for example a use hold or a withdrawn consent), each naming the fact. Pick list opens the printable list."
+      ]
+    },
+    {
+      "title": "Submissions and decisions",
+      "paragraphs": [
+        "Each submission keeps the request as it was when submitted. Its row shows who submitted it and when, and the decision recorded on it: decision, who recorded it, the committee or reviewer reference, conditions, conflicts of interest and the reason."
+      ]
+    },
+    {
+      "title": "Shipments",
+      "paragraphs": [
+        "The request's shipments with their state, destination, number of specimens and dispatch time. New shipment (technicians and above) appears while the request is approved."
+      ]
+    },
+    {
+      "title": "Timeline and history",
+      "paragraphs": [
+        "The timeline lists, oldest first, what happened to the request: created, edited, submitted, decided, agreement linked, reopened, cancelled, closed and notes, and for each specimen allocated, picked, not found, put back, released and shipped, with who and the reason. History lists the audit events recorded on the request, including pick list printouts. Nothing here can be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/services.py",
+    "distribution/queries.py",
+    "distribution/models.py",
+    "distribution/templatetags/distribution.py",
+    "distribution/templates/distribution/requests/request_detail.html",
+    "distribution/templates/distribution/requests/_header_actions.html"
+  ]
+}

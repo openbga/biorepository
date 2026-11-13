@@ -1,0 +1,75 @@
+{
+  "id": "storage-room-detail",
+  "routes": [
+    "storage:room-detail"
+  ],
+  "title": "Room",
+  "purpose": "Review one room: its site, occupancy across its storage units, the units standing in it and its history.",
+  "sections": [
+    {
+      "title": "Room",
+      "items": [
+        {
+          "label": "Site",
+          "description": "Opens the site."
+        },
+        {
+          "label": "Code",
+          "description": "Unique within the site; immutable."
+        },
+        {
+          "label": "Name",
+          "description": "Room name."
+        }
+      ]
+    },
+    {
+      "title": "Occupancy",
+      "paragraphs": [
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it. Counts cover every active unit in the room."
+      ]
+    },
+    {
+      "title": "Storage units",
+      "paragraphs": [
+        "Units in the room, active first then by code, including retired units with a Retired status."
+      ],
+      "items": [
+        {
+          "label": "Add storage unit",
+          "description": "Admin and manager roles. Opens the unit form with this room chosen."
+        }
+      ]
+    },
+    {
+      "title": "Actions",
+      "items": [
+        {
+          "label": "Edit",
+          "description": "Admin and manager roles. Changes the name; a reason is required."
+        }
+      ]
+    },
+    {
+      "title": "Notes",
+      "paragraphs": [
+        "Rooms cannot be retired or deleted."
+      ]
+    },
+    {
+      "title": "History",
+      "paragraphs": [
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/templates/storage/room_detail.html",
+    "storage/templates/storage/_capacity.html",
+    "storage/templates/storage/_history.html"
+  ]
+}

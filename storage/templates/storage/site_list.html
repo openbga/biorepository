@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% comment %}Sites. Context: grid_response for lists.SPECS["site"].{% endcomment %}
+{% block page_actions %}{% url 'storage:site-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New site" %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="sites-heading">
+  <h2 class="visually-hidden" id="sites-heading">Sites</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter sites" q=q placeholder="Code or name" grid="storage.sites" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="storage.sites" data-vr-grid-version="1" aria-labelledby="sites-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% include "includes/sort_header.html" with label="Time zone" asc="timezone" desc="-timezone" col="timezone" %}
+        <th scope="col" class="text-end" data-vr-col="rooms" data-vr-col-label="Rooms">Rooms</th>
+        {% include "includes/sort_header.html" with label="Storage units" asc="units" desc="-units" col="units" class="text-end" %}
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:site-detail' row.pk %}">{{ row.code }}</a></th>
+          <td>{{ row.name }}</td>
+          <td>{{ row.timezone }}</td>
+          <td class="text-end vr-id">{{ row.room_count }}</td>
+          <td class="text-end vr-id">{{ row.unit_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% if can_manage %}{% url 'storage:site-create' as create_url %}{% endif %}
+  {% include "storage/_list_states.html" with title_empty="No sites yet" body_empty="Start storage setup with the site, then its rooms and storage units." create_url=create_url create_label="New site" %}
+  {% endif %}
+</section>
+{% endblock %}

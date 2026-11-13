@@ -1,0 +1,47 @@
+{
+  "id": "distribution-return-review",
+  "routes": [
+    "distribution:return-review"
+  ],
+  "title": "Review return",
+  "purpose": "Decide whether a returned specimen may be used again.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Managers and administrators, while the return has not been released for use. The form shows the return and any earlier reviews. It opens in the form dialog over the page you came from; without JavaScript it is a page of its own. Cancel returns without saving."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Decision",
+          "description": "Required: Release for use (the hold placed on return is released) or Keep on hold (it can be reviewed again later)."
+        },
+        {
+          "label": "Reviewed at",
+          "description": "Required; repository local time, not in the future."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, for example the seal and the reported thaws. Do not enter names, signatures, record numbers, birth dates or contact details of a participant."
+        }
+      ]
+    },
+    {
+      "title": "What happens",
+      "paragraphs": [
+        "The review is recorded on the return. Disposal of returned material stays a separate disposal request approved by another person. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "accounts/roles.py",
+    "distribution/request_views.py",
+    "distribution/request_forms.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/requests/form.html"
+  ]
+}

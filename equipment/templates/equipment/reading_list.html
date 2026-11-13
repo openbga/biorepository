@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load equipment navigation %}
+{% comment %}Effective temperature readings (Readings tab), each with the limits recorded with it. Readings have no page of their own: the time is plain text, and Correct is the row action for the person who recorded it and for managers. Context: equipment.views.grid_response for lists.SPECS["reading"], create_url.{% endcomment %}
+{% block page_actions %}{% include "equipment/_list_actions.html" with create_label="Record reading" may_create=can_operate %}{% endblock %}
+{% block content %}
+{% section_tabs "equipment-readings" %}
+<section class="card vr-table-card" aria-labelledby="readings-heading">
+  <h2 class="visually-hidden" id="readings-heading">Readings</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter readings" q=q placeholder="Asset ID or probe position" inline=inline more=more more_open=more_open grid="equipment.readings" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="equipment.readings" data-vr-grid-version="1" aria-labelledby="readings-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Read at" asc="measured" desc="-measured" first="desc" col="measured" locked=True %}
+        {% include "includes/sort_header.html" with label="Equipment" asc="equipment" desc="-equipment" col="equipment" %}
+        {% include "includes/sort_header.html" with label="Temperature (°C)" asc="value" desc="-value" col="value" class="text-end" %}
+        <th scope="col" data-vr-col="outside" data-vr-col-label="Limits">Limits</th>
+        <th scope="col" class="text-end" data-vr-col="limits" data-vr-col-label="Limits recorded (°C)">Limits recorded (°C)</th>
+        <th scope="col" data-vr-col="probe" data-vr-col-label="Probe position">Probe position</th>
+        <th scope="col" data-vr-col="device" data-vr-col-label="Monitor">Monitor</th>
+        <th scope="col" data-vr-col="source" data-vr-col-label="Source">Source</th>
+        <th scope="col" data-vr-col="by" data-vr-col-label="Recorded by">Recorded by</th>
+        {% if can_operate %}<th scope="col" data-vr-col="actions" data-vr-col-locked data-vr-col-label="Actions"><span class="visually-hidden">Actions</span></th>{% endif %}
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row" class="vr-nowrap"><time datetime="{{ row.measured_at|date:'c' }}">{{ row.measured_at|date:"Y-m-d H:i" }}</time>{% if row.corrects_id %} <span class="vr-muted small">corrected</span>{% endif %}</th>
+          <td><a class="vr-id" href="{% url 'equipment:equipment-detail' row.equipment_id %}">{{ row.equipment.code }}</a></td>
+          <td class="text-end vr-id">{{ row.value }}</td>
+          <td>{% if row.outside_limits %}{% outside_status row %}{% else %}<span class="vr-muted">Within</span>{% endif %}</td>
+          <td class="text-end vr-id vr-nowrap">{% if row.lower_limit is None and row.upper_limit is None %}<span class="vr-muted">None set</span>{% else %}{{ row.lower_limit|default_if_none:"—" }} to {{ row.upper_limit|default_if_none:"—" }}{% endif %}</td>
+          <td>{{ row.probe_position|default:"—" }}</td>
+          <td>{% if row.device %}<a class="vr-id" href="{% url 'equipment:equipment-detail' row.device_id %}">{{ row.device.code }}</a>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td>{% if row.batch_id %}<a href="{% url 'equipment:import-detail' row.batch_id %}">{{ row.get_source_display }}</a>{% else %}{{ row.get_source_display }}{% endif %}</td>
+          <td>{{ row.recorded_by|person }}</td>
+          {% if can_operate %}<td>{% if can_manage or row.recorded_by_id == user.pk %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:reading-correct' row.pk %}">Correct</a>{% endif %}</td>{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No temperature readings yet" body_empty="Record readings by hand, or upload a logger's CSV under Imports." create_url=create_url create_label="Record reading" %}{% else %}{% include "storage/_list_states.html" with title_empty="No temperature readings yet" body_empty="Readings entered by hand or imported from a CSV appear here." %}{% endif %}
+  {% endif %}
+</section>
+{% endblock %}

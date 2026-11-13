@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load distribution_requests navigation specimens %}
+{% comment %}Returned specimens, newest first (List page, tab Returns of the Shipments section). A return is recorded from the shipment record (Record return on a sent item); each returned specimen is on a use hold until a manager reviews it. Context: request_views.grid_response for request_lists.SPECS["return"]; rows carry is_reviewed and is_released.{% endcomment %}
+{% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
+{% block content %}
+{% section_tabs "distribution-shipments" %}
+<section class="card vr-table-card" aria-labelledby="returns-heading">
+  <h2 class="visually-hidden" id="returns-heading">Returns</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter returns" q=q placeholder="Specimen ID or shipment number" inline=inline more=more more_open=more_open grid="distribution.returns" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap">
+    <table class="table table-hover vr-table" data-vr-grid="distribution.returns" data-vr-grid-version="1" aria-labelledby="returns-heading">
+      <thead><tr>
+        {% include "includes/sort_header.html" with label="Specimen" asc="specimen" desc="-specimen" col="specimen" locked=True %}
+        <th scope="col" data-vr-col="review" data-vr-col-label="Review">Review</th>
+        {% include "includes/sort_header.html" with label="Shipment" asc="shipment" desc="-shipment" first="desc" col="shipment" %}
+        {% include "includes/sort_header.html" with label="Returned" asc="returned" desc="-returned" first="desc" col="returned" %}
+        <th scope="col" class="text-end" data-vr-col="amount" data-vr-col-label="Amount returned">Amount returned</th>
+        <th scope="col" class="text-end" data-vr-col="thaws" data-vr-col-label="Thaws reported (count)">Thaws reported (count)</th>
+        <th scope="col" data-vr-col="recorded" data-vr-col-label="Recorded by">Recorded by</th>
+        <th scope="col" data-vr-col="actions" data-vr-col-locked data-vr-col-label="Actions"><span class="visually-hidden">Actions</span></th>
+      </tr></thead>
+      <tbody>
+        {% for row in page_obj %}
+        <tr>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' row.specimen_id %}">{{ row.item.accession }}</a></th>
+          <td>{% if row.is_released %}{% return_status "released" %}{% elif row.is_reviewed %}{% return_status "kept" %}{% else %}{% return_status "awaiting" %}{% endif %}</td>
+          <td><a class="vr-id" href="{% url 'distribution:shipment-detail' row.shipment_id %}">{{ row.shipment.number }}</a></td>
+          <td class="vr-nowrap"><time datetime="{{ row.occurred_at|date:'c' }}">{{ row.occurred_at|date:"Y-m-d H:i" }}</time></td>
+          <td class="text-end vr-id">{{ row.quantity|amount:row.unit }}</td>
+          <td class="text-end vr-id">{% if row.thaw_count is not None %}{{ row.thaw_count }}{% else %}<span class="vr-muted">Not known</span>{% endif %}</td>
+          <td>{{ row.actor|person }}</td>
+          <td>{% if can_manage and not row.is_released %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:return-review' row.pk %}">Review<span class="visually-hidden"> return of {{ row.item.accession }}</span></a>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% else %}
+  {% include "storage/_list_states.html" with title_empty="No returns recorded" body_empty="Specimens that come back from a shipment are recorded on the shipment's page and listed here until and after review." %}
+  {% endif %}
+</section>
+{% endblock %}

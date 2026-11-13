@@ -1,0 +1,66 @@
+{
+  "id": "storage-retire",
+  "routes": [
+    "storage:retire"
+  ],
+  "title": "Retire a storage unit, rack, shelf or box",
+  "purpose": "Take a storage unit, rack, shelf, tower, canister or box out of service permanently, keeping its record, code and history.",
+  "sections": [
+    {
+      "title": "Who and when",
+      "paragraphs": [
+        "Only the admin and manager roles can open or submit this form.",
+        "Retirement is permanent: a retired record cannot be reactivated, edited, moved or offered for storage. Its positions stop counting as capacity. Nothing is deleted, disposed of or reused; the code can never be reused. Already-retired records return to their page with a message."
+      ],
+      "items": [
+        {
+          "label": "Storage unit",
+          "description": "Allowed only when none of its racks, towers, shelves or canisters is active."
+        },
+        {
+          "label": "Rack, tower, shelf or canister",
+          "description": "Allowed only when it holds no active child nodes or boxes."
+        },
+        {
+          "label": "Box",
+          "description": "Allowed only when no item is stored in it."
+        }
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Reason for retirement",
+          "description": "Required, up to 2000 characters. Kept in the history, and shown on the retired record's banner."
+        }
+      ]
+    },
+    {
+      "title": "Saving",
+      "paragraphs": [
+        "If the record changed since you opened the form the retirement is refused with a message to reload. The button is available on the record's page only when its rule is met; the service checks again at submission."
+      ],
+      "items": [
+        {
+          "label": "Retire ...",
+          "description": "Retires the record and returns to it."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns without saving."
+        }
+      ]
+    }
+  ],
+  "sources": [
+    "storage/urls.py",
+    "storage/views.py",
+    "storage/lists.py",
+    "storage/queries.py",
+    "storage/forms.py",
+    "storage/services.py",
+    "storage/templates/storage/form.html",
+    "storage/tests/test_views.py"
+  ]
+}
