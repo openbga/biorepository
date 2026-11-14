@@ -51,6 +51,7 @@ application's page help and in [workflows](workflows.md).
 | Manifest contents | Accession, type, container, quantity and unit, study, frozen at dispatch. Participant codes only when chosen for the shipment and the agreement's data level is coded or limited; collection dates never |
 | Returns from a shipment | Accepted only from the original shipment; the specimen comes back under a use hold until a manager reviews it and releases or keeps the hold |
 | Excursion review | A technician, manager or administrator opens and submits an excursion; a manager or administrator other than the person who submitted it closes or returns it |
+| Inventory audits | One active box of at most 400 positions per audit. Operators submit all observations together; each position is explicitly empty or has an observed identifier. Unknown identifiers remain discrepancies. Completion requires an explanation for discrepancies and an unchanged storage snapshot. Audits never change inventory; corrections use a new audit linked to the previous one. These are working defaults, not repository policy |
 | Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
 | Operational bounds | 1,000 rows and 2 MiB per import, 200 labels per print, 10,000 rows per export, 1 to 50 children per split, 200 specimens per allocation, pick or shipment, 10 MiB per attachment. Product limits, not standards |
 
@@ -69,7 +70,8 @@ in code.
 ## The journey
 
 The product was built one complete path at a time, each working end to end before breadth was
-added. The synthetic demonstration (`seed_demo --full`) walks all of it.
+added. The synthetic demonstration (`seed_demo --full`) walks the journey below. Staff can
+create inventory audits for its seeded boxes.
 
 ```
 storage unit (LN2 vapor-phase tank or freezer) -> racks -> boxes with a grid -> positions
@@ -118,6 +120,8 @@ Acceptance outcomes:
     and study; a request is decided by a second person; allocation, picking, packing and dispatch
     each pass one gate that quotes the recorded fact behind any refusal; the manifest is frozen at
     dispatch; receipt and returns are recorded, and returned material is held for review.
+16. Staff can audit a box against a frozen expected inventory, record observed contents and
+    discrepancies, and retain completed or cancelled audits without changing custody or stock.
 
 The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
 like "P-000123".
@@ -176,8 +180,8 @@ rule" means no source read states it; it is a design choice.
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
-| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions | Built |
-| | Inventory audits, rack-scanner import, deviations and training, holds placed from an excursion | Next |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions; manual box inventory audits | Built |
+| | Rack-scanner import, deviations and training, holds placed from an excursion | Next |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
 | Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
 

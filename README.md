@@ -9,7 +9,7 @@ boxes and positions. Built with Django, PostgreSQL and Bootstrap/HTMX. AGPL-3.0-
 Source: <https://github.com/openbga/vapor-phase>.
 
 Status: the repository journey works end to end: storage, specimens, custody, disposal with
-approval, labels, bulk import, equipment records, and distribution from consent records and a
+approval, labels, bulk import, equipment records, inventory audits, and distribution from consent records and a
 request through shipment, receipt and return. Use synthetic data only.
 
 This software supports a repository's own records and quality system; it does not certify
@@ -40,6 +40,9 @@ compliance or accreditation.
   second person, with the specimens that were in the unit captured when one is closed. The limits,
   low levels and due dates are the repository's own: the product sets none, and it does not
   monitor or raise alarms.
+- **Inventory audits:** manually check one box against a saved inventory snapshot, record empty
+  positions or observed identifiers, and retain discrepancies with an explanation. Completed
+  and cancelled audits remain on record; an audit never changes specimen locations.
 - **Distribution:** studies that govern collections, consent records by scope category with
   withdrawal (which holds the participant's specimens and lists material already sent), specimen
   requests decided by a different person who holds the request decision permission, allocation
@@ -57,7 +60,7 @@ compliance or accreditation.
 Corrections add a record with a reason. Events (custody, moves, check-outs, disposals) are
 append-only and specimens are never deleted. [Workflow rules and limits](docs/workflows.md)
 describes each of these in more detail, and what is not built: requester accounts, monitoring and
-alarms, inventory audits and deviations come later (see [product scope](docs/product.md)).
+alarms, rack-scanner import and deviations come later (see [product scope](docs/product.md)).
 
 ![Dashboard with the work queues: check-outs in progress, specimens waiting for a position, holds and disposal requests](docs/images/dashboard.png)
 

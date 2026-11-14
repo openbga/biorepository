@@ -46,6 +46,18 @@ class TabSet:
 
 STAFF_NAV = (
     NavItem("dashboard", "Dashboard", "dashboard", "house"),
+    NavItem(
+        "quality-audits",
+        "Inventory audits",
+        "quality:audit-list",
+        "clipboard-check",
+        (
+            "quality:audit-create",
+            "quality:audit-detail",
+            "quality:audit-complete",
+            "quality:audit-cancel",
+        ),
+    ),
     # Storage
     NavItem("storage-overview", "Storage overview", "storage:overview", "layers"),
     NavItem(

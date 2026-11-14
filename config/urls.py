@@ -54,6 +54,7 @@ urlpatterns = [
     path("specimens/", include("specimens.urls")),
     path("equipment/", include("equipment.urls")),
     path("distribution/", include("distribution.urls")),
+    path("quality/", include("quality.urls")),
     path("accounts/", include("allauth.urls")),
     path("admin/", admin.site.urls),
 ]

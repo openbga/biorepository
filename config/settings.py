@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "specimens",
     "equipment",
     "distribution",
+    "quality",
 ]
 MIDDLEWARE = [
     "core.security_headers.SecurityHeadersMiddleware",
