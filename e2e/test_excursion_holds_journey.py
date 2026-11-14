@@ -42,6 +42,13 @@ def test_selected_excursion_hold_is_reviewed_and_released_from_specimen(page, pe
     expect(form).to_contain_text("No matching affected specimens")
     expect(form.get_by_role("button", name="Place holds", exact=True)).to_have_count(0)
     form.get_by_role("link", name="Clear search", exact=True).click()
+    counter = form.locator('[data-vr-select-count="specimen_ids"]')
+    expect(counter).to_have_text("0 of 2 selected")
+    select_all = form.get_by_role("checkbox", name="Select all eligible specimens on this page")
+    select_all.check()
+    expect(counter).to_have_text("2 of 2 selected")
+    select_all.uncheck()
+    expect(counter).to_have_text("0 of 2 selected")
     expect(
         form.get_by_role("checkbox", name=f"Select {selected.accession}", exact=True)
     ).not_to_be_checked()
@@ -64,8 +71,10 @@ def test_selected_excursion_hold_is_reviewed_and_released_from_specimen(page, pe
         "Synthetic review hold; no physical quality finding."
     )
     assert not Hold.objects.exists()
+    expect(counter).to_have_text("0 of 2 selected")
 
     form.get_by_role("checkbox", name=f"Select {selected.accession}", exact=True).check()
+    expect(counter).to_have_text("1 of 2 selected")
     form.locator("[data-vr-documentation-toggle]").click()
     help_panel = page.locator("#vr-documentation")
     expect(help_panel).to_be_visible()

@@ -90,6 +90,8 @@ Intentional divergences from Smart Roots (keep this list current):
   file stored once and referenced by equipment and distribution event versions, with the optional
   `ATTACHMENT_STORAGE_LIMIT_BYTES` total cap. Smart Roots keeps attachment bytes on its
   `laboratory` records.
+- `static/js/form-dialog.js` refreshes shared row-selection counts after restoring controls from
+  their temporary loading state; `static/js/app.js` exposes the existing initializer for that call.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
   for the bounded excursion hold picker; the default pagination behavior is unchanged.
 - The `checks` workflow's `application` job allows 60 minutes (Smart Roots: 30): the Vapor Phase
