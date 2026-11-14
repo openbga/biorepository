@@ -4,7 +4,7 @@
     "quality:audit-create"
   ],
   "title": "New inventory audit",
-  "purpose": "Freeze the expected contents and location of one box before manually checking its positions.",
+  "purpose": "Freeze the expected contents and location of one box before checking its positions.",
   "sections": [
     {
       "title": "Who can use it",
@@ -18,7 +18,7 @@
       "items": [
         {
           "label": "Box",
-          "description": "Required. Choose one active box in active site, room, unit and node ancestry. The server checks the current state again when creating the snapshot. This manual workflow supports 1 to 400 positions per audit, a working product bound."
+          "description": "Required. Choose one active box in active site, room, unit and node ancestry. The server checks the current state again when creating the snapshot. This workflow supports 1 to 400 positions per audit, a working product bound."
         },
         {
           "label": "Reason for the audit",
@@ -35,7 +35,7 @@
       "paragraphs": [
         "Create audit records the current box code, full location and slot, each position identity and coordinates, label, blocked state and reason, and the accession expected there or explicit empty. This snapshot is immutable. Snapshot creation is serialized with storage changes, then ordinary operations continue freely; an audit does not reserve or freeze the box.",
         "A successful submission opens the audit record. Cancel leaves the form and returns to Inventory audits without creating a record. Required fields and validation errors keep the entered form values.",
-        "Observations are entered later through Complete audit and saved together only at completion. There is no partial observation save or automatic fill from expected contents."
+        "Observations are entered manually or loaded from a normalized one-box CSV later through Complete audit and saved together only at completion. There is no partial observation save or automatic fill from expected contents."
       ]
     }
   ],

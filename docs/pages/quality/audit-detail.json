@@ -4,7 +4,7 @@
     "quality:audit-detail"
   ],
   "title": "Inventory audit",
-  "purpose": "Read a frozen box snapshot, record its manual comparison, and retain the result for later review.",
+  "purpose": "Read a frozen box snapshot, record its comparison and retain the result for later review.",
   "sections": [
     {
       "title": "Access and meaning",
@@ -55,7 +55,7 @@
       "items": [
         {
           "label": "Complete audit",
-          "description": "Operators can open this action while the audit is open and the snapshot is current. It requires an explicit observation at every position, a completion reason and an explanation if contents differ."
+          "description": "Operators can open this action while the audit is open and the snapshot is current. It requires an explicit observation at every position, a completion reason and an explanation if contents differ. Enter observations manually or load a normalized one-box CSV into the editable grid, then review before completing. Loading creates no saved draft or result and does not retain the upload."
         },
         {
           "label": "Cancel audit",

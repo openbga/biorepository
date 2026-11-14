@@ -52,6 +52,7 @@ application's page help and in [workflows](workflows.md).
 | Returns from a shipment | Accepted only from the original shipment; the specimen comes back under a use hold until a manager reviews it and releases or keeps the hold |
 | Excursion review | A technician, manager or administrator opens and submits an excursion; a manager or administrator other than the person who submitted it closes or returns it |
 | Inventory audits | One active box of at most 400 positions per audit. Operators submit all observations together; each position is explicitly empty or has an observed identifier. Unknown identifiers remain discrepancies. Completion requires an explanation for discrepancies and an unchanged storage snapshot. Audits never change inventory; corrections use a new audit linked to the previous one. These are working defaults, not repository policy |
+| Scanner CSV observations | UTF-8 CSV (optional BOM), at most 128 KiB, with `box,position,state,accession` columns and exactly one row per snapshotted position. Each row names the same box and an exact position label; state is `empty` or `accession`. Load for review before completing the audit. No device-specific formats or scanner qualification are implied. The upload is not retained; only the reviewed final observations are saved. This interchange format is a working product default |
 | Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
 | Operational bounds | 1,000 rows and 2 MiB per import, 200 labels per print, 10,000 rows per export, 1 to 50 children per split, 200 specimens per allocation, pick or shipment, 10 MiB per attachment. Product limits, not standards |
 
@@ -122,6 +123,8 @@ Acceptance outcomes:
     dispatch; receipt and returns are recorded, and returned material is held for review.
 16. Staff can audit a box against a frozen expected inventory, record observed contents and
     discrepancies, and retain completed or cancelled audits without changing custody or stock.
+    Observations can be entered manually or loaded from the normalized scanner CSV format for
+    one box, then reviewed before completion.
 
 The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
 like "P-000123".
@@ -180,8 +183,8 @@ rule" means no source read states it; it is a design choice.
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
-| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions; manual box inventory audits | Built |
-| | Rack-scanner import, deviations and training, holds placed from an excursion | Next |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions; box inventory audits with manual entry and normalized scanner CSV import | Built |
+| | Deviations and training, holds placed from an excursion | Next |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
 | Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
 

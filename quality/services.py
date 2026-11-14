@@ -13,6 +13,7 @@ from storage import services as storage
 from storage.models import Box, MoveMember, Position
 
 from .models import MAX_AUDIT_POSITIONS, AuditFinalization, InventoryAudit
+from .scanner_import import parse_observations
 
 READ_ROLES = storage.READ_ROLES
 OPERATE_ROLES = storage.OPERATE_ROLES
@@ -157,6 +158,20 @@ def _open_locked(audit_id):
             code="invalid_transition",
         )
     return audit
+
+
+@storage.operation()
+def load_scanner_observations(*, actor, audit_id, upload):
+    """Validate a preview against a current open snapshot; save no file or draft."""
+    require_role(actor, *OPERATE_ROLES)
+    storage.lock_gate()
+    audit = _open_locked(audit_id)
+    if is_stale(actor=actor, audit=audit):
+        raise ValidationError(
+            "Storage changed since this audit began. Cancel this audit and start a new one.",
+            code="stale_snapshot",
+        )
+    return parse_observations(upload, audit=audit)
 
 
 def _observations(audit, observations):

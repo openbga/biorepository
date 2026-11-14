@@ -1,4 +1,4 @@
-"""Bounded manual observations; nothing is prefilled from expected accessions."""
+"""Bounded observations; nothing is prefilled from expected accessions."""
 
 from django import forms
 
@@ -37,6 +37,23 @@ class AuditCreateForm(GroupedForm):
         self.fields["supersedes"].queryset = services.audits(actor=actor).filter(
             finalization__isnull=False
         )
+
+
+class ScannerUploadForm(GroupedForm):
+    scanner_file = forms.FileField(
+        label="Scanner CSV (optional)",
+        required=False,
+        widget=forms.FileInput(attrs={"accept": ".csv,text/csv"}),
+        help_text=(
+            "UTF-8, at most 128 KiB. The upload is not retained. Select a file again after errors."
+        ),
+    )
+
+    def clean_scanner_file(self):
+        upload = self.cleaned_data["scanner_file"]
+        if not upload:
+            raise forms.ValidationError("Choose a CSV file to load observations.")
+        return upload
 
 
 class CompleteForm(GroupedForm):
