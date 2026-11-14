@@ -37,7 +37,8 @@ compliance or accreditation.
   the specimens, tied to their storage units; service events (maintenance, calibration, repair,
   mapping, qualification) with due dates the repository enters; an LN2 level and fill log;
   temperature readings entered or imported from CSV; and temperature excursions reviewed by a
-  second person, with the specimens that were in the unit captured when one is closed. The limits,
+  second person, with the specimens that were in the unit captured when one is closed. Operators
+  can select affected specimens and place manual holds with a reason. The limits,
   low levels and due dates are the repository's own: the product sets none, and it does not
   monitor or raise alarms.
 - **Inventory audits:** check one box against a saved inventory snapshot, enter observations

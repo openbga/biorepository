@@ -16,6 +16,7 @@ import csv
 import hashlib
 import io
 import json
+import uuid
 from datetime import date, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 
@@ -28,6 +29,8 @@ from accounts.models import User
 from accounts.roles import has_role, require_role
 from core.attachments import attachment_fields, store_attachment
 from core.audit import record_event
+from specimens import services as specimen_services
+from specimens.models import Hold, Specimen
 from storage import services as storage
 from storage.models import StorageUnit
 
@@ -55,6 +58,7 @@ TEXT_LIMIT = 4000
 IMPORT_MAX_BYTES = 5 * 1024 * 1024
 IMPORT_MAX_ROWS = 10000
 IMPORT_LIFETIME = timedelta(hours=24)
+EXCURSION_HOLD_LIMIT = 200
 
 EQUIPMENT_FIELDS = (
     "code",
@@ -1443,3 +1447,108 @@ def add_excursion_note(*, actor, excursion_id, note="", attachment=None):
         reason=note,
     )
     return event
+
+
+@storage.operation()
+def place_excursion_holds(
+    *, actor, excursion_id, expected_revision, specimen_ids, specimen_revisions, scope, reason
+):
+    """Place explicitly selected ordinary manual holds, keeping excursion provenance.
+
+    Lock order is storage gate, equipment, excursion, then specimens by primary key. Membership
+    and reviewed revisions are checked again under those locks. Closing/reopening never owns or
+    releases these holds; managers release each through the ordinary specimen workflow.
+    """
+    require_role(actor, *OPERATE_ROLES)
+    reason = need_reason(reason)
+    if type(expected_revision) is not int or expected_revision < 1:
+        raise _error("Reload the excursion and review its current state.", "stale_revision")
+    if scope not in Hold.Scope.values:
+        raise _error("Choose a disposal hold, a use hold or an all-use hold.", "invalid", "scope")
+    try:
+        selected = [uuid.UUID(str(value)) for value in specimen_ids]
+        revisions = {uuid.UUID(str(key)): value for key, value in specimen_revisions.items()}
+    except AttributeError, TypeError, ValueError:
+        raise _error(
+            "Reload the candidates and review your selection.", "invalid", "specimen_ids"
+        ) from None
+    if not selected or len(selected) > EXCURSION_HOLD_LIMIT or len(set(selected)) != len(selected):
+        raise _error(
+            f"Select between 1 and {EXCURSION_HOLD_LIMIT} distinct specimens.",
+            "invalid",
+            "specimen_ids",
+        )
+    if any(type(revisions.get(key)) is not int or revisions[key] < 1 for key in selected):
+        raise _error("Reload the candidates and review their current state.", "stale_revision")
+    storage.lock_gate()
+    excursion = _lock_excursion(excursion_id, expected_revision)
+    # Local import avoids the query module depending on service implementation details.
+    from .queries import excursion_specimens
+
+    affected, _ = excursion_specimens(excursion, actor=actor)
+    if not set(selected).issubset({row.specimen_id for row in affected}):
+        raise _error(
+            "A selected specimen is not affected by this excursion. Reload the candidates and "
+            "review your selection.",
+            "invalid",
+            "specimen_ids",
+        )
+    specimens = list(Specimen.objects.select_for_update().filter(pk__in=selected).order_by("pk"))
+    if len(specimens) != len(selected):
+        raise _error("A selected specimen no longer exists. Reload the candidates.", "invalid")
+    for specimen in specimens:
+        if specimen.revision != revisions[specimen.pk]:
+            raise _error(
+                f"Specimen {specimen.accession} changed since you reviewed it. Reload the "
+                "candidates, check its current state and try again.",
+                "stale_revision",
+            )
+    hold_reason = f"Excursion {excursion.number}: {reason}"
+    if len(hold_reason) > specimen_services.TEXT_LIMIT:
+        limit = specimen_services.TEXT_LIMIT - len(hold_reason) + len(reason)
+        raise _error(
+            f"Use at most {limit} characters so the excursion number fits in the hold reason.",
+            "invalid",
+            "reason",
+        )
+    now = tz.now()
+    holds = []
+    provenance = []
+    for specimen in specimens:
+        hold = specimen_services.place_hold(
+            actor=actor,
+            specimen_id=specimen.pk,
+            expected_revision=revisions[specimen.pk],
+            scope=scope,
+            occurred_at=now,
+            reason=hold_reason,
+        )
+        holds.append(hold)
+        provenance.append(
+            {
+                "hold_id": str(hold.pk),
+                "specimen_id": str(specimen.pk),
+                "accession": specimen.accession,
+                "scope": scope,
+            }
+        )
+    before_revision = excursion.revision
+    excursion.revision += 1
+    excursion.save(update_fields=["revision"])
+    event = _timeline(
+        excursion,
+        actor,
+        ExcursionEvent.Kind.NOTE,
+        note=hold_reason,
+        changes={"manual_holds": [[], provenance]},
+        at=now,
+    )
+    _audit(
+        actor,
+        "excursion.holds_placed",
+        excursion,
+        before={"revision": before_revision},
+        after={"revision": excursion.revision, "event": str(event.pk), "manual_holds": provenance},
+        reason=hold_reason,
+    )
+    return holds

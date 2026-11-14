@@ -24,9 +24,10 @@ from accounts.roles import has_role, require_role, staff_role_required
 from core.attachments import download_response
 from core.grids import GridRequest
 from core.models import Attachment, AuditEvent
+from specimens.models import Hold
 
 from . import exports, lists, queries, services
-from .forms import ImportCommitForm, apply_errors
+from .forms import ExcursionHoldsForm, ImportCommitForm, apply_errors
 from .models import (
     Equipment,
     Excursion,
@@ -372,6 +373,8 @@ CHANGE_CHOICES = {
 
 
 def _display(name, value):
+    if name == "manual_holds":
+        return f"{len(value)} manual holds" if value else "None"
     if value in (None, ""):
         return ""
     if name in CHANGE_CHOICES:
@@ -389,7 +392,11 @@ def change_rows(event):
     for name, pair in (event.changes or {}).items():
         if isinstance(pair, list) and len(pair) == 2:
             rows.append(
-                (CHANGE_LABELS.get(name, name), _display(name, pair[0]), _display(name, pair[1]))
+                (
+                    "Manual holds" if name == "manual_holds" else CHANGE_LABELS.get(name, name),
+                    _display(name, pair[0]),
+                    _display(name, pair[1]),
+                )
             )
     return rows
 
@@ -424,6 +431,20 @@ def excursion_detail(request, pk):
     )
     for event in events:
         event.change_rows = change_rows(event)
+        provenance = (event.changes or {}).get("manual_holds")
+        if (
+            isinstance(provenance, list)
+            and len(provenance) == 2
+            and isinstance(provenance[1], list)
+            and all(
+                isinstance(item, dict) and {"specimen_id", "accession", "scope"} <= item.keys()
+                for item in provenance[1]
+            )
+        ):
+            event.manual_holds = [
+                {**item, "scope_label": dict(Hold.Scope.choices).get(item["scope"], item["scope"])}
+                for item in provenance[1]
+            ]
         if event.kind == ExcursionEvent.Kind.CLOSED and "affected_specimens" in event.changes:
             count = event.changes["affected_specimens"]
             event.detail = f"{count} specimen{'s' if count != 1 else ''} captured as affected."
@@ -455,6 +476,76 @@ def excursion_detail(request, pk):
             "history": history(excursion),
             **allowed,
         },
+    )
+
+
+@staff_role_required(*OPERATE)
+@require_http_methods(["GET", "POST"])
+def excursion_holds(request, pk):
+    excursion = get_object_or_404(Excursion.objects.select_related("equipment"), pk=pk)
+    query = request.GET.get("q", "").strip()[:100]
+    candidates, capture = queries.excursion_hold_candidates(
+        excursion, actor=request.user, query=query
+    )
+    page = Paginator(candidates, services.EXCURSION_HOLD_LIMIT).get_page(request.GET.get("page"))
+    form = ExcursionHoldsForm(
+        request.POST if request.method == "POST" else None,
+        actor=request.user,
+        excursion=excursion,
+        candidates=page.object_list,
+    )
+    if request.method == "POST" and form.is_valid():
+        data = form.cleaned_data
+        try:
+            holds = services.place_excursion_holds(
+                actor=request.user,
+                excursion_id=excursion.pk,
+                expected_revision=data["snapshot"]["revision"],
+                specimen_ids=data["specimen_ids"],
+                specimen_revisions=data["snapshot"]["specimens"],
+                scope=data["scope"],
+                reason=data["reason"],
+            )
+        except ValidationError as exc:
+            apply_errors(form, exc)
+        else:
+            messages.success(
+                request,
+                f"Placed {len(holds)} manual hold{'s' if len(holds) != 1 else ''} "
+                f"from {excursion.number}.",
+            )
+            return redirect("equipment:excursion-detail", pk=excursion.pk)
+    if form.errors.get("specimen_ids"):
+        form.fields["specimen_ids"].widget.attrs.update(
+            {"aria-invalid": "true", "aria-describedby": "selection-note selection-errors"}
+        )
+    checkboxes = {str(widget.data["value"]): widget for widget in form["specimen_ids"]}
+    for item in page.object_list:
+        item["checkbox"] = checkboxes.get(str(item["specimen"].pk))
+        if not item["selectable"]:
+            item["checkbox"].data["attrs"].update(
+                {
+                    "disabled": True,
+                    "aria-describedby": f"{item['checkbox'].id_for_label}-unavailable",
+                }
+            )
+    if form.errors.get("specimen_ids") and checkboxes:
+        next(iter(checkboxes.values())).data["attrs"]["autofocus"] = True
+    return render(
+        request,
+        "equipment/excursion_holds.html",
+        {
+            "page_title": "Place holds",
+            "excursion": excursion,
+            "form": form,
+            "crumbs": excursion_crumbs(excursion, ("Place holds", None)),
+            "back_url": reverse("equipment:excursion-detail", args=[excursion.pk]),
+            "page_obj": page,
+            "q": query,
+            "capture": capture,
+            "has_selectable": any(item["selectable"] for item in page.object_list),
+        },
+        status=422 if request.method == "POST" and form.errors else 200,
     )
 
 

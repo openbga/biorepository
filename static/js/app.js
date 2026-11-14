@@ -138,10 +138,15 @@
     }
   });
 
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("[data-vr-select-all]").forEach(function (master) {
+  function initSelections(root) {
+    (root || document).querySelectorAll("[data-vr-select-all]").forEach(function (master) {
       syncSelection(master.getAttribute("data-vr-select-all"));
     });
+  }
+  window.vrInitSelections = initSelections;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initSelections(document);
   });
 
   // Long checkbox/radio lists (more than ten options) get a filter box. Presentation only: hidden
@@ -320,9 +325,7 @@
   });
 
   document.addEventListener("htmx:load", function () {
-    document.querySelectorAll("[data-vr-select-all]").forEach(function (master) {
-      syncSelection(master.getAttribute("data-vr-select-all"));
-    });
+    initSelections(document);
     document.querySelectorAll(".vr-choices").forEach(addChoiceFilter);
     document.querySelectorAll("[data-formset-add]").forEach(initFormsetButton);
   });

@@ -5,6 +5,7 @@ filters apply). Keeps every other query parameter; changing rows per page return
 Post mode, for a picker inside a larger POST form (a pick list's specimen picker): post_name
 (e.g. "ppage") renders the pager as submit buttons name=post_name value=<page> with formnovalidate,
 so the surrounding form keeps its entries; no rows-per-page form (the picker has its own).
+fixed_per_page omits the rows-per-page control for a picker with a fixed batch size.
 {% endcomment %}
 {% with paginator=page_obj.paginator %}
 <div class="vr-table-footer vr-pagination">
@@ -36,6 +37,7 @@ so the surrounding form keeps its entries; no rows-per-page form (the picker has
     </nav>
     {% endif %}
     {% else %}
+    {% if not fixed_per_page %}
     <form class="d-flex align-items-center gap-2" method="get" action="{{ request.path }}">
       {% for key, values in request.GET.lists %}{% if key != "page" and key != "per_page" %}{% for value in values %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}{% endif %}{% endfor %}
       <label class="vr-count text-nowrap" for="per-page-{{ noun|default:'records'|slugify }}">Rows per page</label>
@@ -46,6 +48,7 @@ so the surrounding form keeps its entries; no rows-per-page form (the picker has
       </select>
       <button class="btn btn-sm btn-outline-secondary" type="submit">Show</button>
     </form>
+    {% endif %}
     {% if paginator.num_pages > 1 %}
     <nav aria-label="{{ noun|default:'Records'|capfirst }} pages">
       <ul class="pagination pagination-sm mb-0">

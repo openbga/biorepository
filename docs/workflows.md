@@ -322,8 +322,12 @@ who submitted it** returns it with a note or closes it. A closed excursion can b
 manager or admin with a reason. The second-person close is a default, not a sourced rule. While an excursion is open the specimens that were in the unit during it are
 computed from storage's recorded movements (placements, check-outs and check-ins, disposals, box
 and rack moves); closing captures that list with the closing entry, and it stays fixed. Vapor Phase
-records the review; it does not decide the outcome or what happens to the specimens, and it places
-no holds itself (a hold is placed from the specimen record).
+records the review; it does not decide specimen quality. Operators can explicitly select affected
+specimens and place disposal, use or all-use holds with a reason, in batches of up to 200. The
+excursion and specimen state are rechecked before the whole batch and its history are saved
+together. Each hold keeps the excursion number in its reason and remains an ordinary manual hold
+that a manager releases from the specimen record. Existing holds remain separate; closing or
+reopening an excursion does not place or release any hold automatically.
 
 **Corrections.** Log entries, readings and service events can be back-dated (paper logs and logger
 downloads), but not into the future. A correction replaces or withdraws an entry with a reason and
@@ -492,7 +496,7 @@ device-specific exports need conversion. In-app help describes the fields, contr
 | Time away is not time out of storage | A long wait between picking and dispatch does count as time out of storage |
 | No monitoring or alarms | Readings are entered or imported; nothing is polled, and no notification is sent |
 | Box audit import | Normalized scanner CSV for one box at a time; no device-specific import or hardware qualification |
-| Quality workflows | No deviations, training or automatic holds from excursions yet |
+| Quality workflows | No deviations or training workflows. Excursion holds require explicit operator selection; temperatures and reviews never place holds automatically |
 | One repository organization | No tenant layer; permissions are not site-scoped |
 | Storage writes are serialized | One lock per storage-changing operation; fine for one repository's pace |
 | Disposal approvals are brittle by design | Any change to the specimen after approval needs a new request |

@@ -31,6 +31,12 @@
       "paragraphs": [
         "Closing captures the specimens that were in the unit during the excursion, from the recorded storage movements, and keeps that list with the closing entry; the note and the closer are shown on the excursion. Returning adds a Returned for more work entry. Record review applies the chosen decision, and the status, the timeline entry and the audit event are saved together. Vapor Phase does not decide whether an excursion is acceptable; the note records the reviewer's decision."
       ]
+    },
+    {
+      "title": "Manual holds",
+      "paragraphs": [
+        "Holds placed from an excursion remain ordinary manual holds on the selected specimens. Submitting, closing, returning or reopening an excursion never releases them. A manager or administrator reviews and releases each from its specimen record with a reason."
+      ]
     }
   ],
   "sources": [

@@ -27,6 +27,12 @@
       "paragraphs": [
         "Reopen excursion returns it to Open and clears the earlier submission and closure details; the earlier closing entry and its note stay in the timeline. The specimen list captured at closing stays with the record, the page shows the live list while it is open, and closing it again captures a new list."
       ]
+    },
+    {
+      "title": "Manual holds",
+      "paragraphs": [
+        "Holds placed from an excursion remain ordinary manual holds on the selected specimens. Submitting, closing, returning or reopening an excursion never releases them. A manager or administrator reviews and releases each from its specimen record with a reason."
+      ]
     }
   ],
   "sources": [

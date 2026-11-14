@@ -51,6 +51,7 @@ application's page help and in [workflows](workflows.md).
 | Manifest contents | Accession, type, container, quantity and unit, study, frozen at dispatch. Participant codes only when chosen for the shipment and the agreement's data level is coded or limited; collection dates never |
 | Returns from a shipment | Accepted only from the original shipment; the specimen comes back under a use hold until a manager reviews it and releases or keeps the hold |
 | Excursion review | A technician, manager or administrator opens and submits an excursion; a manager or administrator other than the person who submitted it closes or returns it |
+| Holds from excursions | Operators explicitly select up to 200 affected specimens and a disposal, use or all-use hold, with a reason. The affected list is computed while open or awaiting review and frozen at closure. Holds keep the excursion reference in their reason and are released individually by a manager from the specimen record. Closing or reopening an excursion never places or releases holds automatically. This is a working product default |
 | Inventory audits | One active box of at most 400 positions per audit. Operators submit all observations together; each position is explicitly empty or has an observed identifier. Unknown identifiers remain discrepancies. Completion requires an explanation for discrepancies and an unchanged storage snapshot. Audits never change inventory; corrections use a new audit linked to the previous one. These are working defaults, not repository policy |
 | Scanner CSV observations | UTF-8 CSV (optional BOM), at most 128 KiB, with `box,position,state,accession` columns and exactly one row per snapshotted position. Each row names the same box and an exact position label; state is `empty` or `accession`. Load for review before completing the audit. No device-specific formats or scanner qualification are implied. The upload is not retained; only the reviewed final observations are saved. This interchange format is a working product default |
 | Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
@@ -116,7 +117,8 @@ Acceptance outcomes:
 14. Equipment (tanks, freezers, monitors, supply dewars) is tied to its storage unit, with service
     events and the due dates the repository enters, an LN2 level and fill log, temperature
     readings entered or imported, and excursions reviewed by a second person that capture the
-    specimens in the unit when closed.
+    specimens in the unit when closed. Operators can place manual holds on selected affected
+    specimens, with an attributed reason and excursion history.
 15. A study governs collections; consent records and withdrawals are recorded per coded participant
     and study; a request is decided by a second person; allocation, picking, packing and dispatch
     each pass one gate that quotes the recorded fact behind any refusal; the manifest is frozen at
@@ -183,8 +185,8 @@ rule" means no source read states it; it is a design choice.
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
-| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions; box inventory audits with manual entry and normalized scanner CSV import | Built |
-| | Deviations and training, holds placed from an excursion | Next |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import | Built |
+| | Deviations and training | Next |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
 | Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
 

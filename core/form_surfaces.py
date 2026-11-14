@@ -79,6 +79,7 @@ FORM_SURFACES = {
     "equipment:excursion-review": "lg",
     "equipment:excursion-reopen": "lg",
     "equipment:excursion-note": "lg",
+    "equipment:excursion-holds": "xl",
     "distribution:request-create": "lg",
     "distribution:request-edit": "lg",
     "distribution:request-submit": "lg",

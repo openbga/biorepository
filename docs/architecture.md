@@ -90,6 +90,10 @@ Intentional divergences from Smart Roots (keep this list current):
   file stored once and referenced by equipment and distribution event versions, with the optional
   `ATTACHMENT_STORAGE_LIMIT_BYTES` total cap. Smart Roots keeps attachment bytes on its
   `laboratory` records.
+- `static/js/form-dialog.js` refreshes shared row-selection counts after restoring controls from
+  their temporary loading state; `static/js/app.js` exposes the existing initializer for that call.
+- `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
+  for the bounded excursion hold picker; the default pagination behavior is unchanged.
 - The `checks` workflow's `application` job allows 60 minutes (Smart Roots: 30): the Vapor Phase
   suite is larger. Lower it if CI runs leave room.
 
@@ -117,9 +121,11 @@ Integrity rules: append-only event tables protected by database triggers; one oc
 position by a unique constraint, allocation under row lock; state change, checks and audit event
 in one transaction; optimistic revision on edited records; exact numerics with units. `specimens`
 depends on `storage`, never the reverse: storage exposes positions and containers, and learns what
-occupies them only as opaque occupancy keys. `equipment` depends on `storage` and reads specimen
-history through public queries. `distribution` depends on `specimens` and `storage` and changes
-specimens only through the specimens services (holds, check-out and check-in, dispatch, return).
+occupies them only as opaque occupancy keys. `equipment` depends on `storage`, reads specimen
+history through public queries, and places explicitly selected manual excursion holds through the
+specimen service under the storage gate. Holds and their excursion provenance commit together;
+equipment never changes specimen rows directly. `distribution` depends on `specimens` and `storage`
+and changes specimens only through the specimens services (holds, check-out and check-in, dispatch, return).
 Neither `storage` nor `specimens` depends on `equipment`, `distribution` or `quality`.
 `quality` reads storage and specimen identities and takes the storage gate for consistent audit
 snapshots and completion checks. It never changes custody or inventory. Its snapshots and

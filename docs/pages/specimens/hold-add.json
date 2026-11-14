@@ -12,7 +12,8 @@
         "Admin, manager and technician can use this form; a viewer is refused.",
         "When the action is not possible right now, the form opens with a Not available notice giving the reason, its fields are disabled and there is no submit button; Cancel returns to the record. The checks are repeated on the server when you save, so a form that opens is not a guarantee.",
         "The top of the form repeats the specimen ID (a link back to the record), status including any active holds, amount on hand and location, so you can confirm you are acting on the right specimen. The location reads Checked out to the person and destination while checked out, Returned, in hand of the person who received it (with where it came back from) after a return from outside the repository, and Distributed: outside the repository while it is away in a shipment.",
-        "Any specimen that is not disposed can be held, including one already on hold and one that is distributed (outside the repository); holds stack and each is listed separately."
+        "Any specimen that is not disposed can be held, including one already on hold and one that is distributed (outside the repository); holds stack and each is listed separately.",
+        "Holds placed from a temperature excursion are ordinary manual holds. Their reason includes the excursion number. Admin and manager release each hold from the specimen record with a reason; closing or reopening the excursion never releases it. Other active holds remain in force."
       ]
     },
     {
@@ -48,6 +49,7 @@
     "accounts/roles.py",
     "specimens/templates/specimens/actions/form.html",
     "specimens/templates/specimens/actions/_context.html",
-    "specimens/tests/test_views_actions.py"
+    "specimens/tests/test_views_actions.py",
+    "equipment/services.py"
   ]
 }

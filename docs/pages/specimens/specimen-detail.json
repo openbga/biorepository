@@ -9,7 +9,8 @@
     {
       "title": "Who can use it",
       "paragraphs": [
-        "All roles can read the record. Buttons appear only for roles that may use them: admin, manager and technician record work on the specimen; admin and manager also correct and adjust; a viewer sees no work buttons. A hidden or disabled button is never the only protection: every action is checked again on the server when it is submitted."
+        "All roles can read the record. Buttons appear only for roles that may use them: admin, manager and technician record work on the specimen; admin and manager also correct and adjust; a viewer sees no work buttons. A hidden or disabled button is never the only protection: every action is checked again on the server when it is submitted.",
+        "Holds placed from a temperature excursion are ordinary manual holds. Their reason includes the excursion number. Admin and manager release each hold from the specimen record with a reason; closing or reopening the excursion never releases it. Other active holds remain in force."
       ]
     },
     {
@@ -126,7 +127,7 @@
         },
         {
           "label": "Holds",
-          "description": "Each hold with its kind, when it was placed, by whom, why and whether it was released. A disposal hold blocks disposal; a use hold blocks check-out, splitting, consumption, hand-over and dispatch but not disposal; an all-use hold blocks both. A hold placed by another workflow shows its reference (“For …”) and “Released through its workflow” instead of Release. Release is for admin and manager on manual holds; releasing records who and why and the hold stays listed."
+          "description": "Each hold with its kind, when it was placed, by whom, why and whether it was released. A disposal hold blocks disposal; a use hold blocks check-out, splitting, consumption, hand-over and dispatch but not disposal; an all-use hold blocks both. A hold owned by another workflow shows its reference (“For …”) and “Released through its workflow” instead of Release. Release is for admin and manager on manual holds; releasing records who and why and the hold stays listed."
         },
         {
           "label": "Disposal requests",
@@ -150,7 +151,7 @@
       "title": "Rules to know",
       "paragraphs": [
         "Records are not deleted. A status change or correction always carries a reason, and corrections add a record beside the original. A disposed specimen keeps its record, ledger and history; no further work can be recorded on it except a manager's correction.",
-        "Nobody can approve their own disposal request, and disposal and all-use holds block disposal until they are released. A hold placed by another workflow is released only through that workflow."
+        "Nobody can approve their own disposal request, and disposal and all-use holds block disposal until they are released. A hold with a workflow reference is released only through that workflow."
       ]
     }
   ],
@@ -163,6 +164,7 @@
     "specimens/templates/specimens/specimen_detail.html",
     "specimens/templatetags/specimens.py",
     "specimens/tests/test_views_records.py",
-    "specimens/tests/test_views_actions.py"
+    "specimens/tests/test_views_actions.py",
+    "equipment/services.py"
   ]
 }

@@ -9,7 +9,7 @@
     {
       "title": "Life of an excursion",
       "paragraphs": [
-        "Open: the details are being completed. A technician submits it for review once it has an end time, a cause, an action taken and an impact assessment. Awaiting review: a manager or administrator either returns it for more work with a note (back to Open) or closes it. The person who submitted it cannot close it; another manager or administrator must. Closed: it can be reopened by a manager or administrator with a reason. Notes and attachments can be added in any state. Vapor Phase records the review; it does not decide the outcome or tell you what to do about the specimens. Holds on affected specimens are placed from the specimen records."
+        "Open: the details are being completed. A technician submits it for review once it has an end time, a cause, an action taken and an impact assessment. Awaiting review: a manager or administrator either returns it for more work with a note (back to Open) or closes it. The person who submitted it cannot close it; another manager or administrator must. Closed: it can be reopened by a manager or administrator with a reason. Notes and attachments can be added in any state. Vapor Phase records the review; it does not decide the outcome or tell you what to do about the specimens. Place holds lets operators explicitly select affected specimens and a manual hold scope, in any excursion state. Holds are never automatic, and closing or reopening never releases them. Managers release each hold from its specimen record."
       ]
     },
     {
@@ -21,7 +21,7 @@
         },
         {
           "label": "Extreme reached",
-          "description": "The extreme in °C and when, or Not recorded."
+          "description": "The extreme in \u00b0C and when, or Not recorded."
         },
         {
           "label": "Limits in force",
@@ -57,7 +57,8 @@
     {
       "title": "Timeline",
       "paragraphs": [
-        "Every step, oldest first: Opened, Details updated (each value before and after), Submitted for review, Returned for more work, Reviewed and closed (with how many specimens were captured), Reopened, and notes, each with who, when, the note and any attached file."
+        "Every step, oldest first: Opened, Details updated (each value before and after), Submitted for review, Returned for more work, Reviewed and closed (with how many specimens were captured), Reopened, and notes, each with who, when, the note and any attached file.",
+        "Manual holds placed from this excursion add a Note or attachment entry with the number of holds, links to the selected specimens, the scope and reason. These entries are immutable; individual releases are recorded on the specimen records."
       ]
     },
     {
@@ -91,6 +92,10 @@
         {
           "label": "Add note",
           "description": "Any state; technicians, managers and administrators."
+        },
+        {
+          "label": "Place holds",
+          "description": "Any state; technicians, managers and administrators. Opens a searchable affected-specimen selection page. Explicitly choose up to 200 specimens on one page, one scope and a reason. Current status and active holds are shown. Disposed specimens are unavailable; distributed specimens may receive holds. Each new hold is separate from existing holds and is released manually from the specimen record."
         }
       ]
     }
@@ -104,6 +109,10 @@
     "equipment/models.py",
     "equipment/templates/equipment/excursion_detail.html",
     "equipment/templates/equipment/_event_extra.html",
-    "storage/templates/storage/_history.html"
+    "storage/templates/storage/_history.html",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/templates/equipment/excursion_holds.html",
+    "specimens/services.py"
   ]
 }
