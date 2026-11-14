@@ -461,7 +461,7 @@ dispatch, return and holds with their references. Pick lists, manifests and CSV 
 audited. Requests, allocation, shipments, consent and returns take the same single lock as storage
 and specimens; catalogue saves do not.
 
-## Manual inventory audits
+## Inventory audits
 
 Inventory audits compare a box with a saved expected inventory. Operators record every position
 as empty or with the identifier they observe, including identifiers the system does not know.
@@ -472,7 +472,11 @@ Working defaults are one active box of at most 400 positions, all observations s
 and completion or cancellation by any operating role. Viewers read the records. Expected contents
 and final results are append-only; repeat an audit to correct it, retaining the earlier record.
 Relevant storage changes after the snapshot prevent completion; cancel and start again against
-the current inventory. In-app help describes the fields and controls. Scanner import is not built.
+the current inventory. Operators can enter observations manually or load a normalized scanner CSV
+for one box, review and adjust the grid, then complete the audit. Loading a file does not save
+results or a draft. The source file is not retained; the completed audit keeps the reviewed
+observations. The project format and bounds are working defaults in [product scope](product.md);
+device-specific exports need conversion. In-app help describes the fields, controls and errors.
 
 ## Limits to know
 
@@ -487,7 +491,8 @@ the current inventory. In-app help describes the fields and controls. Scanner im
 | Allocation reserves the specimen, not its position | Others can still move or use allocated material; a disposal hold stops only its disposal. Allocation is whole-container |
 | Time away is not time out of storage | A long wait between picking and dispatch does count as time out of storage |
 | No monitoring or alarms | Readings are entered or imported; nothing is polled, and no notification is sent |
-| Manual box audits only | No rack-scanner import, deviations, training or automatic holds from excursions yet |
+| Box audit import | Normalized scanner CSV for one box at a time; no device-specific import or hardware qualification |
+| Quality workflows | No deviations, training or automatic holds from excursions yet |
 | One repository organization | No tenant layer; permissions are not site-scoped |
 | Storage writes are serialized | One lock per storage-changing operation; fine for one repository's pace |
 | Disposal approvals are brittle by design | Any change to the specimen after approval needs a new request |

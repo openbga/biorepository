@@ -40,9 +40,11 @@ compliance or accreditation.
   second person, with the specimens that were in the unit captured when one is closed. The limits,
   low levels and due dates are the repository's own: the product sets none, and it does not
   monitor or raise alarms.
-- **Inventory audits:** manually check one box against a saved inventory snapshot, record empty
-  positions or observed identifiers, and retain discrepancies with an explanation. Completed
-  and cancelled audits remain on record; an audit never changes specimen locations.
+- **Inventory audits:** check one box against a saved inventory snapshot, enter observations
+  manually or load a normalized scanner CSV for review, and retain discrepancies with an
+  explanation. Completed and cancelled audits remain on record; an audit never changes specimen
+  locations. CSV import uses the project format, one box at a time; device-specific formats
+  require conversion.
 - **Distribution:** studies that govern collections, consent records by scope category with
   withdrawal (which holds the participant's specimens and lists material already sent), specimen
   requests decided by a different person who holds the request decision permission, allocation
@@ -60,7 +62,7 @@ compliance or accreditation.
 Corrections add a record with a reason. Events (custody, moves, check-outs, disposals) are
 append-only and specimens are never deleted. [Workflow rules and limits](docs/workflows.md)
 describes each of these in more detail, and what is not built: requester accounts, monitoring and
-alarms, rack-scanner import and deviations come later (see [product scope](docs/product.md)).
+alarms, deviations and training come later (see [product scope](docs/product.md)).
 
 ![Dashboard with the work queues: check-outs in progress, specimens waiting for a position, holds and disposal requests](docs/images/dashboard.png)
 

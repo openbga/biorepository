@@ -4,7 +4,7 @@
     "quality:audit-cancel"
   ],
   "title": "Cancel audit",
-  "purpose": "End an unfinished manual audit while retaining the original box snapshot.",
+  "purpose": "End an unfinished audit while retaining the original box snapshot.",
   "sections": [
     {
       "title": "Access and prerequisites",

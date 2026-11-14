@@ -108,7 +108,7 @@ spread it across UI handlers.
 | `storage` | Sites, rooms, storage units and classes, container types and grids, racks, boxes, positions, occupancy, moves |
 | `specimens` | Participants (coded), collections, specimen types, specimens and aliquots, quantity ledger, placement, custody events, check-out/in, holds, disposal |
 | `equipment` | Equipment linked to storage units, service events, LN2 level and fill log, temperature readings and excursions |
-| `quality` | Manual box inventory audits, immutable expected snapshots and completed observations or cancellation |
+| `quality` | Box inventory audits with manual or normalized scanner CSV input, immutable expected snapshots and completed observations or cancellation |
 | `distribution` | Studies and their collections, consent records and withdrawals, institutions, investigators, requests and decisions, allocations and pick lists, shipments and manifests, receipts, returns, agreements |
 
 Label PDFs live in `specimens`; pick lists and manifests in `distribution`. The `quality` app holds inventory audits; deviations and training remain planned.

@@ -11,7 +11,14 @@ from core.grids import GridRequest, active_filters
 from core.models import AuditEvent
 
 from . import services
-from .forms import AuditCreateForm, CancelForm, CompleteForm, FilterForm, apply_errors
+from .forms import (
+    AuditCreateForm,
+    CancelForm,
+    CompleteForm,
+    FilterForm,
+    ScannerUploadForm,
+    apply_errors,
+)
 from .models import InventoryAudit
 
 
@@ -164,7 +171,16 @@ def _disable_widgets(form):
 @require_http_methods(["GET", "POST"])
 def audit_complete(request, pk):
     audit = _audit(request, pk)
-    form = CompleteForm(request.POST if request.method == "POST" else None, audit=audit)
+    is_post = request.method == "POST"
+    action = request.POST.get("action", "complete") if is_post else ""
+    if is_post and action not in {"load_scanner", "complete"}:
+        return HttpResponseBadRequest("Choose Load observations or Complete audit.")
+    form = CompleteForm(request.POST if is_post else None, audit=audit)
+    upload_form = ScannerUploadForm(
+        request.POST if is_post and action == "load_scanner" else None,
+        request.FILES if is_post and action == "load_scanner" else None,
+    )
+    loaded = False
     blocked = (
         "This audit is already finalized. Start a new audit to add evidence."
         if audit.status != "open"
@@ -174,7 +190,39 @@ def audit_complete(request, pk):
         blocked = "Storage changed since this audit began. Cancel this audit and start a new one."
     if blocked:
         _disable_widgets(form)
-    elif request.method == "POST" and form.is_valid():
+        _disable_widgets(upload_form)
+    elif is_post and action == "load_scanner":
+        # Preview does not validate completion fields or turn unobserved entries into errors.
+        # Keep every posted grid value and note if the upload is rejected.
+        initial = {name: request.POST.get(name, "") for name in form.fields}
+        form = CompleteForm(audit=audit, initial=initial)
+        if upload_form.is_valid():
+            try:
+                observations = services.load_scanner_observations(
+                    actor=request.user, audit_id=pk, upload=upload_form.cleaned_data["scanner_file"]
+                )
+            except ValidationError as exc:
+                upload_form.add_error("scanner_file", exc)
+                if exc.code in {"stale_snapshot", "invalid_transition"}:
+                    blocked = " ".join(exc.messages)
+                    _disable_widgets(form)
+                    _disable_widgets(upload_form)
+            else:
+                for index, position in enumerate(audit.positions):
+                    accession = observations[position["id"]]
+                    initial[f"state_{index}"] = "accession" if accession else "empty"
+                    initial[f"accession_{index}"] = accession
+                form = CompleteForm(audit=audit, initial=initial)
+                upload_form = ScannerUploadForm()
+                loaded = True
+    elif is_post and request.FILES:
+        upload_form = ScannerUploadForm(request.POST, request.FILES)
+        upload_form.is_valid()
+        # A selected file must be deliberately loaded and reviewed before finalization.
+        upload_form.add_error(
+            "scanner_file", "Load observations and review them before completing."
+        )
+    elif is_post and form.is_valid():
         try:
             services.complete_audit(
                 actor=request.user,
@@ -186,6 +234,10 @@ def audit_complete(request, pk):
             )
         except ValidationError as exc:
             apply_errors(form, exc)
+            if getattr(exc, "code", None) in {"stale_snapshot", "invalid_transition"}:
+                blocked = " ".join(exc.messages)
+                _disable_widgets(form)
+                _disable_widgets(upload_form)
         else:
             messages.success(
                 request,
@@ -200,6 +252,8 @@ def audit_complete(request, pk):
             "form": form,
             "audit": audit,
             "blocked": blocked,
+            "upload_form": upload_form,
+            "loaded": loaded,
             "submit_label": "Complete audit",
             "back_url": reverse("quality:audit-detail", args=[pk]),
             "crumbs": _crumbs(audit, "Complete audit"),

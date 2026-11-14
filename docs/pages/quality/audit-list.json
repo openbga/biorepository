@@ -4,7 +4,7 @@
     "quality:audit-list"
   ],
   "title": "Inventory audits",
-  "purpose": "Find manual box inventory audits and compare their recorded evidence.",
+  "purpose": "Find box inventory audits and compare their recorded evidence.",
   "sections": [
     {
       "title": "Access and actions",
