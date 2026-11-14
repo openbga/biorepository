@@ -5,11 +5,15 @@ repository's time zone to the second, as in the specimen forms.
 """
 
 from django import forms
+from django.core import signing
+from django.core.validators import MaxLengthValidator
 from django.db.models import Q
 from django.utils import timezone
 
 from accounts.models import User
 from core.attachments import AttachmentField
+from specimens.models import Hold
+from specimens.services import TEXT_LIMIT as HOLD_REASON_LIMIT
 from storage.models import StorageUnit
 
 from .models import (
@@ -23,7 +27,7 @@ from .models import (
     LN2Entry,
     ServiceEvent,
 )
-from .services import READ_ROLES, TEXT_LIMIT
+from .services import EXCURSION_HOLD_LIMIT, READ_ROLES, TEXT_LIMIT
 
 DATETIME = forms.DateTimeInput(
     attrs={"type": "datetime-local", "step": "1"}, format="%Y-%m-%dT%H:%M:%S"
@@ -643,3 +647,93 @@ class NoteForm(GroupedForm):
     note = text_field("Note", help_text=NOT_IDENTIFYING)
     attachment = AttachmentField(label="Attachment")
     groups = (("", ["note", "attachment"]),)
+
+
+HOLD_SNAPSHOT_SALT = "equipment.excursion-manual-holds"
+HOLD_SNAPSHOT_AGE = 60 * 60
+
+
+class ExcursionHoldsForm(GroupedForm):
+    specimen_ids = forms.MultipleChoiceField(
+        label="Specimens",
+        choices=(),
+        widget=forms.CheckboxSelectMultiple(
+            attrs={"class": "form-check-input", "aria-describedby": "selection-note"}
+        ),
+        error_messages={
+            "required": "Select at least one specimen from this page.",
+            "invalid_choice": "A selected specimen is not available on this page. "
+            "Reload the candidates and review your selection.",
+        },
+    )
+    scope = forms.ChoiceField(
+        label="Hold scope",
+        choices=[("", "Select…"), *Hold.Scope.choices],
+        help_text="Disposal blocks disposal only. Use blocks use and dispatch, but permits "
+        "disposal. All-use blocks both. Existing holds remain separate.",
+    )
+    reason = reason_field(help_text="The excursion number is added to every hold reason.")
+    snapshot = forms.CharField(widget=forms.HiddenInput)
+    groups = (("Hold details", ["scope", "reason"]),)
+
+    def __init__(self, *args, actor, excursion, candidates, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.actor, self.excursion = actor, excursion
+        self.fields["specimen_ids"].choices = [
+            (str(item["specimen"].pk), item["specimen"].accession) for item in candidates
+        ]
+        limit = HOLD_REASON_LIMIT - len(f"Excursion {excursion.number}: ")
+        self.fields["reason"].max_length = limit
+        self.fields["reason"].validators.append(MaxLengthValidator(limit))
+        self.fields["reason"].widget.attrs["maxlength"] = limit
+        self.fields["reason"].help_text += f" Use at most {limit} characters."
+        # Never refresh a bound snapshot: a failed submission must not approve newer state.
+        if not self.is_bound:
+            self.initial["snapshot"] = signing.dumps(
+                {
+                    "actor": str(actor.pk),
+                    "excursion": str(excursion.pk),
+                    "revision": excursion.revision,
+                    "specimens": {
+                        str(item["specimen"].pk): item["specimen"].revision
+                        for item in candidates
+                        if item["selectable"]
+                    },
+                },
+                salt=HOLD_SNAPSHOT_SALT,
+                compress=True,
+            )
+
+    def clean_specimen_ids(self):
+        selected = self.cleaned_data["specimen_ids"]
+        if len(selected) > EXCURSION_HOLD_LIMIT or len(selected) != len(set(selected)):
+            raise forms.ValidationError(
+                f"Select at most {EXCURSION_HOLD_LIMIT} distinct specimens."
+            )
+        return selected
+
+    def clean_snapshot(self):
+        try:
+            value = signing.loads(
+                self.cleaned_data["snapshot"], salt=HOLD_SNAPSHOT_SALT, max_age=HOLD_SNAPSHOT_AGE
+            )
+            if (
+                value["actor"] != str(self.actor.pk)
+                or value["excursion"] != str(self.excursion.pk)
+                or type(value["revision"]) is not int
+                or not isinstance(value["specimens"], dict)
+            ):
+                raise ValueError
+        except signing.BadSignature, KeyError, TypeError, ValueError:
+            raise forms.ValidationError(
+                "This candidate review expired or is invalid. Reload the candidates and "
+                "review your selection before submitting again."
+            ) from None
+        return value
+
+    def clean(self):
+        data = super().clean()
+        if "snapshot" in data and "specimen_ids" in data:
+            if not set(data["specimen_ids"]).issubset(data["snapshot"]["specimens"]):
+                self.add_error("specimen_ids", "Select only specimens from your reviewed page.")
+        return data

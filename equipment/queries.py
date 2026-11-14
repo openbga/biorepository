@@ -23,6 +23,10 @@ from django.db.models import (
 from django.db.models.functions import Lag
 from django.utils import timezone as tz
 
+from accounts.roles import require_role
+from specimens.models import Hold, Specimen
+from storage.services import OPERATE_ROLES
+
 from .models import (
     AffectedSpecimen,
     Equipment,
@@ -243,6 +247,34 @@ def excursion_specimens(excursion, *, actor):
         ),
         None,
     )
+
+
+def excursion_hold_candidates(excursion, *, actor, query=""):
+    """All affected rows, with current status and active holds for an explicit selection page.
+
+    Do not omit disposed specimens: show why they cannot receive a hold. Pagination belongs to
+    the view, after filtering the whole affected set.
+    """
+    require_role(actor, *OPERATE_ROLES)
+    rows, capture = excursion_specimens(excursion, actor=actor)
+    specimens = {
+        specimen.pk: specimen
+        for specimen in Specimen.objects.filter(pk__in={row.specimen_id for row in rows})
+    }
+    active = {}
+    for hold in Hold.objects.filter(specimen_id__in=specimens, release__isnull=True):
+        active.setdefault(hold.specimen_id, []).append(hold.get_scope_display())
+    query = query.strip().casefold()
+    return [
+        {
+            "row": row,
+            "specimen": specimens[row.specimen_id],
+            "active_holds": active.get(row.specimen_id, []),
+            "selectable": specimens[row.specimen_id].status != Specimen.Status.DISPOSED,
+        }
+        for row in rows
+        if row.specimen_id in specimens and (not query or query in row.accession.casefold())
+    ], capture
 
 
 def readings_during(excursion):

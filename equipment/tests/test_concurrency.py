@@ -19,9 +19,12 @@ from equipment.models import (
     ServiceEvent,
     TemperatureReading,
 )
+from specimens import services as specimen_services
+from specimens.models import Hold
+from specimens.tests.test_concurrency import HoldFirst as HoldSpecimenFirst
 from specimens.tests.test_concurrency import race
 
-from .conftest import ago, make_user
+from .conftest import ago, make_user, place, register
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
@@ -119,3 +122,99 @@ def test_two_corrections_of_one_entry_leave_one(people, tank, monkeypatch):
     assert codes(second) == {"invalid_transition"}
     assert LN2Entry.objects.filter(corrects=entry).count() == 1
     assert ServiceEvent.objects.count() == 0
+
+
+def excursion_hold_setup(people, world, tank):
+    technician = people["technician"]
+    specimen = register(technician, world)
+    place(technician, specimen, world.position("A1"), occurred_at=ago(250))
+    specimen.refresh_from_db()
+    excursion = services.open_excursion(
+        actor=technician,
+        equipment_id=tank.pk,
+        started_at=ago(200),
+        ended_at=ago(100),
+        detection="alarm",
+        cause="Synthetic probe event",
+        action="Probe checked",
+        impact="Review affected material",
+    )
+
+    def place_holds():
+        return services.place_excursion_holds(
+            actor=technician,
+            excursion_id=excursion.pk,
+            expected_revision=excursion.revision,
+            specimen_ids=[specimen.pk],
+            specimen_revisions={specimen.pk: specimen.revision},
+            scope="use",
+            reason="Review affected stock",
+        )
+
+    return excursion, specimen, place_holds
+
+
+def test_concurrent_excursion_hold_batches_leave_one_and_reject_replay(
+    people, world, tank, monkeypatch
+):
+    excursion, specimen, place_holds = excursion_hold_setup(people, world, tank)
+    first, second = race(HoldFirst(monkeypatch), place_holds, place_holds)
+    assert isinstance(first, list) and len(first) == 1
+    assert codes(second) == {"stale_revision"}
+    assert Hold.objects.filter(specimen=specimen).count() == 1
+    assert ExcursionEvent.objects.filter(excursion=excursion, kind="note").count() == 1
+
+
+def test_excursion_batch_waits_for_specimen_mutation_and_rechecks_reviewed_revision(
+    people, world, tank, monkeypatch
+):
+    excursion, specimen, place_holds = excursion_hold_setup(people, world, tank)
+
+    def other_hold():
+        return specimen_services.place_hold(
+            actor=people["technician2"],
+            specimen_id=specimen.pk,
+            expected_revision=specimen.revision,
+            scope="disposal",
+            occurred_at=ago(50),
+            reason="Separate manual review",
+        )
+
+    first, second = race(HoldSpecimenFirst(monkeypatch), other_hold, place_holds)
+    assert isinstance(first, Hold)
+    assert codes(second) == {"stale_revision"}
+    assert Hold.objects.filter(specimen=specimen).count() == 1
+    assert not ExcursionEvent.objects.filter(excursion=excursion, kind="note").exists()
+
+
+def test_excursion_batch_waits_for_close_without_lock_cycle(people, world, tank, monkeypatch):
+    excursion, specimen, _ = excursion_hold_setup(people, world, tank)
+    excursion = services.submit_excursion(
+        actor=people["technician"],
+        excursion_id=excursion.pk,
+        expected_revision=excursion.revision,
+    )
+
+    def close():
+        return services.close_excursion(
+            actor=people["manager"],
+            excursion_id=excursion.pk,
+            expected_revision=excursion.revision,
+            note="Reviewed",
+        )
+
+    def place_holds():
+        return services.place_excursion_holds(
+            actor=people["technician"],
+            excursion_id=excursion.pk,
+            expected_revision=excursion.revision,
+            specimen_ids=[specimen.pk],
+            specimen_revisions={specimen.pk: specimen.revision},
+            scope="use",
+            reason="Review stock",
+        )
+
+    first, second = race(HoldFirst(monkeypatch), close, place_holds)
+    assert isinstance(first, Excursion)
+    assert codes(second) == {"stale_revision"}
+    assert not Hold.objects.exists()

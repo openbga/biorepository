@@ -193,6 +193,7 @@ STAFF_NAV = (
             "equipment:excursion-review",
             "equipment:excursion-reopen",
             "equipment:excursion-note",
+            "equipment:excursion-holds",
         ),
     ),
     # Distribution
