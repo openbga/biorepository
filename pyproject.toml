@@ -37,6 +37,7 @@ testpaths = [
     "specimens/tests",
     "equipment/tests",
     "distribution/tests",
+    "quality/tests",
 ]
 
 [tool.ruff]

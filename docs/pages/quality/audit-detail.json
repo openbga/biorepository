@@ -1,0 +1,91 @@
+{
+  "id": "quality-audit-detail",
+  "routes": [
+    "quality:audit-detail"
+  ],
+  "title": "Inventory audit",
+  "purpose": "Read a frozen box snapshot, record its manual comparison, and retain the result for later review.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians create, complete and cancel audits. Viewers read audits and their results. Accounts without an application role, including superuser accounts without a role, have no access.",
+        "These are working product defaults, not repository policy. Audits record evidence only. They never change storage positions, specimen records, quantities, statuses or holds. A discrepancy needs follow-up through the ordinary inventory workflows; it is not a correction."
+      ]
+    },
+    {
+      "title": "Snapshot and links",
+      "items": [
+        {
+          "label": "Status and box",
+          "description": "Open, Completed or Cancelled. The box link opens its current storage record; the snapshot remains as it was at audit creation."
+        },
+        {
+          "label": "Box and Location at creation",
+          "description": "Frozen box code and full storage path. Movement after creation never rewrites this evidence."
+        },
+        {
+          "label": "Created and Reason",
+          "description": "Server time in repository time zone, creating actor and required creation reason."
+        },
+        {
+          "label": "Earlier audit",
+          "description": "Optional link to the finalized audit of the same box that this one follows. It does not overwrite the earlier evidence."
+        },
+        {
+          "label": "Positions",
+          "description": "Every snapshot position is shown in grid order: label, expected accession or Empty, and blocked state and reason. Observed accession is Not observed until completion, then the submitted accession or explicit Empty."
+        },
+        {
+          "label": "Result",
+          "description": "Match means expected and observed contents agree, including empty/empty. Missing means an expected accession was observed empty. Unexpected means an accession was found in an expected empty position. Mismatch means different accessions at an occupied position. Unknown accessions are allowed evidence."
+        },
+        {
+          "label": "Final result",
+          "description": "Completion or cancellation time and actor with reason. Completed results include match, missing, unexpected and mismatch counts and the discrepancy explanation. Cancelled audits retain no observation results."
+        },
+        {
+          "label": "History",
+          "description": "Creation and finalization events in time order, with actor, recorded time and reason. The record foot shows when and by whom this view was produced."
+        }
+      ]
+    },
+    {
+      "title": "Actions and states",
+      "items": [
+        {
+          "label": "Complete audit",
+          "description": "Operators can open this action while the audit is open and the snapshot is current. It requires an explicit observation at every position, a completion reason and an explanation if contents differ."
+        },
+        {
+          "label": "Cancel audit",
+          "description": "Operators may cancel any open audit, including a stale one, with a reason. This adds an immutable cancellation and retains the original snapshot."
+        },
+        {
+          "label": "New audit of this box",
+          "description": "Offered after finalization; opens New inventory audit with this box and this earlier audit preselected. Results cannot be edited or reopened."
+        },
+        {
+          "label": "Snapshot changed",
+          "description": "Storage movement into or out of this box, even if moved back or backdated, box or ancestor movement, position block changes, or inactive storage ancestry prevents completion. Unrelated box movements do not invalidate it. Cancel and start a new audit; do not use the stale comparison."
+        }
+      ]
+    },
+    {
+      "title": "Saving and retention",
+      "paragraphs": [
+        "Audits do not store partial observations. Completion saves every observation and its classification together, with actor, server time, reason and explanation, or saves nothing if validation fails. Completion and cancellation compete for one final result; an already finalized audit rejects another submission."
+      ]
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/views.py",
+    "quality/forms.py",
+    "quality/models.py",
+    "quality/services.py",
+    "quality/tests/test_audits.py",
+    "templates/quality/audit_detail.html",
+    "templates/quality/_status.html"
+  ]
+}

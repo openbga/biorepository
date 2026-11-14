@@ -461,6 +461,19 @@ dispatch, return and holds with their references. Pick lists, manifests and CSV 
 audited. Requests, allocation, shipments, consent and returns take the same single lock as storage
 and specimens; catalogue saves do not.
 
+## Manual inventory audits
+
+Inventory audits compare a box with a saved expected inventory. Operators record every position
+as empty or with the identifier they observe, including identifiers the system does not know.
+Discrepancies require an explanation. A completed audit is evidence of the check, not a change to
+stock: use the ordinary custody workflows to investigate and correct a location separately.
+
+Working defaults are one active box of at most 400 positions, all observations submitted together,
+and completion or cancellation by any operating role. Viewers read the records. Expected contents
+and final results are append-only; repeat an audit to correct it, retaining the earlier record.
+Relevant storage changes after the snapshot prevent completion; cancel and start again against
+the current inventory. In-app help describes the fields and controls. Scanner import is not built.
+
 ## Limits to know
 
 | Limit | Detail |
@@ -474,7 +487,7 @@ and specimens; catalogue saves do not.
 | Allocation reserves the specimen, not its position | Others can still move or use allocated material; a disposal hold stops only its disposal. Allocation is whole-container |
 | Time away is not time out of storage | A long wait between picking and dispatch does count as time out of storage |
 | No monitoring or alarms | Readings are entered or imported; nothing is polled, and no notification is sent |
-| Equipment is not yet tied to inventory audits, deviations or training | Planned next (product scope) |
+| Manual box audits only | No rack-scanner import, deviations, training or automatic holds from excursions yet |
 | One repository organization | No tenant layer; permissions are not site-scoped |
 | Storage writes are serialized | One lock per storage-changing operation; fine for one repository's pace |
 | Disposal approvals are brittle by design | Any change to the specimen after approval needs a new request |

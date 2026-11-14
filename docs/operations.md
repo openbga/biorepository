@@ -8,7 +8,7 @@ shell or secret manager, never in Git, tickets or logs.
 ## What is protected
 
 All state is in PostgreSQL: accounts, the repository record, announcements, the audit trail,
-storage, specimens, custody, equipment and distribution records. Uploaded files (equipment and
+storage, specimens, custody, equipment, distribution records and inventory audits. Uploaded files (equipment and
 agreement attachments) are stored once in the `attachment` table as a binary column with their
 SHA-256 hash and size, so there is no file storage to back up separately. The container
 filesystem is disposable.
@@ -262,8 +262,8 @@ It asks for confirmation unless `--noinput` is given, and refuses to run unless 
 The erase and the seed are one transaction. Requests that arrive meanwhile wait, usually a
 minute or so, then see the fresh demonstration; everyone is signed out. If the seed fails, the
 transaction rolls back and nothing changes. The erase empties every application table, including
-accounts, sessions, audit history, specimens, custody, equipment and distribution
-history, and restarts identifiers such as specimen numbers. The database triggers that keep history rows from being updated or
+accounts, sessions, audit history, specimens, custody, equipment, distribution
+history and inventory audits, and restarts identifiers such as specimen numbers. The database triggers that keep history rows from being updated or
 deleted do not apply to this whole-table erase; that is deliberate and is the reason for the
 checks above.
 

@@ -108,10 +108,10 @@ spread it across UI handlers.
 | `storage` | Sites, rooms, storage units and classes, container types and grids, racks, boxes, positions, occupancy, moves |
 | `specimens` | Participants (coded), collections, specimen types, specimens and aliquots, quantity ledger, placement, custody events, check-out/in, holds, disposal |
 | `equipment` | Equipment linked to storage units, service events, LN2 level and fill log, temperature readings and excursions |
+| `quality` | Manual box inventory audits, immutable expected snapshots and completed observations or cancellation |
 | `distribution` | Studies and their collections, consent records and withdrawals, institutions, investigators, requests and decisions, allocations and pick lists, shipments and manifests, receipts, returns, agreements |
 
-Label PDFs live in `specimens`; pick lists and manifests in `distribution`. A `quality` app
-(inventory audits, deviations, training) is planned.
+Label PDFs live in `specimens`; pick lists and manifests in `distribution`. The `quality` app holds inventory audits; deviations and training remain planned.
 
 Integrity rules: append-only event tables protected by database triggers; one occupant per
 position by a unique constraint, allocation under row lock; state change, checks and audit event
@@ -120,7 +120,10 @@ depends on `storage`, never the reverse: storage exposes positions and container
 occupies them only as opaque occupancy keys. `equipment` depends on `storage` and reads specimen
 history through public queries. `distribution` depends on `specimens` and `storage` and changes
 specimens only through the specimens services (holds, check-out and check-in, dispatch, return).
-Neither `storage` nor `specimens` depends on `equipment` or `distribution`.
+Neither `storage` nor `specimens` depends on `equipment`, `distribution` or `quality`.
+`quality` reads storage and specimen identities and takes the storage gate for consistent audit
+snapshots and completion checks. It never changes custody or inventory. Its snapshots and
+finalizations use the same append-only database protection as other history records.
 
 ### Accounts and access
 
