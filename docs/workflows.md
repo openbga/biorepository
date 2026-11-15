@@ -499,6 +499,20 @@ operator to reload and review the latest version. Closed reports and earlier eve
 record. This text-only register does not place or release holds, decide specimen suitability,
 assign training, send notifications or impose deadlines. In-app help covers its fields and actions.
 
+## Training
+
+Managers and administrators assign a training topic to an active staff account, with an optional
+procedure/version reference and deadline. They record the completion date, trainer or provider
+and evidence, and may add a competency assessment and renewal date. All staff can read the
+register and filter dates that need attention. The repository decides what training and evidence
+are adequate; no interval or curriculum is supplied.
+
+Working default: this is manager-maintained recordkeeping, including a manager's own training,
+not a separate approval or electronic signature. Corrections and cancellation keep their reason,
+actor, time and earlier values. Renewal is a new assignment. Records do not certify competence,
+change permissions, block specimen work or send notifications. In-app help describes the fields,
+date filters and state transitions.
+
 ## Limits to know
 
 | Limit | Detail |
@@ -513,7 +527,7 @@ assign training, send notifications or impose deadlines. In-app help covers its 
 | Time away is not time out of storage | A long wait between picking and dispatch does count as time out of storage |
 | No monitoring or alarms | Readings are entered or imported; nothing is polled, and no notification is sent |
 | Box audit import | Normalized scanner CSV for one box at a time; no device-specific import or hardware qualification |
-| Quality workflows | Deviation investigation and review are recorded as staff assess them; no automatic quality decision or training workflow. Excursion holds require explicit operator selection; temperatures and reviews never place holds automatically |
+| Quality workflows | Deviation investigation and review are recorded as staff assess them; no automatic quality decision. Training records do not establish qualification or grant access. Excursion holds require explicit operator selection; temperatures and reviews never place holds automatically |
 | One repository organization | No tenant layer; permissions are not site-scoped |
 | Storage writes are serialized | One lock per storage-changing operation; fine for one repository's pace |
 | Disposal approvals are brittle by design | Any change to the specimen after approval needs a new request |

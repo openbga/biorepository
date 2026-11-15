@@ -9,8 +9,8 @@ boxes and positions. Built with Django, PostgreSQL and Bootstrap/HTMX. AGPL-3.0-
 Source: <https://github.com/openbga/vapor-phase>.
 
 Status: the repository journey works end to end: storage, specimens, custody, disposal with
-approval, labels, bulk import, equipment records, inventory audits, deviations, and distribution from consent records and a
-request through shipment, receipt and return. Use synthetic data only.
+approval, labels, bulk import, equipment records, inventory audits, deviations, training, and
+distribution from consent records and a request through shipment, receipt and return. Use synthetic data only.
 
 This software supports a repository's own records and quality system; it does not certify
 compliance or accreditation.
@@ -50,6 +50,10 @@ compliance or accreditation.
   evidence, then submit for a separate manager's review. Optional links connect a report to an
   excursion or inventory audit. Corrections, returns and reopening retain the earlier values and
   reasons. Review changes no specimen status or hold.
+- **Training:** staff assignments with explicit due dates, completion evidence, trainer/provider,
+  optional competency assessments and renewal dates. Managers record corrections and cancellation
+  with retained history; staff can filter and read the register. Records do not grant permissions
+  or certify qualification.
 - **Distribution:** studies that govern collections, consent records by scope category with
   withdrawal (which holds the participant's specimens and lists material already sent), specimen
   requests decided by a different person who holds the request decision permission, allocation
@@ -67,7 +71,7 @@ compliance or accreditation.
 Corrections add a record with a reason. Events (custody, moves, check-outs, disposals) are
 append-only and specimens are never deleted. [Workflow rules and limits](docs/workflows.md)
 describes each of these in more detail, and what is not built: requester accounts, monitoring and
-alarms and training come later (see [product scope](docs/product.md)).
+alarms come later (see [product scope](docs/product.md)).
 
 ![Dashboard with the work queues: check-outs in progress, specimens waiting for a position, holds and disposal requests](docs/images/dashboard.png)
 
