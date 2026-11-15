@@ -259,10 +259,12 @@ def seed_full_equipment(*, manager, technician, admin):
     if Equipment.objects.filter(code=FULL_MARKER).exists():
         return False
     now = timezone.now()
-    today = timezone.localdate()
+    local_now = timezone.localtime(now)
+    today = local_now.date()
 
     def morning(days_ago):
-        local = timezone.localtime(now - timedelta(days=days_ago))
+        # Subtract calendar days locally so DST cannot repeat or skip a morning.
+        local = local_now - timedelta(days=days_ago)
         return local.replace(hour=8, minute=0, second=0, microsecond=0)
 
     units = {u.code: u for u in StorageUnit.objects.filter(code__in=[e[3] for e in FULL_EQUIPMENT])}
