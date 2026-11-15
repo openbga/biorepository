@@ -116,15 +116,16 @@ def test_eligible_trainee_and_immutable_identity_and_form(people):
         change(people, record, "correct", values={"trainee_id": people["viewer"].pk})
 
 
-def test_manager_can_record_own_training_and_exact_history(people):
-    stamp = timezone.now().replace(microsecond=123456)
-    with patch("quality.training_services.timezone.now", return_value=stamp):
-        record = services.create_training(
-            actor=people["manager"],
-            trainee_id=people["manager"].pk,
-            values={"topic": " Synthetic own training "},
-            reason=" Synthetic ",
-        )
+def test_manager_can_record_own_training_and_exact_history(people, monkeypatch):
+    stamp = datetime(2026, 1, 15, 12, 0, 0, 123456, tzinfo=UTC)
+    # Keep every transition on the same clock; resuming real time could precede stamp.
+    monkeypatch.setattr("quality.training_services.timezone.now", lambda: stamp)
+    record = services.create_training(
+        actor=people["manager"],
+        trainee_id=people["manager"].pk,
+        values={"topic": " Synthetic own training "},
+        reason=" Synthetic ",
+    )
     first = record.events.get()
     assert first.changes["created_at"] == [None, stamp.isoformat()]
     assert first.changes["topic"] == [None, "Synthetic own training"]
