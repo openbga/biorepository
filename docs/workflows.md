@@ -482,6 +482,23 @@ results or a draft. The source file is not retained; the completed audit keeps t
 observations. The project format and bounds are working defaults in [product scope](product.md);
 device-specific exports need conversion. In-app help describes the fields, controls and errors.
 
+## Deviations
+
+Staff record departures from a procedure or expected practice, with the observed time,
+description, immediate action and optional links to an excursion or inventory audit. Investigation,
+corrective action and effectiveness evidence can be added while open. When action is unnecessary
+or a cause cannot be established, explain the assessment rather than leaving its field empty.
+
+Working default: an operator submits a complete report for review; a manager other than its
+creator and latest submitter returns it for more work or closes it with a reason. A manager can
+reopen a closed report. These roles and the review sequence are product choices, not a claim of
+independent quality qualification. The repository decides what evidence is adequate.
+
+Each save keeps its reason, actor, server time and prior values. Concurrent changes require the
+operator to reload and review the latest version. Closed reports and earlier events remain on
+record. This text-only register does not place or release holds, decide specimen suitability,
+assign training, send notifications or impose deadlines. In-app help covers its fields and actions.
+
 ## Limits to know
 
 | Limit | Detail |
@@ -496,7 +513,7 @@ device-specific exports need conversion. In-app help describes the fields, contr
 | Time away is not time out of storage | A long wait between picking and dispatch does count as time out of storage |
 | No monitoring or alarms | Readings are entered or imported; nothing is polled, and no notification is sent |
 | Box audit import | Normalized scanner CSV for one box at a time; no device-specific import or hardware qualification |
-| Quality workflows | No deviations or training workflows. Excursion holds require explicit operator selection; temperatures and reviews never place holds automatically |
+| Quality workflows | Deviation investigation and review are recorded as staff assess them; no automatic quality decision or training workflow. Excursion holds require explicit operator selection; temperatures and reviews never place holds automatically |
 | One repository organization | No tenant layer; permissions are not site-scoped |
 | Storage writes are serialized | One lock per storage-changing operation; fine for one repository's pace |
 | Disposal approvals are brittle by design | Any change to the specimen after approval needs a new request |

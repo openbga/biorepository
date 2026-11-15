@@ -9,7 +9,7 @@ boxes and positions. Built with Django, PostgreSQL and Bootstrap/HTMX. AGPL-3.0-
 Source: <https://github.com/openbga/vapor-phase>.
 
 Status: the repository journey works end to end: storage, specimens, custody, disposal with
-approval, labels, bulk import, equipment records, inventory audits, and distribution from consent records and a
+approval, labels, bulk import, equipment records, inventory audits, deviations, and distribution from consent records and a
 request through shipment, receipt and return. Use synthetic data only.
 
 This software supports a repository's own records and quality system; it does not certify
@@ -46,6 +46,10 @@ compliance or accreditation.
   explanation. Completed and cancelled audits remain on record; an audit never changes specimen
   locations. CSV import uses the project format, one box at a time; device-specific formats
   require conversion.
+- **Deviations:** report an issue, record investigation, corrective action and effectiveness
+  evidence, then submit for a separate manager's review. Optional links connect a report to an
+  excursion or inventory audit. Corrections, returns and reopening retain the earlier values and
+  reasons. Review changes no specimen status or hold.
 - **Distribution:** studies that govern collections, consent records by scope category with
   withdrawal (which holds the participant's specimens and lists material already sent), specimen
   requests decided by a different person who holds the request decision permission, allocation
@@ -63,7 +67,7 @@ compliance or accreditation.
 Corrections add a record with a reason. Events (custody, moves, check-outs, disposals) are
 append-only and specimens are never deleted. [Workflow rules and limits](docs/workflows.md)
 describes each of these in more detail, and what is not built: requester accounts, monitoring and
-alarms, deviations and training come later (see [product scope](docs/product.md)).
+alarms and training come later (see [product scope](docs/product.md)).
 
 ![Dashboard with the work queues: check-outs in progress, specimens waiting for a position, holds and disposal requests](docs/images/dashboard.png)
 

@@ -1,0 +1,62 @@
+{
+  "id": "quality-deviation-review",
+  "routes": [
+    "quality:deviation-review"
+  ],
+  "title": "Record review",
+  "purpose": "Close a submitted deviation or return it for revision.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians record, edit and submit deviations. Viewers read them. Managers and administrators review and reopen them. Inactive accounts and accounts without an application role, including bare superusers, have no access.",
+        "These are working product defaults, not repository policy. Deviations retain a report and its investigation, corrective action, effectiveness and independent review. They do not change specimens, stock, storage, linked records or holds. No attachments, deadlines, automatic notifications or risk thresholds are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Independent reviewer",
+      "paragraphs": [
+        "The report must be Awaiting review. The reviewer must be a manager or administrator who is neither the original creator nor the latest submitter. No role or superuser status overrides this rule. A blocked form explains who must act."
+      ],
+      "items": []
+    },
+    {
+      "title": "Decision and reason",
+      "paragraphs": [],
+      "items": [
+        {
+          "label": "Decision",
+          "description": "Required. Close accepts this report and records the closure actor and server time. Return for revision restores Open status so operators can edit and submit again; the latest submission remains visible."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 4,000 characters, for either decision. Explain the review outcome; it is retained in history."
+        },
+        {
+          "label": "Record review and Cancel",
+          "description": "Record review saves the decision and returns to the report. Cancel returns without changing it. Review cannot edit the report narratives or related evidence."
+        }
+      ]
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change requires a reason and records the actor, server time, revision and full prior and new values. Earlier narratives, source links, submissions and decisions remain in history. Reports cannot be deleted and history cannot be rewritten.",
+        "Saving validates and commits the report and its history together or saves nothing. Validation retains entered values. If someone changes the record first, your posted values stay visible and saving is blocked. Cancel, reload the latest record, compare your notes and start again; retrying the old form cannot overwrite the newer report. Do not enter identifying information."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/deviation_views.py",
+    "quality/deviation_forms.py",
+    "quality/deviation_services.py",
+    "quality/models.py",
+    "quality/tests/test_deviations.py",
+    "templates/quality/deviation_detail.html",
+    "templates/quality/deviation_list.html",
+    "templates/quality/form.html"
+  ]
+}

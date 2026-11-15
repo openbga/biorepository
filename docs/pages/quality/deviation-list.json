@@ -1,0 +1,38 @@
+{
+  "id": "quality-deviation-list",
+  "routes": [
+    "quality:deviation-list"
+  ],
+  "title": "Deviations",
+  "purpose": "Find a deviation report and its review state.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians record, edit and submit deviations. Viewers read them. Managers and administrators review and reopen them. Inactive accounts and accounts without an application role, including bare superusers, have no access.",
+        "These are working product defaults, not repository policy. Deviations retain a report and its investigation, corrective action, effectiveness and independent review. They do not change specimens, stock, storage, linked records or holds. No attachments, deadlines, automatic notifications or risk thresholds are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Search, filters and columns",
+      "paragraphs": [
+        "Search matches the DEV number, title or description, ignoring case. Status defaults to All statuses; choices are Open, Awaiting review and Closed. Apply runs the search and filters, filter chips remove one filter and Clear all resets them. Invalid filters show an error instead of records.",
+        "The table shows Deviation, Status, Title, Occurred at, Updated and Created by. The DEV number opens the report. Occurred at is the observed time; Updated is the latest recorded change. Times use repository local time. Sort Deviation, Status, Title, Occurred at or Updated; the default is latest Updated first. Rows per page is 25 by default, with 50 and 100 available. Pagination and sorting apply to all matching records. Columns changes visibility and order locally.",
+        "New deviation is available to operators and opens a blank report. An empty register offers creation to operators; no matching results offers Clear filters. Viewers have read-only access."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/deviation_views.py",
+    "quality/deviation_forms.py",
+    "quality/deviation_services.py",
+    "quality/models.py",
+    "quality/tests/test_deviations.py",
+    "templates/quality/deviation_detail.html",
+    "templates/quality/deviation_list.html",
+    "templates/quality/form.html"
+  ]
+}

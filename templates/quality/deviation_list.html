@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block page_actions %}{% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:deviation-create' %}">New deviation</a>{% endif %}{% endblock %}
+{% block content %}
+<section class="card vr-table-card" aria-labelledby="deviations-heading">
+  <h2 class="visually-hidden" id="deviations-heading">Deviations</h2>
+  {% include "includes/grid_toolbar.html" with label="Filter deviations" q=q inline=inline grid="quality.deviations" %}
+  {% if page_obj.paginator.count %}
+  <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.deviations" data-vr-grid-version="1" aria-labelledby="deviations-heading"><thead><tr>
+    {% include "includes/sort_header.html" with label="Deviation" asc="number" desc="-number" col="number" locked=True %}
+    {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+    {% include "includes/sort_header.html" with label="Title" asc="title" desc="-title" col="title" %}
+    {% include "includes/sort_header.html" with label="Occurred at" asc="observed" desc="-observed" col="observed" %}
+    {% include "includes/sort_header.html" with label="Updated" asc="updated" desc="-updated" col="updated" %}
+    <th scope="col" data-vr-col="creator">Created by</th>
+  </tr></thead><tbody>{% for deviation in page_obj %}<tr>
+    <th scope="row"><a class="vr-row-link vr-id" href="{% url 'quality:deviation-detail' deviation.pk %}">{{ deviation.number }}</a></th>
+    <td>{% include "quality/_deviation_status.html" with status=deviation.status plain=True %}</td>
+    <td>{{ deviation.title }}</td>
+    <td class="vr-nowrap"><time datetime="{{ deviation.occurred_at|date:'c' }}">{{ deviation.occurred_at|date:"Y-m-d H:i" }}</time></td>
+    <td class="vr-nowrap"><time datetime="{{ deviation.updated_at|date:'c' }}">{{ deviation.updated_at|date:"Y-m-d H:i" }}</time></td>
+    <td>{{ deviation.created_by.get_full_name|default:deviation.created_by.get_username }}</td>
+  </tr>{% endfor %}</tbody></table></div>
+  {% include "includes/pagination.html" with noun="deviations" filtered=filtered %}
+  {% else %}
+    {% if can_operate %}{% url 'quality:deviation-create' as create_url %}{% endif %}
+    {% include "storage/_list_states.html" with title_empty="No deviations yet" body_empty="Record a quality deviation, investigate it and retain another person's review." create_label="New deviation" %}
+  {% endif %}
+</section>
+{% endblock %}
