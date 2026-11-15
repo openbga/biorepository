@@ -219,3 +219,121 @@ class DeviationEvent(models.Model):
                 name="quality_dev_event_kind",
             ),
         ]
+
+
+class TrainingRecord(models.Model):
+    """Retained staff training evidence; it confers no permission or certification."""
+
+    class Status(models.TextChoices):
+        ASSIGNED = "assigned", "Assigned"
+        COMPLETED = "completed", "Completed"
+        CANCELLED = "cancelled", "Cancelled"
+
+    trainee = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="training_records"
+    )
+    topic = models.CharField(max_length=160)
+    procedure_reference = models.CharField(max_length=240, blank=True)
+    due_on = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=Status.choices, default=Status.ASSIGNED)
+    completed_on = models.DateField(null=True, blank=True)
+    trainer_provider = models.CharField(max_length=240, blank=True)
+    completion_evidence = models.TextField(max_length=4000, blank=True)
+    competency_assessment = models.TextField(max_length=4000, blank=True)
+    renewal_due = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+"
+    )
+    updated_at = models.DateTimeField(default=timezone.now, editable=False)
+    updated_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+"
+    )
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ["-updated_at", "-pk"]
+        constraints = [
+            models.CheckConstraint(condition=Q(topic__regex=r"\S"), name="quality_training_topic"),
+            models.CheckConstraint(condition=Q(revision__gte=1), name="quality_training_revision"),
+            models.CheckConstraint(
+                condition=Q(status__in=["assigned", "completed", "cancelled"]),
+                name="quality_training_status",
+            ),
+            models.CheckConstraint(
+                condition=Q(created_at__lte=models.F("updated_at")),
+                name="quality_training_chronology",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(
+                        completed_on__isnull=True,
+                        trainer_provider="",
+                        completion_evidence="",
+                        competency_assessment="",
+                        renewal_due__isnull=True,
+                    )
+                    | Q(
+                        completed_on__isnull=False,
+                        trainer_provider__regex=r"\S",
+                        completion_evidence__regex=r"\S",
+                    )
+                ),
+                name="quality_training_evidence",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="completed") | Q(completed_on__isnull=False),
+                name="quality_training_completed",
+            ),
+            models.CheckConstraint(
+                condition=~Q(status="assigned") | Q(completed_on__isnull=True),
+                name="quality_training_assigned",
+            ),
+            models.CheckConstraint(
+                condition=Q(renewal_due__isnull=True)
+                | Q(completed_on__isnull=False, renewal_due__gte=models.F("completed_on")),
+                name="quality_training_renewal",
+            ),
+        ]
+
+    @property
+    def number(self):
+        return f"TRN-{self.pk:06d}"
+
+    def __str__(self):
+        return f"{self.number} · {self.topic}"
+
+
+class TrainingEvent(models.Model):
+    class Kind(models.TextChoices):
+        CREATED = "created", "Assigned"
+        UPDATED = "updated", "Assignment updated"
+        COMPLETED = "completed", "Completion recorded"
+        CORRECTED = "corrected", "Completion corrected"
+        CANCELLED = "cancelled", "Cancelled"
+
+    training = models.ForeignKey(TrainingRecord, on_delete=models.PROTECT, related_name="events")
+    kind = models.CharField(max_length=10, choices=Kind.choices)
+    revision = models.PositiveIntegerField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+")
+    recorded_at = models.DateTimeField(default=timezone.now, editable=False)
+    reason = models.TextField(max_length=4000)
+    changes = models.JSONField(default=dict)
+
+    class Meta:
+        ordering = ["revision", "pk"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["training", "revision"], name="quality_training_event_rev"
+            ),
+            models.CheckConstraint(
+                condition=Q(revision__gte=1), name="quality_training_event_positive"
+            ),
+            models.CheckConstraint(
+                condition=Q(reason__regex=r"\S"), name="quality_training_event_reason"
+            ),
+            models.CheckConstraint(
+                condition=Q(kind__in=["created", "updated", "completed", "corrected", "cancelled"]),
+                name="quality_training_event_kind",
+            ),
+        ]

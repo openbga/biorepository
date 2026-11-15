@@ -1,0 +1,61 @@
+{
+  "id": "quality-training-cancel",
+  "routes": [
+    "quality:training-cancel"
+  ],
+  "title": "Cancel training record",
+  "purpose": "End an incorrect or no-longer-needed assignment or completion record without deleting evidence.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "All four application staff roles can read the list, record and history. Only administrators and repository managers create assignments, edit, complete, correct or cancel. Inactive accounts and accounts without an application role, including bare superusers, have no access. Managers may record their own training; this is recordkeeping without an independent approval step.",
+        "These are working product defaults, not repository policy. Training records retain evidence and human competency assessments. The software does not certify competence, grant permissions, determine expired qualifications or block specimen work. No attachments, automatic recurrence, notifications or fixed renewal interval are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Cancellation fields and actions",
+      "paragraphs": [],
+      "items": [
+        {
+          "label": "Trainee and Topic",
+          "description": "Read-only context identifying the record that will be cancelled."
+        },
+        {
+          "label": "Reason",
+          "description": "Required explanation, up to 4,000 characters, retained with cancellation. Whitespace-only text is rejected; do not enter identifying donor or participant details."
+        },
+        {
+          "label": "Cancel training record",
+          "description": "Available only for Assigned or Completed records. Changes status to Cancelled; completion dates, evidence, human assessments and all history remain. Cancellation is terminal: no edit, completion, correction or repeated cancellation is allowed. Create another assignment when needed."
+        },
+        {
+          "label": "Cancel",
+          "description": "Leaves the form without changing the record and returns to its detail."
+        }
+      ]
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change commits the record, revision event and field audit together or saves nothing. History retains the action, actor, exact server recording timestamp, revision, reason and old and new values. Dates are shown as YYYY-MM-DD and recording times in the repository time zone. Records cannot be deleted; history cannot be rewritten.",
+        "Validation errors keep entered values. If another change was saved first, your submitted values remain visible and saving is blocked. Cancel, reopen the latest record, review its values and start again. An old form cannot overwrite the newer revision. No-change edits and corrections are rejected."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/training_views.py",
+    "quality/training_forms.py",
+    "quality/training_lists.py",
+    "quality/training_services.py",
+    "quality/models.py",
+    "quality/tests/test_training.py",
+    "quality/templates/quality/training/list.html",
+    "quality/templates/quality/training/detail.html",
+    "quality/templates/quality/training/form.html",
+    "templates/quality/form.html"
+  ]
+}

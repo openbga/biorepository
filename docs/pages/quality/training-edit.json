@@ -1,0 +1,72 @@
+{
+  "id": "quality-training-edit",
+  "routes": [
+    "quality:training-edit"
+  ],
+  "title": "Edit training assignment",
+  "purpose": "Correct assignment metadata before completion.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "All four application staff roles can read the list, record and history. Only administrators and repository managers create assignments, edit, complete, correct or cancel. Inactive accounts and accounts without an application role, including bare superusers, have no access. Managers may record their own training; this is recordkeeping without an independent approval step.",
+        "These are working product defaults, not repository policy. Training records retain evidence and human competency assessments. The software does not certify competence, grant permissions, determine expired qualifications or block specimen work. No attachments, automatic recurrence, notifications or fixed renewal interval are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Assignment fields",
+      "paragraphs": [],
+      "items": [
+        {
+          "label": "Trainee",
+          "description": "Required when creating: choose an active account with an application staff role. Django administrative-site access is not required. The trainee cannot change after creation. For the wrong trainee, cancel this record with a reason and create a new assignment. Existing records remain readable and correctable after the trainee is deactivated or changes role."
+        },
+        {
+          "label": "Topic",
+          "description": "Required concise training topic, up to 160 characters."
+        },
+        {
+          "label": "Procedure / version reference",
+          "description": "Optional reference text, up to 240 characters. Record the relevant procedure and version if known. This is text only and does not link, validate or control a procedure."
+        },
+        {
+          "label": "Assignment due",
+          "description": "Optional follow-up date entered by the repository. Past dates are allowed. It remains visible after completion and is not a completion deadline gate."
+        },
+        {
+          "label": "Reason",
+          "description": "Required for every saved action, up to 4,000 characters. Explain the assignment or change; it remains in history. Required text cannot be whitespace only. Text is trimmed before saving. Do not enter donor or participant identifying information."
+        }
+      ]
+    },
+    {
+      "title": "Save changes and Cancel",
+      "paragraphs": [
+        "Only Assigned records can be edited. The trainee and topic are shown as record context; the trainee remains fixed. Topic, Procedure / version reference and Assignment due are editable. Save changes requires at least one changed field and a reason; it keeps Assigned status. Completed records use Correct training record. Cancel leaves without saving and returns to the record."
+      ],
+      "items": []
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change commits the record, revision event and field audit together or saves nothing. History retains the action, actor, exact server recording timestamp, revision, reason and old and new values. Dates are shown as YYYY-MM-DD and recording times in the repository time zone. Records cannot be deleted; history cannot be rewritten.",
+        "Validation errors keep entered values. If another change was saved first, your submitted values remain visible and saving is blocked. Cancel, reopen the latest record, review its values and start again. An old form cannot overwrite the newer revision. No-change edits and corrections are rejected."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/training_views.py",
+    "quality/training_forms.py",
+    "quality/training_lists.py",
+    "quality/training_services.py",
+    "quality/models.py",
+    "quality/tests/test_training.py",
+    "quality/templates/quality/training/list.html",
+    "quality/templates/quality/training/detail.html",
+    "quality/templates/quality/training/form.html",
+    "templates/quality/form.html"
+  ]
+}

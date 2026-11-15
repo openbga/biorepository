@@ -72,6 +72,20 @@ STAFF_NAV = (
             "quality:audit-cancel",
         ),
     ),
+    NavItem(
+        "quality-training",
+        "Training records",
+        "quality:training-list",
+        "journal-text",
+        (
+            "quality:training-create",
+            "quality:training-detail",
+            "quality:training-edit",
+            "quality:training-complete",
+            "quality:training-correct",
+            "quality:training-cancel",
+        ),
+    ),
     # Storage
     NavItem("storage-overview", "Storage overview", "storage:overview", "layers"),
     NavItem(

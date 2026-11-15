@@ -55,6 +55,7 @@ application's page help and in [workflows](workflows.md).
 | Inventory audits | One active box of at most 400 positions per audit. Operators submit all observations together; each position is explicitly empty or has an observed identifier. Unknown identifiers remain discrepancies. Completion requires an explanation for discrepancies and an unchanged storage snapshot. Audits never change inventory; corrections use a new audit linked to the previous one. These are working defaults, not repository policy |
 | Scanner CSV observations | UTF-8 CSV (optional BOM), at most 128 KiB, with `box,position,state,accession` columns and exactly one row per snapshotted position. Each row names the same box and an exact position label; state is `empty` or `accession`. Load for review before completing the audit. No device-specific formats or scanner qualification are implied. The upload is not retained; only the reviewed final observations are saved. This interchange format is a working product default |
 | Deviations | Operators report and update an open deviation, with optional excursion and inventory-audit links. Submission requires investigation, corrective action and effectiveness narratives; explain an unknown cause or why action is unnecessary. A manager other than the creator and latest submitter closes or returns the report with a reason; managers may reopen closed reports. Every change retains prior values and attribution. Text-only evidence, no automatic holds, suitability decisions, deadlines or notifications. These are working product defaults |
+| Training | Managers and administrators assign training to active staff accounts and record completion, trainer/provider and evidence. Optional competency assessments and renewal dates are staff declarations. All staff read the register. Corrections and cancellation require a reason and retain earlier evidence; a new assignment records renewal. No fixed curriculum, renewal interval, qualification claim, independent approval or permission gate. These are working product defaults |
 | Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
 | Operational bounds | 1,000 rows and 2 MiB per import, 200 labels per print, 10,000 rows per export, 1 to 50 children per split, 200 specimens per allocation, pick or shipment, 10 MiB per attachment. Product limits, not standards |
 
@@ -131,6 +132,9 @@ Acceptance outcomes:
 17. Staff can report a deviation, record investigation, corrective action and effectiveness
     evidence, and submit it for a separate manager's review. Corrections, returns and reopening
     keep the earlier record and reason without changing inventory or holds.
+18. Managers assign staff training with an optional deadline, record completion and assessment
+    evidence, and retain corrections and cancellation. Staff can find assignments and renewal
+    dates that need attention without changing operational permissions.
 
 The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
 like "P-000123".
@@ -166,6 +170,7 @@ rule" means no source read states it; it is a design choice.
 | Excursions | Storage deviations and out-of-range events are recorded, documented and available for reporting. No source read requires a second person to sign off an excursion; supervisory or QA review of deviations is the closest, so the second-person close is a project default | NCI C.2.8.1, C.2.8.2, C.3.3; ISBER J3.5 |
 | LN2 log | LN2 level, consumption and storage temperature are critical parameters; record the level before and after a manual fill; consumption is derived from the levels | ISBER H2.2 |
 | Maintenance and calibration | Maintenance records carry description, date and who did it; calibration records name the reference device; intervals are set by the repository, so the product enforces none | ISBER H12.1, D3.6.2.2 |
+| Training | Retain staff training and competency assessment evidence; the repository defines its curriculum, assessment and schedule | NCI C.1.2 and C.3.2 recommend periodic training, assessment documentation and training records; this workflow is a project choice |
 | Deviations | Retain deviation and corrective-action records as part of the repository's quality system. The software records staff assessments; its second-person review and required narratives are product choices | NCI C.3.1–C.3.2 recommends QMS corrective actions and deviation/CAPA records; it does not prescribe this workflow |
 
 ### Why this shapes the design
@@ -190,10 +195,12 @@ rule" means no source read states it; it is a design choice.
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
-| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review | Built |
-| | Training | Next |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review; staff training assignments, completion and assessment evidence, explicit due dates and retained corrections | Built |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
 | Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
+
+No further milestone is currently committed. Later and exploring items need a demonstrated
+repository need or the dependencies described below.
 
 The public [roadmap](../website/about/roadmap/index.html) carries the same order without dates.
 Change it in the same increment when an area ships or the order changes.
@@ -217,9 +224,13 @@ for its intended use.
 | 2026-11-12 | Distribution defaults: structured consent scope categories, current record governs, the three withdrawal kinds, request decisions by a per-person permission, an agreement for every shipment, the manifest contents above, returns held for review, no override of a blocked step | Working default |
 | 2026-11-12 | Equipment defaults: the repository enters every limit, low level and due date; second-person excursion close | Working default |
 | 2026-11-15 | Deviation defaults: open, awaiting review and closed states; investigation/action/effectiveness narratives before submission; review by a manager other than the creator and latest submitter; retained history on return and reopening | Working default |
+| 2026-11-15 | Training defaults: manager-managed assignments and evidence, optional competency assessment and dates, staff read access, retained corrections/cancellation; no automatic qualification or access gates | Working default |
 
 ## Evidence and limits
 
+- Rechecked NCI C.1.2 and C.3.2 directly on 2026-11-15 for training records. These recommend
+  periodic training and documentation of training and competency assessments. Assignment states,
+  manager access and optional renewal dates are product choices, not mandatory intervals.
 - Rechecked NCI C.3.1–C.3.2 directly on 2026-11-15 for the deviation register. These are voluntary
   quality-management recommendations; the review sequence and required fields above are product choices.
 - Read directly on 2026-11-12: NCI Best Practices for Biospecimen Resources, 4th edition (January

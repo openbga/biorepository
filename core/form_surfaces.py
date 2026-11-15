@@ -8,6 +8,11 @@ from django.urls import URLResolver, get_resolver
 
 # Dedicated editing pages only. Record pages with inline actions remain record pages.
 FORM_SURFACES = {
+    "quality:training-create": "lg",
+    "quality:training-edit": "lg",
+    "quality:training-complete": "lg",
+    "quality:training-correct": "lg",
+    "quality:training-cancel": "lg",
     "quality:deviation-create": "lg",
     "quality:deviation-edit": "lg",
     "quality:deviation-submit": "lg",
