@@ -54,6 +54,7 @@ application's page help and in [workflows](workflows.md).
 | Holds from excursions | Operators explicitly select up to 200 affected specimens and a disposal, use or all-use hold, with a reason. The affected list is computed while open or awaiting review and frozen at closure. Holds keep the excursion reference in their reason and are released individually by a manager from the specimen record. Closing or reopening an excursion never places or releases holds automatically. This is a working product default |
 | Inventory audits | One active box of at most 400 positions per audit. Operators submit all observations together; each position is explicitly empty or has an observed identifier. Unknown identifiers remain discrepancies. Completion requires an explanation for discrepancies and an unchanged storage snapshot. Audits never change inventory; corrections use a new audit linked to the previous one. These are working defaults, not repository policy |
 | Scanner CSV observations | UTF-8 CSV (optional BOM), at most 128 KiB, with `box,position,state,accession` columns and exactly one row per snapshotted position. Each row names the same box and an exact position label; state is `empty` or `accession`. Load for review before completing the audit. No device-specific formats or scanner qualification are implied. The upload is not retained; only the reviewed final observations are saved. This interchange format is a working product default |
+| Deviations | Operators report and update an open deviation, with optional excursion and inventory-audit links. Submission requires investigation, corrective action and effectiveness narratives; explain an unknown cause or why action is unnecessary. A manager other than the creator and latest submitter closes or returns the report with a reason; managers may reopen closed reports. Every change retains prior values and attribution. Text-only evidence, no automatic holds, suitability decisions, deadlines or notifications. These are working product defaults |
 | Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
 | Operational bounds | 1,000 rows and 2 MiB per import, 200 labels per print, 10,000 rows per export, 1 to 50 children per split, 200 specimens per allocation, pick or shipment, 10 MiB per attachment. Product limits, not standards |
 
@@ -127,6 +128,9 @@ Acceptance outcomes:
     discrepancies, and retain completed or cancelled audits without changing custody or stock.
     Observations can be entered manually or loaded from the normalized scanner CSV format for
     one box, then reviewed before completion.
+17. Staff can report a deviation, record investigation, corrective action and effectiveness
+    evidence, and submit it for a separate manager's review. Corrections, returns and reopening
+    keep the earlier record and reason without changing inventory or holds.
 
 The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
 like "P-000123".
@@ -162,6 +166,7 @@ rule" means no source read states it; it is a design choice.
 | Excursions | Storage deviations and out-of-range events are recorded, documented and available for reporting. No source read requires a second person to sign off an excursion; supervisory or QA review of deviations is the closest, so the second-person close is a project default | NCI C.2.8.1, C.2.8.2, C.3.3; ISBER J3.5 |
 | LN2 log | LN2 level, consumption and storage temperature are critical parameters; record the level before and after a manual fill; consumption is derived from the levels | ISBER H2.2 |
 | Maintenance and calibration | Maintenance records carry description, date and who did it; calibration records name the reference device; intervals are set by the repository, so the product enforces none | ISBER H12.1, D3.6.2.2 |
+| Deviations | Retain deviation and corrective-action records as part of the repository's quality system. The software records staff assessments; its second-person review and required narratives are product choices | NCI C.3.1–C.3.2 recommends QMS corrective actions and deviation/CAPA records; it does not prescribe this workflow |
 
 ### Why this shapes the design
 
@@ -185,8 +190,8 @@ rule" means no source read states it; it is a design choice.
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
-| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import | Built |
-| | Deviations and training | Next |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review | Built |
+| | Training | Next |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
 | Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
 
@@ -211,9 +216,12 @@ for its intended use.
 | 2026-11-12 | Coded participants only; specimen IDs in `VP-000001` style; disposal approval is a permission granted per person | Working default |
 | 2026-11-12 | Distribution defaults: structured consent scope categories, current record governs, the three withdrawal kinds, request decisions by a per-person permission, an agreement for every shipment, the manifest contents above, returns held for review, no override of a blocked step | Working default |
 | 2026-11-12 | Equipment defaults: the repository enters every limit, low level and due date; second-person excursion close | Working default |
+| 2026-11-15 | Deviation defaults: open, awaiting review and closed states; investigation/action/effectiveness narratives before submission; review by a manager other than the creator and latest submitter; retained history on return and reopening | Working default |
 
 ## Evidence and limits
 
+- Rechecked NCI C.3.1–C.3.2 directly on 2026-11-15 for the deviation register. These are voluntary
+  quality-management recommendations; the review sequence and required fields above are product choices.
 - Read directly on 2026-11-12: NCI Best Practices for Biospecimen Resources, 4th edition (January
   2026), the sections cited above; ISBER Best Practices: Recommendations for Repositories, 5th
   edition (2023), the sections cited above; IARC Technical Publication No. 44 (2017), glossary and

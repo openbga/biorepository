@@ -1,0 +1,45 @@
+{
+  "id": "quality-deviation-submit",
+  "routes": [
+    "quality:deviation-submit"
+  ],
+  "title": "Submit for review",
+  "purpose": "Freeze an open deviation for independent review.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians record, edit and submit deviations. Viewers read them. Managers and administrators review and reopen them. Inactive accounts and accounts without an application role, including bare superusers, have no access.",
+        "These are working product defaults, not repository policy. Deviations retain a report and its investigation, corrective action, effectiveness and independent review. They do not change specimens, stock, storage, linked records or holds. No attachments, deadlines, automatic notifications or risk thresholds are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Prerequisites and action",
+      "paragraphs": [
+        "Only Open reports may be submitted. Investigation, Corrective action and Effectiveness must each contain a nonblank explanation, up to 4,000 characters. Explain when none, unknown or not applicable. If a section is missing, cancel and edit the report first.",
+        "Reason is required, up to 4,000 characters. Submit for review records the submitting actor and server time and moves the report to Awaiting review. The report is frozen until another manager or administrator closes it or returns it for revision. Cancel returns to the report without a transition."
+      ],
+      "items": []
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change requires a reason and records the actor, server time, revision and full prior and new values. Earlier narratives, source links, submissions and decisions remain in history. Reports cannot be deleted and history cannot be rewritten.",
+        "Saving validates and commits the report and its history together or saves nothing. Validation retains entered values. If someone changes the record first, your posted values stay visible and saving is blocked. Cancel, reload the latest record, compare your notes and start again; retrying the old form cannot overwrite the newer report. Do not enter identifying information."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/deviation_views.py",
+    "quality/deviation_forms.py",
+    "quality/deviation_services.py",
+    "quality/models.py",
+    "quality/tests/test_deviations.py",
+    "templates/quality/deviation_detail.html",
+    "templates/quality/deviation_list.html",
+    "templates/quality/form.html"
+  ]
+}

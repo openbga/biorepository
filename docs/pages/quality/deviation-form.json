@@ -1,0 +1,88 @@
+{
+  "id": "quality-deviation-form",
+  "routes": [
+    "quality:deviation-create",
+    "quality:deviation-edit"
+  ],
+  "title": "Record or edit a deviation",
+  "purpose": "Record an observed quality deviation or correct its open report.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians record, edit and submit deviations. Viewers read them. Managers and administrators review and reopen them. Inactive accounts and accounts without an application role, including bare superusers, have no access.",
+        "These are working product defaults, not repository policy. Deviations retain a report and its investigation, corrective action, effectiveness and independent review. They do not change specimens, stock, storage, linked records or holds. No attachments, deadlines, automatic notifications or risk thresholds are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Report and follow-up fields",
+      "paragraphs": [],
+      "items": [
+        {
+          "label": "Title",
+          "description": "Required, up to 160 characters. A concise label for finding this report."
+        },
+        {
+          "label": "Occurred at",
+          "description": "Required observed timestamp, in repository local time to the second. It must not be in the future. It is distinct from the server-recorded creation and update times."
+        },
+        {
+          "label": "Description",
+          "description": "Required report of what was observed, up to 4,000 characters."
+        },
+        {
+          "label": "Immediate action",
+          "description": "Optional action already taken, up to 4,000 characters."
+        },
+        {
+          "label": "Investigation",
+          "description": "Up to 4,000 characters. Optional while open, required before submission. Explain what is known and explain if unknown."
+        },
+        {
+          "label": "Corrective action",
+          "description": "Up to 4,000 characters. Optional while open, required before submission. Explain the action or why none is needed."
+        },
+        {
+          "label": "Effectiveness",
+          "description": "Up to 4,000 characters. Optional while open, required before submission. Record evidence or explain why unknown or not applicable."
+        },
+        {
+          "label": "Excursion and Inventory audit",
+          "description": "Optional links to existing evidence, in any status. Both can be linked or left blank. Open reports may correct or clear links with a reason; previous link identities remain in history. Linking never changes the related record."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 4,000 characters. Explain creation or this change; retained in history. Whitespace-only required text is rejected. All narrative inputs are trimmed before saving."
+        }
+      ]
+    },
+    {
+      "title": "Create deviation, Save changes and Cancel",
+      "paragraphs": [
+        "New deviation starts with the current local time; verify when the deviation was observed. Create deviation assigns a DEV-000001 style number and opens the report in Open status at revision 1. Gaps in numbers are normal. Investigation, corrective action and effectiveness may be completed later.",
+        "Edit opens the current values only while Open. Save changes requires at least one changed report field and a reason. Editing does not submit the report or decide its review. Awaiting review and Closed reports are blocked from editing. Cancel returns to the list for creation, or to the report when editing."
+      ],
+      "items": []
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change requires a reason and records the actor, server time, revision and full prior and new values. Earlier narratives, source links, submissions and decisions remain in history. Reports cannot be deleted and history cannot be rewritten.",
+        "Saving validates and commits the report and its history together or saves nothing. Validation retains entered values. If someone changes the record first, your posted values stay visible and saving is blocked. Cancel, reload the latest record, compare your notes and start again; retrying the old form cannot overwrite the newer report. Do not enter identifying information."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/deviation_views.py",
+    "quality/deviation_forms.py",
+    "quality/deviation_services.py",
+    "quality/models.py",
+    "quality/tests/test_deviations.py",
+    "templates/quality/deviation_detail.html",
+    "templates/quality/deviation_list.html",
+    "templates/quality/form.html"
+  ]
+}

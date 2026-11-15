@@ -1,0 +1,45 @@
+{
+  "id": "quality-deviation-reopen",
+  "routes": [
+    "quality:deviation-reopen"
+  ],
+  "title": "Reopen deviation",
+  "purpose": "Open a closed deviation for further investigation or correction.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians record, edit and submit deviations. Viewers read them. Managers and administrators review and reopen them. Inactive accounts and accounts without an application role, including bare superusers, have no access.",
+        "These are working product defaults, not repository policy. Deviations retain a report and its investigation, corrective action, effectiveness and independent review. They do not change specimens, stock, storage, linked records or holds. No attachments, deadlines, automatic notifications or risk thresholds are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Reason and action",
+      "paragraphs": [
+        "Only managers and administrators can reopen a Closed report. Reason is required, up to 4,000 characters; explain why work is restarting. Reopen deviation changes the status to Open and clears the current closure fields. Earlier closure values and review reasons remain in history, and the latest submitter stays recorded.",
+        "Operators may then edit and submit again. A new submission sets the latest submitter; its reviewer must differ from the original creator and that latest submitter. Reopening never changes linked evidence or holds. Cancel returns to the report without changes."
+      ],
+      "items": []
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change requires a reason and records the actor, server time, revision and full prior and new values. Earlier narratives, source links, submissions and decisions remain in history. Reports cannot be deleted and history cannot be rewritten.",
+        "Saving validates and commits the report and its history together or saves nothing. Validation retains entered values. If someone changes the record first, your posted values stay visible and saving is blocked. Cancel, reload the latest record, compare your notes and start again; retrying the old form cannot overwrite the newer report. Do not enter identifying information."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/deviation_views.py",
+    "quality/deviation_forms.py",
+    "quality/deviation_services.py",
+    "quality/models.py",
+    "quality/tests/test_deviations.py",
+    "templates/quality/deviation_detail.html",
+    "templates/quality/deviation_list.html",
+    "templates/quality/form.html"
+  ]
+}

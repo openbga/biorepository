@@ -47,6 +47,20 @@ class TabSet:
 STAFF_NAV = (
     NavItem("dashboard", "Dashboard", "dashboard", "house"),
     NavItem(
+        "quality-deviations",
+        "Deviations",
+        "quality:deviation-list",
+        "exclamation-octagon",
+        (
+            "quality:deviation-create",
+            "quality:deviation-detail",
+            "quality:deviation-edit",
+            "quality:deviation-submit",
+            "quality:deviation-review",
+            "quality:deviation-reopen",
+        ),
+    ),
+    NavItem(
         "quality-audits",
         "Inventory audits",
         "quality:audit-list",

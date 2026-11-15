@@ -112,10 +112,10 @@ spread it across UI handlers.
 | `storage` | Sites, rooms, storage units and classes, container types and grids, racks, boxes, positions, occupancy, moves |
 | `specimens` | Participants (coded), collections, specimen types, specimens and aliquots, quantity ledger, placement, custody events, check-out/in, holds, disposal |
 | `equipment` | Equipment linked to storage units, service events, LN2 level and fill log, temperature readings and excursions |
-| `quality` | Box inventory audits with manual or normalized scanner CSV input, immutable expected snapshots and completed observations or cancellation |
+| `quality` | Box inventory audits with immutable snapshots and observations; deviation reports, investigation, corrective action and independent review with append-only history |
 | `distribution` | Studies and their collections, consent records and withdrawals, institutions, investigators, requests and decisions, allocations and pick lists, shipments and manifests, receipts, returns, agreements |
 
-Label PDFs live in `specimens`; pick lists and manifests in `distribution`. The `quality` app holds inventory audits; deviations and training remain planned.
+Label PDFs live in `specimens`; pick lists and manifests in `distribution`. The `quality` app holds inventory audits and deviations; training remains planned.
 
 Integrity rules: append-only event tables protected by database triggers; one occupant per
 position by a unique constraint, allocation under row lock; state change, checks and audit event
@@ -130,6 +130,10 @@ Neither `storage` nor `specimens` depends on `equipment`, `distribution` or `qua
 `quality` reads storage and specimen identities and takes the storage gate for consistent audit
 snapshots and completion checks. It never changes custody or inventory. Its snapshots and
 finalizations use the same append-only database protection as other history records.
+Deviation transitions lock their own record and check its revision; they change no storage or
+specimen state and need no storage gate. The report is undeletable, and every change adds a
+protected event and field-level audit entry in the same transaction. Optional links to equipment
+excursions and inventory audits provide context without changing their workflows.
 
 ### Accounts and access
 

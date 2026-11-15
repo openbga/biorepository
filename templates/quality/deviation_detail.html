@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block breadcrumbs %}{% url 'quality:deviation-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Deviations" section_url=list_url current=deviation.number %}{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% include "quality/_deviation_status.html" with status=deviation.status %}</li><li>Revision {{ deviation.revision }}</li></ul>{% endblock %}
+{% block page_actions %}
+{% if can_operate and deviation.status == 'open' %}
+<a class="btn btn-outline-secondary" href="{% url 'quality:deviation-edit' deviation.pk %}">Edit</a>
+<a class="btn btn-primary" href="{% url 'quality:deviation-submit' deviation.pk %}">Submit for review</a>
+{% elif deviation.status == 'awaiting_review' and can_manage %}
+{% if can_review %}<a class="btn btn-primary" href="{% url 'quality:deviation-review' deviation.pk %}">Record review</a>{% else %}<button class="btn btn-primary" disabled>Record review</button><span class="vr-action-note">Another manager must review; you created or submitted this report.</span>{% endif %}
+{% elif deviation.status == 'closed' and can_manage %}
+<a class="btn btn-primary" href="{% url 'quality:deviation-reopen' deviation.pk %}">Reopen deviation</a>
+{% endif %}
+{% endblock %}
+{% block content %}
+{% include "includes/page_toc.html" with items=toc %}
+{% if not can_operate %}<p class="vr-muted">Read-only access. Operators record and submit deviations; another manager or administrator reviews them.</p>{% elif deviation.status == 'awaiting_review' %}<p class="vr-muted">The report is frozen for review. A reviewer can close it or return it for revision.</p>{% elif deviation.status == 'closed' %}<p class="vr-muted">This report is closed. A manager or administrator can reopen it with a reason.</p>{% endif %}
+<section class="card mb-3" aria-labelledby="report-heading"><div class="card-header"><h2 class="card-title" id="report-heading">Report</h2></div><div class="card-body"><dl class="vr-facts">
+  <div><dt>Title</dt><dd>{{ deviation.title }}</dd></div>
+  <div><dt>Occurred at</dt><dd><time datetime="{{ deviation.occurred_at|date:'c' }}">{{ deviation.occurred_at|date:"Y-m-d H:i:s T" }}</time></dd></div>
+  <div><dt>Description</dt><dd>{{ deviation.description|linebreaksbr }}</dd></div>
+  <div><dt>Immediate action</dt><dd>{{ deviation.immediate_action|default:"Not recorded"|linebreaksbr }}</dd></div>
+  <div><dt>Excursion</dt><dd>{% if deviation.excursion %}<a class="vr-id" href="{% url 'equipment:excursion-detail' deviation.excursion_id %}">{{ deviation.excursion.number }}</a> · {{ deviation.excursion.equipment.code }}{% else %}None{% endif %}</dd></div>
+  <div><dt>Inventory audit</dt><dd>{% if deviation.inventory_audit %}<a class="vr-id" href="{% url 'quality:audit-detail' deviation.inventory_audit_id %}">{{ deviation.inventory_audit.number }}</a>{% else %}None{% endif %}</dd></div>
+</dl><p class="vr-muted">Related evidence is a reference. Deviation actions never change inventory, linked records or holds.</p></div></section>
+<section class="card mb-3" aria-labelledby="followup-heading"><div class="card-header"><h2 class="card-title" id="followup-heading">Investigation and follow-up</h2></div><div class="card-body"><dl class="vr-facts">
+  <div><dt>Investigation</dt><dd>{{ deviation.investigation|default:"Not recorded"|linebreaksbr }}</dd></div>
+  <div><dt>Corrective action</dt><dd>{{ deviation.corrective_action|default:"Not recorded"|linebreaksbr }}</dd></div>
+  <div><dt>Effectiveness</dt><dd>{{ deviation.effectiveness|default:"Not recorded"|linebreaksbr }}</dd></div>
+</dl></div></section>
+<section class="card mb-3" aria-labelledby="review-heading"><div class="card-header"><h2 class="card-title" id="review-heading">Review facts</h2></div><div class="card-body"><dl class="vr-facts">
+  <div><dt>Created</dt><dd><time datetime="{{ deviation.created_at|date:'c' }}">{{ deviation.created_at|date:"Y-m-d H:i:s T" }}</time> by {{ deviation.created_by.get_full_name|default:deviation.created_by.get_username }}</dd></div>
+  <div><dt>Updated</dt><dd><time datetime="{{ deviation.updated_at|date:'c' }}">{{ deviation.updated_at|date:"Y-m-d H:i:s T" }}</time></dd></div>
+  <div><dt>Latest submission</dt><dd>{% if deviation.submitted_at %}<time datetime="{{ deviation.submitted_at|date:'c' }}">{{ deviation.submitted_at|date:"Y-m-d H:i:s T" }}</time> by {{ deviation.submitted_by.get_full_name|default:deviation.submitted_by.get_username }}{% else %}Not submitted{% endif %}</dd></div>
+  <div><dt>Closed</dt><dd>{% if deviation.closed_at %}<time datetime="{{ deviation.closed_at|date:'c' }}">{{ deviation.closed_at|date:"Y-m-d H:i:s T" }}</time> by {{ deviation.closed_by.get_full_name|default:deviation.closed_by.get_username }}{% else %}Not closed; prior decisions remain in history{% endif %}</dd></div>
+</dl></div></section>
+<section class="card mb-3" aria-labelledby="history-heading"><div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div><div class="card-body"><ol class="vr-timeline">
+{% for event, changes in history %}{% include "includes/history_item.html" with title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
+</ol></div></section>
+{% endblock %}
+{% block record_foot %}{% include "includes/record_foot.html" with identifier=deviation.number %}{% endblock %}
