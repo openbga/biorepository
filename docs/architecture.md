@@ -49,8 +49,9 @@ as patches. The bootstrap of 2026-11-12 is the baseline for that comparison.
 Naming (2026-11-16): the product is OpenBGA Biorepository, in `openbga/biorepository` (formerly
 Vapor Phase, `openbga/vapor-phase`); its sibling is OpenBGA Environmental LIMS,
 `openbga/environmental-lims` (formerly Smart Roots LIMS). The older names survive only as legacy
-identifiers: the Render service and database names, the `vapor` database and user, the `vapor.*`
-logger and the `vr-` prefix. GitHub redirects the old repository URL, but not the GitHub Pages
+identifiers, for example the Render service, database and cron names, the demo hostname, the `vapor`
+database and user (and the `vapor_*` CI and test databases), the `vapor.*` logger, the `vr-` prefix,
+the `VP-` identifier examples and the Docker Compose project name `vapor-phase`. GitHub redirects the old repository URL, but not the GitHub Pages
 site, which moved from `openbga.github.io/vapor-phase/` to `openbga.github.io/biorepository/`.
 
 Names fixed before the first migration and deployment:

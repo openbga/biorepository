@@ -2,6 +2,8 @@
 # `docker compose --profile app up --build` also builds and runs the application for a local
 # trial at http://127.0.0.1:8000 (DEBUG mode, development credentials, loopback only).
 # This is not a production configuration; see the README for deployment.
+# The project name is pinned so the development database volume survives the checkout directory's name.
+name: vapor-phase
 services:
   db:
     image: postgres:17
