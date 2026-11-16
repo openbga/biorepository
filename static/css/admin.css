@@ -1,4 +1,4 @@
-/* Vapor Phase colours for Django admin (maintenance tooling): the navy and frost of the workspace
+/* OpenBGA Biorepository colours for Django admin (maintenance tooling): the navy and frost of the workspace
    theme. Admin keeps its own layout and light/dark modes; only brand-bearing variables change. */
 html[data-theme="light"],
 :root {

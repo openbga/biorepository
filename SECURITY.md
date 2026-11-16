@@ -6,8 +6,8 @@ Please report security problems privately. Do not open a public issue, pull requ
 discussion for them.
 
 Use GitHub's private vulnerability reporting: open the repository's
-[Security tab](https://github.com/openbga/vapor-phase/security) and choose **Report a vulnerability**,
-or go straight to <https://github.com/openbga/vapor-phase/security/advisories/new>.
+[Security tab](https://github.com/openbga/biorepository/security) and choose **Report a vulnerability**,
+or go straight to <https://github.com/openbga/biorepository/security/advisories/new>.
 
 Include what you can of the following:
 

@@ -1,4 +1,4 @@
-# Vapor Phase
+# OpenBGA Biorepository
 
 Working rules for AI coding agents. Human contributors: start with `CONTRIBUTING.md`.
 
@@ -16,15 +16,15 @@ withdrawal, requests with approval, allocation, shipments, receipt, returns, agr
 field-level audit trail. The working assumptions and defaults in `docs/product.md` are choices,
 not repository policy; keep them marked as such.
 
-Vapor Phase is a BGASoft project and the sibling of
-[Smart Roots LIMS](https://github.com/openbga/smart-roots-lims) (reference only). It deliberately
+The product name is "OpenBGA Biorepository" (repository `openbga/biorepository`), with the full
+OpenBGA prefix in brand lock-ups. It is a BGASoft project and the sibling of
+[OpenBGA Environmental LIMS](https://github.com/openbga/environmental-lims) (reference only). It deliberately
 shares that product's platform layer: stack, sign-in page, shell, field controls, announcements,
-audit trail, page help, tests, CI and deployment. Keep shared platform files as close to the Smart
-Roots originals as the rename allows, and record intentional divergences in
-`docs/architecture.md`, so fixes can move between the two products. Do not copy its laboratory
+audit trail, page help, tests, CI and deployment. Keep shared platform files as close to the Environmental LIMS originals as the rename allows, and
+record intentional divergences and legacy names in `docs/architecture.md`, so fixes can move between the two products. Do not copy its laboratory
 domain rules; copy its idioms.
 
-License decision 2026-11-12: AGPL-3.0-only, as Smart Roots LIMS, with the same LICENSE, NOTICE and
+License decision 2026-11-12: AGPL-3.0-only, as OpenBGA Environmental LIMS, with the same LICENSE, NOTICE and
 footer "Source code" link (`SOURCE_CODE_URL`) arrangement. Everything committed is public: see
 rule 10. Maintainers own the Git history, releases and deployments.
 Keep material about other biobank/LIMS products or vendors out of the repository; regulatory and

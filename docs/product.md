@@ -1,6 +1,6 @@
-# Vapor Phase: product scope
+# OpenBGA Biorepository: product scope
 
-Vapor Phase is a free, open-source biorepository management system: where every specimen is, what
+OpenBGA Biorepository is a free, open-source biorepository management system: where every specimen is, what
 it is, who handled it and what happened to it, from registration through storage, custody,
 disposal and distribution to another institution. This document says what the product must do,
 why, and in what order. It does not prescribe architecture; [workflows](workflows.md) describes
@@ -61,7 +61,7 @@ application's page help and in [workflows](workflows.md).
 
 ## What this product claims
 
-Vapor Phase supports a repository's own records and quality system. It does not make a repository
+OpenBGA Biorepository supports a repository's own records and quality system. It does not make a repository
 compliant, accredited or certified, and it does not classify shipments, decide consent or judge a
 request's merit. Do not write UI copy, README text or reports that claim compliance. Say
 "supports" and name the record or control.
@@ -114,8 +114,7 @@ Acceptance outcomes:
     old value, new value, reason. Controlled fields require a reason to change.
 13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,
     in-application page help, light and dark themes and the audit trail work as they do in
-    [Smart Roots LIMS](https://github.com/openbga/smart-roots-lims), whose platform layer Vapor
-    Phase shares.
+    [OpenBGA Environmental LIMS](https://github.com/openbga/environmental-lims), whose platform layer OpenBGA Biorepository shares.
 14. Equipment (tanks, freezers, monitors, supply dewars) is tied to its storage unit, with service
     events and the due dates the repository enters, an LN2 level and fill log, temperature
     readings entered or imported, and excursions reviewed by a second person that capture the
@@ -251,8 +250,8 @@ for its intended use.
 
 | Date | Decision | Status |
 |---|---|---|
-| 2026-11-12 | Build Vapor Phase on the Smart Roots LIMS platform and pattern, sharing its platform layer so fixes can move between the two | Confirmed |
-| 2026-11-12 | License: AGPL-3.0-only, as Smart Roots LIMS, with the same LICENSE, NOTICE and footer "Source code" arrangement | Confirmed |
+| 2026-11-12 | Build OpenBGA Biorepository on the OpenBGA Environmental LIMS platform and pattern, sharing its platform layer so fixes can move between the two | Confirmed |
+| 2026-11-12 | License: AGPL-3.0-only, as OpenBGA Environmental LIMS, with the same LICENSE, NOTICE and footer "Source code" arrangement | Confirmed |
 | 2026-11-12 | Coded participants only; specimen IDs in `VP-000001` style; disposal approval is a permission granted per person | Working default |
 | 2026-11-12 | Distribution defaults: structured consent scope categories, current record governs, the three withdrawal kinds, request decisions by a per-person permission, an agreement for every shipment, the manifest contents above, returns held for review, no override of a blocked step | Working default |
 | 2026-11-12 | Equipment defaults: the repository enters every limit, low level and due date; second-person excursion close | Working default |
