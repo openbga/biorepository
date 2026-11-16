@@ -197,13 +197,46 @@ rule" means no source read states it; it is a design choice.
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
 | 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review; staff training assignments, completion and assessment evidence, explicit due dates and retained corrections | Built |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
-| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
+| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent, spatial storage maps | Not committed |
 
 No further milestone is currently committed. Later and exploring items need a demonstrated
 repository need or the dependencies described below.
 
 The public [roadmap](../website/about/roadmap/index.html) carries the same order without dates.
 Change it in the same increment when an area ships or the order changes.
+
+### Future research: spatial storage maps
+
+Explore a visual way to find stored material through buildings, floors and rooms, with cabinets,
+freezers and tanks placed in their physical layout. Drill down to the existing internal storage
+structure, boxes and positions, and locate a specimen in that context. This is an eventual
+research direction, not a prioritized milestone or a delivery-date commitment.
+
+Research how spatial layouts should relate to the existing storage records before choosing a
+data model or interaction design. The current model has separate sites, rooms and storage units;
+internal shelves, racks, towers and canisters use a typed hierarchy, followed by boxes and
+positions. Buildings, floors and spatial coordinates are not implemented. A future map should
+complement, not replace, the existing inventory, authorization and custody-history controls.
+
+Research notes (2026-11-16): [ISBER Best Practices, fifth edition, I3.1, p. 133](https://cdn.ymaws.com/www.isber.org/resource/resmgr/best_practices/isberbestpracticeseng-5thedi.pdf)
+recommends unambiguous physical storage locations, including building context, and retained
+movement history. It does not prescribe separate building/floor tables or a map interface.
+
+- **Working preference to evaluate:** optional structured buildings and floors above rooms, when
+  multiple buildings or repeated room names make them useful. Keep simple single-building sites
+  usable without invented floor/building records. Treat map placement as optional presentation
+  data, separate from the authoritative storage and specimen relationships.
+- **Alternatives:** room-level building/floor labels are a smaller initial change but weaker for
+  consistent naming and shared floor plans. A general typed location tree accommodates irregular
+  facilities but adds parent-type, cycle, same-site and move validation. Compare these against
+  explicit building/floor records before committing to a schema; do not generalize the whole
+  specimen-storage model merely to draw a map.
+- **Migration questions:** preserve existing room, unit, box, position and specimen IDs and all
+  historical events; introduce optional associations before verified backfill. Do not infer a
+  building or floor from a room code. Review room-code uniqueness (currently per site),
+  cross-site consistency, imports, exports, breadcrumbs and existing links. Distinguish correcting
+  a map or room label from a real physical move, which must retain its reason and attribution.
+  Plan compatibility and rollback before making associations required.
 
 ### Decisions a repository makes before real use
 
