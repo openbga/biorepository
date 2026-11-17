@@ -208,8 +208,9 @@ shape. Docker pins Python, PDF system libraries and fonts; Gunicorn serves the a
 serves collected static assets. No Redis, worker, separate frontend host or persistent disk.
 The public presentation at `/about/` ships with the same service. Only its static HTML and
 assets live under the [dedicated WhiteNoise root](https://whitenoise.readthedocs.io/en/stable/django.html#whitenoise-root);
-the workspace stays at `/` behind sign-in. The same files are published unchanged to GitHub Pages
-(`.github/workflows/pages.yml`); their links are relative so both addresses work. Build assets
+the workspace stays at `/` behind sign-in. The same files are published to GitHub Pages
+(`.github/workflows/pages.yml`), which adds the Plausible analytics snippet to the published
+copy only; their links are relative so both addresses work. Build assets
 and collectstatic during image build; migrate once in a serialized pre-deploy step. Use
 backward-compatible migrations while old/new instances overlap; destructive changes need a staged
 migration and verified restore path. Rollback of code does not undo a database migration.
