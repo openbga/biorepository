@@ -354,8 +354,34 @@ class ConsentWithdrawal(models.Model):
         ]
 
     @property
+    def effective_kind(self):
+        return self.Kind.DESTROY if hasattr(self, "escalation") else self.kind
+
+    def get_effective_kind_display(self):
+        return self.Kind(self.effective_kind).label
+
+    @property
     def stops_use(self):
         return self.kind in (self.Kind.NO_USE, self.Kind.DESTROY)
+
+
+class ConsentWithdrawalEscalation(models.Model):
+    """A retained instruction to destroy after an existing no-further-use withdrawal."""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    withdrawal = models.OneToOneField(
+        ConsentWithdrawal, on_delete=models.PROTECT, related_name="escalation"
+    )
+    effective_on = models.DateField()
+    received_via = models.CharField(max_length=80, help_text=NO_PARTICIPANT_TEXT)
+    actor = _actor()
+    occurred_at = models.DateTimeField()
+    recorded_at = models.DateTimeField(default=timezone.now)
+    reason = models.TextField()
+
+    class Meta:
+        ordering = ["recorded_at", "id"]
+        constraints = [_reason("dist_escalation_reason")]
 
 
 class ConsentHold(models.Model):

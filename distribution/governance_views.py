@@ -42,6 +42,7 @@ from .governance_forms import (
     ConsentRecordForm,
     DisposalsForm,
     DocumentForm,
+    EscalateWithdrawalForm,
     ExecuteForm,
     FollowUpForm,
     ReasonForm,
@@ -708,7 +709,7 @@ def _answers_for(consent):
 
 def _withdrawals(consent):
     rows = list(
-        consent.withdrawals.select_related("actor", "reinstatement", "reinstatement__actor")
+        consent.withdrawals.select_related("actor", "reinstatement__actor", "escalation__actor")
         .prefetch_related(
             Prefetch(
                 "follow_ups",
@@ -738,22 +739,24 @@ def _consent_shipments(consent):
     ).distinct()
 
 
-def _new_record_after(consent, withdrawal):
-    record = consent.current_record
-    if withdrawal is None or record is None or record.recorded_at < withdrawal.recorded_at:
-        return None
-    return record
-
-
 def reinstate_refusal(user, consent, withdrawal):
     """Why this user cannot reinstate now, or "" (the service checks the same under lock)."""
     if consent.status != Consent.Status.WITHDRAWN or withdrawal is None:
         return "The consent is not withdrawn."
     if withdrawal.actor_id == user.pk:
         return "You recorded the withdrawal. Another manager must reinstate the consent."
-    record = _new_record_after(consent, withdrawal)
+    escalation = getattr(withdrawal, "escalation", None)
+    if escalation is not None and escalation.actor_id == user.pk:
+        return "You recorded the escalation. Another manager must reinstate the consent."
+    record = services.record_after_withdrawal(consent, withdrawal)
     if record is not None and record.recorded_by_id == user.pk:
         return "You recorded the new consent. Another manager must reinstate it."
+    if (
+        escalation is not None
+        and record is not None
+        and record.recorded_at <= escalation.recorded_at
+    ):
+        return "Record consent after the escalation before reinstating."
     return ""
 
 
@@ -785,7 +788,13 @@ def _consent_actions(user, consent, withdrawal, impact):
             "url": url("consent-hold"),
             "reason": "",
         }
-    if withdrawal is not None and withdrawal.kind == ConsentWithdrawal.Kind.DESTROY:
+    if withdrawal is not None and withdrawal.kind == ConsentWithdrawal.Kind.NO_USE:
+        actions["escalate"] = {
+            "label": "Escalate to destruction",
+            "url": url("consent-escalate"),
+            "reason": services.escalation_refusal(consent, withdrawal),
+        }
+    if withdrawal is not None and withdrawal.effective_kind == ConsentWithdrawal.Kind.DESTROY:
         actions["disposals"] = {
             "label": "Request disposal of held specimens",
             "url": url("consent-disposals"),
@@ -798,7 +807,7 @@ def _consent_actions(user, consent, withdrawal, impact):
     if withdrawal is not None:
         primary = actions.pop("hold" if "hold" in actions else "reinstate")
     secondary = [actions[k] for k in ("correct", "record") if k in actions]
-    more = [actions[k] for k in ("hold", "disposals", "reinstate") if k in actions]
+    more = [actions[k] for k in ("hold", "escalate", "disposals", "reinstate") if k in actions]
     return destructive, secondary, more, primary
 
 
@@ -1046,6 +1055,52 @@ def consent_withdraw(request, pk):
 
 @staff_role_required(*MANAGE)
 @ACTION_METHODS
+def consent_escalate(request, pk):
+    consent = _consent(pk)
+    withdrawal = services.open_withdrawal(consent)
+    form = EscalateWithdrawalForm(_post(request), consent=consent)
+    title = "Escalate to destruction"
+    facts = [("Consent", consent_label(consent))]
+    if withdrawal is not None:
+        facts.extend(
+            (
+                ("Original withdrawal", withdrawal.get_kind_display()),
+                ("Original effective date", f"{withdrawal.effective_on:%Y-%m-%d}"),
+                ("Original receipt", lists.local(withdrawal.occurred_at)),
+            )
+        )
+    return _action(
+        request,
+        form,
+        title=title,
+        submit=title,
+        back_url=_consent_url(consent),
+        crumbs=consent_crumbs(consent, (title, None)),
+        run=lambda d: services.escalate_withdrawal(
+            actor=request.user,
+            consent_id=consent.pk,
+            expected_revision=d["expected_revision"],
+            effective_on=d["effective_on"],
+            received_via=d["received_via"],
+            occurred_at=d["occurred_at"],
+            reason=d["reason"],
+        ),
+        success="Recorded the destruction instruction. Existing holds remain in effect.",
+        done_url=_consent_url(consent),
+        revision=lambda: Consent.objects.get(pk=consent.pk).revision,
+        blocked=services.escalation_refusal(consent, withdrawal),
+        facts=facts,
+        notes=(
+            "Adds the destruction instruction to the withdrawal history. The original withdrawal "
+            "and its holds remain in effect. File disposal requests separately for independent "
+            "approval. Record follow-up for distributed material separately.",
+        ),
+        destructive=True,
+    )
+
+
+@staff_role_required(*MANAGE)
+@ACTION_METHODS
 def consent_hold(request, pk):
     consent = _consent(pk)
     form = ReasonForm(_post(request), revision=consent.revision)
@@ -1093,7 +1148,7 @@ def consent_disposals(request, pk):
     withdrawal = services.open_withdrawal(consent)
     impact = queries.consent_impact(actor=request.user, consent_id=consent.pk)
     blocked = ""
-    if withdrawal is None or withdrawal.kind != ConsentWithdrawal.Kind.DESTROY:
+    if withdrawal is None or withdrawal.effective_kind != ConsentWithdrawal.Kind.DESTROY:
         blocked = "Disposal requests are offered only for a withdrawal asking for destruction."
     elif not impact.held:
         blocked = "No specimen in custody holds this withdrawal."
@@ -1154,11 +1209,20 @@ def consent_reinstate(request, pk):
     if withdrawal is not None:
         facts.append(
             (
-                "Withdrawal",
+                "Original withdrawal",
                 f"{withdrawal.get_kind_display()}, effective {withdrawal.effective_on:%Y-%m-%d}, "
                 f"recorded by {person(withdrawal.actor)}",
             )
         )
+        if escalation := getattr(withdrawal, "escalation", None):
+            facts.append(
+                (
+                    "Destruction instruction",
+                    f"Effective {escalation.effective_on:%Y-%m-%d}, "
+                    f"received {lists.local(escalation.occurred_at)}, "
+                    f"recorded by {person(escalation.actor)}",
+                )
+            )
     return _action(
         request,
         form,
@@ -1173,9 +1237,9 @@ def consent_reinstate(request, pk):
         blocked=blocked,
         facts=facts,
         notes=(
-            "Ends the withdrawal and releases its holds. Another manager than the one who "
-            "recorded the withdrawal, and than the one who recorded the new consent, must do "
-            "it; administrator or superuser status does not change this.",
+            "Ends the withdrawal and releases its holds. Reinstatement requires a manager or "
+            "administrator other than the people who recorded the withdrawal, escalation or new "
+            "consent.",
         ),
     )
 
@@ -1185,7 +1249,7 @@ def consent_reinstate(request, pk):
 def withdrawal_follow_up(request, pk):
     withdrawal = get_object_or_404(
         ConsentWithdrawal.objects.select_related(
-            "consent", "consent__participant", "consent__study"
+            "consent", "consent__participant", "consent__study", "escalation"
         ),
         pk=pk,
     )
@@ -1196,6 +1260,21 @@ def withdrawal_follow_up(request, pk):
     if key.isdigit() and shipments.filter(pk=int(key)).exists():
         form.initial["shipment"] = int(key)
     blocked = "" if shipments.exists() else "No shipment contained this participant's material."
+    facts = [
+        ("Consent", consent_label(consent)),
+        (
+            "Original withdrawal",
+            f"{withdrawal.get_kind_display()}, effective {withdrawal.effective_on:%Y-%m-%d}",
+        ),
+    ]
+    if escalation := getattr(withdrawal, "escalation", None):
+        facts.append(
+            (
+                "Destruction instruction",
+                f"{withdrawal.get_effective_kind_display()}, "
+                f"effective {escalation.effective_on:%Y-%m-%d}",
+            )
+        )
     return _action(
         request,
         form,
@@ -1215,13 +1294,7 @@ def withdrawal_follow_up(request, pk):
         success=lambda f: f"Recorded follow-up for {f.shipment.number}.",
         done_url=_consent_url(consent),
         blocked=blocked,
-        facts=(
-            ("Consent", consent_label(consent)),
-            (
-                "Withdrawal",
-                f"{withdrawal.get_kind_display()}, effective {withdrawal.effective_on:%Y-%m-%d}",
-            ),
-        ),
+        facts=facts,
         notes=(
             "Records what was done about material already distributed. The software sends "
             "nothing and does not recall material.",

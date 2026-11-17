@@ -29,7 +29,7 @@ from .models import (
     StudyCollection,
     WithdrawalFollowUp,
 )
-from .services import TEXT_LIMIT
+from .services import TEXT_LIMIT, record_after_withdrawal
 
 DATETIME = forms.DateTimeInput(
     attrs={"type": "datetime-local", "step": "1"}, format="%Y-%m-%dT%H:%M:%S"
@@ -520,6 +520,30 @@ class WithdrawForm(GroupedForm):
             )
 
 
+class EscalateWithdrawalForm(GroupedForm):
+    effective_on = date_field(
+        "Effective on", help_text="From the original withdrawal's effective date through today."
+    )
+    received_via = forms.CharField(
+        label="Received via",
+        max_length=80,
+        help_text=f"How the destruction instruction reached the repository. {NO_PARTICIPANT_TEXT}",
+    )
+    occurred_at = when_field(
+        "Received at",
+        "Repository local time, from the original withdrawal's receipt through now.",
+    )
+    reason = reason_field("Reason", "Kept with the instruction in the history.")
+    expected_revision = revision_field()
+    groups = (("", [("effective_on", "occurred_at"), "received_via", "reason"]),)
+
+    def __init__(self, *args, consent, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.initial.setdefault("expected_revision", consent.revision)
+        self.initial.setdefault("effective_on", timezone.localdate())
+        self.initial.setdefault("occurred_at", now_to_the_second())
+
+
 class DisposalsForm(GroupedForm):
     method = forms.CharField(
         label="Disposal method",
@@ -553,9 +577,9 @@ class ReinstateForm(GroupedForm):
         queryset=ConsentRecord.objects.none(),
         required=False,
         empty_label="None: the withdrawal was recorded in error",
-        help_text="The consent recorded after the withdrawal, when the participant consented "
-        'again. Its decision becomes the consent\'s status. "Recorded in error" is offered '
-        "only while no consent was recorded after the withdrawal.",
+        help_text="Choose the most recent consent record. It must have been recorded after the "
+        "withdrawal and any escalation. Its decision becomes the consent's status. "
+        '"Recorded in error" is available only if no consent was recorded after the withdrawal.',
     )
     occurred_at = when_field("Reinstated at")
     reason = reason_field("Reason", "Kept in the history and on the released holds.")
@@ -564,18 +588,17 @@ class ReinstateForm(GroupedForm):
 
     def __init__(self, *args, consent, withdrawal, **kwargs):
         super().__init__(*args, **kwargs)
-        records = ConsentRecord.objects.none()
-        if withdrawal is not None and consent.current_record_id:
-            records = ConsentRecord.objects.filter(
-                pk=consent.current_record_id, recorded_at__gte=withdrawal.recorded_at
-            ).select_related("form")
-        self.fields["record"].queryset = records
-        first = records.first()
-        if first is not None:
+        record = record_after_withdrawal(consent, withdrawal)
+        if record is not None:
             # A record made after the withdrawal is named: "recorded in error" is not offered.
-            self.initial.setdefault("record", first.pk)
             self.fields["record"].required = True
             self.fields["record"].empty_label = None
+            escalation = getattr(withdrawal, "escalation", None)
+            if escalation is None or record.recorded_at > escalation.recorded_at:
+                self.fields["record"].queryset = ConsentRecord.objects.filter(
+                    pk=record.pk
+                ).select_related("form")
+                self.initial.setdefault("record", record.pk)
         self.initial.setdefault("occurred_at", now_to_the_second())
         self.initial.setdefault("expected_revision", consent.revision)
 

@@ -60,6 +60,7 @@ from .models import (
     ConsentReinstatement,
     ConsentScopeCategory,
     ConsentWithdrawal,
+    ConsentWithdrawalEscalation,
     Institution,
     Investigator,
     ReceiptException,
@@ -782,6 +783,7 @@ def open_withdrawal(consent):
             kind__in=(ConsentWithdrawal.Kind.NO_USE, ConsentWithdrawal.Kind.DESTROY),
             reinstatement__isnull=True,
         )
+        .select_related("actor", "escalation__actor")
         .order_by("-recorded_at", "-id")
         .first()
     )
@@ -1066,6 +1068,63 @@ def withdraw_consent(
     return withdrawal
 
 
+def escalation_refusal(consent, withdrawal):
+    if consent.status != Consent.Status.WITHDRAWN or withdrawal is None:
+        return "Escalation requires a withdrawal in effect that stops further use."
+    if withdrawal.effective_kind != ConsentWithdrawal.Kind.NO_USE:
+        return "This withdrawal already asks for destruction."
+    return ""
+
+
+@storage.operation()
+def escalate_withdrawal(
+    *, actor, consent_id, expected_revision, effective_on, received_via, occurred_at, reason
+):
+    """Append a destruction instruction to an open no-further-use withdrawal."""
+    require_role(actor, *MANAGE_ROLES)
+    reason = need_reason(reason)
+    effective_on = _day(effective_on, "effective_on", label="the effective date")
+    received_via = _text(
+        received_via, "received_via", 80, required=True, label="how it was received"
+    )
+    storage.lock_gate()
+    consent = _lock(Consent, consent_id, "consent")
+    _check_revision(consent, expected_revision, "consent")
+    withdrawal = open_withdrawal(consent)
+    if blocked := escalation_refusal(consent, withdrawal):
+        raise _error(blocked, "invalid_transition")
+    if effective_on < withdrawal.effective_on:
+        raise _error(
+            "The effective date cannot be earlier than the original withdrawal's.",
+            "invalid_time",
+            "effective_on",
+        )
+    occurred_at = _moment(occurred_at, label="when it was received", floor=withdrawal.occurred_at)
+    escalation = ConsentWithdrawalEscalation.objects.create(
+        withdrawal=withdrawal,
+        effective_on=effective_on,
+        received_via=received_via,
+        actor=actor,
+        occurred_at=occurred_at,
+        reason=reason,
+    )
+    consent.revision += 1
+    consent.save(update_fields=["revision"])
+    _audit(
+        actor,
+        "distribution.withdrawal_escalated",
+        consent,
+        before={"kind": withdrawal.kind, "withdrawal": str(withdrawal.pk)},
+        after={
+            "kind": withdrawal.effective_kind,
+            "withdrawal": str(withdrawal.pk),
+            "escalation": str(escalation.pk),
+        },
+        reason=reason,
+    )
+    return escalation
+
+
 @storage.operation()
 def hold_withdrawn_specimens(*, actor, consent_id, expected_revision, occurred_at=None, reason):
     """Hold specimens of a withdrawn consent that have no hold from its withdrawal yet (for
@@ -1111,7 +1170,7 @@ def request_withdrawal_disposals(
     consent = _lock(Consent, consent_id, "consent")
     _check_revision(consent, expected_revision, "consent")
     withdrawal = open_withdrawal(consent)
-    if withdrawal is None or withdrawal.kind != ConsentWithdrawal.Kind.DESTROY:
+    if withdrawal is None or withdrawal.effective_kind != ConsentWithdrawal.Kind.DESTROY:
         raise _error(
             "Disposal requests are offered only for a withdrawal asking for destruction.",
             "invalid_transition",
@@ -1153,11 +1212,17 @@ def request_withdrawal_disposals(
     return tuple(created)
 
 
+def record_after_withdrawal(consent, withdrawal):
+    record = consent.current_record
+    if withdrawal is None or record is None or record.recorded_at < withdrawal.recorded_at:
+        return None
+    return record
+
+
 @storage.operation()
 def reinstate_consent(*, actor, consent_id, expected_revision, record_id, occurred_at, reason):
     """End a withdrawal (new consent recorded, or the withdrawal was recorded in error) and
-    release its holds. Another person than the withdrawal's recorder and the new record's
-    recorder must do it; superuser status does not bypass this."""
+    release its holds. The withdrawal, escalation and new consent recorders cannot reinstate."""
     require_role(actor, *MANAGE_ROLES)
     reason = need_reason(reason)
     now = tz.now()
@@ -1173,11 +1238,25 @@ def reinstate_consent(*, actor, consent_id, expected_revision, record_id, occurr
             "You recorded this withdrawal. Another manager must reinstate the consent.",
             "self_approval",
         )
+    escalation = getattr(withdrawal, "escalation", None)
+    if escalation is not None:
+        if escalation.actor_id == actor.pk:
+            raise _error(
+                "You recorded the escalation. Another manager must reinstate the consent.",
+                "self_approval",
+            )
+        _moment(occurred_at, floor=escalation.occurred_at, now=now)
     current = consent.current_record
-    newer = current if current and current.recorded_at >= withdrawal.recorded_at else None
+    newer = record_after_withdrawal(consent, withdrawal)
     if newer is not None and newer.recorded_by_id == actor.pk:
         raise _error(
             "You recorded the new consent. Another manager must reinstate it.", "self_approval"
+        )
+    if escalation is not None and newer is not None and newer.recorded_at <= escalation.recorded_at:
+        raise _error(
+            "Record consent after the escalation before reinstating.",
+            "invalid",
+            "record",
         )
     record = None
     if record_id:

@@ -6,8 +6,9 @@ record's facts, its answer per scope category, the participant's specimens in cu
 by the withdrawal in effect), open allocations, distributed material with its follow-ups, the
 records history (corrections show prior values struck through), withdrawals and reinstatements,
 then the audit history. Header actions for managers (governance_views._consent_actions): Withdraw
-consent (destructive), Correct consent, Record consent, More (Hold withdrawn specimens, Request
-disposal of held specimens, Reinstate consent), and the next step for the state as primary.
+consent (destructive), Correct consent, Record consent, More (Hold withdrawn specimens,
+Escalate to destruction, Request disposal of held specimens, Reinstate consent), and the next step
+for the state as primary.
 Context: consent, current (the current ConsentRecord), answers [(category, label, tone)], records,
 withdrawals (with follow_ups, reinstated), open_withdrawal, impact (queries.Impact),
 distributed [{shipment, items, follow_ups}], destructive, secondary, more, primary, toc, history,
@@ -20,7 +21,9 @@ can_manage.
 {% block content %}
 {% include "includes/page_toc.html" with items=toc %}
 {% if open_withdrawal %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Withdrawn" tone="hold" plain=True %}<div>{{ open_withdrawal.get_kind_display }}, effective <time datetime="{{ open_withdrawal.effective_on|date:'Y-m-d' }}">{{ open_withdrawal.effective_on|date:"Y-m-d" }}</time>, recorded by {{ open_withdrawal.actor|person }}. The participant's specimens in this study's collections carry a use hold; nothing has been disposed or deleted.</div></div>
+{% with instruction=open_withdrawal.escalation|default:open_withdrawal %}
+<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Withdrawn" tone="hold" plain=True %}<div>{{ open_withdrawal.get_effective_kind_display }}, effective <time datetime="{{ instruction.effective_on|date:'Y-m-d' }}">{{ instruction.effective_on|date:"Y-m-d" }}</time>, recorded by {{ instruction.actor|person }}.</div></div>
+{% endwith %}
 {% endif %}
 {% if open_withdrawal and impact.unheld %}
 <div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Not held" tone="danger" plain=True %}<div>{{ impact.unheld|length }} specimen{{ impact.unheld|pluralize }} in custody without a hold from the withdrawal (for example registered after it). The distribution gate still blocks them; {% if can_manage %}use Hold withdrawn specimens to hold them.{% else %}a manager can hold them.{% endif %}</div></div>
@@ -130,7 +133,17 @@ can_manage.
     <thead><tr><th scope="col">Withdrawal</th><th scope="col">State</th><th scope="col">Effective</th><th scope="col">Received</th><th scope="col" class="text-end vr-th-wrap">Held (specimens)</th><th scope="col" class="text-end vr-th-wrap">Allocations released (count)</th><th scope="col" class="text-end vr-th-wrap">Distributed (specimens)</th><th scope="col">Recorded</th><th scope="col">Reinstated</th></tr></thead>
     <tbody>{% for w in withdrawals %}
       <tr>
-        <th scope="row">{{ w.get_kind_display }}</th>
+        <th scope="row">{{ w.get_kind_display }}
+          {% if w.escalation %}{% with e=w.escalation %}
+          <details class="mt-1 fw-normal">
+            <summary>Escalated to destruction</summary>
+            <div>{{ w.get_effective_kind_display }}, effective <time datetime="{{ e.effective_on|date:'Y-m-d' }}">{{ e.effective_on|date:"Y-m-d" }}</time></div>
+            <div>Received <time datetime="{{ e.occurred_at|date:'c' }}">{{ e.occurred_at|date:"Y-m-d H:i" }}</time> via {{ e.received_via }}</div>
+            <div>Recorded <time datetime="{{ e.recorded_at|date:'c' }}">{{ e.recorded_at|date:"Y-m-d H:i" }}</time> by {{ e.actor|person }}</div>
+            <div>{{ e.reason }}</div>
+          </details>
+          {% endwith %}{% endif %}
+        </th>
         <td>{% withdrawal_status w %}</td>
         <td class="vr-nowrap"><time datetime="{{ w.effective_on|date:'Y-m-d' }}">{{ w.effective_on|date:"Y-m-d" }}</time></td>
         <td class="vr-nowrap"><time datetime="{{ w.occurred_at|date:'c' }}">{{ w.occurred_at|date:"Y-m-d H:i" }}</time><span class="d-block vr-muted small">{{ w.received_via }}</span></td>

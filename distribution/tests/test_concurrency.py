@@ -12,7 +12,7 @@ from django.core.exceptions import ValidationError
 from django.db import connection
 
 from distribution import services
-from distribution.models import Allocation, ConsentWithdrawal
+from distribution.models import Allocation, ConsentWithdrawal, ConsentWithdrawalEscalation
 from specimens.models import Hold
 from specimens.tests.test_concurrency import race
 
@@ -23,6 +23,7 @@ from .helpers import (
     fresh,
     timezone,
 )
+from .test_services_consent import withdraw
 
 pytestmark = pytest.mark.django_db(transaction=True)
 
@@ -87,6 +88,37 @@ def test_two_allocations_of_one_specimen_to_two_requests_leave_exactly_one(
         ).count()
         == 1
     )
+
+
+def test_two_managers_escalating_the_same_withdrawal_record_one_instruction(
+    people, dist, monkeypatch
+):
+    consent = dist.consent
+    withdrawal = withdraw(people, consent)
+    revision = fresh(consent).revision
+
+    def escalate(actor):
+        return services.escalate_withdrawal(
+            actor=actor,
+            consent_id=consent.pk,
+            expected_revision=revision,
+            effective_on=timezone.localdate(),
+            received_via="Letter (synthetic)",
+            occurred_at=timezone.now(),
+            reason="Later destruction instruction (synthetic)",
+        )
+
+    first, second = race(
+        HoldFirst(monkeypatch),
+        lambda: escalate(people["manager"]),
+        lambda: escalate(people["manager2"]),
+    )
+    assert isinstance(first, ConsentWithdrawalEscalation)
+    assert isinstance(second, ValidationError), second
+    assert codes(second) == {"stale_revision"}
+    assert ConsentWithdrawalEscalation.objects.get(withdrawal=withdrawal).pk == first.pk
+    assert fresh(consent).revision == revision + 1
+    assert not withdrawal.holds.filter(hold__release__isnull=False).exists()
 
 
 def test_the_loser_sees_the_gate_when_it_read_the_specimen_after_the_winner(

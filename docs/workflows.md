@@ -376,12 +376,21 @@ page with their shipment and the agreement's end-of-use and onward-transfer term
 the follow-up they did. For destroy, the page offers to file ordinary disposal requests for the
 held specimens; another person still approves each. Nothing is disposed, anonymized or deleted by
 the withdrawal, and the software contacts nobody. Holds are placed and released at the time of
-recording; the withdrawal keeps the date reported. A withdrawn record cannot be withdrawn again:
-another manager (not the one who recorded the withdrawal) reinstates it with a new consent record,
-which releases the withdrawal's holds, and a stronger withdrawal is then recorded. Reinstating
-names the consent record made after the withdrawal whenever there is one, and its recorder cannot
-reinstate either; "recorded in error" is available only while no record was made after the
-withdrawal, and the status then returns to the last record before it. Specimens
+recording; the withdrawal keeps the date reported. A manager can escalate an active no-further-use
+withdrawal to destruction with a received time, effective date, channel and reason. The new
+instruction is retained separately, and the original withdrawal, holds and follow-up links stay
+intact. Escalation does not place additional holds or file disposal requests; those remain explicit
+actions. The received time and effective date cannot precede the original instruction or be in
+the future. A duplicate escalation, a reinstated withdrawal or a no-contact-only withdrawal is
+ineligible.
+
+Reinstatement releases the withdrawal's holds and requires another manager than either the
+original withdrawal recorder or the escalation recorder. It names the current consent record made
+after the withdrawal whenever there is one, and that record's recorder cannot reinstate either.
+After escalation a named record must have been recorded after the escalation; an intervening
+consent record needs a fresh record or correction. "Recorded in error" is available only while no
+record was made after the original withdrawal, and the status then returns to the last record
+before it. Specimens
 registered after a withdrawal are not held automatically; the consent page lists them and a manager
 holds them.
 

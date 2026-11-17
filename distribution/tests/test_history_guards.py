@@ -1,6 +1,7 @@
-"""Append-only history and undeletable records, exercised with raw SQL that bypasses the models.
-Every table of HISTORY_TABLES and UNDELETABLE_TABLES in migration 0002 gets at least one row from
-the services first. All data is synthetic."""
+"""Exercise every append-only and undeletable record, including with raw SQL.
+
+Each protected table gets at least one synthetic row written through the services.
+"""
 
 import importlib
 from decimal import Decimal
@@ -12,7 +13,12 @@ from django.utils import timezone
 
 from core.models import AuditEvent
 from distribution import services
-from distribution.models import OutputRecord, RequestItem, SpecimenRequest
+from distribution.models import (
+    ConsentWithdrawalEscalation,
+    OutputRecord,
+    RequestItem,
+    SpecimenRequest,
+)
 
 from .helpers import (
     allocate,
@@ -30,7 +36,7 @@ from .helpers import (
 pytestmark = pytest.mark.django_db
 
 migration = importlib.import_module("distribution.migrations.0002_history_triggers")
-HISTORY_TABLES = migration.HISTORY_TABLES
+HISTORY_TABLES = (*migration.HISTORY_TABLES, ConsentWithdrawalEscalation._meta.db_table)
 UNDELETABLE_TABLES = migration.UNDELETABLE_TABLES
 MESSAGE = "Historical records cannot be updated or deleted"
 
@@ -134,11 +140,21 @@ def history(people, dist, world):
         actor=manager,
         consent_id=consent.pk,
         expected_revision=consent.revision,
-        kind="destroy",
+        kind="no_use",
         effective_on=timezone.localdate(),
         received_via="Letter (synthetic)",
         occurred_at=now(),
-        reason="Participant asked for destruction",
+        reason="Participant asked to stop use",
+    )
+    consent.refresh_from_db()
+    services.escalate_withdrawal(
+        actor=manager,
+        consent_id=consent.pk,
+        expected_revision=consent.revision,
+        effective_on=timezone.localdate(),
+        received_via="Letter (synthetic)",
+        occurred_at=now(),
+        reason="Participant later asked for destruction",
     )
     services.record_follow_up(
         actor=manager,
@@ -301,6 +317,7 @@ def test_services_write_an_attributed_audit_event_with_the_change(history, peopl
         "distribution.return_recorded",
         "distribution.return_reviewed",
         "distribution.consent_withdrawn",
+        "distribution.withdrawal_escalated",
         "distribution.consent_reinstated",
         "distribution.agreement_executed",
     } <= actions

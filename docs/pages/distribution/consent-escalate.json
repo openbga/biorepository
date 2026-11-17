@@ -1,0 +1,65 @@
+{
+  "id": "distribution-consent-escalate",
+  "routes": [
+    "distribution:consent-escalate"
+  ],
+  "title": "Escalate to destruction",
+  "purpose": "Record a later destruction instruction when a No further use withdrawal is in effect.",
+  "sections": [
+    {
+      "title": "Original withdrawal",
+      "paragraphs": [
+        "The form shows the consent's participant and study, the original withdrawal kind, its effective date and when the repository received it."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Effective on",
+          "description": "Required, initially today. Enter the date the destruction instruction took effect, from the original withdrawal's effective date through today."
+        },
+        {
+          "label": "Received at",
+          "description": "Required, initially the current repository time. Enter when the repository received the instruction, from the original withdrawal's receipt through now."
+        },
+        {
+          "label": "Received via",
+          "description": "Required, up to 80 characters. Enter how the repository received the instruction, such as a letter or phone call."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, up to 4,000 characters. Explain why you are recording the instruction. The reason is kept in the withdrawal history."
+        }
+      ],
+      "paragraphs": [
+        "Keep participant names, signatures, record numbers, birth dates and contact details out of the form."
+      ]
+    },
+    {
+      "title": "Actions and access",
+      "items": [
+        {
+          "label": "Escalate to destruction",
+          "description": "Records the destruction instruction with your account and the time you saved it, then returns to the consent. The original withdrawal stays in effect with its holds and allocation history. Use Request disposal of held specimens to file disposal requests for independent approval. Use Record follow-up for material already distributed."
+        },
+        {
+          "label": "Cancel",
+          "description": "Returns to the consent without saving."
+        }
+      ],
+      "paragraphs": [
+        "Repository managers and administrators can open and submit the form. The action is available once for each No further use withdrawal in effect. The server checks eligibility again on save.",
+        "If the consent changed while the form was open, review the current consent before retrying. The form keeps your entries and refreshes the version for the next submission when the withdrawal is still eligible."
+      ]
+    }
+  ],
+  "sources": [
+    "distribution/urls.py",
+    "distribution/governance_views.py",
+    "distribution/governance_forms.py",
+    "distribution/models.py",
+    "distribution/services.py",
+    "distribution/templates/distribution/governance/form.html"
+  ]
+}

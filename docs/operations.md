@@ -29,8 +29,11 @@ Each domain app attaches the same function in its own migrations through
 `core.immutability.protect_history`: append-only event tables and `attachment` get an
 `<table>_immutable` trigger that refuses `UPDATE` and `DELETE`, and records that change state but
 are never deleted (specimens, position occupancy, studies, shipments and similar) get a
-`<table>_undeletable` trigger that refuses `DELETE`. Triggers do not block `INSERT`,
-so `pg_restore` works. They do not block `TRUNCATE`, `DROP TABLE` or schema changes, and the table
+`<table>_undeletable` trigger that refuses `DELETE`. History-mutation triggers do not block `INSERT`.
+The withdrawal-escalation guard does check reinstatement inserts; a full restore into an empty
+database loads data before installing triggers ([PostgreSQL 17 restore sections](https://www.postgresql.org/docs/17/app-pgrestore.html),
+checked 2026-11-17). These guards do not block `TRUNCATE`,
+`DROP TABLE` or schema changes, and the table
 owner or a superuser can disable them (`ALTER TABLE ... DISABLE TRIGGER`,
 `session_replication_role`). Runtime and migration use the same database role today. Do not
 repair history in place; restore into a new database and compare instead. This is not tamper

@@ -10,6 +10,14 @@ The same list is shown in the application under What's new.
 
 ### High impact
 
+- **Added:** Escalate a withdrawal to destruction while keeping its holds (2026-11-17, Consent records)
+
+  Managers can escalate an active no-further-use withdrawal to destruction from its consent record. Consent stays withdrawn and its existing holds remain in place; the original instruction and escalation remain visible in history. Disposal still requires an ordinary request and a different person's approval.
+
+  Technical notes:
+
+  > Adds the additive migration `distribution.0003_withdrawal_escalation` with append-only history protection and a database guard that keeps older writers from bypassing escalation-specific reinstatement checks. Keep this migration applied during code rollback; older pages do not display escalation details and an unsafe reinstatement fails. Do not reverse the migration after history has been recorded. No dependency or environment changes.
+
 - **Changed:** The application is now called OpenBGA Biorepository (2026-11-17, [#15](https://github.com/openbga/biorepository/pull/15))
 
   The product is now named OpenBGA Biorepository. The new name appears in the top bar, page titles, sign-in, error pages, footer and page help; on phones the top bar wraps the name onto two lines.

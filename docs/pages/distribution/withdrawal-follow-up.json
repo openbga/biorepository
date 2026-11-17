@@ -7,6 +7,12 @@
   "purpose": "Record what was done about material already distributed when the participant withdrew.",
   "sections": [
     {
+      "title": "Withdrawal details",
+      "paragraphs": [
+        "The form identifies the consent and shows the original withdrawal's kind and effective date. If it was escalated, the form also shows the destruction instruction and its own effective date."
+      ]
+    },
+    {
       "title": "Fields",
       "items": [
         {

@@ -7,15 +7,21 @@
   "purpose": "End a withdrawal because the participant consented again or because it was recorded in error, and release its holds.",
   "sections": [
     {
+      "title": "Withdrawal details",
+      "paragraphs": [
+        "The form identifies the participant and study and shows the original withdrawal kind, effective date and recorder. If it was escalated, the form also shows the destruction instruction's effective date, receipt time and recorder."
+      ]
+    },
+    {
       "title": "Fields",
       "items": [
         {
           "label": "New consent record",
-          "description": "The record made after the withdrawal, when the participant consented again; its decision becomes the status. When such a record exists it is preselected and must be chosen. The option None: the withdrawal was recorded in error is offered only while no consent has been recorded after the withdrawal; the status then returns to the decision of the last record before the withdrawal."
+          "description": "The current consent record made after the withdrawal and any escalation. The form preselects that record and its decision becomes the status. If consent was recorded between the withdrawal and escalation, record or correct it after escalation before reinstating. If no consent was recorded after the original withdrawal, the form offers None: the withdrawal was recorded in error. That choice restores the decision of the last record before the withdrawal."
         },
         {
           "label": "Reinstated at",
-          "description": "Required; not in the future."
+          "description": "Required, in repository local time. Enter a time through now. If the withdrawal was escalated, enter a time from the destruction instruction's receipt onward."
         },
         {
           "label": "Reason",
@@ -24,9 +30,9 @@
       ]
     },
     {
-      "title": "Four eyes",
+      "title": "Independent review",
       "paragraphs": [
-        "The person who recorded the withdrawal cannot reinstate it, and neither can the person who recorded a consent record made after it, whether or not that record is chosen; another manager or administrator must. Superuser status does not change this. For them the form is shown as not available with the reason, and the rule is checked again when you save."
+        "A different manager or administrator must reinstate. The people who recorded the original withdrawal, its escalation or the current consent record made after the withdrawal are ineligible, including administrators and superusers. The form shows why it is unavailable and the server checks eligibility again on save."
       ]
     },
     {
@@ -34,7 +40,7 @@
       "paragraphs": [
         "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
         "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
-        "Not available when the consent is not withdrawn. The withdrawal and its holds stay in the history. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first."
+        "Available while the consent is withdrawn. The original withdrawal, any escalation and the released holds stay in the history. If someone else changed the consent while the form was open, review the current values before trying again. When the form remains available it keeps your entries and refreshes the version for the next submission."
       ]
     }
   ],

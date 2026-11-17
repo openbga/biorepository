@@ -9,7 +9,7 @@
     {
       "title": "Notices",
       "paragraphs": [
-        "When a withdrawal that stops use is in effect a notice says so. If specimens of the participant in the collections the study governs or has governed are in custody without a hold from that withdrawal (for example registered after it), a second notice says how many; the distribution gate still blocks them."
+        "When a withdrawal that stops use is in effect, a notice shows its current instruction, effective date and recorder. After an escalation these facts come from the destruction instruction. If specimens in custody lack a hold from the withdrawal, a second notice gives the count. The distribution gate still blocks those specimens."
       ]
     },
     {
@@ -81,7 +81,7 @@
     {
       "title": "Withdrawals and reinstatements",
       "paragraphs": [
-        "Each withdrawal with its kind, state (In effect, Do not contact, Reinstated), effective date, when and how it was received, the counts it held, released and found distributed at the time, who recorded it with the reason, and the reinstatement if any."
+        "Each original withdrawal shows its kind, state (In effect, Do not contact, Reinstated), effective date, when and how it was received, the counts it held, released and found distributed at the time, who recorded it with the reason, and any reinstatement. Open Escalated to destruction on the original row to see the later instruction's effective date, receipt time and channel, recorder, recording time and reason."
       ]
     },
     {
@@ -114,12 +114,16 @@
           "description": "Shown when specimens in custody lack a hold from the withdrawal in effect."
         },
         {
+          "label": "More: Escalate to destruction",
+          "description": "Available for an active No further use withdrawal. It records the later destruction instruction on that withdrawal and leaves its holds in effect. After escalation the menu item is disabled and disposal requests are available for held specimens."
+        },
+        {
           "label": "More: Request disposal of held specimens",
-          "description": "Shown for a withdrawal asking for destruction; each request still needs approval by another person with disposal approval."
+          "description": "Shown when the withdrawal originally asked for destruction or was escalated. Each disposal request needs approval by another person with disposal approval."
         },
         {
           "label": "More: Reinstate consent",
-          "description": "Ends the withdrawal and releases its holds. Disabled for the person who recorded the withdrawal or the new consent record, and when the consent is not withdrawn; superuser status does not change this."
+          "description": "Ends the withdrawal and releases its holds. The recorders of the withdrawal, its escalation and the current consent record made after the withdrawal cannot reinstate it. If consent was recorded between withdrawal and escalation, record or correct the consent after escalation before reinstating."
         }
       ]
     }

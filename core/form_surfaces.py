@@ -119,6 +119,7 @@ FORM_SURFACES = {
     "distribution:consent-create": "lg",
     "distribution:consent-correct": "lg",
     "distribution:consent-withdraw": "lg",
+    "distribution:consent-escalate": "lg",
     "distribution:consent-hold": "lg",
     "distribution:consent-disposals": "lg",
     "distribution:consent-reinstate": "lg",
