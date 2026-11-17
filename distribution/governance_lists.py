@@ -10,7 +10,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from django import forms
-from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models import Case, Count, Exists, OuterRef, Q, Value, When
 from django.utils import timezone
 
 from specimens.models import Specimen
@@ -137,7 +137,9 @@ class WithdrawalFilter(ListFilter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["kind"] = _choice("Withdrawal", ConsentWithdrawal.Kind.choices, "Any kind")
+        self.fields["kind"] = _choice(
+            "Effective withdrawal", ConsentWithdrawal.Kind.choices, "Any kind"
+        )
         self.fields["study"] = _study_field()
         self.fields["state"] = _choice("State", WITHDRAWAL_STATES, "In effect or reinstated")
         self.fields["attention"] = forms.BooleanField(
@@ -283,8 +285,12 @@ def unfollowed_shipments():
 
 def withdrawal_queryset():
     return ConsentWithdrawal.objects.select_related(
-        "consent", "consent__participant", "consent__study", "actor"
+        "consent", "consent__participant", "consent__study", "actor", "escalation__actor"
     ).annotate(
+        effective_kind_label=Case(
+            When(escalation__isnull=False, then=Value(ConsentWithdrawal.Kind.DESTROY.label)),
+            *(When(kind=kind, then=Value(label)) for kind, label in ConsentWithdrawal.Kind.choices),
+        ),
         follow_up_count=Count("follow_ups", distinct=True),
         is_reinstated=Exists(ConsentReinstatement.objects.filter(withdrawal=OuterRef("pk"))),
     )
@@ -302,7 +308,9 @@ def needing_attention(queryset=None):
 def withdrawal_rows(cleaned, user):
     queryset = withdrawal_queryset()
     if cleaned.get("kind"):
-        queryset = queryset.filter(kind=cleaned["kind"])
+        queryset = queryset.filter(
+            effective_kind_label=ConsentWithdrawal.Kind(cleaned["kind"]).label
+        )
     if cleaned.get("study"):
         queryset = queryset.filter(consent__study=cleaned["study"])
     if cleaned.get("state") == "open":
@@ -389,6 +397,10 @@ def _record(consent, name):
     return getattr(record, name) if record is not None else None
 
 
+def _escalation(withdrawal, field):
+    return getattr(getattr(withdrawal, "escalation", None), field, None)
+
+
 EXPORT = {
     "study": (
         ("Code", lambda o: o.code),
@@ -424,6 +436,13 @@ EXPORT = {
         ("Follow-ups", lambda o: o.follow_up_count),
         ("Reinstated", lambda o: yes_no(o.is_reinstated)),
         ("Recorded by", lambda o: person(o.actor)),
+        ("Effective withdrawal", lambda o: o.get_effective_kind_display()),
+        ("Escalation effective on", lambda o: _day(_escalation(o, "effective_on"))),
+        ("Escalation received at", lambda o: local(_escalation(o, "occurred_at"))),
+        ("Escalation received via", lambda o: _escalation(o, "received_via") or ""),
+        ("Escalation recorded at", lambda o: local(_escalation(o, "recorded_at"))),
+        ("Escalation recorded by", lambda o: person(_escalation(o, "actor"))),
+        ("Escalation reason", lambda o: _escalation(o, "reason") or ""),
     ),
     "agreement": (
         ("Agreement", lambda o: o.number),
@@ -541,9 +560,10 @@ SPECS = {
         slug="withdrawals",
         noun="withdrawals",
         build=withdrawal_rows,
-        empty=ConsentWithdrawal.objects.none,
+        empty=lambda: withdrawal_queryset().none(),
         columns={
             "participant": "consent__participant__code",
+            "kind": "effective_kind_label",
             "effective": "effective_on",
             "received": "occurred_at",
         },

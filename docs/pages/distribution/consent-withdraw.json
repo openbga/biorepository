@@ -28,7 +28,7 @@
       "items": [
         {
           "label": "What was withdrawn",
-          "description": "Required. While the consent is already withdrawn only No further contact is offered."
+          "description": "Required. While the consent is already withdrawn only No further contact is offered here. If a No further use withdrawal is in effect and the participant later requests destruction, use Escalate to destruction on the consent page."
         },
         {
           "label": "Effective on",

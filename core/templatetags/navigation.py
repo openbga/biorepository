@@ -310,6 +310,7 @@ STAFF_NAV = (
             "distribution:consent-detail",
             "distribution:consent-correct",
             "distribution:consent-withdraw",
+            "distribution:consent-escalate",
             "distribution:consent-hold",
             "distribution:consent-disposals",
             "distribution:consent-reinstate",

@@ -157,6 +157,14 @@ Training transitions likewise lock only their own record, check its revision and
 history plus field-level audit in the transaction. Staff accounts are protected references;
 training records neither grant roles nor gate operational workflows.
 
+Withdrawal escalation adds an immutable instruction linked one-to-one to the original
+withdrawal. Its additive migration retains the existing withdrawal kind and all hold links;
+reads distinguish the original instruction from the effective kind. Escalation takes the storage
+gate and consent lock, checks the revision and writes its audit event in the same transaction.
+A conditional database guard rejects reinstatement inserts that violate the escalation-specific
+reviewer or chronology checks, including from older application processes during deployment
+overlap or code rollback. Keep this migration applied when rolling back code.
+
 ### Accounts and access
 
 Use Django's user model extensibility from the first migration. Staff permissions use groups and

@@ -65,6 +65,7 @@ urlpatterns = [
     path("consents/<uuid:pk>/", governance.consent_detail, name="consent-detail"),
     path("consents/<uuid:pk>/correct/", governance.consent_correct, name="consent-correct"),
     path("consents/<uuid:pk>/withdraw/", governance.consent_withdraw, name="consent-withdraw"),
+    path("consents/<uuid:pk>/escalate/", governance.consent_escalate, name="consent-escalate"),
     path("consents/<uuid:pk>/hold/", governance.consent_hold, name="consent-hold"),
     path("consents/<uuid:pk>/disposals/", governance.consent_disposals, name="consent-disposals"),
     path("consents/<uuid:pk>/reinstate/", governance.consent_reinstate, name="consent-reinstate"),

@@ -55,7 +55,8 @@ compliance or accreditation.
   with retained history; staff can filter and read the register. Records do not grant permissions
   or certify qualification.
 - **Distribution:** studies that govern collections, consent records by scope category with
-  withdrawal (which holds the participant's specimens and lists material already sent), specimen
+  withdrawal (which holds the participant's specimens and lists material already sent), escalation
+  to destruction while retaining those holds, specimen
   requests decided by a different person who holds the request decision permission, allocation
   against what the records permit, pick lists, shipments with the shipper's declarations and
   manifests frozen at dispatch, receipt confirmation, returns held for a manager's review, and

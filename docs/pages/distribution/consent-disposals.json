@@ -34,7 +34,7 @@
       "paragraphs": [
         "Only admin and manager can open or submit this form; other roles are refused. The server repeats every check when you save.",
         "The form opens in a dialog over the page you came from; opened directly it is a full page. Cancel returns to that page without saving.",
-        "Not available unless a withdrawal asking for destruction is in effect and holds specimens. If someone else changed the record since you opened the form, the save is refused with a message to reload; the form keeps your entries and the next save uses the current version, so check the current values first."
+        "Available when a withdrawal holds specimens and requested destruction, either originally or through Escalate to destruction. If someone else changed the record since you opened the form, review the current values before trying again. The form keeps your entries and refreshes the version for the next submission."
       ]
     }
   ],

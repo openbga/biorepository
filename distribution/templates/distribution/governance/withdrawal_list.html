@@ -14,9 +14,9 @@
       <thead><tr>
         {% include "includes/sort_header.html" with label="Consent" asc="participant" desc="-participant" col="participant" locked=True %}
         <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
-        <th scope="col" data-vr-col="kind" data-vr-col-label="Withdrawal">Withdrawal</th>
-        {% include "includes/sort_header.html" with label="Effective" asc="effective" desc="-effective" first="desc" col="effective" %}
-        {% include "includes/sort_header.html" with label="Received" asc="received" desc="-received" first="desc" col="received" %}
+        {% include "includes/sort_header.html" with label="Effective withdrawal" asc="kind" desc="-kind" col="kind" %}
+        {% include "includes/sort_header.html" with label="Original effective" asc="effective" desc="-effective" first="desc" col="effective" %}
+        {% include "includes/sort_header.html" with label="Original received" asc="received" desc="-received" first="desc" col="received" %}
         <th scope="col" class="text-end vr-th-wrap" data-vr-col="held" data-vr-col-label="Held (specimens)">Held (specimens)</th>
         <th scope="col" class="text-end vr-th-wrap" data-vr-col="released" data-vr-col-label="Allocations released (count)">Allocations released (count)</th>
         <th scope="col" class="text-end vr-th-wrap" data-vr-col="distributed" data-vr-col-label="Distributed (specimens)">Distributed (specimens)</th>
@@ -28,14 +28,14 @@
         <tr>
           <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:consent-detail' row.consent_id %}#withdrawals-heading">{{ row.consent.participant.code }} · {{ row.consent.study.code }}</a></th>
           <td>{% withdrawal_status row %}</td>
-          <td>{{ row.get_kind_display }}</td>
+          <td>{{ row.get_effective_kind_display }}{% if row.escalation %}<span class="d-block vr-muted small">Originally {{ row.get_kind_display|lower }}</span>{% endif %}</td>
           <td class="vr-nowrap"><time datetime="{{ row.effective_on|date:'Y-m-d' }}">{{ row.effective_on|date:"Y-m-d" }}</time></td>
           <td class="vr-nowrap"><time datetime="{{ row.occurred_at|date:'c' }}">{{ row.occurred_at|date:"Y-m-d H:i" }}</time></td>
           <td class="text-end vr-id">{{ row.held_count }}</td>
           <td class="text-end vr-id">{{ row.released_count }}</td>
           <td class="text-end vr-id">{{ row.distributed_count }}</td>
           <td class="text-end vr-id">{{ row.follow_up_count }}</td>
-          <td>{{ row.actor|person }}</td>
+          <td>{{ row.actor|person }}{% if row.escalation %}<span class="d-block vr-muted small">Escalated by {{ row.escalation.actor|person }}</span>{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>

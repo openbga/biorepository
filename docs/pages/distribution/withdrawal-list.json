@@ -24,12 +24,12 @@
           "description": "In effect (use stopped), Do not contact (contact only) or Reinstated."
         },
         {
-          "label": "Withdrawal",
-          "description": "No further contact, No further use, or No further use and destroy."
+          "label": "Effective withdrawal",
+          "description": "No further contact, No further use, or No further use and destroy. For an escalated withdrawal the row shows the destruction instruction followed by the original kind."
         },
         {
-          "label": "Effective, Received",
-          "description": "The effective date, and when it reached the repository."
+          "label": "Original effective, Original received",
+          "description": "The original withdrawal's effective date and when it reached the repository. Open the consent for the escalation dates."
         },
         {
           "label": "Held (specimens), Allocations released (count), Distributed (specimens)",
@@ -41,7 +41,7 @@
         },
         {
           "label": "Recorded by",
-          "description": "Who recorded it."
+          "description": "Who recorded the original withdrawal and any escalation."
         }
       ]
     },
@@ -53,8 +53,8 @@
           "description": "Participant code or study code."
         },
         {
-          "label": "Withdrawal, Study, State",
-          "description": "Filters; default all."
+          "label": "Effective withdrawal, Study, State",
+          "description": "Filters, initially all. Choose No further use and destroy to include escalated withdrawals."
         },
         {
           "label": "More filters: Needs follow-up",
@@ -74,7 +74,7 @@
         },
         {
           "label": "Export CSV",
-          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+          "description": "Downloads rows matching the current filters and sort as UTF-8 CSV, up to 10,000 rows. Narrow the filters for a larger selection. The Withdrawal column keeps the original kind. Effective withdrawal shows the current instruction. Escalated entries include the escalation's effective date, receipt time and channel, recording time, recorder and reason. Cells a spreadsheet would read as a formula get a leading apostrophe. The audit records who exported the selection and how many rows."
         }
       ]
     },

@@ -44,6 +44,7 @@ application's page help and in [workflows](workflows.md).
 | Consent basis per study | Either individual consent records, or a recorded study-level determination (for example a waiver) that covers material without a record. A recorded refusal or withdrawal blocks in both cases |
 | Material without a consent basis | No participant, no collection, or a collection no study governs: cannot be requested, allocated or sent. There is no override; a wrong record is corrected with a reason |
 | Who records consent and withdrawal | Administrator and repository manager |
+| Withdrawal escalation | A manager can append a destruction instruction to an active no-further-use withdrawal without reinstating consent or releasing holds. Disposal still requires ordinary requests and separate approval. The original withdrawal and escalation recorders cannot reinstate it; any new consent used for reinstatement must be recorded after the escalation |
 | Withdrawal kinds | No further contact; no further use; no further use and destroy. The last two place a use hold on the participant's specimens in custody and release their allocations; destroy offers ordinary disposal requests, each approved by another person. Nothing is deleted or anonymized, and material already distributed is listed for recorded follow-up, not recalled |
 | Agreements | Every shipment needs a valid executed agreement (MTA or DUA) with the request's institution. Valid from its effective date through the day before it expires or is terminated; dates are shown and nothing ends automatically |
 | Allocation | Whole containers; send part of a specimen by deriving an aliquot first. Allocation reserves the specimen, not its position. Remaining stock is shown, not gated |
@@ -193,10 +194,14 @@ rule" means no source read states it; it is a design choice.
 | 1. Storage | Storage tree, container types and grids, templates, occupancy views, free-position search, blocked positions, box and rack moves | Built |
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
-| 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
+| 4. Governance and distribution | Studies and collections, consent records and withdrawal with escalation to destruction while retaining holds, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
 | 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review; staff training assignments, completion and assessment evidence, explicit due dates and retained corrections | Built |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
-| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent, spatial storage maps | Not committed |
+| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, spatial storage maps | Not committed |
+
+Withdrawal escalation shipped as an extension of milestone 4 on 2026-11-17. It records an
+explicit destruction instruction while the existing restriction stays in effect; it creates no
+automatic disposal, recall or contact obligation. This is a product default, not laboratory policy.
 
 No further milestone is currently committed. Later and exploring items need a demonstrated
 repository need or the dependencies described below.
@@ -257,8 +262,16 @@ for its intended use.
 | 2026-11-12 | Equipment defaults: the repository enters every limit, low level and due date; second-person excursion close | Working default |
 | 2026-11-15 | Deviation defaults: open, awaiting review and closed states; investigation/action/effectiveness narratives before submission; review by a manager other than the creator and latest submitter; retained history on return and reopening | Working default |
 | 2026-11-15 | Training defaults: manager-managed assignments and evidence, optional competency assessment and dates, staff read access, retained corrections/cancellation; no automatic qualification or access gates | Working default |
+| 2026-11-17 | Withdrawal escalation: retain an active no-use withdrawal and its holds while appending a destruction instruction; ordinary disposal approval remains separate; reinstatement excludes both instruction recorders | Working default |
 
 ## Evidence and limits
+
+- Rechecked NCI B.5.7, pp. 16–17, directly on 2026-11-17 for withdrawal escalation. This
+  voluntary guidance recommends documenting discontinuation actions, stopping further
+  distribution when withdrawal applies to stored material, and respecting requests to destroy
+  unused specimens whenever possible. It leaves the repository's response procedures to the
+  repository; the append-only escalation and separate-person reinstatement checks are product
+  choices. See the January 2026 primary source below.
 
 - Rechecked NCI C.1.2 and C.3.2 directly on 2026-11-15 for training records. These recommend
   periodic training and documentation of training and competency assessments. Assignment states,
