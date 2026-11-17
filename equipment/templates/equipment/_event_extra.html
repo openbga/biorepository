@@ -1,1 +1,2 @@
 {% comment %}Timeline entry extra: the attached file of an excursion timeline entry. Context: e (ExcursionEvent).{% endcomment %}{% if e.has_attachment %}<p class="vr-timeline-meta">Attachment: {% include "equipment/_attachment.html" with item=e kind="excursion-event" %}</p>{% endif %}
+{% if e.manual_holds %}<ul class="small">{% for hold in e.manual_holds %}<li><a class="vr-id" href="{% url 'specimens:specimen-detail' hold.specimen_id %}">{{ hold.accession }}</a>: {{ hold.scope_label }}</li>{% endfor %}</ul>{% endif %}

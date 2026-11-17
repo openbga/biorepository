@@ -47,6 +47,14 @@ and hides those a role never uses. An unmounted route renders as "Planned". Stor
   </ul>
 </div>
 <div class="vr-nav-section">
+  <p class="vr-nav-heading" id="vr-nav-quality">Quality</p>
+  <ul class="vr-nav-list" aria-labelledby="vr-nav-quality">
+    {% nav_item "quality-audits" %}
+    {% nav_item "quality-deviations" %}
+    {% nav_item "quality-training" %}
+  </ul>
+</div>
+<div class="vr-nav-section">
   <p class="vr-nav-heading" id="vr-nav-setup">Setup</p>
   <ul class="vr-nav-list" aria-labelledby="vr-nav-setup">
     {% nav_item "storage-catalogues" %}

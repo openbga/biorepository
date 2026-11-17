@@ -1,0 +1,61 @@
+{
+  "id": "equipment-excursion-holds",
+  "routes": [
+    "equipment:excursion-holds"
+  ],
+  "title": "Place holds",
+  "purpose": "Choose affected specimens from an excursion and place an ordinary manual hold on each, with a recorded reason and the excursion number.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Technicians, managers and administrators can place holds in any excursion state: Open, Awaiting review or Closed. Viewers can read the excursion and specimen records, but cannot open or submit this action. The application records your decision; it does not judge specimen quality or place holds automatically."
+      ]
+    },
+    {
+      "title": "Affected specimens",
+      "paragraphs": [
+        "Open and Awaiting review excursions compute candidates from recorded storage movements during the excursion, up to its end or now if ongoing. A Closed excursion uses its most recent closing capture. The list identifies material recorded in that storage unit during the period; it does not determine suitability for use.",
+        "Specimen ID search matches any part of the affected IDs, without regard to case. Search applies to the full affected set. Clear search restores all candidates. Candidates are ordered by their recorded location and specimen ID, with 200 per page. The result count and page links expose the remaining candidates; none are silently omitted.",
+        "Nothing is selected by default. Select individual rows or use the header checkbox to select all eligible rows on this page; the selection count shows how many are chosen. Choose between 1 and 200 distinct specimens on the displayed page. Selection belongs to that page only. Searching or changing pages clears unsaved selection and hold details, so submit the current batch before moving to another page. Cancel returns to the excursion without placing holds.",
+        "Each row shows selection, the specimen ID linking to its record, current status, existing active hold scopes, recorded location during the excursion, and first and last presence during the period. Presence times are repository local time. The same specimen may already have one or more holds; the new hold stays separate and no existing hold is skipped or released.",
+        "Disposed specimens remain visible but cannot be selected because their records are final. Distributed specimens can receive holds. If every specimen on a page is disposed, no Place holds button is offered. With no affected specimens there is nothing to hold; with no search matches, clear or change the search. Equipment that had no storage unit when the excursion opened has no affected specimens."
+      ]
+    },
+    {
+      "title": "Hold details",
+      "items": [
+        {
+          "label": "Hold scope",
+          "description": "Required, with no default. Disposal hold blocks disposal only. Use hold blocks use and dispatch, but permits disposal. All-use hold blocks both. The chosen scope applies to every selected specimen."
+        },
+        {
+          "label": "Reason",
+          "description": "Required, explaining this hold decision. The excursion number is added to every hold reason. The field shows its character limit, leaving room for that prefix within the 2,000-character hold reason. Do not enter donor, patient or participant names or other identifying details."
+        }
+      ]
+    },
+    {
+      "title": "Place holds",
+      "paragraphs": [
+        "Place holds records one manual hold per selected specimen at the current time, attributed to you. It also adds an immutable Note or attachment timeline entry on the excursion showing the specimen links, scope and reason, and an excursion audit event. The batch commits together or nothing is recorded. Quantities and positions do not change.",
+        "Each hold is an ordinary manual hold, released individually by a manager or administrator from its specimen record with a reason. The excursion does not own its release. Submitting, closing or reopening an excursion never releases these holds. Unrelated manual holds and holds owned by other workflows remain independent.",
+        "Your review expires after one hour. A changed excursion revision, changed selected specimen, invalid selection or specimen no longer in the affected set refuses the whole batch. Duplicate submission is refused. Your submitted scope, reason and available selections are kept on an error; the review is never refreshed automatically. Use Reload candidates and review current state to examine current records and make a fresh selection before retrying a stale, invalid or expired review."
+      ]
+    }
+  ],
+  "sources": [
+    "equipment/urls.py",
+    "accounts/roles.py",
+    "equipment/views.py",
+    "equipment/queries.py",
+    "equipment/forms.py",
+    "equipment/services.py",
+    "equipment/occupancy.py",
+    "equipment/templates/equipment/excursion_holds.html",
+    "specimens/services.py",
+    "specimens/models.py",
+    "equipment/tests/test_excursion_holds.py",
+    "equipment/tests/test_concurrency.py"
+  ]
+}

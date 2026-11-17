@@ -9,7 +9,7 @@
     {
       "title": "What the page is for",
       "paragraphs": [
-        "The register of storage equipment. Each row is one piece of equipment, identified by its asset ID. Open a row to record service events, LN2 entries, readings and excursions, or to change its limits and status. Vapor Phase has no default limits, refill levels or service intervals and never works out a due date: every one of them is entered by your repository, and what the page shows is what was entered.",
+        "The register of storage equipment. Each row is one piece of equipment, identified by its asset ID. Open a row to record service events, LN2 entries, readings and excursions, or to change its limits and status. OpenBGA Biorepository has no default limits, refill levels or service intervals and never works out a due date: every one of them is entered by your repository, and what the page shows is what was entered.",
         "Retired equipment is hidden until you choose Retired or Any status. Equipment is never deleted.",
         "Every role that can sign in to the workspace can read this list, including viewers.",
         "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."

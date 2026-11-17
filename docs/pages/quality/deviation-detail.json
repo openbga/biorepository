@@ -1,0 +1,107 @@
+{
+  "id": "quality-deviation-detail",
+  "routes": [
+    "quality:deviation-detail"
+  ],
+  "title": "Deviation report",
+  "purpose": "Read the report, its related evidence, investigation and retained review history.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "Administrators, repository managers and technicians record, edit and submit deviations. Viewers read them. Managers and administrators review and reopen them. Inactive accounts and accounts without an application role, including bare superusers, have no access.",
+        "These are working product defaults, not repository policy. Deviations retain a report and its investigation, corrective action, effectiveness and independent review. They do not change specimens, stock, storage, linked records or holds. No attachments, deadlines, automatic notifications or risk thresholds are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Report and navigation",
+      "paragraphs": [
+        "The header shows the DEV identifier, Open, Awaiting review or Closed status and revision. On this page links jump to Report, Investigation and follow-up, Review facts and History. The breadcrumb returns to Deviations."
+      ],
+      "items": [
+        {
+          "label": "Title",
+          "description": "Required, up to 160 characters. A concise label for finding this report."
+        },
+        {
+          "label": "Occurred at",
+          "description": "Required observed timestamp, in repository local time to the second. It must not be in the future. It is distinct from the server-recorded creation and update times."
+        },
+        {
+          "label": "Description",
+          "description": "Required report of what was observed, up to 4,000 characters."
+        },
+        {
+          "label": "Immediate action",
+          "description": "Optional action already taken, up to 4,000 characters."
+        },
+        {
+          "label": "Investigation",
+          "description": "Up to 4,000 characters. Optional while open, required before submission. Explain what is known and explain if unknown."
+        },
+        {
+          "label": "Corrective action",
+          "description": "Up to 4,000 characters. Optional while open, required before submission. Explain the action or why none is needed."
+        },
+        {
+          "label": "Effectiveness",
+          "description": "Up to 4,000 characters. Optional while open, required before submission. Record evidence or explain why unknown or not applicable."
+        },
+        {
+          "label": "Excursion and Inventory audit",
+          "description": "Optional links to existing evidence, in any status. Both can be linked or left blank. Open reports may correct or clear links with a reason; previous link identities remain in history. Linking never changes the related record."
+        }
+      ]
+    },
+    {
+      "title": "Review facts and history",
+      "paragraphs": [
+        "Created shows the original server time and creator; Updated shows the latest saved change. Latest submission shows the latest submitter and time, even after return or reopen. Closed shows the current closure actor and time; a return or reopen has no current closure. Prior decisions remain in history.",
+        "History runs oldest to newest with event type, actor, recorded time, reason and complete prior/new values. Blank means no value was recorded. Source links show the current excursion or audit and open that record. Their prior identifiers are retained in history. The record foot identifies this view and who produced it."
+      ],
+      "items": []
+    },
+    {
+      "title": "Actions and read-only states",
+      "paragraphs": [],
+      "items": [
+        {
+          "label": "Edit and Submit for review",
+          "description": "Operators can edit or submit an Open report. Submission requires investigation, corrective action and effectiveness; it freezes narratives and source links for review."
+        },
+        {
+          "label": "Record review",
+          "description": "Available while Awaiting review to a manager or administrator other than both the original creator and latest submitter. Close records acceptance and freezes the report; Return for revision opens it for further work. Both require a reason. A creator or submitter sees a disabled action and must ask another reviewer."
+        },
+        {
+          "label": "Reopen deviation",
+          "description": "Managers and administrators can reopen a Closed report with a reason. Operators can edit and submit again. The previous closure remains in history."
+        },
+        {
+          "label": "Read-only",
+          "description": "Viewers see the full report and history without mutation controls. Awaiting review reports are frozen; Closed reports require reopening before edits."
+        }
+      ]
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change requires a reason and records the actor, server time, revision and full prior and new values. Earlier narratives, source links, submissions and decisions remain in history. Reports cannot be deleted and history cannot be rewritten.",
+        "Saving validates and commits the report and its history together or saves nothing. Validation retains entered values. If someone changes the record first, your posted values stay visible and saving is blocked. Cancel, reload the latest record, compare your notes and start again; retrying the old form cannot overwrite the newer report. Do not enter identifying information."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/deviation_views.py",
+    "quality/deviation_forms.py",
+    "quality/deviation_services.py",
+    "quality/models.py",
+    "quality/tests/test_deviations.py",
+    "templates/quality/deviation_detail.html",
+    "templates/quality/deviation_list.html",
+    "templates/quality/form.html"
+  ]
+}

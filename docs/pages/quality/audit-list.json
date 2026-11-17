@@ -1,0 +1,83 @@
+{
+  "id": "quality-audit-list",
+  "routes": [
+    "quality:audit-list"
+  ],
+  "title": "Inventory audits",
+  "purpose": "Find box inventory audits and compare their recorded evidence.",
+  "sections": [
+    {
+      "title": "Access and actions",
+      "paragraphs": [
+        "Administrators, repository managers and technicians create, complete and cancel audits. Viewers read audits and their results. Accounts without an application role, including superuser accounts without a role, have no access.",
+        "These are working product defaults, not repository policy. Audits record evidence only. They never change storage positions, specimen records, quantities, statuses or holds. A discrepancy needs follow-up through the ordinary inventory workflows; it is not a correction.",
+        "New inventory audit opens a form for one active box. Select an audit number to open its snapshot and results. Viewers see no mutation controls."
+      ]
+    },
+    {
+      "title": "Search, filters and paging",
+      "items": [
+        {
+          "label": "Search",
+          "description": "Matches the frozen box code or creation reason, or an exact audit number such as AUD-000001 (also accepts its numeric part). Empty search includes all audits."
+        },
+        {
+          "label": "Status",
+          "description": "All statuses is the default. Open means no final result; Completed means every position was observed and results frozen; Cancelled retains a snapshot without observations. Invalid status values display filter errors and no results."
+        },
+        {
+          "label": "Apply and Clear all",
+          "description": "Apply runs the current search and filters from the first page. Clear all removes them. Filter chips remove the named filter."
+        },
+        {
+          "label": "Sorting and pages",
+          "description": "Newest created audits first by default. Audit, Box and Created headings sort in either direction. Shared pagination offers 25, 50 or 100 rows per page. An invalid page size is rejected; an unknown sort uses the default."
+        }
+      ]
+    },
+    {
+      "title": "Columns",
+      "items": [
+        {
+          "label": "Audit",
+          "description": "Permanent AUD-prefixed audit number; links to the record."
+        },
+        {
+          "label": "Box",
+          "description": "Box code frozen when the audit was created."
+        },
+        {
+          "label": "Status",
+          "description": "Open, Completed or Cancelled, determined by the immutable final result."
+        },
+        {
+          "label": "Created and Created by",
+          "description": "When the snapshot was recorded, in repository time, and the actor who created it."
+        },
+        {
+          "label": "Reason",
+          "description": "The creation reason, shortened in the list. The record retains the full text."
+        },
+        {
+          "label": "Columns",
+          "description": "Choose which table columns to show. Audit remains available."
+        }
+      ]
+    },
+    {
+      "title": "Empty and error states",
+      "paragraphs": [
+        "An empty list offers New inventory audit to operators. No results invites you to change or clear filters. Invalid filters explain what to correct."
+      ]
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/views.py",
+    "quality/forms.py",
+    "quality/models.py",
+    "quality/services.py",
+    "quality/tests/test_audits.py",
+    "templates/quality/audit_list.html"
+  ]
+}

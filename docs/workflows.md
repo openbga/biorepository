@@ -9,7 +9,7 @@ agreements), as built. The help panel
 inside the application describes every page, field and action; this is the overview.
 [Product scope](product.md) explains why the rules exist. Items that product scope lists as
 working assumptions or defaults are choices a repository should check against its own policy;
-they are marked "default" below. Vapor Phase supports a repository's own records and quality system. It
+they are marked "default" below. OpenBGA Biorepository supports a repository's own records and quality system. It
 does not make a repository compliant, accredited or certified.
 
 ## Time zones
@@ -283,7 +283,7 @@ selection and row count.
 ## Equipment
 
 Equipment records describe the vessels and devices that hold or watch the specimens. Everything
-here is a record of what the repository entered; Vapor Phase sets no limit, interval or level of
+here is a record of what the repository entered; OpenBGA Biorepository sets no limit, interval or level of
 its own, and it neither monitors temperature nor raises alarms.
 
 **Register.** Admin and manager register equipment with an asset ID, a kind (LN2 tank, freezer,
@@ -321,9 +321,13 @@ an end, a cause, an action and an impact assessment, and a manager or admin **ot
 who submitted it** returns it with a note or closes it. A closed excursion can be reopened by a
 manager or admin with a reason. The second-person close is a default, not a sourced rule. While an excursion is open the specimens that were in the unit during it are
 computed from storage's recorded movements (placements, check-outs and check-ins, disposals, box
-and rack moves); closing captures that list with the closing entry, and it stays fixed. Vapor Phase
-records the review; it does not decide the outcome or what happens to the specimens, and it places
-no holds itself (a hold is placed from the specimen record).
+and rack moves); closing captures that list with the closing entry, and it stays fixed. OpenBGA Biorepository
+records the review; it does not decide specimen quality. Operators can explicitly select affected
+specimens and place disposal, use or all-use holds with a reason, in batches of up to 200. The
+excursion and specimen state are rechecked before the whole batch and its history are saved
+together. Each hold keeps the excursion number in its reason and remains an ordinary manual hold
+that a manager releases from the specimen record. Existing holds remain separate; closing or
+reopening an excursion does not place or release any hold automatically.
 
 **Corrections.** Log entries, readings and service events can be back-dated (paper logs and logger
 downloads), but not into the future. A correction replaces or withdraws an entry with a reason and
@@ -461,6 +465,54 @@ dispatch, return and holds with their references. Pick lists, manifests and CSV 
 audited. Requests, allocation, shipments, consent and returns take the same single lock as storage
 and specimens; catalogue saves do not.
 
+## Inventory audits
+
+Inventory audits compare a box with a saved expected inventory. Operators record every position
+as empty or with the identifier they observe, including identifiers the system does not know.
+Discrepancies require an explanation. A completed audit is evidence of the check, not a change to
+stock: use the ordinary custody workflows to investigate and correct a location separately.
+
+Working defaults are one active box of at most 400 positions, all observations submitted together,
+and completion or cancellation by any operating role. Viewers read the records. Expected contents
+and final results are append-only; repeat an audit to correct it, retaining the earlier record.
+Relevant storage changes after the snapshot prevent completion; cancel and start again against
+the current inventory. Operators can enter observations manually or load a normalized scanner CSV
+for one box, review and adjust the grid, then complete the audit. Loading a file does not save
+results or a draft. The source file is not retained; the completed audit keeps the reviewed
+observations. The project format and bounds are working defaults in [product scope](product.md);
+device-specific exports need conversion. In-app help describes the fields, controls and errors.
+
+## Deviations
+
+Staff record departures from a procedure or expected practice, with the observed time,
+description, immediate action and optional links to an excursion or inventory audit. Investigation,
+corrective action and effectiveness evidence can be added while open. When action is unnecessary
+or a cause cannot be established, explain the assessment rather than leaving its field empty.
+
+Working default: an operator submits a complete report for review; a manager other than its
+creator and latest submitter returns it for more work or closes it with a reason. A manager can
+reopen a closed report. These roles and the review sequence are product choices, not a claim of
+independent quality qualification. The repository decides what evidence is adequate.
+
+Each save keeps its reason, actor, server time and prior values. Concurrent changes require the
+operator to reload and review the latest version. Closed reports and earlier events remain on
+record. This text-only register does not place or release holds, decide specimen suitability,
+assign training, send notifications or impose deadlines. In-app help covers its fields and actions.
+
+## Training
+
+Managers and administrators assign a training topic to an active staff account, with an optional
+procedure/version reference and deadline. They record the completion date, trainer or provider
+and evidence, and may add a competency assessment and renewal date. All staff can read the
+register and filter dates that need attention. The repository decides what training and evidence
+are adequate; no interval or curriculum is supplied.
+
+Working default: this is manager-maintained recordkeeping, including a manager's own training,
+not a separate approval or electronic signature. Corrections and cancellation keep their reason,
+actor, time and earlier values. Renewal is a new assignment. Records do not certify competence,
+change permissions, block specimen work or send notifications. In-app help describes the fields,
+date filters and state transitions.
+
 ## Limits to know
 
 | Limit | Detail |
@@ -474,7 +526,8 @@ and specimens; catalogue saves do not.
 | Allocation reserves the specimen, not its position | Others can still move or use allocated material; a disposal hold stops only its disposal. Allocation is whole-container |
 | Time away is not time out of storage | A long wait between picking and dispatch does count as time out of storage |
 | No monitoring or alarms | Readings are entered or imported; nothing is polled, and no notification is sent |
-| Equipment is not yet tied to inventory audits, deviations or training | Planned next (product scope) |
+| Box audit import | Normalized scanner CSV for one box at a time; no device-specific import or hardware qualification |
+| Quality workflows | Deviation investigation and review are recorded as staff assess them; no automatic quality decision. Training records do not establish qualification or grant access. Excursion holds require explicit operator selection; temperatures and reviews never place holds automatically |
 | One repository organization | No tenant layer; permissions are not site-scoped |
 | Storage writes are serialized | One lock per storage-changing operation; fine for one repository's pace |
 | Disposal approvals are brittle by design | Any change to the specimen after approval needs a new request |

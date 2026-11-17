@@ -10,7 +10,7 @@
           "website/about/index.html"
         ],
         "createdAt": "2026-11-12T12:00:00.000Z",
-        "reason": "Computed for the Vapor Phase palette: the hover button uses white text on #122238 (16.0:1), not inherited #182434. Every displayed text palette pair exceeds 4.5:1."
+        "reason": "Computed for the OpenBGA Biorepository palette: the hover button uses white text on #122238 (16.0:1), not inherited #182434. Every displayed text palette pair exceeds 4.5:1."
       },
       {
         "rule": "cramped-padding",

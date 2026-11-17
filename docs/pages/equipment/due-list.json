@@ -9,7 +9,7 @@
     {
       "title": "What the page shows",
       "paragraphs": [
-        "One row for each piece of equipment in use and each kind of service whose latest effective event carries a next due date. Dates are the ones entered on those events: Vapor Phase has no default intervals and never calculates a date, so equipment with no recorded date does not appear. Repairs have no due date. Retired equipment is not listed. A correction or withdrawal changes the row at once, because the latest effective event counts.",
+        "One row for each piece of equipment in use and each kind of service whose latest effective event carries a next due date. Dates are the ones entered on those events: OpenBGA Biorepository has no default intervals and never calculates a date, so equipment with no recorded date does not appear. Repairs have no due date. Retired equipment is not listed. A correction or withdrawal changes the row at once, because the latest effective event counts.",
         "Every role that can sign in to the workspace can read this list, including viewers.",
         "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
       ]

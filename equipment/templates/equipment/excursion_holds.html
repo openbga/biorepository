@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block page_meta %}<p class="vr-muted">{{ excursion.number }} · {{ excursion.equipment.code }} · {{ excursion.get_status_display }}</p>{% endblock %}
+{% block content %}
+<p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.</p>
+<p>Choose affected specimens and place a separate manual hold on each. Managers release these holds from each specimen record. Closing or reopening this excursion does not release them.</p>
+<p class="vr-form-note">{% if capture %}Candidates are from the most recent closing capture.{% else %}Candidates are computed from recorded movements during the excursion, up to its end or now.{% endif %} Current status and existing active holds are shown for review. Existing holds remain separate; this action adds another hold.</p>
+<form method="get" class="d-flex flex-wrap align-items-end gap-2 mb-3" role="search" aria-label="Search affected specimens">
+  <div><label class="form-label" for="candidate-search">Specimen ID</label><input class="form-control" type="search" id="candidate-search" name="q" value="{{ q }}" maxlength="100" placeholder="Search affected specimen IDs"></div>
+  <button class="btn btn-outline-secondary" type="submit">Search</button>
+  {% if q %}<a class="btn btn-link" href="{{ request.path }}">Clear search</a>{% endif %}
+</form>
+<p id="selection-note" class="vr-form-note">Select up to 200 specimens from this page. Nothing is selected by default. Searching or changing pages clears unsaved selection and hold details; submit this batch before choosing another page. Every affected specimen can be reached through the pages or search.</p>
+<form method="post" class="vr-form" novalidate>
+  {% csrf_token %}
+  {% include "includes/form_errors.html" with form=form %}
+  {% if form.errors %}<p><a href="{{ request.get_full_path }}">Reload candidates and review current state</a> before retrying a stale or expired review. Your submitted values are shown below.</p>{% endif %}
+  <fieldset class="vr-form-section" aria-describedby="selection-note">
+    <legend>Specimens <span class="vr-req" aria-hidden="true">*</span></legend>
+    <p class="vr-count" data-vr-select-count="specimen_ids"></p>
+    {% if form.specimen_ids.errors %}<div id="selection-errors" class="text-danger" role="alert">{% for error in form.specimen_ids.errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
+    {% if page_obj.paginator.count %}
+    <div class="vr-table-wrap"><table class="table vr-table">
+      <thead><tr><th scope="col">{% include "includes/select_all.html" with name="specimen_ids" label="Select all eligible specimens on this page" %}</th><th scope="col">Specimen ID</th><th scope="col">Current status</th><th scope="col">Existing active holds</th><th scope="col">Location during excursion</th><th scope="col">Present from</th><th scope="col">Present until</th></tr></thead>
+      <tbody>{% for item in page_obj %}
+        <tr>
+          <td>{{ item.checkbox.tag }}<label class="visually-hidden" for="{{ item.checkbox.id_for_label }}">Select {{ item.specimen.accession }}</label>{% if not item.selectable %}<span class="d-block vr-muted small" id="{{ item.checkbox.id_for_label }}-unavailable">Disposed; unavailable</span>{% endif %}</td>
+          <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' item.specimen.pk %}">{{ item.specimen.accession }}</a></th>
+          <td>{{ item.specimen.get_status_display }}</td>
+          <td>{% if item.active_holds %}{{ item.active_holds|join:", " }}{% else %}<span class="vr-muted">None</span>{% endif %}</td>
+          <td class="vr-id">{{ item.row.location|default:"—" }}</td>
+          <td class="vr-nowrap"><time datetime="{{ item.row.present_from|date:'c' }}">{{ item.row.present_from|date:"Y-m-d H:i" }}</time></td>
+          <td class="vr-nowrap"><time datetime="{{ item.row.present_until|date:'c' }}">{{ item.row.present_until|date:"Y-m-d H:i" }}</time></td>
+        </tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% if not has_selectable %}<div class="alert alert-info" role="status">{% include "includes/status.html" with label="Unavailable" tone="info" plain=True %}<div>All specimens on this page are disposed. Their records are final and cannot receive holds.</div></div>{% endif %}
+    {% else %}{% if q %}{% include "includes/empty_state.html" with title="No matching affected specimens" body="Clear or change the specimen ID search to see other candidates." %}{% else %}{% include "includes/empty_state.html" with title="No affected specimens" body="No specimen was recorded in this excursion's storage unit during its period. There is nothing to hold." %}{% endif %}{% endif %}
+  </fieldset>
+  {% for legend, rows, note in form.grouped %}<fieldset class="vr-form-section"><legend>{{ legend }}</legend>{% for row in rows %}{% include "includes/field.html" with field=row.0 %}{% endfor %}</fieldset>{% endfor %}
+  {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+  <p class="vr-form-note">Holds are recorded now with your name and the excursion number in the reason. If the excursion, selected specimens or affected membership changed since review, the whole batch is refused. Review expires after one hour. No specimen quality decision is made automatically.</p>
+  <div class="vr-form-actions"><a class="btn btn-link" href="{{ back_url }}">Cancel</a>{% if has_selectable %}<button class="btn btn-primary" type="submit">Place holds</button>{% endif %}</div>
+</form>
+{% if page_obj.paginator.count %}{% include "includes/pagination.html" with page_obj=page_obj noun="affected specimens" filtered=q fixed_per_page=True %}{% endif %}
+{% endblock %}

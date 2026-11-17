@@ -1,5 +1,6 @@
 # Paid web and database services. Review and accept the estimate before deploying.
 # Keep the database name and user stable once deployed: renaming them loses the records.
+# The service and database names predate the OpenBGA Biorepository name and stay so existing instances are unchanged.
 services:
   - type: web
     name: vapor-phase

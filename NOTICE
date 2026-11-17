@@ -1,5 +1,5 @@
-Vapor Phase
-https://github.com/openbga/vapor-phase
+OpenBGA Biorepository
+https://github.com/openbga/biorepository
 
 Copyright (C) 2026 BGASoft Inc. and OpenBGA contributors.
 
@@ -8,7 +8,7 @@ GNU Affero General Public License as published by the Free Software Foundation, 
 (AGPL-3.0-only). It is distributed WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the LICENSE file for the full terms.
 
-OpenBGA, Vapor Phase and their logos are trademarks of BGASoft Inc. The licence
+OpenBGA, OpenBGA Biorepository and their logos are trademarks of BGASoft Inc. The licence
 does not grant permission to use them (AGPL-3.0 section 7(e)), except as needed to describe the
 origin of the software.
 

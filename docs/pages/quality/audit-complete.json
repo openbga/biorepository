@@ -1,0 +1,73 @@
+{
+  "id": "quality-audit-complete",
+  "routes": [
+    "quality:audit-complete"
+  ],
+  "title": "Complete audit",
+  "purpose": "Record or load what was physically observed at every position, review the observations and freeze the comparison results.",
+  "sections": [
+    {
+      "title": "Access and prerequisites",
+      "paragraphs": [
+        "Administrators, repository managers and technicians create, complete and cancel audits. Viewers read audits and their results. Accounts without an application role, including superuser accounts without a role, have no access.",
+        "The audit must still be open and its storage snapshot current. A finalized or stale audit opens with a Not available notice, disabled fields and no submission buttons. Cancel returns to the audit record. Storage and finalization are rechecked under lock when loading observations and when completing.",
+        "If storage changes or another operator finalizes the audit before your submission, the rejected values remain visible in disabled controls for review. They are not saved as a draft, and the blocked form cannot be submitted again."
+      ]
+    },
+    {
+      "title": "Snapshot and observed positions",
+      "items": [
+        {
+          "label": "Box, Snapshot location and Snapshot time",
+          "description": "Read-only identity, frozen full location and server time in repository time. Expected accession and Blocked at snapshot are context, never automatic observation input."
+        },
+        {
+          "label": "Observed contents",
+          "description": "Required for every position. Starts at Not yet observed; choose Empty explicitly or choose Accession. Leaving a position unobserved is rejected, even where inventory expects empty."
+        },
+        {
+          "label": "Observed accession",
+          "description": "Required when Accession is selected, at most 80 characters after trimming surrounding spaces. Enter the exact accession you observed, including an unknown barcode when necessary. Clear the accession when selecting Empty. The same observed accession cannot appear twice in the audit, ignoring letter case."
+        },
+        {
+          "label": "Completion reason",
+          "description": "Required, up to 4,000 characters. Retained with the completing actor and server-recorded time. Do not enter identifying information."
+        },
+        {
+          "label": "Discrepancy explanation",
+          "description": "Up to 4,000 characters, required if any position differs. Describe missing, unexpected or different contents. Empty positions that agree count as matches. Unknown accessions are retained as discrepancies."
+        }
+      ]
+    },
+    {
+      "title": "Load observations from CSV",
+      "paragraphs": [
+        "Scanner CSV (optional) accepts a normalized project interchange file for one box, encoded as UTF-8 with an optional UTF-8 BOM, at most 128 KiB (131,072 bytes). The exact header is box,position,state,accession in that order. This is a project format; native scanner output and hardware compatibility are not verified.",
+        "Include every snapshotted position exactly once, including empty positions. Each box code and position label must exactly match this audit, including letter case. Rows may be in any order. Use state empty with a blank accession, or state accession with an identifier of 1 to 80 characters and no surrounding whitespace. Unknown identifiers are accepted. Duplicate observed identifiers are rejected ignoring letter case. Blank rows, extra or missing columns, malformed CSV, control characters, unrecognized states, wrong boxes, duplicate positions and incomplete coverage are rejected; nothing is silently omitted or truncated.",
+        "Load observations validates the entire file before replacing all Observed contents and Observed accession entries in the editable grid. It preserves Completion reason and Discrepancy explanation. Review and edit the loaded values before selecting Complete audit. Loading does not finalize the audit, create an audit event or change inventory.",
+        "A rejected upload keeps the existing grid entries and completion notes. Select the file again after an error. If storage changes or another person finalizes the audit during loading, the submitted values remain visible in disabled controls and loading is blocked. Cancel a stale open audit and start a new one.",
+        "The uploaded file is not retained, and there is no saved draft. Only the observations reviewed and submitted through Complete audit become the final audit evidence. Leaving or cancelling loses unsaved loaded values. If a file is selected when Complete audit is pressed, completion is rejected: load and review it first, or clear the file selection to complete the current grid."
+      ]
+    },
+    {
+      "title": "Complete audit and Cancel",
+      "paragraphs": [
+        "Complete audit validates every position and saves all results in one transaction with its audit event. Match, missing, unexpected and mismatch counts are computed from the frozen expectations and submitted observations. It opens the immutable completed record. These are working product defaults, not repository policy. Audits record evidence only. They never change storage positions, specimen records, quantities, statuses or holds. A discrepancy needs follow-up through the ordinary inventory workflows; it is not a correction.",
+        "Observations are not saved as a draft. Cancel or leaving the form discards unsaved entries. Validation errors keep submitted values on this form; a storage change prevents saving and requires cancel/re-audit rather than retrying the old snapshot.",
+        "Any recorded movement involving this box since creation invalidates completion, even move-out-and-back or backdated movements. Moving an empty box or its ancestor also invalidates it, as do position block changes or retirement/inactive ancestry. Unrelated movement is ignored. Ordinary storage operations are never frozen by an audit.",
+        "Completed results cannot be edited. Use New audit of this box from the record to retain a linked follow-up; cancel a stale open audit first."
+      ]
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/views.py",
+    "quality/forms.py",
+    "quality/models.py",
+    "quality/services.py",
+    "quality/tests/test_audits.py",
+    "templates/quality/complete.html",
+    "quality/scanner_import.py",
+    "quality/tests/test_scanner_import.py"
+  ]
+}

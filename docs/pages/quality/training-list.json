@@ -1,0 +1,49 @@
+{
+  "id": "quality-training-list",
+  "routes": [
+    "quality:training-list"
+  ],
+  "title": "Training records",
+  "purpose": "Find staff training assignments and retained completion evidence.",
+  "sections": [
+    {
+      "title": "Access and meaning",
+      "paragraphs": [
+        "All four application staff roles can read the list, record and history. Only administrators and repository managers create assignments, edit, complete, correct or cancel. Inactive accounts and accounts without an application role, including bare superusers, have no access. Managers may record their own training; this is recordkeeping without an independent approval step.",
+        "These are working product defaults, not repository policy. Training records retain evidence and human competency assessments. The software does not certify competence, grant permissions, determine expired qualifications or block specimen work. No attachments, automatic recurrence, notifications or fixed renewal interval are provided."
+      ],
+      "items": []
+    },
+    {
+      "title": "Search, filters and table",
+      "paragraphs": [
+        "Search matches training number, topic, procedure/version reference, trainee username, first name or last name. Status offers All statuses, Assigned, Completed and Cancelled. Apply updates the complete result set. Clear all resets filters; filter chips remove individual filters. An invalid filter shows an error and no rows.",
+        "Assignment overdue means Assigned with Assignment due before today. Renewal overdue means Completed with Renewal due before today. Due in next 30 days includes today through 30 days ahead, using assignment dates for Assigned and renewal dates for Completed. Cancelled records never enter due-date queues. Dates use the repository time zone and indicate follow-up, not expired qualification.",
+        "The table shows Training record (open its detail), Status, Trainee, Topic, Procedure / version reference, Assignment due, Completed on, Renewal due and Updated. Unrecorded dates and references say Not recorded. Sortable headings change the full result set; default order is Updated newest first. Trainee sorting uses username. Page sizes are 25, 50 or 100. Column controls change local presentation only.",
+        "New training record is available to managers and administrators. With no records, the empty state explains the next step; no matches offers filter reset. Viewers and technicians read records and cannot submit changes."
+      ],
+      "items": []
+    },
+    {
+      "title": "Saving and retained history",
+      "paragraphs": [
+        "Every saved change commits the record, revision event and field audit together or saves nothing. History retains the action, actor, exact server recording timestamp, revision, reason and old and new values. Dates are shown as YYYY-MM-DD and recording times in the repository time zone. Records cannot be deleted; history cannot be rewritten.",
+        "Validation errors keep entered values. If another change was saved first, your submitted values remain visible and saving is blocked. Cancel, reopen the latest record, review its values and start again. An old form cannot overwrite the newer revision. No-change edits and corrections are rejected."
+      ],
+      "items": []
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/training_views.py",
+    "quality/training_forms.py",
+    "quality/training_lists.py",
+    "quality/training_services.py",
+    "quality/models.py",
+    "quality/tests/test_training.py",
+    "quality/templates/quality/training/list.html",
+    "quality/templates/quality/training/detail.html",
+    "quality/templates/quality/training/form.html",
+    "templates/quality/form.html"
+  ]
+}

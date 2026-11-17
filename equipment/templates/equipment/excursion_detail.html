@@ -21,6 +21,7 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
 <a class="btn btn-outline-secondary" href="{% url 'equipment:excursion-reopen' excursion.pk %}">Reopen excursion</a>
 {% endif %}
 {% if can_operate %}<a class="btn btn-outline-secondary" href="{% url 'equipment:excursion-note' excursion.pk %}">Add note</a>{% endif %}
+{% if can_operate %}<a class="btn btn-outline-secondary" href="{% url 'equipment:excursion-holds' excursion.pk %}">Place holds</a>{% endif %}
 {% if excursion.status == "open" and can_operate %}
 <a class="btn btn-primary" href="{% url 'equipment:excursion-submit' excursion.pk %}">Submit for review</a>
 {% elif excursion.status == "review" and can_manage %}

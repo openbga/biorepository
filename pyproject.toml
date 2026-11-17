@@ -1,7 +1,7 @@
 [project]
-name = "vapor-phase"
+name = "biorepository"
 version = "0.1.0"
-description = "Vapor Phase: free, open-source biorepository management"
+description = "OpenBGA Biorepository: free, open-source biorepository management"
 requires-python = ">=3.14,<3.15"
 license = "AGPL-3.0-only"
 readme = "README.md"
@@ -17,9 +17,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/openbga/vapor-phase"
-Documentation = "https://github.com/openbga/vapor-phase#documentation"
-Issues = "https://github.com/openbga/vapor-phase/issues"
+Homepage = "https://github.com/openbga/biorepository"
+Documentation = "https://github.com/openbga/biorepository#documentation"
+Issues = "https://github.com/openbga/biorepository/issues"
 
 [dependency-groups]
 dev = ["pytest>=9,<10", "pytest-django>=4.14,<5", "ruff>=0.17.4,<0.18"]
@@ -37,6 +37,7 @@ testpaths = [
     "specimens/tests",
     "equipment/tests",
     "distribution/tests",
+    "quality/tests",
 ]
 
 [tool.ruff]

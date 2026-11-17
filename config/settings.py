@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "specimens",
     "equipment",
     "distribution",
+    "quality",
 ]
 MIDDLEWARE = [
     "core.security_headers.SecurityHeadersMiddleware",
@@ -188,6 +189,6 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 # AGPL-3.0 section 13: every page links users to the corresponding source. Deployments running
 # modified code must point this at their own published source.
-SOURCE_CODE_URL = os.environ.get("SOURCE_CODE_URL", "https://github.com/openbga/vapor-phase")
+SOURCE_CODE_URL = os.environ.get("SOURCE_CODE_URL", "https://github.com/openbga/biorepository")
 
 from config.logging import LOGGING  # noqa: E402,F401

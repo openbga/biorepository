@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="The Vapor Phase roadmap: the milestones of the open-source biorepository management system, what is built and what follows it.">
+  <meta name="description" content="The OpenBGA Biorepository roadmap: the milestones of the open-source biorepository management system, what is built and what follows it.">
   <meta name="theme-color" content="#e9edf3">
-  <title>Roadmap · Vapor Phase</title>
-  <link rel="canonical" href="https://openbga.github.io/vapor-phase/roadmap/">
+  <title>Roadmap · OpenBGA Biorepository</title>
+  <link rel="canonical" href="https://openbga.github.io/biorepository/roadmap/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Vapor Phase">
-  <meta property="og:title" content="Vapor Phase roadmap: what is built and what follows">
+  <meta property="og:site_name" content="OpenBGA Biorepository">
+  <meta property="og:title" content="OpenBGA Biorepository roadmap: what is built and what follows">
   <meta property="og:description" content="The milestones of the open-source biorepository management system.">
-  <meta property="og:url" content="https://openbga.github.io/vapor-phase/roadmap/">
-  <meta property="og:image" content="https://openbga.github.io/vapor-phase/assets/og.png">
+  <meta property="og:url" content="https://openbga.github.io/biorepository/roadmap/">
+  <meta property="og:image" content="https://openbga.github.io/biorepository/assets/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="The Vapor Phase mark, a storage tank with rising vapor, beside the name Vapor Phase and the line: every specimen, every move, on record.">
+  <meta property="og:image:alt" content="The OpenBGA Biorepository mark, a storage tank with rising vapor, beside the name OpenBGA Biorepository and the line: every specimen, every move, on record.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="../assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="../assets/site.css">
@@ -25,7 +25,7 @@
   <header class="site-header">
     <a class="brand" href="../">
       <img src="../assets/mark.svg" alt="" width="40" height="40">
-      <span class="wordmark"><span class="wordmark-name">Vapor Phase</span> <span class="wordmark-parent">An OpenBGA project</span></span>
+      <span class="wordmark"><span class="wordmark-name">OpenBGA Biorepository</span></span>
     </a>
     <nav aria-label="Main navigation">
       <a href="../">Overview</a>
@@ -42,8 +42,8 @@
         <div class="hero-inner">
           <h1 id="roadmap-title">What is built.<br>What follows.</h1>
           <div class="hero-description">
-            <p>Vapor Phase is developed in the open. This roadmap lists what is built and what follows it.</p>
-            <p>It carries no dates. Milestones 0 to 4 are built, from storage to the distribution of specimens to other institutions; the order after that can change when repositories say otherwise.</p>
+            <p>OpenBGA Biorepository is developed in the open. This roadmap lists what is built and what follows it.</p>
+            <p>It carries no dates. Milestones 0 to 5 are built, from storage to the distribution of specimens to other institutions; the order after that can change when repositories say otherwise.</p>
             <p class="project-status">Reviewed November 2026 · In development</p>
           </div>
         </div>
@@ -57,13 +57,14 @@
               <li>2 · Specimens</li>
               <li>3 · Throughput</li>
               <li>4 · Governance and distribution</li>
+              <li>5 · Equipment and quality</li>
             </ul>
           </div>
           <div>
             <a class="status status-next" href="#next">Next</a>
-            <p>In progress</p>
+            <p>Priorities to choose</p>
             <ul>
-              <li>5 · Equipment and quality (equipment records built)</li>
+              <li>No further milestone committed</li>
             </ul>
           </div>
           <div>
@@ -81,6 +82,7 @@
               <li>Standards exports</li>
               <li>Electronic signatures</li>
               <li>Withdrawal escalation</li>
+              <li>Spatial storage maps</li>
             </ul>
           </div>
         </nav>
@@ -94,10 +96,10 @@
             <p class="status status-built">Now</p>
             <h2 id="built-title">The journey<br>works.</h2>
           </div>
-          <p>Milestones 0 to 4 make the complete path work end to end: from a storage unit to a specimen that was disposed of or sent to another institution, with every step in custody history and the audit trail. Use synthetic data only while the project is in development.</p>
+          <p>Milestones 0 to 5 make the complete path work end to end: from a storage unit to a specimen that was disposed of or sent to another institution, with every step in custody history and the audit trail. Equipment and quality records cover excursions, inventory audits, deviations and staff training. Use synthetic data only while the project is in development.</p>
         </div>
         <table>
-          <caption>Milestones 0 to 4: what is built</caption>
+          <caption>Milestones 0 to 5: what is built</caption>
           <thead><tr><th scope="col">Milestone</th><th scope="col">What it brings</th></tr></thead>
           <tbody>
             <tr><th scope="row">0 · Platform</th><td>Sign-in with optional two-factor authentication, announcements on the sign-in page, four staff roles checked on the server, the shell and theme in light and dark, an attributed append-only audit trail, help for every page, tests, a container image and a deployment description.</td></tr>
@@ -105,6 +107,7 @@
             <tr><th scope="row">2 · Specimens</th><td>Registration with an opaque identifier, aliquots and derivatives, placement, check-out and check-in with computed time out of storage, observed thaws, holds, and disposal with a second person's approval.</td></tr>
             <tr><th scope="row">3 · Throughput</th><td>Labels with barcodes and scan-to-lookup, CSV import with a validation pass, filters and exports, a full synthetic demo and a browser journey test.</td></tr>
             <tr><th scope="row">4 · Governance and distribution</th><td>Studies that govern collections, consent records by scope with withdrawal, requests decided by a second person, allocation checked against the records, pick lists, shipments with the shipper's declarations and manifests, receipt confirmation, returns held for review, agreements, and a distributed status with time away kept apart from time out of storage. It records what the shipper declares and what the repository's records say; it never classifies a shipment or decides consent, and nothing is emailed.</td></tr>
+            <tr id="equipment"><th scope="row">5 · Equipment and quality</th><td>Equipment records, service events and due dates, LN2 level and fill logs, temperature readings and reviewed excursions with explicitly selected manual holds; box inventory audits with manual or normalized scanner CSV observations; reviewed deviations; and staff training assignments with completion and assessment evidence, explicit due dates and retained corrections. The repository defines its limits, training requirements and renewal schedule.</td></tr>
           </tbody>
         </table>
       </div>
@@ -115,19 +118,10 @@
         <div class="section-intro">
           <div>
             <p class="status status-next">Next</p>
-            <h2 id="next-title">Equipment<br>and quality.</h2>
+            <h2 id="next-title">Set the<br>next priority.</h2>
           </div>
-          <p>Milestone 5 has started: equipment records and excursions are built. The rest follows, in this order unless repositories ask otherwise.</p>
+          <p>Milestones 0 to 5 are built. No further milestone is committed: the later and exploring items below need a repository that wants them and can test them. Physical scanner qualification, training requirements and real-world validation remain the repository's responsibility.</p>
         </div>
-        <ul class="buckets">
-          <li id="equipment">
-            <h3>Equipment and quality</h3>
-            <ul>
-              <li>Built: equipment records, service events and due dates, the liquid nitrogen level and fill log, temperature readings and reviewed excursions</li>
-              <li>To come: inventory audits, rack-scanner import, deviations and training, and holds placed from an excursion</li>
-            </ul>
-          </li>
-        </ul>
       </div>
     </section>
 
@@ -170,6 +164,7 @@
           <div><dt>Standards exports</dt><dd>Exports in published specimen description formats such as SPREC and MIABIS.</dd></div>
           <div><dt>Electronic signatures</dt><dd>Signed approvals, deferred until the audit trail and roles are proven in use.</dd></div>
           <div><dt>Withdrawal escalation</dt><dd>Turning a withdrawal that stopped use into one that asks for destruction, without a second record; today a manager reinstates the consent and records the new withdrawal.</dd></div>
+          <div><dt>Spatial storage maps</dt><dd>Future research into visual layouts of buildings, floors and rooms, with cabinets, freezers and tanks placed in their physical context. Drill down to racks, boxes and positions to locate a specimen, while preserving inventory and custody controls. Research optional building and floor records versus labels or a flexible hierarchy, with a migration that retains existing identifiers and history. Not implemented or assigned a delivery priority or date.</dd></div>
         </dl>
       </div>
     </section>
@@ -180,11 +175,11 @@
           <h2 id="contribute-title">Help set<br>the order.</h2>
           <div>
             <p>Tell the project what your biorepository needs. Feedback from repositories moves items on this page.</p>
-            <p>Vapor Phase supports a repository's own records and quality system. It does not certify compliance or accreditation, and nothing on this page is a commitment to a date.</p>
+            <p>OpenBGA Biorepository supports a repository's own records and quality system. It does not certify compliance or accreditation, and nothing on this page is a commitment to a date.</p>
             <p class="links">
-              <a class="text-link" href="https://github.com/openbga/vapor-phase/issues">Open an issue</a>
-              <a class="text-link" href="https://github.com/openbga/vapor-phase/blob/main/CONTRIBUTING.md">Contribute</a>
-              <a class="text-link" href="https://github.com/openbga/vapor-phase/blob/main/docs/product.md">Read the product scope</a>
+              <a class="text-link" href="https://github.com/openbga/biorepository/issues">Open an issue</a>
+              <a class="text-link" href="https://github.com/openbga/biorepository/blob/main/CONTRIBUTING.md">Contribute</a>
+              <a class="text-link" href="https://github.com/openbga/biorepository/blob/main/docs/product.md">Read the product scope</a>
               <a class="text-link" href="../">Back to the overview</a>
             </p>
           </div>
@@ -194,9 +189,9 @@
   </main>
 
   <footer class="site-footer">
-    <span>Vapor Phase</span>
-    <a href="https://github.com/openbga/vapor-phase">Source code</a>
-    <a href="https://github.com/openbga/vapor-phase/blob/main/LICENSE">AGPL-3.0-only</a>
+    <span>OpenBGA Biorepository</span>
+    <a href="https://github.com/openbga/biorepository">Source code</a>
+    <a href="https://github.com/openbga/biorepository/blob/main/LICENSE">AGPL-3.0-only</a>
   </footer>
 </body>
 </html>

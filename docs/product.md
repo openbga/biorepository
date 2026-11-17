@@ -1,6 +1,6 @@
-# Vapor Phase: product scope
+# OpenBGA Biorepository: product scope
 
-Vapor Phase is a free, open-source biorepository management system: where every specimen is, what
+OpenBGA Biorepository is a free, open-source biorepository management system: where every specimen is, what
 it is, who handled it and what happened to it, from registration through storage, custody,
 disposal and distribution to another institution. This document says what the product must do,
 why, and in what order. It does not prescribe architecture; [workflows](workflows.md) describes
@@ -51,12 +51,17 @@ application's page help and in [workflows](workflows.md).
 | Manifest contents | Accession, type, container, quantity and unit, study, frozen at dispatch. Participant codes only when chosen for the shipment and the agreement's data level is coded or limited; collection dates never |
 | Returns from a shipment | Accepted only from the original shipment; the specimen comes back under a use hold until a manager reviews it and releases or keeps the hold |
 | Excursion review | A technician, manager or administrator opens and submits an excursion; a manager or administrator other than the person who submitted it closes or returns it |
+| Holds from excursions | Operators explicitly select up to 200 affected specimens and a disposal, use or all-use hold, with a reason. The affected list is computed while open or awaiting review and frozen at closure. Holds keep the excursion reference in their reason and are released individually by a manager from the specimen record. Closing or reopening an excursion never places or releases holds automatically. This is a working product default |
+| Inventory audits | One active box of at most 400 positions per audit. Operators submit all observations together; each position is explicitly empty or has an observed identifier. Unknown identifiers remain discrepancies. Completion requires an explanation for discrepancies and an unchanged storage snapshot. Audits never change inventory; corrections use a new audit linked to the previous one. These are working defaults, not repository policy |
+| Scanner CSV observations | UTF-8 CSV (optional BOM), at most 128 KiB, with `box,position,state,accession` columns and exactly one row per snapshotted position. Each row names the same box and an exact position label; state is `empty` or `accession`. Load for review before completing the audit. No device-specific formats or scanner qualification are implied. The upload is not retained; only the reviewed final observations are saved. This interchange format is a working product default |
+| Deviations | Operators report and update an open deviation, with optional excursion and inventory-audit links. Submission requires investigation, corrective action and effectiveness narratives; explain an unknown cause or why action is unnecessary. A manager other than the creator and latest submitter closes or returns the report with a reason; managers may reopen closed reports. Every change retains prior values and attribution. Text-only evidence, no automatic holds, suitability decisions, deadlines or notifications. These are working product defaults |
+| Training | Managers and administrators assign training to active staff accounts and record completion, trainer/provider and evidence. Optional competency assessments and renewal dates are staff declarations. All staff read the register. Corrections and cancellation require a reason and retain earlier evidence; a new assignment records renewal. No fixed curriculum, renewal interval, qualification claim, independent approval or permission gate. These are working product defaults |
 | Labels | Code 128, one specimen ID per label, nothing else printed. Stock 50.8 × 25.4 mm unless the deployment sets `SPECIMEN_LABEL_STOCK`; not yet read with a physical scanner |
 | Operational bounds | 1,000 rows and 2 MiB per import, 200 labels per print, 10,000 rows per export, 1 to 50 children per split, 200 specimens per allocation, pick or shipment, 10 MiB per attachment. Product limits, not standards |
 
 ## What this product claims
 
-Vapor Phase supports a repository's own records and quality system. It does not make a repository
+OpenBGA Biorepository supports a repository's own records and quality system. It does not make a repository
 compliant, accredited or certified, and it does not classify shipments, decide consent or judge a
 request's merit. Do not write UI copy, README text or reports that claim compliance. Say
 "supports" and name the record or control.
@@ -69,7 +74,8 @@ in code.
 ## The journey
 
 The product was built one complete path at a time, each working end to end before breadth was
-added. The synthetic demonstration (`seed_demo --full`) walks all of it.
+added. The synthetic demonstration (`seed_demo --full`) walks the journey below. Staff can
+create inventory audits for its seeded boxes.
 
 ```
 storage unit (LN2 vapor-phase tank or freezer) -> racks -> boxes with a grid -> positions
@@ -108,16 +114,26 @@ Acceptance outcomes:
     old value, new value, reason. Controlled fields require a reason to change.
 13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,
     in-application page help, light and dark themes and the audit trail work as they do in
-    [Smart Roots LIMS](https://github.com/openbga/smart-roots-lims), whose platform layer Vapor
-    Phase shares.
+    [OpenBGA Environmental LIMS](https://github.com/openbga/environmental-lims), whose platform layer OpenBGA Biorepository shares.
 14. Equipment (tanks, freezers, monitors, supply dewars) is tied to its storage unit, with service
     events and the due dates the repository enters, an LN2 level and fill log, temperature
     readings entered or imported, and excursions reviewed by a second person that capture the
-    specimens in the unit when closed.
+    specimens in the unit when closed. Operators can place manual holds on selected affected
+    specimens, with an attributed reason and excursion history.
 15. A study governs collections; consent records and withdrawals are recorded per coded participant
     and study; a request is decided by a second person; allocation, picking, packing and dispatch
     each pass one gate that quotes the recorded fact behind any refusal; the manifest is frozen at
     dispatch; receipt and returns are recorded, and returned material is held for review.
+16. Staff can audit a box against a frozen expected inventory, record observed contents and
+    discrepancies, and retain completed or cancelled audits without changing custody or stock.
+    Observations can be entered manually or loaded from the normalized scanner CSV format for
+    one box, then reviewed before completion.
+17. Staff can report a deviation, record investigation, corrective action and effectiveness
+    evidence, and submit it for a separate manager's review. Corrections, returns and reopening
+    keep the earlier record and reason without changing inventory or holds.
+18. Managers assign staff training with an optional deadline, record completion and assessment
+    evidence, and retain corrections and cancellation. Staff can find assignments and renewal
+    dates that need attention without changing operational permissions.
 
 The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
 like "P-000123".
@@ -153,6 +169,8 @@ rule" means no source read states it; it is a design choice.
 | Excursions | Storage deviations and out-of-range events are recorded, documented and available for reporting. No source read requires a second person to sign off an excursion; supervisory or QA review of deviations is the closest, so the second-person close is a project default | NCI C.2.8.1, C.2.8.2, C.3.3; ISBER J3.5 |
 | LN2 log | LN2 level, consumption and storage temperature are critical parameters; record the level before and after a manual fill; consumption is derived from the levels | ISBER H2.2 |
 | Maintenance and calibration | Maintenance records carry description, date and who did it; calibration records name the reference device; intervals are set by the repository, so the product enforces none | ISBER H12.1, D3.6.2.2 |
+| Training | Retain staff training and competency assessment evidence; the repository defines its curriculum, assessment and schedule | NCI C.1.2 and C.3.2 recommend periodic training, assessment documentation and training records; this workflow is a project choice |
+| Deviations | Retain deviation and corrective-action records as part of the repository's quality system. The software records staff assessments; its second-person review and required narratives are product choices | NCI C.3.1–C.3.2 recommends QMS corrective actions and deviation/CAPA records; it does not prescribe this workflow |
 
 ### Why this shapes the design
 
@@ -176,13 +194,48 @@ rule" means no source read states it; it is a design choice.
 | 2. Specimens | Registration, aliquots and derivatives, placement, check-out and check-in, freeze-thaw, holds, disposal with approval, custody history | Built |
 | 3. Throughput | Labels, scan-to-lookup, CSV import, search, exports, full synthetic demo, browser journey | Built |
 | 4. Governance and distribution | Studies and collections, consent records and withdrawal, requests with approval, allocation and pick lists, shipments and manifests, receipt, returns, agreements | Built |
-| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings and reviewed excursions | Built |
-| | Inventory audits, rack-scanner import, deviations and training, holds placed from an excursion | Next |
+| 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review; staff training assignments, completion and assessment evidence, explicit due dates and retained corrections | Built |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
-| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent | Not committed |
+| Exploring | Standards exports (SPREC, MIABIS), electronic signatures, escalating a withdrawal without reinstating consent, spatial storage maps | Not committed |
+
+No further milestone is currently committed. Later and exploring items need a demonstrated
+repository need or the dependencies described below.
 
 The public [roadmap](../website/about/roadmap/index.html) carries the same order without dates.
 Change it in the same increment when an area ships or the order changes.
+
+### Future research: spatial storage maps
+
+Explore a visual way to find stored material through buildings, floors and rooms, with cabinets,
+freezers and tanks placed in their physical layout. Drill down to the existing internal storage
+structure, boxes and positions, and locate a specimen in that context. This is an eventual
+research direction, not a prioritized milestone or a delivery-date commitment.
+
+Research how spatial layouts should relate to the existing storage records before choosing a
+data model or interaction design. The current model has separate sites, rooms and storage units;
+internal shelves, racks, towers and canisters use a typed hierarchy, followed by boxes and
+positions. Buildings, floors and spatial coordinates are not implemented. A future map should
+complement, not replace, the existing inventory, authorization and custody-history controls.
+
+Research notes (2026-11-16): [ISBER Best Practices, fifth edition, I3.1, p. 133](https://cdn.ymaws.com/www.isber.org/resource/resmgr/best_practices/isberbestpracticeseng-5thedi.pdf)
+recommends unambiguous physical storage locations, including building context, and retained
+movement history. It does not prescribe separate building/floor tables or a map interface.
+
+- **Working preference to evaluate:** optional structured buildings and floors above rooms, when
+  multiple buildings or repeated room names make them useful. Keep simple single-building sites
+  usable without invented floor/building records. Treat map placement as optional presentation
+  data, separate from the authoritative storage and specimen relationships.
+- **Alternatives:** room-level building/floor labels are a smaller initial change but weaker for
+  consistent naming and shared floor plans. A general typed location tree accommodates irregular
+  facilities but adds parent-type, cycle, same-site and move validation. Compare these against
+  explicit building/floor records before committing to a schema; do not generalize the whole
+  specimen-storage model merely to draw a map.
+- **Migration questions:** preserve existing room, unit, box, position and specimen IDs and all
+  historical events; introduce optional associations before verified backfill. Do not infer a
+  building or floor from a room code. Review room-code uniqueness (currently per site),
+  cross-site consistency, imports, exports, breadcrumbs and existing links. Distinguish correcting
+  a map or room label from a real physical move, which must retain its reason and attribution.
+  Plan compatibility and rollback before making associations required.
 
 ### Decisions a repository makes before real use
 
@@ -197,14 +250,21 @@ for its intended use.
 
 | Date | Decision | Status |
 |---|---|---|
-| 2026-11-12 | Build Vapor Phase on the Smart Roots LIMS platform and pattern, sharing its platform layer so fixes can move between the two | Confirmed |
-| 2026-11-12 | License: AGPL-3.0-only, as Smart Roots LIMS, with the same LICENSE, NOTICE and footer "Source code" arrangement | Confirmed |
+| 2026-11-12 | Build OpenBGA Biorepository on the OpenBGA Environmental LIMS platform and pattern, sharing its platform layer so fixes can move between the two | Confirmed |
+| 2026-11-12 | License: AGPL-3.0-only, as OpenBGA Environmental LIMS, with the same LICENSE, NOTICE and footer "Source code" arrangement | Confirmed |
 | 2026-11-12 | Coded participants only; specimen IDs in `VP-000001` style; disposal approval is a permission granted per person | Working default |
 | 2026-11-12 | Distribution defaults: structured consent scope categories, current record governs, the three withdrawal kinds, request decisions by a per-person permission, an agreement for every shipment, the manifest contents above, returns held for review, no override of a blocked step | Working default |
 | 2026-11-12 | Equipment defaults: the repository enters every limit, low level and due date; second-person excursion close | Working default |
+| 2026-11-15 | Deviation defaults: open, awaiting review and closed states; investigation/action/effectiveness narratives before submission; review by a manager other than the creator and latest submitter; retained history on return and reopening | Working default |
+| 2026-11-15 | Training defaults: manager-managed assignments and evidence, optional competency assessment and dates, staff read access, retained corrections/cancellation; no automatic qualification or access gates | Working default |
 
 ## Evidence and limits
 
+- Rechecked NCI C.1.2 and C.3.2 directly on 2026-11-15 for training records. These recommend
+  periodic training and documentation of training and competency assessments. Assignment states,
+  manager access and optional renewal dates are product choices, not mandatory intervals.
+- Rechecked NCI C.3.1–C.3.2 directly on 2026-11-15 for the deviation register. These are voluntary
+  quality-management recommendations; the review sequence and required fields above are product choices.
 - Read directly on 2026-11-12: NCI Best Practices for Biospecimen Resources, 4th edition (January
   2026), the sections cited above; ISBER Best Practices: Recommendations for Repositories, 5th
   edition (2023), the sections cited above; IARC Technical Publication No. 44 (2017), glossary and

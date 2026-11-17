@@ -1,14 +1,38 @@
 """The equipment demo seed runs through the services after the storage and specimen seeds, once."""
 
+from datetime import datetime, timedelta
+
 import pytest
 from django.core.management import call_command
+from django.utils import timezone
 
 from accounts.models import User
 from equipment import queries
 from equipment.models import AffectedSpecimen, Equipment, Excursion, TemperatureReading
-from equipment.seed import seed_equipment
+from equipment.seed import seed_equipment, seed_full_equipment
 
 pytestmark = pytest.mark.django_db
+
+
+@pytest.mark.parametrize("instant", ["2026-11-15T04:00:00+00:00", "2026-03-15T04:30:00+00:00"])
+def test_full_seed_uses_one_reading_per_local_day_across_dst(people, monkeypatch, instant):
+    now = datetime.fromisoformat(instant)
+    monkeypatch.setattr(timezone, "now", lambda: now)
+    with timezone.override("America/New_York"):
+        assert seed_full_equipment(
+            manager=people["manager"], technician=people["technician"], admin=people["admin"]
+        )
+        readings = TemperatureReading.objects.filter(
+            equipment__code="TANK-VP-02", batch__filename="monthly-logger-export.csv"
+        )
+        local_times = [
+            timezone.localtime(value) for value in readings.values_list("measured_at", flat=True)
+        ]
+        assert len(local_times) == 30
+        assert all(value.hour == 8 and value.minute == 0 for value in local_times)
+        assert {value.date() for value in local_times} == {
+            timezone.localdate(now) - timedelta(days=day) for day in range(1, 31)
+        }
 
 
 def test_equipment_seed_after_the_demo_seed_is_complete_and_idempotent(monkeypatch):

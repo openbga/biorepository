@@ -1,0 +1,51 @@
+{
+  "id": "quality-audit-create",
+  "routes": [
+    "quality:audit-create"
+  ],
+  "title": "New inventory audit",
+  "purpose": "Freeze the expected contents and location of one box before checking its positions.",
+  "sections": [
+    {
+      "title": "Who can use it",
+      "paragraphs": [
+        "Administrators, repository managers and technicians create, complete and cancel audits. Viewers read audits and their results. Accounts without an application role, including superuser accounts without a role, have no access.",
+        "These are working product defaults, not repository policy. Audits record evidence only. They never change storage positions, specimen records, quantities, statuses or holds. A discrepancy needs follow-up through the ordinary inventory workflows; it is not a correction."
+      ]
+    },
+    {
+      "title": "Fields",
+      "items": [
+        {
+          "label": "Box",
+          "description": "Required. Choose one active box in active site, room, unit and node ancestry. The server checks the current state again when creating the snapshot. This workflow supports 1 to 400 positions per audit, a working product bound."
+        },
+        {
+          "label": "Reason for the audit",
+          "description": "Required, up to 4,000 characters. State why this check is being made. It is retained with the creator and server-recorded time. Do not enter identifying information."
+        },
+        {
+          "label": "Earlier audit",
+          "description": "Optional. Choose a finalized audit of this same box to link a correction or repeat check. An open audit or another box is rejected. Coming from New audit of this box preselects both fields."
+        }
+      ]
+    },
+    {
+      "title": "Create audit and Cancel",
+      "paragraphs": [
+        "Create audit records the current box code, full location and slot, each position identity and coordinates, label, blocked state and reason, and the accession expected there or explicit empty. This snapshot is immutable. Snapshot creation is serialized with storage changes, then ordinary operations continue freely; an audit does not reserve or freeze the box.",
+        "A successful submission opens the audit record. Cancel leaves the form and returns to Inventory audits without creating a record. Required fields and validation errors keep the entered form values.",
+        "Observations are entered manually or loaded from a normalized one-box CSV later through Complete audit and saved together only at completion. There is no partial observation save or automatic fill from expected contents."
+      ]
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/views.py",
+    "quality/forms.py",
+    "quality/models.py",
+    "quality/services.py",
+    "quality/tests/test_audits.py",
+    "templates/quality/form.html"
+  ]
+}

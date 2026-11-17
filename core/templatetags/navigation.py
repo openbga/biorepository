@@ -46,6 +46,46 @@ class TabSet:
 
 STAFF_NAV = (
     NavItem("dashboard", "Dashboard", "dashboard", "house"),
+    NavItem(
+        "quality-deviations",
+        "Deviations",
+        "quality:deviation-list",
+        "exclamation-octagon",
+        (
+            "quality:deviation-create",
+            "quality:deviation-detail",
+            "quality:deviation-edit",
+            "quality:deviation-submit",
+            "quality:deviation-review",
+            "quality:deviation-reopen",
+        ),
+    ),
+    NavItem(
+        "quality-audits",
+        "Inventory audits",
+        "quality:audit-list",
+        "clipboard-check",
+        (
+            "quality:audit-create",
+            "quality:audit-detail",
+            "quality:audit-complete",
+            "quality:audit-cancel",
+        ),
+    ),
+    NavItem(
+        "quality-training",
+        "Training records",
+        "quality:training-list",
+        "journal-text",
+        (
+            "quality:training-create",
+            "quality:training-detail",
+            "quality:training-edit",
+            "quality:training-complete",
+            "quality:training-correct",
+            "quality:training-cancel",
+        ),
+    ),
     # Storage
     NavItem("storage-overview", "Storage overview", "storage:overview", "layers"),
     NavItem(
@@ -181,6 +221,7 @@ STAFF_NAV = (
             "equipment:excursion-review",
             "equipment:excursion-reopen",
             "equipment:excursion-note",
+            "equipment:excursion-holds",
         ),
     ),
     # Distribution

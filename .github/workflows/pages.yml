@@ -1,7 +1,8 @@
 name: Publish presentation
 
 # Publishes the static product presentation (website/about) to GitHub Pages at
-# https://openbga.github.io/vapor-phase/. The application serves the same files at /about/.
+# https://openbga.github.io/biorepository/. The application serves the same files at /about/;
+# only the published copy gets the analytics snippet.
 on:
   push:
     branches: [main]
@@ -31,6 +32,28 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # Analytics belong to the published site only. The application serves the same files at
+      # /about/ under a policy that forbids inline script, so the snippet is added here.
+      - name: Add Plausible analytics to every page
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          snippet = """<!-- Privacy-friendly analytics by Plausible -->
+          <script async src="https://plausible.io/js/pa-As5SrVpCQgama4d7wsW_9.js"></script>
+          <script>
+            window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+            plausible.init()
+          </script>
+          """
+          pages = sorted(Path("website/about").rglob("*.html"))
+          assert pages, "no pages to publish"
+          for page in pages:
+              html = page.read_text()
+              assert html.count("</head>") == 1 and "plausible" not in html, page
+              page.write_text(html.replace("</head>", snippet + "</head>"))
+              print(f"Added analytics to {page}")
+          PY
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:

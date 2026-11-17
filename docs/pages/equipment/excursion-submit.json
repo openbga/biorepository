@@ -33,6 +33,12 @@
       "paragraphs": [
         "Submit for review changes the status to Awaiting review, records you as the submitter and adds a timeline entry. While it is awaiting review it cannot be edited. A manager or administrator other than you reviews and closes it; a manager can also return it to you for more work."
       ]
+    },
+    {
+      "title": "Manual holds",
+      "paragraphs": [
+        "Holds placed from an excursion remain ordinary manual holds on the selected specimens. Submitting, closing, returning or reopening an excursion never releases them. A manager or administrator reviews and releases each from its specimen record with a reason."
+      ]
     }
   ],
   "sources": [

@@ -149,6 +149,7 @@ def test_contrast_on_list_empty_state_and_form_dialog_in_both_themes(page: Page,
         page.get_by_role("link", name="New announcement", exact=True).first.click()
         expect(page.locator("#vr-form-dialog .modal-title")).to_have_text("New announcement")
         expect(page.locator("#vr-form-dialog")).to_be_visible()
+        expect(page.locator("#vr-form-content")).to_have_attribute("aria-busy", "false")
         samples = theme_samples(page)
         failures.extend(contrast_failures(samples))
         assert "dialog title" in samples["pairs"]

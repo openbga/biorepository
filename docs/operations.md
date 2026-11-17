@@ -8,8 +8,8 @@ shell or secret manager, never in Git, tickets or logs.
 ## What is protected
 
 All state is in PostgreSQL: accounts, the repository record, announcements, the audit trail,
-storage, specimens, custody, equipment and distribution records. Uploaded files (equipment and
-agreement attachments) are stored once in the `attachment` table as a binary column with their
+storage, specimens, custody, equipment, distribution records, inventory audits, deviations and
+training records. Uploaded files (equipment and agreement attachments) are stored once in the `attachment` table as a binary column with their
 SHA-256 hash and size, so there is no file storage to back up separately. The container
 filesystem is disposable.
 
@@ -57,7 +57,7 @@ instead, which yields a `.dir.tar.gz` directory-format archive for `pg_restore`.
 
 ```sh
 export SOURCE_URL='postgresql://USER:PASSWORD@HOST/vapor'   # placeholder
-pg_dump --format=directory --jobs=4 --no-owner --file=vapor-phase-$(date -u +%Y%m%dT%H%MZ).dump "$SOURCE_URL"
+pg_dump --format=directory --jobs=4 --no-owner --file=biorepository-$(date -u +%Y%m%dT%H%MZ).dump "$SOURCE_URL"
 ```
 
 Encrypt and copy the result off-provider, then record its date and size. Also capture a
@@ -72,7 +72,7 @@ that points only at it.
 ```sh
 export TARGET_URL='postgresql://vapor:vapor@127.0.0.1:55434/vapor_restore_check'   # placeholder
 psql 'postgresql://vapor:vapor@127.0.0.1:55434/postgres' -c 'CREATE DATABASE vapor_restore_check'
-pg_restore --exit-on-error --no-owner --no-privileges --jobs=4 --dbname="$TARGET_URL" vapor-phase-YYYYMMDDTHHMMZ.dump
+pg_restore --exit-on-error --no-owner --no-privileges --jobs=4 --dbname="$TARGET_URL" biorepository-YYYYMMDDTHHMMZ.dump
 ```
 
 - `pg_restore` targets an empty database; `--clean` drops objects first and is not needed here.
@@ -262,9 +262,9 @@ It asks for confirmation unless `--noinput` is given, and refuses to run unless 
 The erase and the seed are one transaction. Requests that arrive meanwhile wait, usually a
 minute or so, then see the fresh demonstration; everyone is signed out. If the seed fails, the
 transaction rolls back and nothing changes. The erase empties every application table, including
-accounts, sessions, audit history, specimens, custody, equipment and distribution
-history, and restarts identifiers such as specimen numbers. The database triggers that keep history rows from being updated or
-deleted do not apply to this whole-table erase; that is deliberate and is the reason for the
+accounts, sessions, audit history, specimens, custody, equipment, distribution
+history, inventory audits, deviations and training records, and restarts identifiers such as
+specimen numbers. The database triggers that keep history rows from being updated or deleted do not apply to this whole-table erase; that is deliberate and is the reason for the
 checks above.
 
 Signed-in visitors can attach files to equipment and distribution records (PDF, PNG, JPEG, TXT

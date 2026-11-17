@@ -31,6 +31,7 @@ urlpatterns = [
     path("excursions/<int:pk>/review/", actions.excursion_review, name="excursion-review"),
     path("excursions/<int:pk>/reopen/", actions.excursion_reopen, name="excursion-reopen"),
     path("excursions/<int:pk>/note/", actions.excursion_note, name="excursion-note"),
+    path("excursions/<int:pk>/holds/", views.excursion_holds, name="excursion-holds"),
     path("attachment/<str:kind>/<uuid:pk>/", views.attachment, name="attachment"),
     path("export/<str:kind>/", views.export, name="export"),
 ]

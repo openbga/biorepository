@@ -143,6 +143,10 @@
       if (isBusy()) {
         return;
       }
+      // Selection totals must use restored eligibility, not temporary loading disables.
+      if (window.vrInitSelections) {
+        window.vrInitSelections(content);
+      }
       if (window.vrInitTestPickers) {
         window.vrInitTestPickers(content);
       }

@@ -1,0 +1,41 @@
+{
+  "id": "quality-audit-cancel",
+  "routes": [
+    "quality:audit-cancel"
+  ],
+  "title": "Cancel audit",
+  "purpose": "End an unfinished audit while retaining the original box snapshot.",
+  "sections": [
+    {
+      "title": "Access and prerequisites",
+      "paragraphs": [
+        "Administrators, repository managers and technicians create, complete and cancel audits. Viewers read audits and their results. Accounts without an application role, including superuser accounts without a role, have no access.",
+        "Only an open audit can be cancelled. A stale audit may still be cancelled so that a new snapshot can be taken. Already finalized audits show Not available and have no submit button.",
+        "If another operator finalizes the audit before your submission, the rejected reason remains visible in a disabled control for review. It is not saved as a draft, and the blocked form cannot be submitted again."
+      ]
+    },
+    {
+      "title": "Reason for cancellation",
+      "paragraphs": [
+        "Required, up to 4,000 characters. Explain why the audit is being ended, for example storage changed during observation. The reason is retained with the cancelling actor and server-recorded time. Do not enter identifying information."
+      ]
+    },
+    {
+      "title": "Cancel audit and Cancel",
+      "paragraphs": [
+        "Cancel audit adds one immutable cancellation and audit event together, then opens the audit record. Its snapshot stays available; no observation results are retained because this workflow has no partial saves. These are working product defaults, not repository policy. Audits record evidence only. They never change storage positions, specimen records, quantities, statuses or holds. A discrepancy needs follow-up through the ordinary inventory workflows; it is not a correction.",
+        "Cancel leaves this form and returns to the audit record without changing it. Validation errors retain the entered reason. If another person completes or cancels the audit first, this submission is rejected.",
+        "A cancelled audit cannot be reopened or changed. New audit of this box creates a new snapshot linked to the earlier audit."
+      ]
+    }
+  ],
+  "sources": [
+    "quality/urls.py",
+    "quality/views.py",
+    "quality/forms.py",
+    "quality/models.py",
+    "quality/services.py",
+    "quality/tests/test_audits.py",
+    "templates/quality/form.html"
+  ]
+}

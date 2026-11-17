@@ -254,11 +254,11 @@ it use the same words. Every page uses the same term for the same thing.
 
 ## 12. Visual language
 
-The Smart Roots "field notebook" structure (approved there 2026-11-09), re-coloured for cold
+The Environmental LIMS "field notebook" structure (approved there 2026-11-09), re-coloured for cold
 storage on 2026-11-12 through the colour tokens only: navy ink, steel-blue pen, frost panel band,
 a frost-blue margin rule, and a navy top bar (the tank controller's colour) that carries the brand.
 Reviewed in the UI and brand pass of 2026-11-12; the structure, type, shape and devices below are
-unchanged from Smart Roots apart from the top bar's colour and the box position map. `static/css/app.css` holds the one
+unchanged from Environmental LIMS apart from the top bar's colour and the box position map. `static/css/app.css` holds the one
 definition of each token and component for light, dark and print; this section states the intent
 and the rules.
 
