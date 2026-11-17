@@ -22,7 +22,7 @@ from equipment.models import (
     TemperatureReading,
 )
 
-from .conftest import ago, csv_file, place, register
+from .conftest import ago, csv_file, place, register, register_equipment
 
 pytestmark = pytest.mark.django_db
 PDF = b"%PDF-1.4\n% synthetic test certificate\n%%EOF\n"
@@ -438,18 +438,117 @@ def test_readings_csv_is_exact_filtered_and_audited(client, people, tank, monito
     assert response.status_code == 200
     assert response["Content-Disposition"] == 'attachment; filename="equipment-reading.csv"'
     rows = list(csv.reader(io.StringIO(response.content.decode())))
-    assert rows[0][:3] == ["Measured at", "Asset ID", "Temperature (°C)"]
+    assert rows[0] == [
+        "Measured at",
+        "Asset ID",
+        "Temperature (°C)",
+        "Probe position",
+        "Monitor",
+        "Lower limit (°C)",
+        "Upper limit (°C)",
+        "Outside limits",
+        "Source",
+        "Recorded by",
+        "Note",
+        "Limit assessment",
+    ]
     assert [row[2] for row in rows[1:]] == ["-140.25"]
+    assert rows[1][7] == rows[1][-1] == "Above upper limit"
     everything = list(
         csv.reader(
             io.StringIO(client.get(reverse("equipment:export", args=["reading"])).content.decode())
         )
     )
-    assert "-185.10" in [row[2] for row in everything] and "'=cmd" in [row[3] for row in everything]
+    within = next(row for row in everything[1:] if row[2] == "-185.10")
+    assert within[3:9] == ["'=cmd", "MON-01", "-196.00", "-150.00", "", "Entered"]
+    assert within[-1] == "Within recorded limits"
     event = AuditEvent.objects.filter(action="equipment.exported").first()
     assert event.after["rows"] == 1 and event.after["filters"] == {"outside": "any"}
     assert client.get(reverse("equipment:export", args=["reading"]) + "?bogus=1").status_code == 400
     assert client.get(reverse("equipment:export", args=["nothing"])).status_code == 404
+
+
+def test_register_and_export_assess_effective_readings_against_their_recorded_limits(
+    client, people
+):
+    tech, manager = people["technician"], people["manager"]
+    freezer = register_equipment(manager, code="FZ-LIMITS", kind="freezer")
+
+    def record(probe, value):
+        return services.record_reading(
+            actor=tech,
+            equipment_id=freezer.pk,
+            measured_at=ago(20),
+            value=Decimal(value),
+            probe_position=probe,
+        )
+
+    record("Before limits", "12.00")
+    original = record("Original probe", "15.00")
+    withdrawn = record("Withdrawn probe", "16.00")
+    freezer = services.save_equipment(
+        actor=manager,
+        equipment_id=freezer.pk,
+        expected_revision=freezer.revision,
+        reason="Set the upper limit",
+        upper_limit=Decimal("0.00"),
+    )
+    services.correct_reading(
+        actor=tech,
+        reading_id=original.pk,
+        reason="Probe mislabeled",
+        probe_position="Corrected probe",
+    )
+    services.correct_reading(actor=tech, reading_id=withdrawn.pk, reason="Wrong probe", void=True)
+    record("Upper endpoint", "0.00")
+    record("Below upper limit", "-0.01")
+    record("Above zero", "0.01")
+    services.save_equipment(
+        actor=manager,
+        equipment_id=freezer.pk,
+        expected_revision=freezer.revision,
+        reason="Use a lower limit instead",
+        lower_limit=Decimal("0.00"),
+        upper_limit=None,
+    )
+    record("Lower endpoint", "0.00")
+    record("Above lower limit", "0.01")
+    record("Below zero", "-0.01")
+
+    assessments = {
+        "Before limits": ("", "No limits recorded"),
+        "Corrected probe": ("", "No limits recorded"),
+        "Upper endpoint": ("", "Within recorded limits"),
+        "Below upper limit": ("", "Within recorded limits"),
+        "Lower endpoint": ("", "Within recorded limits"),
+        "Above lower limit": ("", "Within recorded limits"),
+        "Above zero": ("Above upper limit", "Above upper limit"),
+        "Below zero": ("Below lower limit", "Below lower limit"),
+    }
+    login(client, people["viewer"])
+    register_url = reverse("equipment:reading-list")
+    export_url = reverse("equipment:export", args=["reading"])
+    for filters, probes in (
+        ({"outside": "none"}, {"Before limits", "Corrected probe"}),
+        (
+            {"outside": "within"},
+            {"Upper endpoint", "Below upper limit", "Lower endpoint", "Above lower limit"},
+        ),
+        ({"outside": "any"}, {"Above zero", "Below zero"}),
+        ({"outside": "uncovered"}, {"Above zero", "Below zero"}),
+        ({"outside": "none", "q": "Corrected"}, {"Corrected probe"}),
+        ({}, set(assessments)),
+    ):
+        register_page = client.get(register_url, filters)
+        assert register_page.status_code == 200
+        assert {row.probe_position for row in register_page.context["page_obj"]} == probes
+        export = client.get(export_url, filters)
+        assert export.status_code == 200
+        rows = list(csv.DictReader(io.StringIO(export.content.decode())))
+        assert len(rows) == len(probes)
+        assert {
+            row["Probe position"]: (row["Outside limits"], row["Limit assessment"]) for row in rows
+        } == {probe: assessments[probe] for probe in probes}
 
 
 def test_list_pages_link_rows_by_their_identifier(client, people, tank, records):

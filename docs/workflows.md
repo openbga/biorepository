@@ -310,7 +310,8 @@ latest level is below the low level the repository set is flagged.
 **Temperature readings.** Readings are entered one by one or imported from a CSV (checked first,
 then committed with a reason; a checked file expires after 24 hours). A reading at the same time and
 probe position as an existing one for the equipment is refused. Each reading keeps the limits in
-force when it was recorded, so a later change of limits does not rewrite it. A reading outside
+force when it was recorded. The register and CSV distinguish readings within those bounds from
+readings with neither bound, even after the equipment limits change. A reading outside
 those limits that no excursion covers is listed on the dashboard until an excursion is opened for it
 or the reading is corrected.
 

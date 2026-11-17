@@ -470,6 +470,16 @@ class TemperatureReading(Correctable):
     holding the equipment row lock (a database constraint on originals would wrongly block a slot
     that a correction moved away from)."""
 
+    class Assessment(models.TextChoices):
+        ABOVE = "above", "Above upper limit"
+        BELOW = "below", "Below lower limit"
+        WITHIN = "within", "Within recorded limits"
+        NONE = "none", "No limits recorded"
+
+        @property
+        def is_outside(self):
+            return self in (self.ABOVE, self.BELOW)
+
     class Source(models.TextChoices):
         MANUAL = "manual", "Entered"
         IMPORT = "import", "Imported"
@@ -516,13 +526,20 @@ class TemperatureReading(Correctable):
         ]
 
     @property
-    def outside_limits(self):
-        """'above', 'below' or '' against the limits recorded with the reading."""
+    def limit_assessment(self):
+        if self.upper_limit is None and self.lower_limit is None:
+            return self.Assessment.NONE
         if self.upper_limit is not None and self.value > self.upper_limit:
-            return "above"
+            return self.Assessment.ABOVE
         if self.lower_limit is not None and self.value < self.lower_limit:
-            return "below"
-        return ""
+            return self.Assessment.BELOW
+        return self.Assessment.WITHIN
+
+    @property
+    def outside_limits(self):
+        """Direction of an actual breach, or an empty string for the other readings."""
+        assessment = self.limit_assessment
+        return assessment.value if assessment.is_outside else ""
 
 
 # ------------------------------------------------------------------ excursions

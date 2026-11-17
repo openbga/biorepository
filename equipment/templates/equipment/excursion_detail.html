@@ -81,7 +81,7 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
       <tr>
         <th scope="row" class="vr-nowrap"><time datetime="{{ row.measured_at|date:'c' }}">{{ row.measured_at|date:"Y-m-d H:i" }}</time></th>
         <td class="text-end vr-id">{{ row.value }}</td>
-        <td>{% if row.outside_limits %}{% outside_status row %}{% else %}<span class="vr-muted">Within</span>{% endif %}</td>
+        <td>{% reading_limit_status row %}</td>
         <td>{{ row.probe_position|default:"—" }}</td>
         <td>{% if row.device %}<span class="vr-id">{{ row.device.code }}</span>{% else %}—{% endif %}</td>
         <td>{{ row.get_source_display }}</td>

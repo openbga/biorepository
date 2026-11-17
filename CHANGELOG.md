@@ -60,6 +60,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Fixed:** Identify temperature readings that had no recorded limits (2026-11-17, Temperature readings)
+
+  Temperature readings now show “No limits recorded” when both bounds were blank. Use the Limits filter to find those readings or readings within the recorded bounds. The same assessment appears on equipment and excursion records and in the new Limit assessment CSV column.
+
 - **Added:** See what changed in the application under What's new (2026-11-17)
 
   Select What's new in the top bar to read the changes to the application, newest first, grouped by month and ranked by impact. A number beside it counts the changes made since you last looked in this browser, and opening the list clears it; a first visit starts with no number.

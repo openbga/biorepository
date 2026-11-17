@@ -38,7 +38,8 @@ compliance or accreditation.
   mapping, qualification) with due dates the repository enters; an LN2 level and fill log;
   temperature readings entered or imported from CSV; and temperature excursions reviewed by a
   second person, with the specimens that were in the unit captured when one is closed. Operators
-  can select affected specimens and place manual holds with a reason. The limits,
+  can select affected specimens and place manual holds with a reason. Staff can filter and export
+  readings with no recorded limits. The limits,
   low levels and due dates are the repository's own: the product sets none, and it does not
   monitor or raise alarms.
 - **Inventory audits:** check one box against a saved inventory snapshot, enter observations

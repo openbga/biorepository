@@ -1,12 +1,13 @@
-"""Equipment journey: a manager registers Tank VP-01 with its limits; a technician logs the LN2
-level and a warm reading, the dashboard flags it, the technician records and submits an excursion;
-a second manager closes it and the record lists the specimen that was in the tank."""
+"""Equipment journeys for reading assessments, the LN2 log and excursion review."""
 
+import csv
+import io
 import re
 from datetime import timedelta
+from decimal import Decimal
 
 import pytest
-from helpers import field, local_input, make_user, sign_in, sign_out
+from helpers import field, local_input, make_user, save_download, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -18,6 +19,92 @@ def dialog(page: Page):
     found = page.locator("#vr-form-dialog")
     expect(found).to_be_visible()
     return found
+
+
+def test_reading_assessments_match_the_register_filter_and_download(page: Page, tmp_path):
+    from django.urls import reverse
+    from django.utils import timezone
+
+    from equipment import services
+
+    manager = make_user("limits_manager", PASSWORD, "manager")
+    tech = make_user("limits_tech", PASSWORD, "technician")
+    freezer = services.save_equipment(
+        actor=manager, code="FZ-01", name="Freezer 01", kind="freezer"
+    )
+    now = timezone.now()
+    services.record_reading(
+        actor=tech,
+        equipment_id=freezer.pk,
+        measured_at=now - timedelta(minutes=30),
+        value=Decimal("-80.00"),
+        probe_position="Before the limit change",
+    )
+    services.save_equipment(
+        actor=manager,
+        equipment_id=freezer.pk,
+        expected_revision=freezer.revision,
+        reason="Set temperature limits",
+        lower_limit=Decimal("-90.00"),
+        upper_limit=Decimal("-80.00"),
+    )
+    for minutes, probe, value in (
+        (20, "At the new upper limit", "-80.00"),
+        (15, "Above the new range", "-79.99"),
+        (10, "Below the new range", "-90.01"),
+    ):
+        services.record_reading(
+            actor=tech,
+            equipment_id=freezer.pk,
+            measured_at=now - timedelta(minutes=minutes),
+            value=Decimal(value),
+            probe_position=probe,
+        )
+    excursion = services.open_excursion(
+        actor=tech,
+        equipment_id=freezer.pk,
+        started_at=now - timedelta(minutes=35),
+        detection="reading",
+    )
+
+    sign_in(page, "limits_tech", PASSWORD)
+    for url, section in (
+        (reverse("equipment:equipment-detail", args=[freezer.pk]), "Temperature readings"),
+        (
+            reverse("equipment:excursion-detail", args=[excursion.pk]),
+            "Readings during the excursion",
+        ),
+        (reverse("equipment:reading-list"), "Readings"),
+    ):
+        page.goto(url)
+        table = page.get_by_role("region", name=section, exact=True).get_by_role("table")
+        for probe, assessment in (
+            ("Before the limit change", "No limits recorded"),
+            ("At the new upper limit", "Within recorded limits"),
+            ("Above the new range", "Above upper limit"),
+            ("Below the new range", "Below lower limit"),
+        ):
+            row = table.get_by_role("row").filter(has_text=probe)
+            expect(row.get_by_role("cell", name=assessment, exact=True)).to_be_visible()
+
+    toolbar = page.get_by_role("search", name="Filter readings")
+    for choice, assessment in (
+        ("within", "Within recorded limits"),
+        ("none", "No limits recorded"),
+    ):
+        toolbar.locator('[name="outside"]').select_option(choice)
+        toolbar.get_by_role("button", name="Apply").click()
+        rows = page.get_by_role("table", name="Readings", exact=True).locator("tbody tr")
+        expect(rows).to_have_count(1)
+        expect(rows.get_by_role("cell", name=assessment, exact=True)).to_be_visible()
+
+    download = save_download(
+        page, page.get_by_role("link", name="Export CSV").click, tmp_path / "readings.csv"
+    )
+    records = list(csv.DictReader(io.StringIO(download.decode())))
+    assert [(row["Probe position"], row["Limit assessment"]) for row in records] == [
+        ("Before the limit change", "No limits recorded")
+    ]
 
 
 def test_excursion_is_recorded_reviewed_by_a_second_person_and_lists_the_specimens(

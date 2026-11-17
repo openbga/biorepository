@@ -161,7 +161,9 @@ class LN2Filter(ListFilter):
         self.fields["date_from"], self.fields["date_to"] = _dates()
 
 
-OUTSIDE = [
+READING_LIMITS = [
+    (TemperatureReading.Assessment.WITHIN, TemperatureReading.Assessment.WITHIN.label),
+    (TemperatureReading.Assessment.NONE, TemperatureReading.Assessment.NONE.label),
     ("any", "Outside the recorded limits"),
     ("uncovered", "Outside, without an excursion"),
 ]
@@ -174,7 +176,7 @@ class ReadingFilter(ListFilter):
         self.fields["equipment"] = _equipment(
             kind__in=("ln2_tank", "freezer", "supply_dewar", "other")
         )
-        self.fields["outside"] = _choice("Limits", OUTSIDE, "All readings")
+        self.fields["outside"] = _choice("Limits", READING_LIMITS, "All readings")
         self.fields["source"] = _choice(
             "Source", TemperatureReading.Source.choices, "Entered and imported"
         )
@@ -289,9 +291,16 @@ def reading_rows(cleaned, user):
     queryset = queries.effective_readings().select_related("equipment", "device", "recorded_by")
     if cleaned.get("equipment"):
         queryset = queryset.filter(equipment=cleaned["equipment"])
-    if cleaned.get("outside") == "any":
+    limit_filter = cleaned.get("outside")
+    if limit_filter == "none":
+        queryset = queryset.filter(lower_limit__isnull=True, upper_limit__isnull=True)
+    elif limit_filter == "within":
+        queryset = queryset.exclude(lower_limit__isnull=True, upper_limit__isnull=True).exclude(
+            queries.OUTSIDE
+        )
+    elif limit_filter == "any":
         queryset = queryset.filter(queries.OUTSIDE)
-    elif cleaned.get("outside") == "uncovered":
+    elif limit_filter == "uncovered":
         queryset = queryset.filter(pk__in=queries.uncovered_readings().values("pk"))
     if cleaned.get("source"):
         queryset = queryset.filter(source=cleaned["source"])
@@ -367,9 +376,8 @@ def _due_days(event):
 
 
 def _outside(reading):
-    return {"above": "Above upper limit", "below": "Below lower limit"}.get(
-        reading.outside_limits, ""
-    )
+    assessment = reading.limit_assessment
+    return assessment.label if assessment.is_outside else ""
 
 
 EXPORT = {
@@ -433,6 +441,7 @@ EXPORT = {
         ("Source", lambda o: o.get_source_display()),
         ("Recorded by", lambda o: person(o.recorded_by)),
         ("Note", lambda o: o.note),
+        ("Limit assessment", lambda o: o.limit_assessment.label),
     ),
     "excursion": (
         ("Excursion", lambda o: o.number),
