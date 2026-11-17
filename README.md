@@ -1,12 +1,12 @@
-# Vapor Phase: open-source biorepository management
+# OpenBGA Biorepository: open-source biorepository management
 
-[![checks](https://github.com/openbga/vapor-phase/actions/workflows/checks.yml/badge.svg)](https://github.com/openbga/vapor-phase/actions/workflows/checks.yml)
+[![checks](https://github.com/openbga/biorepository/actions/workflows/checks.yml/badge.svg)](https://github.com/openbga/biorepository/actions/workflows/checks.yml)
 
-Vapor Phase is a biorepository management system for one repository organization per deployment,
+OpenBGA Biorepository is a biorepository management system for one repository organization per deployment,
 and an open-source project of BGASoft Inc. It records where every specimen is, what it is, who
 handled it and what happened to it, across freezers, liquid-nitrogen vapor-phase tanks, racks,
 boxes and positions. Built with Django, PostgreSQL and Bootstrap/HTMX. AGPL-3.0-only.
-Source: <https://github.com/openbga/vapor-phase>.
+Source: <https://github.com/openbga/biorepository>.
 
 Status: the repository journey works end to end: storage, specimens, custody, disposal with
 approval, labels, bulk import, equipment records, inventory audits, deviations, training, and
@@ -87,7 +87,7 @@ Screens show the synthetic demo data.
 
 ## Hosted demo
 
-Open the [Vapor Phase demo](https://vapor-phase.onrender.com/) on Render and sign in with one of
+Open the [OpenBGA Biorepository demo](https://vapor-phase.onrender.com/) on Render and sign in with one of
 the demo accounts listed on its sign-in page. The [demo presentation](https://vapor-phase.onrender.com/about/)
 is available without signing in. The demo is public and is erased and seeded again every day with
 the full synthetic repository, so enter synthetic data only. See
@@ -102,8 +102,8 @@ PostgreSQL database in development mode, reachable only from your machine. It is
 not for real repository data.
 
 ```sh
-git clone --branch main https://github.com/openbga/vapor-phase.git
-cd vapor-phase
+git clone --branch main https://github.com/openbga/biorepository.git
+cd biorepository
 docker compose --profile app up --build -d
 # Choose a private password (at least 12 characters) for the synthetic demo accounts.
 read -s DEMO_PASSWORD; export DEMO_PASSWORD
@@ -215,10 +215,11 @@ permissions.
 
 ## Deploy to Render
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/openbga/vapor-phase/tree/main)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/openbga/biorepository/tree/main)
 
 The Blueprint packages a Docker web service (`vapor-phase`) and PostgreSQL 17
-(`vapor-phase-db`). **It creates paid resources:** review and accept the current charges in your
+(`vapor-phase-db`); these resource names predate the product's current name and are kept so
+existing instances are unchanged. **It creates paid resources:** review and accept the current charges in your
 Render account before deploying. For a private fork, authorize Render's GitHub App to access the
 source. Distributed instances do not automatically deploy upstream changes.
 
@@ -264,7 +265,7 @@ coding agents.
 
 ## Project and support
 
-Vapor Phase is an open-source project of [BGASoft](https://bgasoft.com), a laboratory software company, and part of [OpenBGA](https://github.com/openbga).
+OpenBGA Biorepository is an open-source project of [BGASoft](https://bgasoft.com), a laboratory software company, and part of [OpenBGA](https://github.com/openbga).
 
 **Community use.** The software is free under the AGPL-3.0-only licence and is provided as is. The project does not include a support commitment: issues and pull requests are welcome and are answered on a best-effort basis.
 
@@ -274,12 +275,12 @@ Vapor Phase is an open-source project of [BGASoft](https://bgasoft.com), a labor
 
 Copyright (C) 2026 BGASoft Inc. and OpenBGA contributors.
 
-Vapor Phase is licensed under the GNU Affero General Public License version 3 only
+OpenBGA Biorepository is licensed under the GNU Affero General Public License version 3 only
 (AGPL-3.0-only); see [LICENSE](LICENSE) and [NOTICE](NOTICE). If you run a modified version for
 users over a network, AGPL section 13 requires offering them its source: set `SOURCE_CODE_URL` to
 your published source so the "Source code" link in the application footer points to it.
 
-OpenBGA, Vapor Phase and their logos are trademarks of BGASoft Inc. The licence
+OpenBGA, OpenBGA Biorepository and their logos are trademarks of BGASoft Inc. The licence
 does not grant permission to use them (AGPL-3.0 section 7(e)), except as needed to describe the
 origin of the software.
 

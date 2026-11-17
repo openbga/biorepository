@@ -1,6 +1,6 @@
 # Architecture
 
-Baseline: 2026-11-12, adapted from the Smart Roots LIMS architecture of 2026-11-08. Product policy:
+Baseline: 2026-11-12, adapted from the OpenBGA Environmental LIMS architecture of 2026-11-08. Product policy:
 `docs/product.md`; installed versions: manifests/lockfiles. Working assumption: one repository
 organization per deployment, staff-only access, modest volume and online operation. No shared
 tenancy or offline sync.
@@ -21,11 +21,11 @@ authentication, transactions, migrations and an ORM in one conventional applicat
 | Documents | WeasyPrint 70.0; python-barcode 0.16.1 | Label and manifest PDFs; standard Code 128 SVG generation |
 | Tooling | uv lockfile; Ruff; pytest-django; Playwright | Reproducible environment and focused server/browser verification |
 
-Versions are those Smart Roots LIMS checked against publisher documentation and package registries
-on 2026-11-08, except django-allauth and Psycopg, whose newer patch releases the fresh Vapor Phase
+Versions are those OpenBGA Environmental LIMS checked against publisher documentation and package registries
+on 2026-11-08, except django-allauth and Psycopg, whose newer patch releases the fresh OpenBGA Biorepository
 `uv.lock` of 2026-11-12 resolved (allauth 65.22.0 adds reauthentication-by-code pages, which have
 help). `uv.lock` pins the resolved transitive dependencies and CI builds and checks the container. Use current compatible security patches.
-PostgreSQL's managed minor patch is provider-controlled. SciPy is not carried over: no Vapor Phase
+PostgreSQL's managed minor patch is provider-controlled. SciPy is not carried over: no OpenBGA Biorepository
 feature needs statistics. See [Django support](https://www.djangoproject.com/download/),
 [Python compatibility](https://docs.djangoproject.com/en/5.2/faq/install/),
 [allauth requirements](https://docs.allauth.org/en/latest/installation/requirements.html),
@@ -40,61 +40,70 @@ controls and reset. No Ajax row API, server preference model, or second table/qu
 
 ## Shared platform
 
-Vapor Phase is the sibling of Smart Roots LIMS and deliberately shares its platform layer:
+OpenBGA Biorepository is the sibling of OpenBGA Environmental LIMS and deliberately shares its platform layer:
 `config/`, `accounts/`, `core/`, root `templates/` and `static/`, the `e2e/` harness, platform
 tests, `skills/document-page`, `docs/ui-standards.md`, CI and deployment files. Keep those files as
-close to the Smart Roots originals as the rename allows, so fixes can move between the two products
+close to the Environmental LIMS originals as the rename allows, so fixes can move between the two products
 as patches. The bootstrap of 2026-11-12 is the baseline for that comparison.
+
+Naming (2026-11-16): the product is OpenBGA Biorepository, in `openbga/biorepository` (formerly
+Vapor Phase, `openbga/vapor-phase`); its sibling is OpenBGA Environmental LIMS,
+`openbga/environmental-lims` (formerly Smart Roots LIMS). The older names survive only as legacy
+identifiers, for example the Render service, database and cron names, the demo hostname, the `vapor`
+database and user (and the `vapor_*` CI and test databases), the `vapor.*` logger, the `vr-` prefix,
+the `VP-` identifier examples and the Docker Compose project name `vapor-phase`. GitHub redirects the old repository URL, but not the GitHub Pages
+site, which moved from `openbga.github.io/vapor-phase/` to `openbga.github.io/biorepository/`.
 
 Names fixed before the first migration and deployment:
 
 | Thing | Value |
 |---|---|
-| Distribution, image and service name | `vapor-phase` |
+| Distribution and image name | `biorepository` |
+| Render service | `vapor-phase`, kept from before the 2026-11-16 rename so existing Blueprint instances and the public demonstration at `vapor-phase.onrender.com` stay the same resources |
 | Database name and user (development) | `vapor` (compose: 127.0.0.1:55434) |
 | Render database | `vapor-phase-db`, database and user `vapor` |
-| Organization singleton (Smart Roots `Lab`) | `core.Repository`, exposed to templates as `repository` |
-| Setup command (Smart Roots `setup_lab`) | `setup_repository` |
-| URL prefix for organization pages (Smart Roots `lab/`) | `repository/` (URL names unchanged) |
+| Organization singleton (Environmental LIMS `Lab`) | `core.Repository`, exposed to templates as `repository` |
+| Setup command (Environmental LIMS `setup_lab`) | `setup_repository` |
+| URL prefix for organization pages (Environmental LIMS `lab/`) | `repository/` (URL names unchanged) |
 | Roles (groups) | `admin`, `manager` (repository manager), `technician`, `viewer` (default list) |
-| Disposal approval (Smart Roots `authorize_release`) | permission `accounts.approve_disposal`, granted per person |
-| Request logger (Smart Roots `roots.request`) | `vapor.request` |
-| CSS/JS prefix | `vr-` kept, so platform files stay comparable with Smart Roots |
+| Disposal approval (Environmental LIMS `authorize_release`) | permission `accounts.approve_disposal`, granted per person |
+| Request logger (Environmental LIMS `roots.request`) | `vapor.request` |
+| CSS/JS prefix | `vr-` kept, so platform files stay comparable with Environmental LIMS |
 | Theme | Re-skinned through the color tokens only; new mark and sign-in scene |
 | Specimen ID | `VP-` and six or more digits from a PostgreSQL sequence |
 
-Intentional divergences from Smart Roots (keep this list current):
+Intentional divergences from Environmental LIMS (keep this list current):
 
 - `accounts.User` has no client link; there is no portal. Portal layout, portal navigation,
   client announcements (`show_to_clients`) and client checks in roles, setup and admin are gone.
 - The immutability trigger function `prevent_record_mutation()` lives in `core` (migration 0002,
   which also protects `core_auditevent`); each app attaches it to its own event tables in its own
-  migration with `core.immutability.protect_history`. Smart Roots attached a domain table in the
+  migration with `core.immutability.protect_history`. Environmental LIMS attached a domain table in the
   core migration.
-- One `staff_role_required` decorator, in `accounts.roles` (Smart Roots had one per domain app).
+- One `staff_role_required` decorator, in `accounts.roles` (Environmental LIMS had one per domain app).
 - No role group receives disposal approval; `setup_repository` creates the four role groups only.
-  Smart Roots gave release authority to the `approver` group.
+  Environmental LIMS gave release authority to the `approver` group.
 - Navigation (`core/templatetags/navigation.py`) and form surfaces (`core/form_surfaces.py`) hold
-  Vapor Phase routes only.
-- `core/security_headers.py` has no PDF-preview framing exception (Smart Roots reporting).
-- The `action_label` history filter is `core/templatetags/history.py` (Smart Roots
+  OpenBGA Biorepository routes only.
+- `core/security_headers.py` has no PDF-preview framing exception (Environmental LIMS reporting).
+- The `action_label` history filter is `core/templatetags/history.py` (Environmental LIMS
   `laboratory_extras`).
-- Error pages choose the shell by `user.is_authenticated` (Smart Roots also chose the portal).
+- Error pages choose the shell by `user.is_authenticated` (Environmental LIMS also chose the portal).
 - The top bar is navy in both themes, set through the color tokens.
 - Chart.js and Tom Select are not vendored, and `core/widgets.py` (the list-or-other and
-  suggestion inputs) with its widget templates is not carried over: no Vapor Phase page uses them.
-  `static/css/app.css` drops their styles and the Smart Roots domain styles (quote documents,
+  suggestion inputs) with its widget templates is not carried over: no OpenBGA Biorepository page uses them.
+  `static/css/app.css` drops their styles and the Environmental LIMS domain styles (quote documents,
   requested-test pickers, container rows, the labels menu). The `.tomselect` branches in
   `static/js/app.js` and `static/js/form-dialog.js` stay, unused, so those files remain identical.
 - Uploaded files are `core.Attachment` rows (`core/attachments.py`, migration `core` 0003): each
   file stored once and referenced by equipment and distribution event versions, with the optional
-  `ATTACHMENT_STORAGE_LIMIT_BYTES` total cap. Smart Roots keeps attachment bytes on its
+  `ATTACHMENT_STORAGE_LIMIT_BYTES` total cap. Environmental LIMS keeps attachment bytes on its
   `laboratory` records.
 - `static/js/form-dialog.js` refreshes shared row-selection counts after restoring controls from
   their temporary loading state; `static/js/app.js` exposes the existing initializer for that call.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
   for the bounded excursion hold picker; the default pagination behavior is unchanged.
-- The `checks` workflow's `application` job allows 60 minutes (Smart Roots: 30): the Vapor Phase
+- The `checks` workflow's `application` job allows 60 minutes (Environmental LIMS: 30): the OpenBGA Biorepository
   suite is larger. Lower it if CI runs leave room.
 
 ## Application boundaries and integrity
@@ -221,7 +230,7 @@ use needs an operational runbook and tested recovery, not merely a successful de
 
 The Render Blueprint (`render.yaml`) describes the web service, database, generated secret and
 required inputs. The README button targets
-`https://render.com/deploy?repo=https://github.com/openbga/vapor-phase/tree/main`. It names `main`
+`https://render.com/deploy?repo=https://github.com/openbga/biorepository/tree/main`. It names `main`
 because Render otherwise deploys the repository's default branch, which is `develop`. Set `autoDeployTrigger: off` for distributed button instances.
 `render blueprints validate render.yaml` needs an authenticated Render workspace; on 2026-11-13 it
 accepted `render.yaml`. The public demonstration at <https://vapor-phase.onrender.com/> runs this

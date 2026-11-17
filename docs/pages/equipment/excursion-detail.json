@@ -9,7 +9,7 @@
     {
       "title": "Life of an excursion",
       "paragraphs": [
-        "Open: the details are being completed. A technician submits it for review once it has an end time, a cause, an action taken and an impact assessment. Awaiting review: a manager or administrator either returns it for more work with a note (back to Open) or closes it. The person who submitted it cannot close it; another manager or administrator must. Closed: it can be reopened by a manager or administrator with a reason. Notes and attachments can be added in any state. Vapor Phase records the review; it does not decide the outcome or tell you what to do about the specimens. Place holds lets operators explicitly select affected specimens and a manual hold scope, in any excursion state. Holds are never automatic, and closing or reopening never releases them. Managers release each hold from its specimen record."
+        "Open: the details are being completed. A technician submits it for review once it has an end time, a cause, an action taken and an impact assessment. Awaiting review: a manager or administrator either returns it for more work with a note (back to Open) or closes it. The person who submitted it cannot close it; another manager or administrator must. Closed: it can be reopened by a manager or administrator with a reason. Notes and attachments can be added in any state. OpenBGA Biorepository records the review; it does not decide the outcome or tell you what to do about the specimens. Place holds lets operators explicitly select affected specimens and a manual hold scope, in any excursion state. Holds are never automatic, and closing or reopening never releases them. Managers release each hold from its specimen record."
       ]
     },
     {

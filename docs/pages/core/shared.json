@@ -31,8 +31,8 @@
       "title": "Navigation and appearance",
       "items": [
         {
-          "label": "Vapor Phase / Find specimen ID",
-          "description": "The brand (the mark, Vapor Phase and An OpenBGA project; the name alone on phones) returns to the workspace home. On staff pages, Find specimen ID submits a search to the specimen list; it appears once the specimen pages exist. Press Enter to search. On wide screens the repository name beside the brand identifies this deployment."
+          "label": "OpenBGA Biorepository / Find specimen ID",
+          "description": "The brand (the mark and OpenBGA Biorepository) returns to the workspace home. On staff pages, Find specimen ID submits a search to the specimen list; it appears once the specimen pages exist. Press Enter to search. On wide screens the repository name beside the brand identifies this deployment."
         },
         {
           "label": "Menus and section tabs",

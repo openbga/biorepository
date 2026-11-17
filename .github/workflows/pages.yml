@@ -1,7 +1,7 @@
 name: Publish presentation
 
 # Publishes the static product presentation (website/about) to GitHub Pages at
-# https://openbga.github.io/vapor-phase/. The application serves the same files at /about/.
+# https://openbga.github.io/biorepository/. The application serves the same files at /about/.
 on:
   push:
     branches: [main]

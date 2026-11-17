@@ -16,7 +16,7 @@
     {
       "title": "Equipment and Limits",
       "paragraphs": [
-        "Vapor Phase has no default limits, refill levels or service intervals and never works out a due date: every one of them is entered by your repository, and what the page shows is what was entered. Each reading and excursion keeps the limits in force when it was recorded."
+        "OpenBGA Biorepository has no default limits, refill levels or service intervals and never works out a due date: every one of them is entered by your repository, and what the page shows is what was entered. Each reading and excursion keeps the limits in force when it was recorded."
       ],
       "items": [
         {

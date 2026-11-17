@@ -8,8 +8,8 @@ the manager after the technician submitted it, which captures the demo specimens
 still open on the freezer.
 
 The limits and the low level below are demonstration values typed in by the demo repository so the
-pages have something to compare against. They are not recommendations; Vapor Phase has no default
-limits.
+pages have something to compare against. They are not recommendations; OpenBGA
+Biorepository has no default limits.
 
 `seed_full_equipment` adds the equipment of the larger demonstration (`seed_demo --full`): the
 enclosures of VP-02, VP-03, MF-02, MF-03 and RF-01, a second monitor and dewar, and about three

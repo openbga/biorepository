@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from accounts.models import User
 
-DEFAULT_SOURCE = "https://github.com/openbga/vapor-phase"
+DEFAULT_SOURCE = "https://github.com/openbga/biorepository"
 
 
 def source_link(url):
@@ -27,7 +27,7 @@ def test_default_points_at_the_project_repository(settings):
 
 @pytest.mark.django_db
 def test_staff_entrance_and_admin_pages_link_to_source(client, staff, settings, plain_static):
-    settings.SOURCE_CODE_URL = "https://source.example.invalid/modified-vapor-phase"
+    settings.SOURCE_CODE_URL = "https://source.example.invalid/modified-biorepository"
     link = source_link(settings.SOURCE_CODE_URL)
 
     sign_in = client.get(reverse("account_login")).content.decode()

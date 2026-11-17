@@ -9,7 +9,7 @@ agreements), as built. The help panel
 inside the application describes every page, field and action; this is the overview.
 [Product scope](product.md) explains why the rules exist. Items that product scope lists as
 working assumptions or defaults are choices a repository should check against its own policy;
-they are marked "default" below. Vapor Phase supports a repository's own records and quality system. It
+they are marked "default" below. OpenBGA Biorepository supports a repository's own records and quality system. It
 does not make a repository compliant, accredited or certified.
 
 ## Time zones
@@ -283,7 +283,7 @@ selection and row count.
 ## Equipment
 
 Equipment records describe the vessels and devices that hold or watch the specimens. Everything
-here is a record of what the repository entered; Vapor Phase sets no limit, interval or level of
+here is a record of what the repository entered; OpenBGA Biorepository sets no limit, interval or level of
 its own, and it neither monitors temperature nor raises alarms.
 
 **Register.** Admin and manager register equipment with an asset ID, a kind (LN2 tank, freezer,
@@ -321,7 +321,7 @@ an end, a cause, an action and an impact assessment, and a manager or admin **ot
 who submitted it** returns it with a note or closes it. A closed excursion can be reopened by a
 manager or admin with a reason. The second-person close is a default, not a sourced rule. While an excursion is open the specimens that were in the unit during it are
 computed from storage's recorded movements (placements, check-outs and check-ins, disposals, box
-and rack moves); closing captures that list with the closing entry, and it stays fixed. Vapor Phase
+and rack moves); closing captures that list with the closing entry, and it stays fixed. OpenBGA Biorepository
 records the review; it does not decide specimen quality. Operators can explicitly select affected
 specimens and place disposal, use or all-use holds with a reason, in batches of up to 200. The
 excursion and specimen state are rechecked before the whole batch and its history are saved

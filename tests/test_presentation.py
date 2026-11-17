@@ -8,7 +8,7 @@ import pytest
 from django.conf import settings as django_settings
 
 PRESENTATION = Path(django_settings.WHITENOISE_ROOT) / "about"
-PUBLISHED_URL = "https://openbga.github.io/vapor-phase/"
+PUBLISHED_URL = "https://openbga.github.io/biorepository/"
 
 
 # Closing a streamed file runs Django's connection clean-up, which may touch a connection left
@@ -21,10 +21,10 @@ def test_public_presentation_and_assets_are_served_by_whitenoise(client, setting
     response = client.get("/about/")
     assert response.status_code == 200
     html = b"".join(response.streaming_content).decode()
-    assert "Vapor Phase" in html and "AGPL-3.0-only" in html
+    assert "OpenBGA Biorepository" in html and "AGPL-3.0-only" in html
     assert 'href="https://bgasoft.com"' in html
     assert "compliant" not in html.lower()  # "supports", never a compliance claim
-    assert 'href="https://github.com/openbga/vapor-phase"' in html
+    assert 'href="https://github.com/openbga/biorepository"' in html
     for path, content_type in (
         ("/about/assets/site.css", "text/css"),
         ("/about/assets/mark.svg", "image/svg+xml"),

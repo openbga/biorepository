@@ -248,6 +248,6 @@ def test_shared_includes_render_their_documented_parameters(rf, django_user_mode
 
     brand = render_to_string("includes/brand.html", {"href": "/", "name": ""})
     assert 'class="vr-brand" href="/"' in brand
-    assert ">Vapor Phase</span>" in brand and ">An OpenBGA project</span>" in brand
+    assert ">OpenBGA Biorepository</span>" in brand and "An OpenBGA project" not in brand
     named = render_to_string("includes/brand.html", {"href": "/", "name": "Example Biorepository"})
     assert ">Example Biorepository</span>" in named and "OpenBGA" not in named

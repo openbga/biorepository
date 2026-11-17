@@ -1,5 +1,5 @@
 /*
- * Vapor Phase application theme for Bootstrap 5.3: the "cold-store log".
+ * OpenBGA Biorepository application theme for Bootstrap 5.3: the "cold-store log".
  *
  * Bootstrap supplies every control, dialog, dropdown, table and form widget; DataTables supplies
  * grid behaviour. This file sets the design tokens for the light and dark colour modes
@@ -977,24 +977,20 @@ s,
   height: 1.5rem;
 }
 
-/* Product lock-up (includes/brand.html): the name over a quieter "An OpenBGA project" line. */
+/* Product lock-up (includes/brand.html): the product name beside the mark. */
 .vr-wordmark {
-  display: grid;
-  gap: 0.0625rem;
   line-height: 1.15;
 }
 
-.vr-wordmark-parent {
-  color: var(--vr-topbar-text-muted);
-  font-size: 0.6875rem;
-  font-weight: 500;
-  letter-spacing: 0;
-}
-
-/* Phones: the bar keeps its controls whole, so it shows the name alone rather than a cut-off line. */
+/* Phones: the bar is crowded, so the long product name wraps onto two lines rather than being cut off. */
 @media (max-width: 575.98px) {
-  .vr-topbar .vr-wordmark-parent {
-    display: none;
+  .vr-topbar .vr-brand {
+    white-space: normal;
+  }
+
+  .vr-topbar .vr-wordmark {
+    font-size: 0.875rem;
+    line-height: 1.1;
   }
 }
 
@@ -2588,11 +2584,6 @@ fieldset.vr-field > legend {
 .vr-entrance-brand img {
   width: 2rem;
   height: 2rem;
-}
-
-.vr-entrance-brand .vr-wordmark-parent {
-  color: var(--vr-text-muted);
-  font-size: 0.75rem;
 }
 
 .vr-entrance-panel {

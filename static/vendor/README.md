@@ -19,5 +19,5 @@ afterwards.
 `static/img/icons.svg` is a subset of Bootstrap Icons 1.13.2 (MIT); its licence is
 `static/img/icons.LICENSE`.
 
-Chart.js and Tom Select are not vendored: no Vapor Phase page draws a chart or enhances a picker
+Chart.js and Tom Select are not vendored: no OpenBGA Biorepository page draws a chart or enhances a picker
 yet. Add them the same way when one does.

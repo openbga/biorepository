@@ -1,6 +1,6 @@
-# Contributing to Vapor Phase
+# Contributing to OpenBGA Biorepository
 
-Thank you for your interest. Vapor Phase is a biorepository management system for tracking
+Thank you for your interest. OpenBGA Biorepository is a biorepository management system for tracking
 specimens, storage, custody, disposal, equipment and distribution. Bug reports, fixes, documentation and focused improvements are welcome and
 are reviewed on a best-effort basis.
 
@@ -125,7 +125,7 @@ pull request.
 
 ## Licence of contributions
 
-Vapor Phase is licensed under [AGPL-3.0-only](LICENSE). By submitting a contribution you agree
+OpenBGA Biorepository is licensed under [AGPL-3.0-only](LICENSE). By submitting a contribution you agree
 that it is licensed under the same terms, and you confirm that you have the right to submit it.
 Do not copy code or text from sources whose licence is incompatible with AGPL-3.0-only, and
 keep third-party notices intact (see [Third-party notices](THIRD_PARTY_NOTICES.md)).
