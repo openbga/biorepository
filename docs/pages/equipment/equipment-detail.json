@@ -74,7 +74,7 @@
     {
       "title": "LN2 log and Temperature readings",
       "paragraphs": [
-        "Each shows the latest 20 effective entries with a link to the full list for this equipment (All entries in the LN2 log, All readings). Record LN2 entry and Record reading open the forms with this equipment preselected. A reading is flagged Above upper limit or Below lower limit against the limits recorded with it, otherwise Within. Change since previous is worked out from the levels and not entered."
+        "Each shows the latest 20 effective entries with a link to the full list for this equipment (All entries in the LN2 log, All readings). Record LN2 entry and Record reading open the forms with this equipment preselected. Each reading shows Above upper limit, Below lower limit, Within recorded limits or No limits recorded. The comparison uses the bounds saved with that reading. A value equal to a bound is within it. Change since previous is worked out from the levels and not entered."
       ]
     },
     {

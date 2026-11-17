@@ -136,7 +136,7 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
       <tr>
         <th scope="row" class="vr-nowrap"><time datetime="{{ row.measured_at|date:'c' }}">{{ row.measured_at|date:"Y-m-d H:i" }}</time></th>
         <td class="text-end vr-id">{{ row.value }}</td>
-        <td>{% if row.outside_limits %}{% outside_status row %}{% else %}<span class="vr-muted">Within</span>{% endif %}</td>
+        <td>{% reading_limit_status row %}</td>
         <td>{{ row.probe_position|default:"—" }}</td>
         <td>{% if row.device %}<a class="vr-id" href="{% url 'equipment:equipment-detail' row.device_id %}">{{ row.device.code }}</a>{% else %}—{% endif %}</td>
         <td>{{ row.get_source_display }}</td>

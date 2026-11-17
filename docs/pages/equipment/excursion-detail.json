@@ -51,7 +51,7 @@
     {
       "title": "Readings during the excursion",
       "paragraphs": [
-        "Effective readings of the equipment from the start to the end (or now), up to the first 200, with the limits recorded with each. Readings of these days opens the readings list for the equipment and dates."
+        "Effective readings of the equipment from the start to the end (or now), up to the first 200, with an assessment against the bounds saved with each reading. No limits recorded means the reading had neither bound, even if limits appear in the excursion summary. Readings of these days opens the readings list for the equipment and dates."
       ]
     },
     {

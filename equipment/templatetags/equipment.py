@@ -23,7 +23,6 @@ IMPORT_STATES = {
     "committed": ("Committed", "success"),
     "expired": ("Expired", "neutral"),
 }
-OUTSIDE = {"above": "Above upper limit", "below": "Below lower limit"}
 
 
 def _status(label, tone, plain):
@@ -52,8 +51,9 @@ def due_status(event, plain=True):
 
 
 @register.inclusion_tag("includes/status.html")
-def outside_status(reading, plain=True):
-    return _status(OUTSIDE[reading.outside_limits], "danger", plain)
+def reading_limit_status(reading, plain=True):
+    assessment = reading.limit_assessment
+    return _status(assessment.label, "danger" if assessment.is_outside else "neutral", plain)
 
 
 @register.inclusion_tag("includes/status.html")
