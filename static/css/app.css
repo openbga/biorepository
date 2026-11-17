@@ -1049,6 +1049,31 @@ s,
   --bs-btn-active-border-color: rgba(var(--vr-topbar-text-rgb), 0.3);
 }
 
+/* What's new (includes/whats_new_button.html): the unread count, a small stamp in the bar's accent
+   (static/js/whats-new.js fills it). The link's accessible name carries the count. */
+.vr-whats-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.vr-whats-new:hover {
+  text-decoration: none;
+}
+
+.vr-topbar-count {
+  min-width: 1.25rem;
+  padding: 0 0.3125rem;
+  border-radius: 1px;
+  background: var(--vr-topbar-accent);
+  color: var(--vr-topbar-bg);
+  font-family: var(--vr-font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
 .vr-lookup {
   position: relative;
   flex: 0 1 18rem;
@@ -2525,6 +2550,82 @@ fieldset.vr-field > legend {
 
 .vr-history-item > p {
   margin-bottom: 0;
+}
+
+/* What's new (core/whats_new.html): one change per entry, ruled off from the next. The type is a
+   mono capital label before the title; summary and technical notes keep their paragraphs. */
+.vr-changes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vr-change {
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--vr-border);
+}
+
+.vr-change:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.vr-change:last-child {
+  padding-bottom: 0;
+}
+
+.vr-change-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  align-items: baseline;
+}
+
+.vr-change-type {
+  color: var(--vr-text-muted);
+  font-family: var(--vr-font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.vr-change-title {
+  font-weight: 600;
+}
+
+.vr-change-meta {
+  margin: 0.125rem 0 0.25rem;
+  color: var(--vr-text-muted);
+  font-size: 0.875rem;
+}
+
+.vr-change-summary > p,
+.vr-change-notes-body > p {
+  margin-bottom: 0.375rem;
+}
+
+.vr-change-summary > :last-child,
+.vr-change-notes-body > :last-child {
+  margin-bottom: 0;
+}
+
+.vr-change-more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-top: 0.5rem;
+}
+
+.vr-change-notes > summary {
+  color: var(--vr-text-muted);
+  font-size: 0.875rem;
+}
+
+.vr-change-notes-body {
+  margin-top: 0.375rem;
+  font-size: 0.875rem;
 }
 
 .vr-history-changes {

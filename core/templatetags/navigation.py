@@ -391,9 +391,11 @@ STAFF_NAV = (
     NavItem("accounts-roles", "Accounts & roles", "admin:index", "people"),
 )
 
-# Pages reached from the user menu: they render inside the user's shell and mark no item.
+# Pages reached from the user menu or the top bar (What's new): they render inside the user's
+# shell and mark no item.
 ACCOUNT_ROUTES = frozenset(
     {
+        "whats-new",
         "account_change_password",
         "account_set_password",
         "account_email",

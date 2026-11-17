@@ -84,3 +84,10 @@ action, tab, permission, filter or underlying workflow rule changes. Update its 
 `docs/pages/` in the same increment. `core/page_docs.py` defines the content contract and route
 selection; `tests/test_page_docs.py` enforces coverage. Verify changed help beside the rendered
 page.
+
+## What's new
+
+Every change that users, deployers or integrators can observe adds an entry file in
+`changelog.d/` in the same change and regenerates `CHANGELOG.md` (never edited by hand); a
+change with nothing observable says so in the pull request. How: the
+[`changelog`](skills/changelog/SKILL.md) skill.

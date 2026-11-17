@@ -1,0 +1,11 @@
+{% comment %}
+What's new, a global utility in the top bar: a link to the What's new page. Rendered only by the
+{% whats_new_button %} tag (core/templatetags/whats_new.py). static/js/whats-new.js reads the
+entries in #vr-whats-new-data and what this account has seen in this browser; when entries are
+newer it fills the count badge and sets the accessible name and tooltip to
+"What's new: N new changes". A browser without a mark for the account stores the current one and
+shows no count. Without the script the link still opens the list.
+{% endcomment %}{% if show %}
+<a class="btn btn-sm vr-topbar-btn vr-whats-new" href="{{ url }}" data-vr-whats-new{% if current %} aria-current="page"{% endif %} aria-label="What's new" title="What's new">{% include "includes/icon.html" with name="stars" %}<span class="d-none d-xl-inline">What's new</span><span class="vr-topbar-count" data-vr-whats-new-count aria-hidden="true" hidden></span></a>
+{{ indicator|json_script:"vr-whats-new-data" }}
+{% endif %}

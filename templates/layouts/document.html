@@ -1,4 +1,4 @@
-{% load static %}<!doctype html>
+{% load static whats_new %}<!doctype html>
 {% comment %}
 Application document and staff shell. Block contract (docs/ui-standards.md section 4):
   title          <title>; defaults to "{{ page_title }} · OpenBGA Biorepository"
@@ -49,6 +49,7 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   <script src="{% static 'js/app.js' %}" defer></script>
   <script src="{% static 'js/grid.js' %}" defer></script>
   <script src="{% static 'js/documentation.js' %}" defer></script>
+  <script src="{% static 'js/whats-new.js' %}" defer></script>
   <script src="{% static 'js/form-dialog.js' %}" defer></script>
 </head>
 <body class="{% block body_class %}vr-app{% endblock %}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'{% if user.is_authenticated %} data-vr-user="{{ user.pk }}"{% endif %} data-vr-icons="{% static 'img/icons.svg' %}">
@@ -69,6 +70,7 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
         <input class="form-control form-control-sm" type="search" id="vr-lookup-q" name="q" placeholder="Find specimen ID" autocomplete="off" spellcheck="false">
       </form>
       {% endif %}
+      {% whats_new_button %}
       {% include "documentation/button.html" %}
       {% include "includes/theme_menu.html" %}
       {% if user.is_authenticated %}{% include "includes/user_menu.html" %}{% endif %}

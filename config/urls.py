@@ -30,6 +30,7 @@ admin.site.login = admin_login
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
     path("health/", views.health, name="health"),
+    path("whats-new/", views.whats_new, name="whats-new"),
     path("repository/record-retention/", views.record_retention, name="record-retention"),
     path(
         "repository/announcements/", announcement_views.announcement_list, name="announcement-list"
