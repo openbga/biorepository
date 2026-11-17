@@ -105,6 +105,15 @@ Intentional divergences from Environmental LIMS (keep this list current):
   for the bounded excursion hold picker; the default pagination behavior is unchanged.
 - The `checks` workflow's `application` job allows 60 minutes (Environmental LIMS: 30): the OpenBGA Biorepository
   suite is larger. Lower it if CI runs leave room.
+- What's new (2026-11-17) shares `core/changelog.py`, the `changelog` management command, the
+  `changelog` workflow and the entry format with Environmental LIMS. It differs in where an
+  account's seen entries live: there is no server preference model here, so
+  `static/js/whats-new.js` keeps them in the browser's local storage per account (as the help
+  panel does) and computes the unread count from `indicator_data()` embedded in each page (a first visit in a
+  browser therefore starts with nothing unread, per browser rather than per account);
+  Environmental LIMS stores them in its per-user preference table and renders the count on the
+  server. The page uses this product's card markup instead of the `{% panel %}` tag, and its
+  "Go to" links are not filtered by role (navigation visibility stays in the shell templates).
 
 ## Application boundaries and integrity
 
@@ -200,6 +209,13 @@ including distinct form variants. It introduces no record API or database state.
 per-account panel visibility and width preferences, as it does table presentation preferences.
 Route-coverage checks require help for every HTML page; downloads and transitions are documented
 on their invoking pages. The document-page skill defines the authoring and maintenance standard.
+
+What's new is versioned content too: one entry file per observable change in `changelog.d/`,
+read by the What's new page and by `manage.py changelog`, which generates `CHANGELOG.md`
+(checked in CI). Deployments have no version tags, so both group by calendar month. Entries ship
+with the release, with no network request. Which entries an account has seen is kept in the
+browser per account, like the help panel's preferences, so no migration is needed. A browser
+without a mark for the account has nothing unread: its first page stores the current entries as seen.
 
 ## Deployment and recovery
 
