@@ -2,10 +2,11 @@
 Staff navigation, grouped by the repository's work: from lg up each group is a section menu in the
 top bar (a disclosure: Tab moves through the items, Escape closes), below lg the same groups list
 open in the offcanvas. The section holding the current page is marked by CSS (:has(aria-current)). Labels, targets and the routes that mark each
-item current are declared in core/templatetags/navigation.py; this template only groups the items
-and hides those a role never uses. An unmounted route renders as "Planned". Storage and specimen sections sit between the dashboard and Setup.
+item current, and the roles that see each, are declared in core/templatetags/navigation.py; this
+template only groups the items, and leaves out the menus of an account without a role (every item
+needs one, except Accounts & roles for a superuser). An unmounted route renders as "Planned". Storage and specimen sections sit between the dashboard and Setup.
 {% endcomment %}
-<ul class="vr-nav-list vr-nav-top">
+{% if user_roles %}<ul class="vr-nav-list vr-nav-top">
   {% nav_item "dashboard" %}
 </ul>
 <div class="vr-nav-section dropdown">
@@ -13,7 +14,7 @@ and hides those a role never uses. An unmounted route renders as "Planned". Stor
   <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-specimens">
     {% nav_item "specimens" %}
     {% nav_item "specimen-disposals" %}
-    {% if "technician" in user_roles or "manager" in user_roles %}{% nav_item "specimen-imports" %}{% endif %}
+    {% nav_item "specimen-imports" %}
   </ul>
 </div>
 <div class="vr-nav-section dropdown">
@@ -55,15 +56,15 @@ and hides those a role never uses. An unmounted route renders as "Planned". Stor
     {% nav_item "quality-deviations" %}
     {% nav_item "quality-training" %}
   </ul>
-</div>
-<div class="vr-nav-section dropdown">
+</div>{% endif %}
+{% if user_roles or user.is_superuser %}<div class="vr-nav-section dropdown">
   <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-setup" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Setup</button>
   <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-setup">
     {% nav_item "storage-catalogues" %}
     {% nav_item "specimen-catalogues" %}
     {% nav_item "distribution-catalogues" %}
     {% nav_item "record-retention" %}
-    {% if "admin" in user_roles %}{% nav_item "announcements" %}{% endif %}
-    {% if user.is_superuser %}{% nav_item "accounts-roles" %}{% endif %}
+    {% nav_item "announcements" %}
+    {% nav_item "accounts-roles" %}
   </ul>
-</div>
+</div>{% endif %}

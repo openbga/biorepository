@@ -11,7 +11,9 @@ Templates use:
   {% nav_item "dashboard" %}          one sidebar item (includes/nav_link.html)
   {% section_tabs "storage" %}         a declared tab set (includes/section_tabs.html)
 
-Which items a user sees stays in the shell templates (role checks); views enforce access anyway.
+Which items a user sees is declared here too (NavItem.roles, NavItem.superuser) and read through
+visible(): the menus and What's new's "Go to" links both use it, so neither offers a page the user
+cannot open. Views enforce access anyway.
 """
 
 from dataclasses import dataclass
@@ -19,6 +21,8 @@ from dataclasses import dataclass
 from django import template
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import NoReverseMatch, reverse
+
+from accounts.roles import ROLES, effective_roles
 
 register = template.Library()
 
@@ -30,6 +34,8 @@ class NavItem:
     url_name: str  # the list or overview the item opens; it marks the item too
     icon: str = ""
     routes: tuple[str, ...] = ()  # further view names (record, form, action pages) it marks
+    roles: tuple[str, ...] = ROLES  # effective roles (accounts.roles) that see the item
+    superuser: bool = False  # shown to superusers only (Django admin), whatever their roles
 
 
 @dataclass(frozen=True)
@@ -171,6 +177,7 @@ STAFF_NAV = (
         "specimens:import-list",
         "file-earmark-arrow-up",
         ("specimens:import-upload", "specimens:import-detail"),
+        roles=("admin", "manager", "technician"),  # specimens OPERATE_ROLES
     ),
     # Equipment
     NavItem(
@@ -326,6 +333,7 @@ STAFF_NAV = (
         "announcement-list",
         "megaphone",
         ("announcement-create", "announcement-edit"),
+        roles=("admin",),  # core.announcements.ANNOUNCEMENT_ROLES
     ),
     NavItem(
         "storage-catalogues",
@@ -389,7 +397,7 @@ STAFF_NAV = (
         ),
     ),
     # Django admin renders its own chrome, so no shell page marks this item.
-    NavItem("accounts-roles", "Accounts & roles", "admin:index", "people"),
+    NavItem("accounts-roles", "Accounts & roles", "admin:index", "people", superuser=True),
 )
 
 # Pages reached from the user menu or the top bar (What's new): they render inside the user's
@@ -492,6 +500,16 @@ def _route_items():
 ROUTE_ITEMS = _route_items()
 
 
+def visible(key, user, roles=None):
+    """Whether `user` sees item `key`; `roles` saves a query when the effective roles are known."""
+    item = ITEMS[key]
+    if item.superuser:
+        return bool(getattr(user, "is_superuser", False))
+    if roles is None:
+        roles = effective_roles(user)
+    return bool(set(item.roles) & set(roles))
+
+
 def current_item_key(request, chosen=None):
     """The key of the item the request's page marks, or None (account, error, unmapped).
 
@@ -516,6 +534,7 @@ def _item_context(context, key):
     item = ITEMS[key]
     request = context.get("request")
     return {
+        "visible": visible(key, context.get("user"), context.get("user_roles")),
         "url": _url(item.url_name),
         "label": item.label,
         "icon": item.icon,

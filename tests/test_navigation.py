@@ -18,6 +18,7 @@ from django.urls import NoReverseMatch, get_resolver, reverse
 from django.urls.resolvers import URLResolver
 from django.views.defaults import bad_request
 
+from accounts.models import User
 from core.templatetags.navigation import (
     ACCOUNT_ROUTES,
     ITEMS,
@@ -219,10 +220,22 @@ def test_sidebar_offers_only_the_items_a_role_may_use(client, staff):
             text(label) for label in re.findall(r'<a class="vr-navlink"[^>]*>(.*?)</a>', nav, re.S)
         }
 
-    assert "Announcements" in offered(staff("nav-admin-2", "admin"))
+    admin = offered(staff("nav-admin-2", "admin"))
+    assert {"Announcements", "Imports"} <= admin and "Accounts & roles" not in admin
+    technician = offered(staff("nav-tech", "technician"))
+    assert "Imports" in technician and "Announcements" not in technician
     viewer = offered(staff("nav-viewer", "viewer"))
-    assert "Announcements" not in viewer and "Accounts & roles" not in viewer
+    assert not {"Announcements", "Accounts & roles", "Imports"} & viewer
     assert {"Dashboard", "Record retention"} <= viewer
+    superuser = staff("nav-super", "viewer")
+    superuser.is_superuser = True
+    superuser.save()
+    assert "Accounts & roles" in offered(superuser)
+    every_item = {item.label for item in STAFF_NAV if not item.superuser}
+    assert offered(staff("nav-admin-3", "admin")) == every_item  # nothing else is gated
+    no_role = User.objects.create_user("nav-none", "nav-none@example.invalid", "test-pass-729!")
+    client.force_login(no_role)
+    assert b"vr-nav-section" not in client.get(reverse("whats-new")).content  # no empty menus
 
 
 def test_account_pages_keep_the_shell_and_mark_nothing(client, admin_user):

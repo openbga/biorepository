@@ -5,11 +5,11 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import NoReverseMatch, reverse
 
-from accounts.roles import has_role, require_staff
+from accounts.roles import effective_roles, has_role, require_staff
 
 from . import changelog
 from .models import AuditEvent, Repository
-from .templatetags.navigation import ITEMS, ROUTE_ITEMS
+from .templatetags.navigation import ITEMS, ROUTE_ITEMS, visible
 
 # The specimen journey on the dashboard: (key, label, icon, unit, queue keys). Each stage lists the
 # dashboard's own queue objects, so its numbers are the queues' and open the same rows.
@@ -136,10 +136,10 @@ def csrf_failure(request, reason=""):
     return render(request, "403.html", {"csrf_failure": True}, status=403)
 
 
-def _entry_link(entry):
-    """The menu destination an entry points to; the page still checks the user's access."""
+def _entry_link(entry, user, roles):
+    """The menu destination an entry points to, if the user's menus offer it (visible())."""
     key = ROUTE_ITEMS.get(entry.link)
-    if not entry.link or key is None:
+    if not entry.link or key is None or not visible(key, user, roles):
         return None
     try:
         return {"url": reverse(entry.link), "label": ITEMS[key].label}
@@ -154,6 +154,7 @@ def whats_new(request):
     the account has seen, marks the ones that were new and clears the top bar's indicator; a
     browser without a mark for the account has nothing new."""
     entries = changelog.entries()
+    roles = effective_roles(request.user)
     groups = [
         {
             "key": group.start.strftime("%Y-%m"),
@@ -165,7 +166,10 @@ def whats_new(request):
                 {
                     "impact": impact,
                     "label": label,
-                    "entries": [{"entry": entry, "link": _entry_link(entry)} for entry in items],
+                    "entries": [
+                        {"entry": entry, "link": _entry_link(entry, request.user, roles)}
+                        for entry in items
+                    ],
                 }
                 for impact, label, items in group.sections
             ],

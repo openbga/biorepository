@@ -199,6 +199,10 @@ The same list is shown in the application under What's new.
 
   What's new uses the full width: changes are tiles grouped by impact, with high impact highlighted, the type as a coloured label, and the area and Go to link at the foot of each change. Labels such as statuses and counts never break across lines.
 
+- **Fixed:** What's new links only to pages you can open (2026-11-18)
+
+  What's new shows a Go to link only when your own menus offer that page, so a viewer no longer sees a link to Imports. An account without a role no longer sees section menus that lead nowhere.
+
 - **Fixed:** Demonstration data no longer fails to load after a daylight-saving change (2026-11-15, [#10](https://github.com/openbga/biorepository/pull/10))
 
   Loading the full demonstration data near midnight after an autumn clock change could stop with an import error, because two temperature readings fell on the same local morning. Each demonstration reading now falls on its own local date.

@@ -364,7 +364,6 @@ def test_download_filtered_specimen_import_register(page: Page, tmp_path):
         (filename, "Has errors", tech.get_full_name()),
     ]
     page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
-    expect(
-        page.locator("#vr-documentation").get_by_role("heading", name="Export CSV")
-    ).to_be_visible()
+    # Reference sections are closed groups under the friendly help: the group names the export.
+    expect(page.locator("#vr-documentation summary", has_text="Export CSV").first).to_be_visible()
     assert page.console_errors == []

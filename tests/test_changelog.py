@@ -326,3 +326,28 @@ def test_any_signed_in_account_may_open_it_and_visitors_may_not(client, entries)
     assert response.status_code == 302 and "/accounts/login/" in response["Location"]
     sign_in = client.get(reverse("account_login")).content.decode()
     assert "vr-whats-new" not in sign_in
+
+
+@pytest.mark.django_db
+def test_go_to_links_only_offer_pages_the_account_may_open(client, staff, monkeypatch):
+    items = [
+        entry("2026-11-18", "Import register", link="specimens:import-list"),
+        entry("2026-11-17", "Specimen filters", link="specimens:specimen-list"),
+        entry("2026-11-16", "Announcement audiences", link="announcement-list"),
+    ]
+    monkeypatch.setattr(changelog, "entries", lambda: tuple(items))
+    imports = f'href="{reverse("specimens:import-list")}">Go to Imports'
+    specimens = f'href="{reverse("specimens:specimen-list")}">Go to Specimens'
+    announcements = f'href="{reverse("announcement-list")}">Go to Announcements'
+
+    def page(user):
+        client.force_login(user)
+        return client.get(reverse("whats-new")).content.decode()
+
+    viewer = page(staff("wn-viewer", "viewer"))  # the menus' own visibility (navigation.visible)
+    assert imports not in viewer and announcements not in viewer and specimens in viewer
+    technician = page(staff("wn-tech-2", "technician"))
+    assert imports in technician and specimens in technician and announcements not in technician
+    assert announcements in page(staff("wn-admin", "admin"))
+    no_role = User.objects.create_user("wn-none-2", "wn-none-2@example.invalid", "test-pass-729!")
+    assert not re.search(r">Go to (Imports|Specimens|Announcements)", page(no_role))
