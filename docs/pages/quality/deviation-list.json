@@ -22,6 +22,15 @@
         "New deviation is available to operators and opens a blank report. An empty register offers creation to operators; no matching results offers Clear filters. Viewers have read-only access."
       ],
       "items": []
+    },
+    {
+      "title": "Export CSV",
+      "paragraphs": [
+        "All four staff roles can export the register. Apply the search and status filter and choose a sort order, then select Export CSV. The file includes all six register columns and every matching page. Column visibility and order in your browser affect only the on-screen table.",
+        "If more than 10,000 deviations match, narrow the selection. Correct any invalid filter before exporting. A search with no matches downloads the column headings. Each successful export records your account, the applied search and status, the sort order and the number of rows in the audit trail.",
+        "Occurred at and Updated include the repository time zone offset. The CSV uses UTF-8 and prefixes text that starts with a spreadsheet formula character with an apostrophe. Open the individual deviation to read its description, investigation, corrective action and review history."
+      ],
+      "items": []
     }
   ],
   "sources": [
@@ -33,6 +42,9 @@
     "quality/tests/test_deviations.py",
     "templates/quality/deviation_detail.html",
     "templates/quality/deviation_list.html",
-    "templates/quality/form.html"
+    "templates/quality/form.html",
+    "quality/deviation_lists.py",
+    "quality/deviation_exports.py",
+    "quality/tests/test_deviation_export.py"
   ]
 }

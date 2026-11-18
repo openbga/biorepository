@@ -494,6 +494,10 @@ device-specific exports need conversion. In-app help describes the fields, contr
 
 ## Deviations
 
+For a review meeting, open Deviations, apply a search or status filter, choose the sort order
+and select **Export CSV**. The download includes the six register columns across all matching
+pages. Open a report by its DEV number to read the investigation and review history.
+
 Staff record departures from a procedure or expected practice, with the observed time,
 description, immediate action and optional links to an excursion or inventory audit. Investigation,
 corrective action and effectiveness evidence can be added while open. When action is unnecessary
