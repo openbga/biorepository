@@ -99,7 +99,7 @@ def chips(request, form):
     return result
 
 
-def grid_response(request, spec, template, *, export=True, extra=None, more=None):
+def grid_response(request, spec, template, *, extra=None, more=None):
     try:
         grid = GridRequest.parse(request.GET, spec.columns, spec.default_sort)
     except ValueError as exc:
@@ -113,9 +113,12 @@ def grid_response(request, spec, template, *, export=True, extra=None, more=None
     active = chips(request, form) if form.is_valid() else []
     cleaned = getattr(form, "cleaned_data", {})
     more = spec.more if more is None else more
-    query = request.GET.copy()
-    query.pop("page", None)
-    export_url = reverse("equipment:export", args=[spec.key]) if export else ""
+    export_url = ""
+    over_limit = page_obj.paginator.count > exports.EXPORT_CAP
+    if form.is_valid() and not over_limit:
+        query = {k: data[k] for k in form.fields if data.get(k) and k not in exports.PAGING}
+        query["sort"] = grid.sort
+        export_url = reverse("equipment:export", args=[spec.key], query=query)
     return render(
         request,
         template,
@@ -131,7 +134,8 @@ def grid_response(request, spec, template, *, export=True, extra=None, more=None
             "more": [form[name] for name in more if name in form.fields],
             "more_open": any(cleaned.get(name) for name in more),
             "noun": spec.noun,
-            "export_url": f"{export_url}?{query.urlencode()}" if export_url else "",
+            "export_url": export_url,
+            "exceeded_export_limit": f"{exports.EXPORT_CAP:,}" if over_limit else "",
             **flags(request.user),
             **(extra or {}),
         },
@@ -207,13 +211,9 @@ def _committed(batch):
         return False
 
 
-def import_name(batch):
-    return batch.filename or f"Import {timezone.localtime(batch.recorded_at):%Y-%m-%d %H:%M}"
-
-
 @staff_role_required(*READ)
 def import_list(request):
-    return grid_response(request, lists.SPECS["import"], "equipment/import_list.html", export=False)
+    return grid_response(request, lists.SPECS["import"], "equipment/import_list.html")
 
 
 # --- CSV and attachments --------------------------------------------------------------------
@@ -229,7 +229,9 @@ def export(request, kind):
     try:
         content = exports.export_list(actor=request.user, kind=kind, filters=params, sort=sort)
     except ValidationError as exc:
-        return HttpResponseBadRequest(" ".join(exc.messages))
+        return HttpResponseBadRequest(
+            " ".join(exc.messages), content_type="text/plain; charset=utf-8"
+        )
     response = HttpResponse(content, content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="equipment-{kind}.csv"'
     response["Cache-Control"] = "no-store"
@@ -558,7 +560,7 @@ def import_crumbs(batch=None, *rest):
         ("Imports", reverse("equipment:import-list")),
     ]
     if batch is not None:
-        trail.append((import_name(batch), reverse("equipment:import-detail", args=[batch.pk])))
+        trail.append((batch.name, reverse("equipment:import-detail", args=[batch.pk])))
     return [*trail, *rest]
 
 
@@ -603,7 +605,7 @@ def import_detail(request, pk):
                 messages.success(
                     request,
                     f"Recorded {commit.reading_count} reading"
-                    f"{'s' if commit.reading_count != 1 else ''} from {import_name(batch)}.",
+                    f"{'s' if commit.reading_count != 1 else ''} from {batch.name}.",
                 )
                 return redirect("equipment:import-detail", pk=batch.pk)
         status = 422
@@ -616,8 +618,8 @@ def import_detail(request, pk):
         request,
         "equipment/import_detail.html",
         {
-            "page_title": import_name(batch),
-            "crumbs": import_crumbs(None, (import_name(batch), None)),
+            "page_title": batch.name,
+            "crumbs": import_crumbs(None, (batch.name, None)),
             "batch": batch,
             "state": state,
             "commit": commit,

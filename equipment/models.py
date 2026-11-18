@@ -426,6 +426,12 @@ class LN2Entry(Correctable):
 class ReadingImport(models.Model):
     """An immutable validation result for a readings CSV: normalized rows and errors only."""
 
+    class State(models.TextChoices):
+        VALIDATED = "validated", "Ready to commit"
+        REJECTED = "rejected", "Rejected"
+        COMMITTED = "committed", "Committed"
+        EXPIRED = "expired", "Expired"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     actor = _actor()
     recorded_at = models.DateTimeField(default=timezone.now)
@@ -443,6 +449,10 @@ class ReadingImport(models.Model):
     class Meta:
         ordering = ["-recorded_at", "id"]
         indexes = [models.Index(fields=["sha256"], name="equipment_import_sha")]
+
+    @property
+    def name(self):
+        return self.filename or f"Import {timezone.localtime(self.recorded_at):%Y-%m-%d %H:%M}"
 
     @property
     def is_valid(self):

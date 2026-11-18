@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, time, timedelta
 
 from django import forms
-from django.db.models import Case, F, Q, Value, When, Window
+from django.db.models import Case, F, Func, IntegerField, Q, Value, When, Window
 from django.db.models.functions import FirstValue
 from django.utils import timezone
 
@@ -215,19 +215,11 @@ class ExcursionFilter(ListFilter):
         return normalize_accession(self.cleaned_data.get("specimen") or "")
 
 
-IMPORT_STATES = [
-    ("validated", "Ready to commit"),
-    ("rejected", "Rejected"),
-    ("committed", "Committed"),
-    ("expired", "Expired"),
-]
-
-
 class ImportFilter(ListFilter):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["q"].widget.attrs["placeholder"] = "File name"
-        self.fields["state"] = _choice("State", IMPORT_STATES, "Any state")
+        self.fields["state"] = _choice("State", ReadingImport.State.choices, "Any state")
 
 
 # --- queries --------------------------------------------------------------------------------
@@ -351,12 +343,25 @@ def search_excursions(queryset, text):
 
 
 def import_rows(cleaned, user):
-    queryset = ReadingImport.objects.select_related("actor", "equipment", "commit").annotate(
-        state=Case(
-            When(commit__isnull=False, then=Value("committed")),
-            When(Q(row_count=0) | ~Q(errors=[]), then=Value("rejected")),
-            When(expires_at__lt=timezone.now(), then=Value("expired")),
-            default=Value("validated"),
+    queryset = (
+        ReadingImport.objects.select_related("actor", "equipment")
+        .only(
+            "filename",
+            "recorded_at",
+            "row_count",
+            "equipment__code",
+            "actor__first_name",
+            "actor__last_name",
+            "actor__username",
+        )
+        .annotate(
+            error_total=Func("errors", function="jsonb_array_length", output_field=IntegerField()),
+            state=Case(
+                When(commit__isnull=False, then=Value(ReadingImport.State.COMMITTED)),
+                When(Q(row_count=0) | ~Q(errors=[]), then=Value(ReadingImport.State.REJECTED)),
+                When(expires_at__lt=timezone.now(), then=Value(ReadingImport.State.EXPIRED)),
+                default=Value(ReadingImport.State.VALIDATED),
+            ),
         )
     )
     if cleaned.get("state"):
@@ -442,6 +447,15 @@ EXPORT = {
         ("Recorded by", lambda o: person(o.recorded_by)),
         ("Note", lambda o: o.note),
         ("Limit assessment", lambda o: o.limit_assessment.label),
+    ),
+    "import": (
+        ("File", lambda o: o.name),
+        ("State", lambda o: ReadingImport.State(o.state).label),
+        ("Rows", lambda o: o.row_count),
+        ("Errors", lambda o: o.error_total),
+        ("Equipment", lambda o: o.equipment.code if o.equipment_id else "Named in the file"),
+        ("Validated by", lambda o: person(o.actor)),
+        ("Validated", lambda o: timezone.localtime(o.recorded_at).isoformat()),
     ),
     "excursion": (
         ("Excursion", lambda o: o.number),
@@ -590,6 +604,7 @@ SPECS = {
         form_class=ImportFilter,
         search_fields=("filename",),
         inline=("state",),
+        export_columns=EXPORT["import"],
     ),
 }
 
@@ -613,9 +628,6 @@ def filtered(spec, data, user):
 
 def ordered(spec, queryset, sort):
     """Apply an allowlisted sort with the primary key as the stable tie-break."""
-    key = (sort or spec.default_sort).removeprefix("-")
-    if key not in spec.columns:
-        sort = spec.default_sort
-        key = sort.removeprefix("-")
+    key = sort.removeprefix("-")
     prefix = "-" if sort.startswith("-") else ""
     return queryset.order_by(prefix + spec.columns[key], prefix + "pk")

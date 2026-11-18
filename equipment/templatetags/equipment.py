@@ -3,7 +3,7 @@
 from django import template
 
 from equipment import queries
-from equipment.models import Equipment, Excursion
+from equipment.models import Equipment, Excursion, ReadingImport
 
 register = template.Library()
 
@@ -17,11 +17,11 @@ EXCURSION_TONES = {
     Excursion.Status.REVIEW: "progress",
     Excursion.Status.CLOSED: "success",
 }
-IMPORT_STATES = {
-    "validated": ("Ready to commit", "info"),
-    "rejected": ("Rejected", "danger"),
-    "committed": ("Committed", "success"),
-    "expired": ("Expired", "neutral"),
+IMPORT_TONES = {
+    ReadingImport.State.VALIDATED: "info",
+    ReadingImport.State.REJECTED: "danger",
+    ReadingImport.State.COMMITTED: "success",
+    ReadingImport.State.EXPIRED: "neutral",
 }
 
 
@@ -41,7 +41,7 @@ def excursion_status(status, plain=False):
 
 @register.inclusion_tag("includes/status.html")
 def equipment_import_status(state, plain=False):
-    return _status(*IMPORT_STATES[state], plain)
+    return _status(ReadingImport.State(state).label, IMPORT_TONES[state], plain)
 
 
 @register.simple_tag
@@ -53,8 +53,7 @@ def equipment_status_parts(kind, value):
         return {"label": Equipment.Status(value).label, "tone": EQUIPMENT_TONES[value]}
     if kind == "excursion":
         return {"label": Excursion.Status(value).label, "tone": EXCURSION_TONES[value]}
-    label, tone = IMPORT_STATES[value]
-    return {"label": label, "tone": tone}
+    return {"label": ReadingImport.State(value).label, "tone": IMPORT_TONES[value]}
 
 
 @register.inclusion_tag("includes/status.html")

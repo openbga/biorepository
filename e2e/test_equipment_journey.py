@@ -1,4 +1,4 @@
-"""Equipment journeys for reading assessments, the LN2 log and excursion review."""
+"""Equipment journeys for readings, imports, the LN2 log and excursion review."""
 
 import csv
 import io
@@ -105,6 +105,57 @@ def test_reading_assessments_match_the_register_filter_and_download(page: Page, 
     assert [(row["Probe position"], row["Limit assessment"]) for row in records] == [
         ("Before the limit change", "No limits recorded")
     ]
+
+
+def test_viewer_downloads_the_filtered_import_register(page: Page, tmp_path):
+    from django.core.files.base import ContentFile
+    from django.urls import reverse
+    from django.utils import timezone
+
+    from equipment import services
+
+    manager = make_user("import_manager", PASSWORD, "manager")
+    viewer = make_user("import_viewer", PASSWORD, "viewer")
+    freezer = services.save_equipment(
+        actor=manager, code="FZ-IMPORT", name="Example freezer", kind="freezer"
+    )
+    measured = (timezone.now() - timedelta(hours=1)).isoformat()
+    for filename, temperature in (
+        ("logger-a.csv", "-83.00"),
+        ("logger-z.csv", "-84.00"),
+        ("logger-rejected.csv", "invalid"),
+        ("other.csv", "-82.00"),
+    ):
+        content = f"measured_at,temperature_c\n{measured},{temperature}\n".encode()
+        services.validate_reading_import(
+            actor=manager, file=ContentFile(content, name=filename), equipment_id=freezer.pk
+        )
+
+    sign_in(page, viewer.username, PASSWORD)
+    page.goto(reverse("equipment:reading-list"))
+    page.get_by_role("navigation", name="Temperature readings", exact=True).get_by_role(
+        "link", name="Imports", exact=True
+    ).click()
+
+    toolbar = page.get_by_role("search", name="Filter imports")
+    search = toolbar.get_by_role("searchbox")
+    search.fill("logger")
+    pick(toolbar.get_by_label("State", exact=True), "validated")
+    toolbar.get_by_role("button", name="Apply", exact=True).click()
+    table = page.get_by_role("table", name="Imports", exact=True)
+    table.get_by_role("link", name="File", exact=True).click()
+    expect(table.get_by_role("rowheader")).to_have_text(["logger-a.csv", "logger-z.csv"])
+    expect(page.get_by_role("link", name="Upload readings", exact=True)).to_have_count(0)
+
+    search.fill("unapplied change")
+    export = page.get_by_role("link", name="Export CSV", exact=True)
+    content = save_download(page, export.click, tmp_path / "equipment-import.csv")
+    rows = list(csv.DictReader(io.StringIO(content.decode(), newline="")))
+    assert [(row["File"], row["State"], row["Equipment"]) for row in rows] == [
+        ("logger-a.csv", "Ready to commit", freezer.code),
+        ("logger-z.csv", "Ready to commit", freezer.code),
+    ]
+    assert page.console_errors == []
 
 
 def test_excursion_is_recorded_reviewed_by_a_second_person_and_lists_the_specimens(

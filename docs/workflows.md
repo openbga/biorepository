@@ -323,7 +323,8 @@ probe position as an existing one for the equipment is refused. Each reading kee
 force when it was recorded. The register and CSV distinguish readings within those bounds from
 readings with neither bound, even after the equipment limits change. A reading outside
 those limits that no excursion covers is listed on the dashboard until an excursion is opened for it
-or the reading is corrected.
+or the reading is corrected. On the Imports tab, staff can download a CSV with one row per
+matching file validation, including its state and the row and error counts.
 
 **Excursions.** A technician, manager or admin opens an excursion on a piece of equipment and fills
 in what is known: period, extreme reached, how it was detected, cause, action taken and impact
