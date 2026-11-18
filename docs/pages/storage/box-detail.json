@@ -63,7 +63,7 @@
         },
         {
           "label": "Container type",
-          "description": "Grid code and version, with rows × columns and the labelling scheme; opens the container type."
+          "description": "Container type name, then its code and version, with rows × columns and the labelling scheme; opens the container type."
         },
         {
           "label": "Unit conditions",
@@ -74,7 +74,7 @@
     {
       "title": "Positions",
       "paragraphs": [
-        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover); with the specimens module, a well whose specimen has an unreleased hold is marked as on hold. The key above the grid counts occupied, free, on hold and blocked positions and the total. The grid is created in full with the box and never changes.",
+        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover); with the specimens module, a well whose specimen has an unreleased hold is marked as on hold. The key above the grid counts occupied, free, on hold and blocked positions and the total; a count of zero is muted. The grid is created in full with the box and never changes.",
         "Counts cover positions in active boxes; a retired box offers no free capacity. A checked-out item's position counts as free, and free positions are not reserved: a position is claimed only when an item is stored in it.",
         "Admin and manager roles can select any position that is not occupied to Block position or Unblock position while the box is active. An occupied position cannot be selected: move the item out first.",
         "An occupied well that holds a specimen links to that specimen's record; hover shows its specimen ID and type, and screen readers hear the specimen ID after the position. Where no specimen can be shown, hover shows the storage key instead."
@@ -92,7 +92,7 @@
         },
         {
           "label": "Specimen",
-          "description": "Specimen ID, linked to the specimen record, with its specimen type code. A dash means no specimen could be shown for that key."
+          "description": "Specimen ID, linked to the specimen record, with its specimen type name. A dash means no specimen could be shown for that key."
         },
         {
           "label": "Storage key",

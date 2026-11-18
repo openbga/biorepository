@@ -68,19 +68,19 @@
       "items": [
         {
           "label": "Storage unit",
-          "description": "Unit code and name; opens the unit."
+          "description": "Unit code and name; opens the unit. Excursion open marks a unit with an open temperature excursion."
         },
         {
           "label": "Site and room",
-          "description": "Where the unit stands."
+          "description": "Where the unit stands: site name / room name."
         },
         {
           "label": "Storage class",
           "description": "The class named when the unit was set up."
         },
         {
-          "label": "Nominal (°C)",
-          "description": "The unit's stated set point in degrees Celsius. A definition, not a measurement; it never blocks storing an item."
+          "label": "Nominal",
+          "description": "The unit's stated set point, with its unit (for example −80 °C). A definition, not a measurement; it never blocks storing an item."
         },
         {
           "label": "Positions, Occupied",

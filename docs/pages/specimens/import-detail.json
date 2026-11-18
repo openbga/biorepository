@@ -38,7 +38,7 @@
       "title": "What the page shows",
       "paragraphs": [
         "The header shows the state, the number of rows and who validated the file and when. A Check notice appears when the same file was validated before (and whether it was committed); commit it again only if these are different specimens.",
-        "Errors gives the number of problems found and lists file problems and then each row problem with its line, row key, column and reason. At most 200 problems are kept: when there are more, a note says how many are shown; correct those and upload the file again to see the rest. A supplied value repeated in a message is shortened to 40 characters. Rows as read shows what the system understood from each row: types and containers by code, the exact amount with its unit, collected time in repository time, participant and collection codes, the position (or Not placed) and prior thaws (Unknown when blank). Check this before committing."
+        "Errors gives the number of problems found and lists file problems and then each row problem with its line, row key, column and reason. At most 200 problems are kept: when there are more, a note says how many are shown; correct those and upload the file again to see the rest. A supplied value repeated in a message is shortened to 40 characters. Rows as read shows what the system understood from each row: specimen types, containers and collections by name with their codes, the exact amount with its unit, collected time in repository time, the participant code, the position (or Not placed) and prior thaws (Unknown when blank). Check this before committing."
       ]
     },
     {

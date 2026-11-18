@@ -137,7 +137,7 @@
         },
         {
           "label": "Location",
-          "description": "The full storage path of its position. If it is out of storage in someone's hand (checked out, or returned and not yet stored) it says Checked out, with a clock of how long it has been out of storage; a distributed specimen says Distributed: outside the repository; otherwise Not in storage (never placed, or disposed)."
+          "description": "The full storage path of its position. If it is out of storage in someone's hand it says Checked out, or Returned, in hand after a return from outside the repository, with a clock of how long it has been out of storage; a distributed specimen says Distributed: outside the repository; otherwise Not in storage (never placed, or disposed)."
         },
         {
           "label": "Custodian",

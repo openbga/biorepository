@@ -2187,6 +2187,7 @@ a.vr-path-seg:hover {
 
 /* A storage temperature as cold text (a units list's Nominal): ice, not a status. */
 .vr-cold {
+  --bs-table-color-state: var(--vr-cold-text); /* Bootstrap's table cell colour reads this first */
   color: var(--vr-cold-text);
   font-weight: var(--vr-font-weight-semibold);
 }
