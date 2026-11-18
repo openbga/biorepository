@@ -5,6 +5,41 @@
   ],
   "title": "Specimen record",
   "purpose": "See everything recorded about one specimen: what it is, how much is left, where it is (or that it was distributed outside the repository), who has it, its holds, disposal requests, custody and thaw records, and the full history. Start actions on it from here.",
+  "summary": "Everything recorded about one specimen: what it is, how much is left, where it is, who has it, its holds, disposal requests, custody and thaw records, and its history.",
+  "tasks": [
+    {
+      "title": "Take it out of storage and put it back",
+      "steps": [
+        "Select [[Record check-out]] while it is in a position.",
+        "When it comes back, select [[Record check-in]] and choose a free position."
+      ]
+    },
+    {
+      "title": "Use or split material",
+      "steps": [
+        "Open [[More]] and choose [[Record consumption]] or [[Make aliquots or derivatives]]. The specimen must be in hand, not in a position."
+      ]
+    },
+    {
+      "title": "Stop work on it",
+      "steps": [
+        "Open [[More]] and choose [[Place hold]]. Admin and manager release holds from the Holds section."
+      ]
+    },
+    {
+      "title": "Dispose of it",
+      "steps": [
+        "Select [[Request disposal]]. Another person with disposal approval must approve before the disposal is recorded."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A blocked action stays visible but disabled, with the reason beside it.",
+    "Amount on hand is the balance of the amount ledger. It changes only by adding entries, never by editing the number.",
+    "Time out of storage and thaw counts are worked out from the custody and thaw records. A check-out is not a thaw.",
+    "Records are never deleted. Corrections add a record beside the original, with a reason.",
+    "A distributed specimen takes no physical step until its return is recorded."
+  ],
   "sections": [
     {
       "title": "Who can use it",

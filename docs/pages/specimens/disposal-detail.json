@@ -5,6 +5,32 @@
   ],
   "title": "Disposal request",
   "purpose": "See one disposal request, who decided it and what happened, and decide, cancel or record it if you may.",
+  "summary": "One disposal request: who asked, who decided and what happened. Decide, cancel or record it here if you may.",
+  "tasks": [
+    {
+      "title": "Decide the request",
+      "steps": [
+        "Select [[Approve disposal]] or [[Reject disposal request]] and give a reason."
+      ]
+    },
+    {
+      "title": "Record the disposal",
+      "steps": [
+        "Once approved, select [[Record disposal]] after the material was disposed of."
+      ]
+    },
+    {
+      "title": "Withdraw your request",
+      "steps": [
+        "Select [[Cancel disposal request]] before it is decided."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Nobody approves their own request. The page tells you when another person must decide.",
+    "A disposal hold or an all-use hold blocks approving and recording, but not rejecting.",
+    "Disposals are never deleted. The request and decision stay on the specimen."
+  ],
   "sections": [
     {
       "title": "What the page shows",

@@ -1,23 +1,23 @@
 {% extends "base.html" %}
-{% load navigation %}
+{% load navigation ui %}
 {% comment %}Container types: box grid geometry, versioned (catalogue tab). Context: grid_response for lists.CATALOGUE_SPECS["container_type"].{% endcomment %}
 {% block page_actions %}{% url 'storage:container-type-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New container type" %}{% endblock %}
 {% block content %}
 {% section_tabs "storage-catalogues" %}
 <section class="card vr-table-card" aria-labelledby="grids-heading">
   <h2 class="visually-hidden" id="grids-heading">Container types</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter container types" q=q placeholder="Code or name" inline=inline grid="storage.container-types" %}
+  {% grid_toolbar label="Filter container types" q=q placeholder="Code or name" inline=inline grid="storage.container-types" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.container-types" data-vr-grid-version="1" aria-labelledby="grids-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% sort_header label="Code" asc="code" desc="-code" col="code" locked=True %}
         <th scope="col" class="text-end" data-vr-col="version" data-vr-col-label="Version">Version</th>
-        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% sort_header label="Name" asc="name" desc="-name" col="name" %}
         <th scope="col" data-vr-col="grid" data-vr-col-label="Grid">Grid</th>
         <th scope="col" class="text-end" data-vr-col="positions" data-vr-col-label="Positions">Positions</th>
         <th scope="col" data-vr-col="labels" data-vr-col-label="Labels">Labels</th>
-        {% include "includes/sort_header.html" with label="Boxes" asc="boxes" desc="-boxes" col="boxes" class="text-end" %}
+        {% sort_header label="Boxes" asc="boxes" desc="-boxes" col="boxes" class="text-end" %}
         <th scope="col" data-vr-col="status" data-vr-col-label="Status">Status</th>
       </tr></thead>
       <tbody>
@@ -36,7 +36,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_manage %}{% url 'storage:container-type-create' as create_url %}{% endif %}
   {% include "storage/_list_states.html" with title_empty="No container types yet" body_empty="A container type is a box grid: rows, columns and how positions are labelled and numbered." create_url=create_url create_label="New container type" %}

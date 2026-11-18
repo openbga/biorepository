@@ -5,6 +5,29 @@
   ],
   "title": "Users",
   "purpose": "Find staff accounts and review their assigned access.",
+  "summary": "Find staff accounts and check their roles and whether they can approve disposals. Only superusers can open this list.",
+  "tasks": [
+    {
+      "title": "Find an account",
+      "steps": [
+        "Type a username, name or email in the search box and press Enter.",
+        "Narrow it with the filters on the right, such as disposal approval or groups.",
+        "Select the username to open the account."
+      ]
+    },
+    {
+      "title": "Create an account",
+      "steps": [
+        "Select [[Add user]] and fill in the account. No invitation email is sent."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Accounts are never deleted. Clear Active on the account instead, so its history keeps its name.",
+    "Roles shows the account's groups. The admin group also covers manager, technician and viewer work, but not disposal approval.",
+    "Can approve disposal needs the explicit permission, directly or through a group. Superuser status does not give it.",
+    "Nobody approves their own disposal request."
+  ],
   "sections": [
     {
       "title": "Access",

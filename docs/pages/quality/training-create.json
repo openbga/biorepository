@@ -5,6 +5,27 @@
   ],
   "title": "New training record",
   "purpose": "Assign a training record to an existing active staff account.",
+  "summary": "Assign a training record to an active staff account. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Assign training",
+      "steps": [
+        "Choose the [[Trainee]] and type the [[Topic]], and the [[Procedure / version reference]] if known.",
+        "Set an optional [[Assignment due]], give the [[Reason]] and select [[Create training record]]."
+      ]
+    },
+    {
+      "title": "Record completion later",
+      "steps": [
+        "Open the record and select Record completion."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The trainee needs an application role. Administration access is not needed.",
+    "Assignment due is a follow-up date, not a deadline enforced by the application.",
+    "Every saved action needs a reason and is kept in the history."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

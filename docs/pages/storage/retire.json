@@ -5,6 +5,26 @@
   ],
   "title": "Retire a storage unit, rack, shelf or box",
   "purpose": "Take a storage unit, rack, shelf, tower, canister or box out of service permanently, keeping its record, code and history.",
+  "summary": "Take a storage unit, rack, shelf or box out of service permanently, keeping its record, code and history.",
+  "tasks": [
+    {
+      "title": "Retire the record",
+      "steps": [
+        "Give the [[Reason for retirement]] and select the Retire button."
+      ]
+    },
+    {
+      "title": "Empty it first",
+      "steps": [
+        "A box must hold no items, a rack or shelf no active children, and a unit no active racks or shelves."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Retirement is permanent. A retired record cannot be reactivated, edited or moved.",
+    "Nothing is deleted, and the code is never reused.",
+    "Its positions stop counting as capacity."
+  ],
   "sections": [
     {
       "title": "Who and when",

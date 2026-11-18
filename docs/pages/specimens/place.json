@@ -5,6 +5,28 @@
   ],
   "title": "Place in storage",
   "purpose": "Put a specimen that has no storage position, and has never been stored or is available again, into a free position.",
+  "summary": "Put a specimen that is not in storage, and is not checked out, into a free position.",
+  "tasks": [
+    {
+      "title": "Store the specimen",
+      "steps": [
+        "Choose the [[Box]] and type the [[Position]] label, for example A1. The help lists free positions.",
+        "Check [[Placed at]] and the [[Reason]].",
+        "Select [[Place in storage]]."
+      ]
+    },
+    {
+      "title": "Store a checked-out specimen",
+      "steps": [
+        "Use [[Record check-in]] on the record instead. It also closes the time out of storage."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only one specimen can occupy a position. It is rechecked when you save, so a position taken meanwhile is refused.",
+    "Free positions are not reserved for you.",
+    "Blocked positions cannot be used."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

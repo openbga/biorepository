@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution specimens %}
+{% load distribution specimens ui %}
 {% comment %}
 Entry grid: allocate specimens to one line of an approved request. Candidates are the available
 specimens of the line's type (and study) from queries.candidates, one page at a time; a blocked
@@ -12,7 +12,7 @@ request_obj, line, taken, remaining, candidates [{specimen, value, blockers, pat
 errors}], unlisted_blockers, page_obj (Paginator over the candidate count), filters, blocked,
 submit_label, back_url, crumbs, facts.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form vr-form-wide mb-3" method="get" role="search" aria-label="Find candidates">
   <fieldset class="vr-form-section">
@@ -28,7 +28,7 @@ submit_label, back_url, crumbs, facts.
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% include "distribution/requests/_grid_head.html" with note="Allocation reserves the specimen, not its position: it stays where it is, cannot be disposed of meanwhile, and is checked again when picked." %}
-  {% if unlisted_blockers %}<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Refused" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for accession, labels in unlisted_blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul></div>{% endif %}
+  {% if unlisted_blockers %}<div class="alert alert-danger" role="alert">{% status label="Refused" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for accession, labels in unlisted_blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul></div>{% endif %}
   <fieldset class="vr-form-section">
     <legend>Candidates</legend>
     <p class="vr-form-note">Available specimens of {{ line.specimen_type }}{% if line.study %} in study {{ line.study.code }}{% endif %}. Tick up to {{ remaining }}. Same type left counts the participant's available specimens of this type, this one included: allocating the last ones depletes the participant's material.</p>
@@ -53,9 +53,9 @@ submit_label, back_url, crumbs, facts.
             <th scope="row"><a class="vr-id" href="{% url 'specimens:specimen-detail' c.specimen.pk %}">{{ c.specimen.accession }}</a></th>
             <td class="vr-id">{{ c.specimen.participant.code|default:"—" }}</td>
             <td class="vr-id">{{ c.study.code|default:"—" }}</td>
-            <td class="text-end vr-id">{{ c.specimen.quantity_on_hand|amount:c.specimen.unit }}{% if c.below_minimum %}<span class="d-block small">{% include "includes/status.html" with label="Below the minimum" tone="warning" plain=True %}</span>{% endif %}</td>
+            <td class="text-end vr-id">{{ c.specimen.quantity_on_hand|amount:c.specimen.unit }}{% if c.below_minimum %}<span class="d-block small">{% status label="Below the minimum" tone="warning" plain=True %}</span>{% endif %}</td>
             <td class="vr-id">{{ c.path|default:"Not in storage" }}</td>
-            <td class="text-end vr-id">{{ c.remaining }}{% if c.remaining <= 1 and c.specimen.participant %}<span class="d-block small">{% include "includes/status.html" with label="Last one" tone="warning" plain=True %}</span>{% endif %}</td>
+            <td class="text-end vr-id">{{ c.remaining }}{% if c.remaining <= 1 and c.specimen.participant %}<span class="d-block small">{% status label="Last one" tone="warning" plain=True %}</span>{% endif %}</td>
             <td class="vr-wrap small">{{ c.restrictions|default:"—" }}</td>
             <td id="why-{{ forloop.counter }}">{% for b in c.blockers %}{% blocker_status b %}<span class="d-block small">{{ b.message }}</span>{% endfor %}{% for label in c.errors %}<span class="d-block small">Refused: {{ label }}</span>{% endfor %}{% if not c.blockers and not c.errors %}<span class="vr-muted">—</span>{% endif %}</td>
           </tr>
@@ -63,9 +63,9 @@ submit_label, back_url, crumbs, facts.
         </tbody>
       </table>
     </div>
-    {% include "includes/pagination.html" with page_obj=page_obj noun="candidates" %}
+    {% pagination page_obj=page_obj noun="candidates" %}
     {% else %}
-    {% if filters %}{% include "includes/empty_state.html" with kind="no-results" title="No candidates match" body="Change or clear the search." clear_url=request.path %}{% else %}{% include "includes/empty_state.html" with title="No available specimens of this type" body="Only available specimens of the line's type, in the studies the line or request names, are offered." %}{% endif %}
+    {% if filters %}{% empty_state kind="no-results" title="No candidates match" body="Change or clear the search." clear_url=request.path %}{% else %}{% empty_state title="No available specimens of this type" body="Only available specimens of the line's type, in the studies the line or request names, are offered." %}{% endif %}
     {% endif %}
   </fieldset>
   {% include "distribution/requests/_grid_foot.html" %}

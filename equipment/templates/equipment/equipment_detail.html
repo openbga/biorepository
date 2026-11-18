@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment ui %}
 {% comment %}
 Equipment record: facts, the limits the repository set, current due dates, service events (with
 corrections and withdrawals), the latest LN2 entries and readings, excursions, status history and
@@ -9,7 +9,7 @@ by queries.with_latest), due_rows [(kind label, event or None)], events (with is
 superseded_by, may_correct), event_count, ln2, readings, excursions, status_changes,
 open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'equipment:equipment-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Equipment" section_url=list_url current=equipment.code %}{% endblock %}
+{% block breadcrumbs %}{% url 'equipment:equipment-list' as list_url %}{% breadcrumbs section="Equipment" section_url=list_url current=equipment.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ equipment.code }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% equipment_status equipment.status %}</li><li>{{ equipment.get_kind_display }}</li>{% if equipment.storage_unit %}<li>Storage unit <a class="vr-id" href="{% url 'storage:unit-detail' equipment.storage_unit_id %}">{{ equipment.storage_unit.code }}</a></li>{% endif %}{% if equipment.is_critical %}<li>Critical equipment</li>{% endif %}{% if equipment.location %}<li>{{ equipment.location }}</li>{% endif %}</ul>{% endblock %}
 {% block page_actions %}
@@ -20,9 +20,9 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
 {% if can_operate %}{% if open_for_entries %}<a class="btn btn-primary" href="{% url 'equipment:service-create' equipment.pk %}">Record service event</a>{% else %}<button class="btn btn-primary" type="button" disabled aria-describedby="entries-why">Record service event</button><span class="vr-action-note" id="entries-why">{{ retired_note }}</span>{% endif %}{% endif %}
 {% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if equipment.active_excursions %}
-<div class="alert alert-danger" role="status">{% include "includes/status.html" with label="Excursion" tone="danger" plain=True %}<div>{{ equipment.active_excursions }} excursion{{ equipment.active_excursions|pluralize }} open or awaiting review. <a href="#excursions-heading">See excursions</a></div></div>
+<div class="alert alert-danger" role="status">{% status label="Excursion" tone="danger" plain=True %}<div>{{ equipment.active_excursions }} excursion{{ equipment.active_excursions|pluralize }} open or awaiting review. <a href="#excursions-heading">See excursions</a></div></div>
 {% endif %}
 
 <section class="card mb-3" aria-labelledby="facts-heading">
@@ -101,12 +101,12 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         {% if can_operate %}<td>{% if e.may_correct %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:service-correct' e.pk %}">Correct</a>{% endif %}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No service events recorded" body="Record maintenance, calibration, repair, temperature mapping or qualification as it is performed, with its certificate or report." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No service events recorded" body="Record maintenance, calibration, repair, temperature mapping or qualification as it is performed, with its certificate or report." %}</div>{% endif %}
 </section>
 
 {% if equipment.keeps_ln2_log %}
 <section class="card vr-table-card mb-3" aria-labelledby="ln2-heading">
-  <div class="card-header"><h2 class="card-title" id="ln2-heading">LN2 log</h2><span class="vr-count">Latest {{ recent }}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:ln2-list' %}?equipment={{ equipment.pk }}">All entries in the LN2 log</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:ln2-create' %}?equipment={{ equipment.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Record LN2 entry</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="ln2-heading">LN2 log</h2><span class="vr-count">Latest {{ recent }}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:ln2-list' %}?equipment={{ equipment.pk }}">All entries in the LN2 log</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:ln2-create' %}?equipment={{ equipment.pk }}">{% icon name="plus-lg" %}Record LN2 entry</a>{% endif %}</div>
   {% if ln2 %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">When</th><th scope="col">Entry</th><th scope="col" class="text-end">Level before</th><th scope="col" class="text-end">Level</th><th scope="col" class="text-end">Change since previous</th><th scope="col" class="text-end">Amount added</th><th scope="col">Supply dewar</th><th scope="col">Recorded by</th></tr></thead>
@@ -122,13 +122,13 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td>{{ row.recorded_by|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No LN2 entries yet" body="Record level checks and fills; the change since the previous entry is worked out from the levels." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No LN2 entries yet" body="Record level checks and fills; the change since the previous entry is worked out from the levels." %}</div>{% endif %}
 </section>
 {% endif %}
 
 {% if equipment.takes_readings %}
 <section class="card vr-table-card mb-3" aria-labelledby="readings-heading">
-  <div class="card-header"><h2 class="card-title" id="readings-heading">Temperature readings</h2><span class="vr-count">Latest {{ recent }}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:reading-list' %}?equipment={{ equipment.pk }}">All readings</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:reading-create' %}?equipment={{ equipment.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Record reading</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="readings-heading">Temperature readings</h2><span class="vr-count">Latest {{ recent }}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:reading-list' %}?equipment={{ equipment.pk }}">All readings</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:reading-create' %}?equipment={{ equipment.pk }}">{% icon name="plus-lg" %}Record reading</a>{% endif %}</div>
   {% if readings %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Read at</th><th scope="col" class="text-end">Temperature (°C)</th><th scope="col">Limits</th><th scope="col">Probe position</th><th scope="col">Monitor</th><th scope="col">Source</th><th scope="col">Recorded by</th></tr></thead>
@@ -143,11 +143,11 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td>{{ row.recorded_by|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No temperature readings yet" body="Record readings by hand or import a logger's CSV." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No temperature readings yet" body="Record readings by hand or import a logger's CSV." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="excursions-heading">
-  <div class="card-header"><h2 class="card-title" id="excursions-heading">Excursions</h2><span class="vr-count">{{ excursions|length }}</span>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:excursion-create' %}?equipment={{ equipment.pk }}">{% include "includes/icon.html" with name="plus-lg" %}New excursion</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="excursions-heading">Excursions</h2><span class="vr-count">{{ excursions|length }}</span>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:excursion-create' %}?equipment={{ equipment.pk }}">{% icon name="plus-lg" %}New excursion</a>{% endif %}</div>
   {% if excursions %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Excursion</th><th scope="col">Status</th><th scope="col">Started</th><th scope="col">Ended</th><th scope="col" class="text-end">Extreme (°C)</th><th scope="col">Cause</th></tr></thead>
@@ -161,7 +161,7 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td>{{ row.get_cause_category_display }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No excursions recorded" body="Record an excursion when the temperature went outside the limits set for this equipment." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No excursions recorded" body="Record an excursion when the temperature went outside the limits set for this equipment." %}</div>{% endif %}
 </section>
 {% endif %}
 
@@ -178,9 +178,9 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td class="vr-nowrap">{{ row.recorded_at|date:"Y-m-d H:i" }} by {{ row.actor|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="In service since it was registered" body="Status changes are listed here with their effective time and reason." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="In service since it was registered" body="Status changes are listed here with their effective time and reason." %}</div>{% endif %}
 </section>
 
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=equipment.code %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=equipment.code %}{% endblock %}

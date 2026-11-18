@@ -5,6 +5,27 @@
   ],
   "title": "Dispatch",
   "purpose": "Record that a packed shipment left the repository.",
+  "summary": "Record that a packed shipment left the repository.",
+  "tasks": [
+    {
+      "title": "Dispatch the shipment",
+      "steps": [
+        "Check the courier and [[Tracking number]], and who it was [[Handed to]].",
+        "Enter [[Dispatched at]] and the [[Reason]], then select [[Dispatch]]."
+      ]
+    },
+    {
+      "title": "Clear what refuses dispatch",
+      "steps": [
+        "Read the listed facts, for example a missing agreement, and fix them first."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Every specimen is checked before anything is written. If one is refused, nothing is dispatched.",
+    "The checks use the day dispatch is recorded, even if you enter an earlier time.",
+    "Dispatched specimens leave custody and become Distributed. Their allocation holds are released."
+  ],
   "sections": [
     {
       "title": "Who can use it",

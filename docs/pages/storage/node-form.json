@@ -6,6 +6,28 @@
   ],
   "title": "Rack or shelf form",
   "purpose": "Add a rack, tower, shelf or canister to a unit, or change the name of an existing one.",
+  "summary": "Add a rack, tower, shelf or canister to a unit, or change the name of an existing one.",
+  "tasks": [
+    {
+      "title": "Add a rack or shelf",
+      "steps": [
+        "Choose the [[Storage unit]], where it sits in [[Inside]], its [[Slot]] and [[Kind]].",
+        "Type the [[Code]] and [[Name]], then give [[Node slots]] or [[Box slots]], not both.",
+        "Select [[Create rack or shelf]]."
+      ]
+    },
+    {
+      "title": "Rename it",
+      "steps": [
+        "Change the [[Name]], give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only the name can be changed later. Use Move to relocate it.",
+    "A shelf holds racks; a rack, tower or canister holds shelves.",
+    "Codes are stored in capitals and never reused."
+  ],
   "sections": [
     {
       "title": "Fields",

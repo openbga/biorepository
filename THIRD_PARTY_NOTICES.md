@@ -26,6 +26,10 @@ files in the image. Do not strip those files or the notices in bundled browser a
 | Bootstrap Icons 1.13.2 (subset in static/img/icons.svg) | MIT; https://github.com/twbs/icons/blob/v1.13.2/LICENSE; retain static/img/icons.LICENSE |
 | HTMX 2.0.11 | 0BSD; https://github.com/bigskysoftware/htmx/blob/v2.0.11/LICENSE; retain bundled LICENSE under static/vendor/htmx-2.0.11/ |
 | DataTables 3.1.5 / ColReorder 3.1.2 (with Bootstrap 5 integrations) | MIT; https://datatables.net/license/mit; retain bundled License.txt under static/vendor/datatables/ |
+| Tom Select 2.7.0 (including bundled Sifter and microplugin) | Apache-2.0; https://github.com/orchidjs/tom-select/blob/v2.7.0/LICENSE; retain bundled license and headers under static/vendor/tom-select/ |
+| Vanilla Calendar Pro 3.4.0 | MIT; https://github.com/uvarov-frontend/vanilla-calendar-pro/blob/v3.4.0/LICENSE; retain bundled LICENSE and the header under static/vendor/vanilla-calendar-pro-3.4.0/ |
+| Geologica (static/fonts/Geologica-Cryo.woff2, subset) | SIL OFL 1.1; Copyright 2020 The Geologisk Project Authors (https://github.com/monokromskriftforlag/geologisk); retain static/fonts/Geologica-OFL.txt |
+| Martian Mono (static/fonts/MartianMono-Cryo.woff2, subset) | SIL OFL 1.1; Copyright 2021 The Martian Mono Project Authors (https://github.com/evilmartians/mono); retain static/fonts/MartianMono-OFL.txt |
 | Playwright / pytest-playwright (optional test tools) | Apache-2.0; https://github.com/microsoft/playwright-python/blob/main/LICENSE |
 
 Using the [GNU license compatibility list](https://www.gnu.org/licenses/license-list.html),

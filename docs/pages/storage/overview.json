@@ -5,6 +5,27 @@
   ],
   "title": "Storage overview",
   "purpose": "See at a glance where there is room: repository-wide position counts, occupancy of each active storage unit and the most recent box and rack moves. Every count links to the list it counts.",
+  "summary": "Where there is room at a glance: position counts across the repository, how full each active storage unit is, and the latest box and rack moves.",
+  "tasks": [
+    {
+      "title": "Find room to store something",
+      "steps": [
+        "Find the unit under Occupancy by storage unit and select its Free count. The free positions list opens, filtered to that unit."
+      ]
+    },
+    {
+      "title": "Check a recent box or rack move",
+      "steps": [
+        "Under Recent box and rack moves, select the box or rack to open its page and moves."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Counts cover active boxes in active racks, shelves and units. Retired structure never counts as capacity.",
+    "Free positions are not reserved. A position is taken only when an item is stored in it.",
+    "Nominal temperature is a stated set point, not a measurement.",
+    "Moves of single specimens are on the specimen records, not here."
+  ],
   "sections": [
     {
       "title": "All active storage",

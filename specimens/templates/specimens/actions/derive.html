@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Entry grid: make aliquots or derivatives from one specimen (docs/ui-standards.md section 7, rules
 7 and 8). Context (specimens.action_views.derive): page_title, form (DeriveForm), formset (prefix
@@ -8,16 +8,16 @@ submit_label, back_url, crumbs and the _context.html parameters.
 row more or less and records nothing, so both work without JavaScript. A hidden copy of the save
 button comes first so Enter in a field saves rather than removing the first row.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}
-  {% include "includes/form_errors.html" with form=form formset=formset formset_label="new specimens" %}
-  {% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Error" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
+  {% form_errors form=form formset=formset formset_label="new specimens" %}
+  {% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{% status label="Error" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
   {% if blocked %}
   <div class="alert alert-warning" role="alert">
-    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
+    {% status label="Not available" tone="warning" plain=True %}
     <div>{{ blocked }}</div>
   </div>
   {% else %}
@@ -58,12 +58,12 @@ button comes first so Enter in a field saves rather than removing the first row.
         </tbody>
       </table>
     </div>
-    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% include "includes/icon.html" with name="plus-lg" %}Add specimen</button>{% endif %}
+    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% icon name="plus-lg" %}Add specimen</button>{% endif %}
   </fieldset>
   {% endif %}
   <fieldset class="vr-form-section">
     <legend>{{ legend }}</legend>
-    {% for row in rows %}{% include "includes/field.html" with field=row.0 suffix=row.0.field.suffix %}{% endfor %}
+    {% for row in rows %}{% field field=row.0 suffix=row.0.field.suffix %}{% endfor %}
   </fieldset>
   {% endfor %}{% endwith %}
   {% for field in form.hidden_fields %}{{ field }}{% endfor %}

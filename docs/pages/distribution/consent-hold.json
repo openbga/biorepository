@@ -5,6 +5,26 @@
   ],
   "title": "Hold withdrawn specimens",
   "purpose": "Place the withdrawal's use hold on specimens of the participant that do not have it yet.",
+  "summary": "Place the withdrawal's use hold on the participant's specimens that do not have it yet. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Hold the specimens",
+      "steps": [
+        "Give the [[Reason]] and select [[Hold withdrawn specimens]]."
+      ]
+    },
+    {
+      "title": "Check which specimens lack the hold",
+      "steps": [
+        "Read Specimens in custody on the consent page."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Specimens registered after a withdrawal are not held automatically.",
+    "Holds are released only by reinstating the consent.",
+    "The reason is kept on every hold."
+  ],
   "sections": [
     {
       "title": "When to use it",

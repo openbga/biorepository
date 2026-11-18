@@ -5,6 +5,28 @@
   ],
   "title": "Dashboard",
   "purpose": "See notices from your repository’s administrators and the specimen, equipment and distribution work waiting for your roles.",
+  "summary": "Notices from your repository's administrators and the specimen, equipment and distribution work waiting for your roles.",
+  "tasks": [
+    {
+      "title": "Start on the work that is waiting",
+      "steps": [
+        "Find the queue under Your work queues.",
+        "Select its label to open the list of those items with the filter applied. Queues showing 0 have no link."
+      ]
+    },
+    {
+      "title": "Open a recently stored specimen",
+      "steps": [
+        "Under Recently stored, select the specimen ID."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Counts are live and match the rows the linked list shows.",
+    "Approval and review queues never count your own requests or submissions. Another person must decide them.",
+    "Limits, low levels and due dates are the ones your repository entered. The application sets none.",
+    "Announcements cannot be dismissed. They disappear when they end or are withdrawn."
+  ],
   "sections": [
     {
       "title": "Sections",

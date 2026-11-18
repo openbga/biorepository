@@ -5,6 +5,26 @@
   ],
   "title": "Submit for review",
   "purpose": "Send a completed excursion to a manager or administrator for review.",
+  "summary": "Send a completed excursion to a manager or administrator for review.",
+  "tasks": [
+    {
+      "title": "Submit it",
+      "steps": [
+        "Add an optional [[Note]] for the reviewer and select [[Submit for review]]."
+      ]
+    },
+    {
+      "title": "Fill in what is missing",
+      "steps": [
+        "If an item is named as missing, use Edit on the excursion first."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "It needs an end time, a cause, an action taken and an impact assessment.",
+    "While awaiting review it cannot be edited.",
+    "Someone other than you reviews and closes it."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

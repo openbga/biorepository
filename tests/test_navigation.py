@@ -61,6 +61,7 @@ NON_PAGE_ROUTES = {
     "specimens:import-commit",
     "specimens:import-template",
     "health",
+    "lookup",
     "ready",
     "mfa_download_recovery_codes",
     "equipment:attachment",

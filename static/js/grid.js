@@ -162,11 +162,6 @@
     };
   }
 
-  function iconMarkup(name) {
-    var sprite = document.body.getAttribute("data-vr-icons") || "";
-    return '<svg class="vr-icon" aria-hidden="true" focusable="false"><use href="' + sprite + "#i-" + name + '"></use></svg>';
-  }
-
   function renderDialog(grid, focus) {
     var parts = dialogParts();
     var order = currentOrder(grid);
@@ -198,14 +193,12 @@
       } else {
         var position = movable.indexOf(id);
         [["up", "arrow-up", position === 0], ["down", "arrow-down", position === movable.length - 1]].forEach(function (spec) {
-          var button = document.createElement("button");
-          button.type = "button";
-          button.className = "btn btn-outline-secondary btn-sm";
+          var button = window.vrUi.button("", "secondary", true);
           button.setAttribute("data-vr-col-move", spec[0]);
           button.setAttribute("data-vr-col-id", id);
           button.setAttribute("aria-label", "Move " + col.label + " " + spec[0]);
           button.disabled = spec[2];
-          button.innerHTML = iconMarkup(spec[1]);
+          button.innerHTML = window.vrUi.icon(spec[1]);
           item.append(button);
         });
       }

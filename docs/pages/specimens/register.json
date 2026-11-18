@@ -5,6 +5,35 @@
   ],
   "title": "Register specimen",
   "purpose": "Record a newly received specimen with its exact amount, origin, times, thaw history and custodian, and optionally store it right away.",
+  "summary": "Record a newly received specimen with its exact amount, origin, times, thaw history and custodian, and optionally store it right away.",
+  "tasks": [
+    {
+      "title": "Register a specimen",
+      "steps": [
+        "Choose the [[Specimen type]] and [[Specimen container]], and type the [[Amount]] exactly as measured with its [[Unit]].",
+        "Enter [[Collected]] and [[Registered]], and the prior thaws or leave [[Unknown]] ticked.",
+        "Select [[Register specimen]]. The new record opens with its ID."
+      ]
+    },
+    {
+      "title": "Store it at the same time",
+      "steps": [
+        "Choose a [[Box]] and type the free position label, for example A1."
+      ]
+    },
+    {
+      "title": "Register many specimens",
+      "steps": [
+        "Use Imports to validate a CSV file and register all its rows in one step."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The system assigns the specimen ID. You cannot choose it.",
+    "Participant is a code only. Never enter names, record numbers or other identifying text in any field.",
+    "Amounts are kept exactly as typed, never rounded.",
+    "Times cannot be in the future. Leave Box and Position blank to place the specimen later."
+  ],
   "sections": [
     {
       "title": "Who can use it",

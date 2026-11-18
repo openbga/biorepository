@@ -4,7 +4,7 @@
 {% url 'mfa_index' as mfa_url %}
 <div class="dropdown">
   <button class="btn btn-sm vr-topbar-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    {% include "includes/icon.html" with name="person-circle" %}<span class="d-none d-md-inline">{{ user.get_full_name|default:user.get_username }}</span><span class="visually-hidden d-md-none">Account</span>
+    {% include "includes/icon.html" with name="person-circle" %}<span class="vr-topbar-label">{{ user.get_full_name|default:user.get_username }}</span>
   </button>
   <div class="dropdown-menu dropdown-menu-end">
     <div class="px-2 py-2 mb-1 border-bottom">

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution distribution_governance %}
+{% load distribution distribution_governance ui %}
 {% comment %}
 Agreement record (AG-…): status stamp and validity today (computed, never stored), the parties
 and references, the terms as recorded, the requests linked to it, its documents (download;
@@ -9,7 +9,7 @@ terminated), Execute agreement (primary; drafts). Add document sits in the docum
 Context: agreement, categories, documents, events (with change_rows), linked_requests, today,
 edit_reason, terminate_reason, toc, history, can_manage.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'distribution:agreement-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Agreements" section_url=list_url current=agreement.number %}{% endblock %}
+{% block breadcrumbs %}{% url 'distribution:agreement-list' as list_url %}{% breadcrumbs section="Agreements" section_url=list_url current=agreement.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ agreement.number }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "agreement" agreement.status %}</li><li>{% agreement_validity agreement today %}</li><li>{{ agreement.get_kind_display }}</li><li class="vr-id">{{ agreement.institution.code }}</li></ul>{% endblock %}
 {% block page_intro %}<p class="vr-page-intro">The terms as recorded from the agreement; the software does not draft or interpret agreements.</p>{% endblock %}
@@ -23,7 +23,7 @@ edit_reason, terminate_reason, toc, history, can_manage.
 {% endif %}
 {% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if agreement.status == "terminated" %}
 <div class="alert alert-secondary" role="status">{% distribution_status "agreement" agreement.status plain=True %}<div>Terminated from <time datetime="{{ agreement.terminated_on|date:'Y-m-d' }}">{{ agreement.terminated_on|date:"Y-m-d" }}</time>. Nothing can be dispatched under it from that date.</div></div>
 {% elif agreement.status == "draft" %}
@@ -72,11 +72,11 @@ edit_reason, terminate_reason, toc, history, can_manage.
       <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:request-detail' r.pk %}">{{ r.number }}</a></th><td>{% distribution_status "request" r.status plain=True %}</td><td class="vr-wrap">{{ r.title }}</td><td class="vr-id">{{ r.investigator.code }}</td></tr>{% endfor %}
     </tbody>
   </table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No requests linked" body="A manager links a request to this agreement from the request's page." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No requests linked" body="A manager links a request to this agreement from the request's page." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="documents-heading">
-  <div class="card-header"><h2 class="card-title" id="documents-heading">Documents</h2><span class="vr-count">{{ documents|length }}</span>{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:agreement-document' agreement.pk %}">{% include "includes/icon.html" with name="plus-lg" %}Add document</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="documents-heading">Documents</h2><span class="vr-count">{{ documents|length }}</span>{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:agreement-document' agreement.pk %}">{% icon name="plus-lg" %}Add document</a>{% endif %}</div>
   {% if documents %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Title</th><th scope="col">Kind</th><th scope="col">File</th><th scope="col">Supersedes</th><th scope="col">Added</th></tr></thead>
@@ -90,16 +90,16 @@ edit_reason, terminate_reason, toc, history, can_manage.
       </tr>{% endfor %}
     </tbody>
   </table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No documents attached" body="Attach the executed copy, amendments and correspondence. Uploads must not identify participants." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No documents attached" body="Attach the executed copy, amendments and correspondence. Uploads must not identify participants." %}</div>{% endif %}
 </section>
 
 <section class="card mb-3" aria-labelledby="timeline-heading">
   <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first</span></div>
   <div class="card-body"><ol class="vr-timeline">
-    {% for e in events %}{% include "includes/history_item.html" with title=e.get_kind_display at=e.recorded_at actor=e.actor reason=e.reason changes=e.change_rows %}{% endfor %}
+    {% for e in events %}{% history_item title=e.get_kind_display at=e.recorded_at actor=e.actor reason=e.reason changes=e.change_rows %}{% endfor %}
   </ol></div>
 </section>
 
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=agreement.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=agreement.number %}{% endblock %}

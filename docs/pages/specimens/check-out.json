@@ -5,6 +5,28 @@
   ],
   "title": "Record check-out",
   "purpose": "Record that a stored specimen left its storage position, who took it and where it is going.",
+  "summary": "Record that a stored specimen left its position, who took it and where it is going.",
+  "tasks": [
+    {
+      "title": "Check the specimen out",
+      "steps": [
+        "Choose who took it in [[Taken by]] and type the [[Destination]].",
+        "Check [[Checked out at]], add the [[Reason]] and select [[Record check-out]]."
+      ]
+    },
+    {
+      "title": "Return it later",
+      "steps": [
+        "Select [[Record check-in]] on the specimen record and choose a free position."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The position is freed at check-out. It is not kept for the return.",
+    "Time out of storage is counted from check-out to check-in, never typed.",
+    "Leaving storage is not counted as a thaw.",
+    "A use hold or an all-use hold blocks check-out. A disposal hold does not."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

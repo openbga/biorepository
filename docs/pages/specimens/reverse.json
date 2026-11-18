@@ -5,6 +5,27 @@
   ],
   "title": "Reverse entry",
   "purpose": "Cancel a consumption or adjustment in the amount ledger by adding an opposite entry.",
+  "summary": "Cancel a consumption or adjustment in the amount ledger by adding an opposite entry. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Reverse the entry",
+      "steps": [
+        "Check the entry shown at the top of the form.",
+        "Explain why in [[Reason]] and select [[Reverse entry]]."
+      ]
+    },
+    {
+      "title": "Fix an initial amount, split or disposal",
+      "steps": [
+        "These cannot be reversed here. They need a correction review."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The reversal is stamped with the current time. There is no time field.",
+    "The original entry stays and is marked Reversed.",
+    "An entry can be reversed only once."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

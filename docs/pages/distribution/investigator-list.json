@@ -5,6 +5,26 @@
   ],
   "title": "Distribution catalogues",
   "purpose": "Find and maintain the investigators used by requests and agreements.",
+  "summary": "The requesting investigators, recorded as professional contacts.",
+  "tasks": [
+    {
+      "title": "Add an investigator",
+      "steps": [
+        "Admin and manager: select [[New investigator]]."
+      ]
+    },
+    {
+      "title": "Find an institution's investigators",
+      "steps": [
+        "Choose the [[Institution]] and select [[Apply]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Investigators do not sign in. They are contacts, not user accounts.",
+    "Inactive entries stay on existing records but are not offered for new ones.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Tabs",

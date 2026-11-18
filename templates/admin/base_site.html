@@ -1,5 +1,5 @@
 {% extends "admin/base.html" %}
-{% load static %}
+{% load static ui %}
 {% comment %}Django admin (restricted maintenance tooling) in OpenBGA Biorepository colours; its theme follows the application theme.{% endcomment %}
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | OpenBGA Biorepository administration{% endblock %}
 {% block dark-mode-vars %}
@@ -16,5 +16,5 @@
 {% endif %}
 {% endblock %}
 {% block nav-global %}{% include "documentation/button.html" %}{% endblock %}
-{% block footer %}<div id="footer">{% include "includes/source_footer.html" %}</div>{% endblock %}
+{% block footer %}<div id="footer">{% source_footer %}</div>{% endblock %}
 {% block extrabody %}{{ block.super }}{% include "documentation/panel.html" %}{% endblock %}

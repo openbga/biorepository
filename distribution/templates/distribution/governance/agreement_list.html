@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% load distribution %}
+{% load distribution ui %}
 {% comment %}Agreements (List). Context: governance_views.grid_response for governance_lists.SPECS["agreement"], plus today (validity is computed for today, never stored) and horizon_days.{% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Material transfer and data use agreements as recorded; the software does not draft or interpret them.</p>{% endblock %}
 {% block page_actions %}{% url 'distribution:agreement-create' as create_url %}{% include "distribution/governance/_list_actions.html" with create_label="New agreement" may_create=can_manage %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="agreements-heading">
   <h2 class="visually-hidden" id="agreements-heading">Agreements</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter agreements" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.agreements" %}
+  {% grid_toolbar label="Filter agreements" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.agreements" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.agreements" data-vr-grid-version="1" aria-labelledby="agreements-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Agreement" asc="number" desc="-number" first="desc" col="number" locked=True %}
-        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+        {% sort_header label="Agreement" asc="number" desc="-number" first="desc" col="number" locked=True %}
+        {% sort_header label="Status" asc="status" desc="-status" col="status" %}
         <th scope="col" data-vr-col="validity" data-vr-col-label="Today">Today</th>
         <th scope="col" data-vr-col="kind" data-vr-col-label="Kind">Kind</th>
         <th scope="col" data-vr-col="title" data-vr-col-label="Title">Title</th>
-        {% include "includes/sort_header.html" with label="Institution" asc="institution" desc="-institution" col="institution" %}
+        {% sort_header label="Institution" asc="institution" desc="-institution" col="institution" %}
         <th scope="col" data-vr-col="investigator" data-vr-col-label="Investigator">Investigator</th>
-        {% include "includes/sort_header.html" with label="Expires" asc="expires" desc="-expires" col="expires" %}
-        {% include "includes/sort_header.html" with label="Reporting due" asc="reporting" desc="-reporting" col="reporting" %}
+        {% sort_header label="Expires" asc="expires" desc="-expires" col="expires" %}
+        {% sort_header label="Reporting due" asc="reporting" desc="-reporting" col="reporting" %}
       </tr></thead>
       <tbody>
         {% for row in page_obj %}
@@ -38,7 +38,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% url 'distribution:agreement-create' as create_url %}
   {% if can_manage %}{% include "storage/_list_states.html" with title_empty="No agreements recorded" body_empty="Record an agreement's terms as a draft, then record its execution." create_url=create_url create_label="New agreement" %}{% else %}{% include "storage/_list_states.html" with title_empty="No agreements recorded" body_empty="A repository manager records agreements and their documents." %}{% endif %}

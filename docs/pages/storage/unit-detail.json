@@ -5,6 +5,33 @@
   ],
   "title": "Storage unit",
   "purpose": "Review one freezer or tank: its facts, occupancy, racks and shelves, boxes and history, and reach the actions to change it.",
+  "summary": "One freezer or tank: its facts, occupancy, racks and shelves, boxes and history.",
+  "tasks": [
+    {
+      "title": "Add racks or shelves",
+      "steps": [
+        "Admin and manager: select [[Add rack or shelf]]."
+      ]
+    },
+    {
+      "title": "Reuse this layout for another unit",
+      "steps": [
+        "Select [[Save layout as template]], check the recipe and save it."
+      ]
+    },
+    {
+      "title": "Take the unit out of service",
+      "steps": [
+        "Retire its racks and shelves first, then select [[Retire storage unit]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The code is fixed and never reused, even after retirement.",
+    "Retirement is permanent. The record and its history are kept.",
+    "Nominal temperature is a set point, not a measurement. It never blocks storing an item.",
+    "Retired boxes are not listed here. Find them in the Boxes list."
+  ],
   "sections": [
     {
       "title": "Storage unit",

@@ -5,6 +5,27 @@
   ],
   "title": "Execute agreement",
   "purpose": "Record that a draft agreement was signed.",
+  "summary": "Record that a draft agreement was signed. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Execute the agreement",
+      "steps": [
+        "Enter [[Signed on]], [[Effective from]] and, if any, [[Expires on]].",
+        "Say [[Where the signed agreement is filed]], give the [[Reason]] and select [[Execute agreement]]."
+      ]
+    },
+    {
+      "title": "Attach the signed copy instead of a filing reference",
+      "steps": [
+        "Add the executed copy as a document first. The filing reference is then optional."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "From now on the terms are fixed.",
+    "Dispatch needs the agreement in effect on the dispatch date.",
+    "Only a draft can be executed."
+  ],
   "sections": [
     {
       "title": "Fields",

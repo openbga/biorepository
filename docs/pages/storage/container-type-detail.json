@@ -5,6 +5,26 @@
   ],
   "title": "Container type",
   "purpose": "Review one version of a box grid: geometry, label preview, its other versions and history.",
+  "summary": "One version of a box grid: its geometry, a label preview, its other versions and history.",
+  "tasks": [
+    {
+      "title": "Check how positions are labelled",
+      "steps": [
+        "Read the Label preview, as seen from the labelled top-left corner."
+      ]
+    },
+    {
+      "title": "Change the grid",
+      "steps": [
+        "Admin and manager: select [[New version]]. Saving with the same code creates the next version."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A grid is fixed once any box uses it. A change is a new version.",
+    "Grids larger than 12 × 12 preview only the top-left 12 × 12.",
+    "Numbering order fixes each position's number."
+  ],
   "sections": [
     {
       "title": "Container type",

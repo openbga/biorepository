@@ -5,6 +5,27 @@
   ],
   "title": "Correct consent",
   "purpose": "Correct a transcription error in the consent's current record.",
+  "summary": "Correct a transcription error in a consent's current record. The earlier version stays. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Correct the record",
+      "steps": [
+        "Change the wrong values and say what was transcribed wrongly in [[Reason for the correction]].",
+        "Select [[Correct consent]]."
+      ]
+    },
+    {
+      "title": "Record a changed decision instead",
+      "steps": [
+        "If the participant changed their mind, use Record consent or Withdraw consent."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The earlier version stays in the history with its values struck through.",
+    "A correction is for transcription errors, not for a new decision.",
+    "Never enter participant names, signatures or contact details."
+  ],
   "sections": [
     {
       "title": "How a correction works",

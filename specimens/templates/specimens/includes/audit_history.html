@@ -1,11 +1,11 @@
-{% load history %}{% comment %}Audit history of a record without its own event timeline, newest last (docs/ui-standards.md section 6, rule 4). Parameters: history (AuditEvent list, newest first).{% endcomment %}
+{% load history ui %}{% comment %}Audit history of a record without its own event timeline, newest last (docs/ui-standards.md section 6, rule 4). Parameters: history (AuditEvent list, newest first).{% endcomment %}
 <section class="card mt-3" aria-labelledby="history-heading">
   <div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div>
   <div class="card-body">
     {% if history %}
     <ol class="vr-timeline">
-      {% for event in history reversed %}{% include "includes/history_item.html" with title=event.action|action_label at=event.occurred_at actor=event.actor reason=event.reason %}{% endfor %}
+      {% for event in history reversed %}{% history_item title=event.action|action_label at=event.occurred_at actor=event.actor reason=event.reason %}{% endfor %}
     </ol>
-    {% else %}{% include "includes/empty_state.html" with title="No recorded changes yet" %}{% endif %}
+    {% else %}{% empty_state title="No recorded changes yet" %}{% endif %}
   </div>
 </section>

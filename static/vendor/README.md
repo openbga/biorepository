@@ -15,9 +15,11 @@ afterwards.
 | datatables.net-bs5 | 3.1.5 | `dataTables.bootstrap5.min.js`, `dataTables.bootstrap5.min.css` | MIT | `eGSe7DVcqqI0RKtrjgzFVqqCZoltJSahAKLCJ0nH0WzSfVclhD8maoGbbz/JJQXky1H9c+vzAnbmAevYRBjxOw==` |
 | datatables.net-colreorder | 3.1.2 | `dataTables.colReorder.min.js` | MIT | `+PckBw8ayHeOXk1qEWMZLzEAHXu4nSVGb5ef7PTFqwYQrPLsZ0xa6A9boUu1se+4xQj/4vPtZ+0Hj3HiIunA3A==` |
 | datatables.net-colreorder-bs5 | 3.1.2 | `colReorder.bootstrap5.min.css` | MIT | `4uBj32P0wHDsCW8+9Goy8fD7HPDUQNANeJqU+2nTkVESDrgU7I4R7PBHi+W9TG84cBixpUptPg8wtzL4t3I0EQ==` |
+| tom-select | 2.7.0 | `dist/js/tom-select.complete.js` and `.min.js` (+ maps; the page loads the minified one), `dist/css/tom-select.bootstrap5.css` (+ map) | Apache-2.0 | `i/iuTfrzYfGPAILfgPdU9/CCSm8XcnomjO2bHjAcFQPV7od0ghVngjaMfB5x5Agkrpe+49/tK6soegrwWyi6Lg==` |
+| vanilla-calendar-pro | 3.4.0 | `index.js` (browser-global build: `window.VanillaCalendarPro`), `styles/layout.css` kept as `layout.css` (layout only; app.css colours it), `LICENSE` | MIT | `HLWjzHOWvMIrjI77tXK5bYzp0s5TeBSrZC247STjcTAdWI7kqEwWT6Xvu20vqdwzF498H1Da8l4WpdgVIGtc1Q==` |
 
 `static/img/icons.svg` is a subset of Bootstrap Icons 1.13.2 (MIT); its licence is
 `static/img/icons.LICENSE`.
 
-Chart.js and Tom Select are not vendored: no OpenBGA Biorepository page draws a chart or enhances a picker
-yet. Add them the same way when one does.
+Chart.js is not vendored: no OpenBGA Biorepository page draws a chart yet. Add it the same way
+when one does.

@@ -6,6 +6,27 @@
   ],
   "title": "Site form",
   "purpose": "Create a site or change the name or time zone of an existing one.",
+  "summary": "Create a site or change the name or time zone of an existing one.",
+  "tasks": [
+    {
+      "title": "Create a site",
+      "steps": [
+        "Type the [[Code]], [[Name]] and [[Time zone]], for example America/New_York.",
+        "Select [[Create site]]."
+      ]
+    },
+    {
+      "title": "Change a site",
+      "steps": [
+        "Change the name or time zone, give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The code cannot be changed or reused.",
+    "Times in forms use the repository's time zone, not the site's.",
+    "Sites cannot be retired or deleted."
+  ],
   "sections": [
     {
       "title": "Fields",

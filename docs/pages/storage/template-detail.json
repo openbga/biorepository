@@ -5,6 +5,26 @@
   ],
   "title": "Storage template",
   "purpose": "Review one version of a recorded unit layout: its settings, the layout outline, units already created from it, other versions and history.",
+  "summary": "One version of a recorded unit layout: its settings, layout outline, units created from it, other versions and history.",
+  "tasks": [
+    {
+      "title": "Create a unit from it",
+      "steps": [
+        "Admin and manager: select [[Apply template]]."
+      ]
+    },
+    {
+      "title": "Change the layout",
+      "steps": [
+        "Select [[New version]] once a unit has been created from this one, or [[Edit]] before that."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A version's layout is fixed once a unit has been created from it.",
+    "Each suffix is added after the new unit's code to make the codes.",
+    "Nominal temperature is a set point, not a measurement."
+  ],
   "sections": [
     {
       "title": "Storage template",

@@ -6,6 +6,28 @@
   ],
   "title": "Equipment form",
   "purpose": "Register a new tank, freezer, supply dewar or monitor, or change the details and limits of equipment that is already registered.",
+  "summary": "Register a tank, freezer, supply dewar or monitor, or change the details and limits of registered equipment.",
+  "tasks": [
+    {
+      "title": "Register equipment",
+      "steps": [
+        "Type the [[Asset ID]], choose the [[Kind]] and type the [[Name]].",
+        "Link the [[Storage unit]] a tank or freezer encloses, so excursions find its specimens.",
+        "Set the limits if your repository has them, and select [[Create equipment]]."
+      ]
+    },
+    {
+      "title": "Change details or limits",
+      "steps": [
+        "Change the fields, give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Limits apply to readings recorded from now on. Earlier readings keep the limits recorded with them.",
+    "Level unit and Low level are for LN2 tanks and supply dewars only.",
+    "Status changes use Change status, not this form."
+  ],
   "sections": [
     {
       "title": "Who can use it",

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 Specimen record: alerts that need action, facts, aliquots and derivatives, amount ledger, holds,
 disposal requests, custody events, thaw records, then the full history. Header actions come from
@@ -13,12 +13,12 @@ returned (the open period in hand is a return, not a check-out), away_now (the o
 distributed specimen, or None), distribution_links ([{label, url}], [] without the distribution app).
 A distributed specimen has no custodian and no position: both read "Outside the repository".
 {% endcomment %}
-{% block breadcrumbs %}{% url 'specimens:specimen-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Specimens" section_url=list_url current=specimen.accession %}{% endblock %}
+{% block breadcrumbs %}{% url 'specimens:specimen-list' as list_url %}{% breadcrumbs section="Specimens" section_url=list_url current=specimen.accession %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ specimen.accession }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% specimen_status specimen %}</li><li>{{ specimen.specimen_type.name }}</li><li class="vr-id">{{ specimen.quantity_on_hand|amount:specimen.unit }}</li>{% if location %}<li class="vr-id vr-path">{% include "storage/_path.html" with p=location %}</li>{% else %}<li>{% if state.checked_out %}{% if returned %}Returned, in hand{% else %}Checked out{% endif %}{% elif specimen.is_distributed %}Outside the repository{% else %}Not in storage{% endif %}</li>{% endif %}{% if specimen.custodian %}<li>{{ specimen.custodian.get_full_name|default:specimen.custodian.get_username }}</li>{% endif %}</ul>{% endblock %}
 {% block page_actions %}
 {% if destructive %}{% if destructive.reason %}<button class="btn btn-outline-danger" type="button" disabled aria-describedby="dispose-why">{{ destructive.label }}</button>{% else %}<a class="btn btn-outline-danger" href="{{ destructive.url }}">{{ destructive.label }}</a>{% endif %}{% endif %}
-<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?id={{ specimen.pk }}">{% include "includes/icon.html" with name="printer" %}Print label</a>
+<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?id={{ specimen.pk }}">{% icon name="printer" %}Print label</a>
 {% if more %}
 <div class="dropdown">
   <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">More</button>
@@ -55,9 +55,9 @@ A distributed specimen has no custodian and no position: both read "Outside the 
 {% endfor %}
 {% if specimen.open_checkout %}{% with out=specimen.open_checkout %}
 <div class="alert alert-info" role="status">
-  {% if returned %}{% include "includes/status.html" with label="Returned, in hand" tone="warning" plain=True %}
+  {% if returned %}{% status label="Returned, in hand" tone="warning" plain=True %}
   <div>Returned, in hand of {{ out.to_custodian.get_full_name|default:out.to_custodian.get_username }} since <time datetime="{{ out.occurred_at|date:'c' }}">{{ out.occurred_at|date:"Y-m-d H:i" }}</time>{% if out.destination %} (from {{ out.destination }}){% endif %}. Record a check-in to store it. Time out of storage is running: {{ timeout.total|duration }} in total.</div>
-  {% else %}{% include "includes/status.html" with label="Checked out" tone="warning" plain=True %}
+  {% else %}{% status label="Checked out" tone="warning" plain=True %}
   <div>Checked out since <time datetime="{{ out.occurred_at|date:'c' }}">{{ out.occurred_at|date:"Y-m-d H:i" }}</time> to {{ out.to_custodian.get_full_name|default:out.to_custodian.get_username }}{% if out.destination %}, destination {{ out.destination }}{% endif %}. Time out of storage is running: {{ timeout.total|duration }} in total.</div>
   {% endif %}
 </div>
@@ -73,7 +73,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
   <div class="card-header"><h2 class="card-title" id="facts-heading">Specimen</h2></div>
   <div class="card-body"><dl class="vr-facts">
     <div><dt>Specimen ID</dt><dd class="vr-id">{{ specimen.accession }}</dd></div>
-    <div><dt>Status</dt><dd>{% specimen_status specimen plain=True %}{% if specimen.held %} {% include "includes/status.html" with label="On hold" tone="hold" plain=True %}{% endif %}</dd></div>
+    <div><dt>Status</dt><dd>{% specimen_status specimen plain=True %}{% if specimen.held %} {% status label="On hold" tone="hold" plain=True %}{% endif %}</dd></div>
     <div><dt>Specimen type</dt><dd>{{ specimen.specimen_type.name }} <span class="vr-muted vr-id">{{ specimen.specimen_type.code }}</span></dd></div>
     <div><dt>Container</dt><dd>{{ specimen.container_type.name }} <span class="vr-muted vr-id">{{ specimen.container_type.code }}</span></dd></div>
     <div><dt>Amount on hand</dt><dd class="vr-id">{{ specimen.quantity_on_hand|amount:specimen.unit }}</dd></div>
@@ -109,7 +109,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
         <td>{% specimen_status child plain=True %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No aliquots or derivatives" body="Aliquots and derivatives made from this specimen are listed here, each with its own ID." %}{% endif %}
+  {% else %}{% empty_state title="No aliquots or derivatives" body="Aliquots and derivatives made from this specimen are listed here, each with its own ID." %}{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="ledger-heading">
@@ -119,7 +119,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
     <thead><tr><th scope="col">Entry</th><th scope="col" class="text-end">Change</th><th scope="col" class="text-end">Balance</th><th scope="col">Entered as</th><th scope="col">When</th><th scope="col">By</th><th scope="col">Reason</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
     <tbody>{% for entry in ledger %}
       <tr>
-        <th scope="row">{{ entry.get_kind_display }}{% if entry.reversed %} {% include "includes/status.html" with label="Reversed" tone="neutral" plain=True %}{% endif %}</th>
+        <th scope="row">{{ entry.get_kind_display }}{% if entry.reversed %} {% status label="Reversed" tone="neutral" plain=True %}{% endif %}</th>
         <td class="text-end vr-id vr-nowrap">{% if entry.delta > 0 %}+{% endif %}{{ entry.delta|amount:entry.unit }}</td>
         <td class="text-end vr-id vr-nowrap">{{ entry.balance_after|amount:entry.unit }}</td>
         <td class="vr-id">{{ entry.supplied_text|default:"—" }}</td>
@@ -129,7 +129,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
         <td class="text-end vr-nowrap">{% if can_manage and live and entry.reversible %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:reverse' entry.pk %}">Reverse<span class="visually-hidden"> {{ entry.get_kind_display|lower }} of {{ entry.occurred_at|date:"Y-m-d H:i" }}</span></a>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No amount entries" %}{% endif %}
+  {% else %}{% empty_state title="No amount entries" %}{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="holds-heading">
@@ -147,7 +147,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
         <td class="text-end">{% if not hold.released %}{% if hold.reference %}{% elif can_manage %}<a class="btn btn-sm btn-outline-secondary vr-nowrap" href="{% url 'specimens:hold-release' hold.pk %}">Release<span class="visually-hidden"> {{ hold.get_scope_display|lower }}</span></a>{% endif %}{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No holds" body="A disposal hold blocks disposal; a use hold blocks check-out and use; an all-use hold blocks both." %}{% endif %}
+  {% else %}{% empty_state title="No holds" body="A disposal hold blocks disposal; a use hold blocks check-out and use; an all-use hold blocks both." %}{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="disposals-heading">
@@ -165,7 +165,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
         <td>{% if req.decision %}{{ req.decision.actor.get_full_name|default:req.decision.actor.get_username }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No disposal requests" body="Disposal needs a request and approval by another person with disposal approval." %}{% endif %}
+  {% else %}{% empty_state title="No disposal requests" body="Disposal needs a request and approval by another person with disposal approval." %}{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="custody-heading">
@@ -175,7 +175,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
     <thead><tr><th scope="col">Event</th><th scope="col">When</th><th scope="col">Custody</th><th scope="col">Destination</th><th scope="col">Recorded by</th><th scope="col">Reason</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
     <tbody>{% for event in custody %}
       <tr>
-        <th scope="row">{{ event.get_kind_display }}{% if event.corrected %} {% include "includes/status.html" with label="Corrected" tone="neutral" plain=True %}{% endif %}{% if event.corrects_id %}<div class="vr-muted small fw-normal">Corrects “{{ event.corrects.get_kind_display }}” of {{ event.corrects.occurred_at|date:"Y-m-d H:i" }}</div>{% endif %}</th>
+        <th scope="row">{{ event.get_kind_display }}{% if event.corrected %} {% status label="Corrected" tone="neutral" plain=True %}{% endif %}{% if event.corrects_id %}<div class="vr-muted small fw-normal">Corrects “{{ event.corrects.get_kind_display }}” of {{ event.corrects.occurred_at|date:"Y-m-d H:i" }}</div>{% endif %}</th>
         <td class="vr-nowrap"><time datetime="{{ event.occurred_at|date:'c' }}">{{ event.occurred_at|date:"Y-m-d H:i" }}</time></td>
         <td>{% if event.root_kind == "return" %}Outside the repository <span aria-hidden="true">→</span><span class="visually-hidden">to</span> {% elif event.from_custodian_id and event.from_custodian_id != event.to_custodian_id %}{{ event.from_custodian.get_full_name|default:event.from_custodian.get_username }} <span aria-hidden="true">→</span><span class="visually-hidden">to</span> {% endif %}{% if event.to_custodian_id %}{{ event.to_custodian.get_full_name|default:event.to_custodian.get_username }}{% else %}Outside the repository{% endif %}</td>
         <td class="vr-path">{% if event.destination %}{% if event.root_kind == "return" %}Returned from {% endif %}{{ event.destination }}{% endif %}{% if event.move_event %}<div class="vr-id{% if event.destination %} vr-muted small{% endif %}">{% if event.move_event.to_path %}{% include "storage/_path.html" with p=event.move_event.to_path %}{% endif %}</div>{% elif not event.destination %}—{% endif %}</td>
@@ -184,7 +184,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
         <td class="text-end vr-nowrap">{% if can_manage and not event.corrected %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:custody-correct' event.pk %}">Correct<span class="visually-hidden"> {{ event.get_kind_display|lower }} of {{ event.occurred_at|date:"Y-m-d H:i" }}</span></a>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No custody events" %}{% endif %}
+  {% else %}{% empty_state title="No custody events" %}{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="thaws-heading">
@@ -194,7 +194,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
     <thead><tr><th scope="col">Record</th><th scope="col">When</th><th scope="col" class="text-end">Count</th><th scope="col">Recorded by</th><th scope="col">Reason</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
     <tbody>{% for event in thaws %}
       <tr>
-        <th scope="row">{{ event.get_kind_display }}{% if event.corrected %} {% include "includes/status.html" with label="Corrected" tone="neutral" plain=True %}{% endif %}</th>
+        <th scope="row">{{ event.get_kind_display }}{% if event.corrected %} {% status label="Corrected" tone="neutral" plain=True %}{% endif %}</th>
         <td class="vr-nowrap"><time datetime="{{ event.occurred_at|date:'c' }}">{{ event.occurred_at|date:"Y-m-d H:i" }}</time></td>
         <td class="text-end vr-id">{% if event.count is None %}Unknown{% else %}{{ event.count }}{% endif %}{% if event.inherited_recorded_count %}<div class="vr-muted small">+{{ event.inherited_recorded_count }} recorded on the parent</div>{% endif %}</td>
         <td>{{ event.actor.get_full_name|default:event.actor.get_username }}</td>
@@ -202,7 +202,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
         <td class="text-end vr-nowrap">{% if can_manage and live and not event.corrected %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:thaw-correct' event.pk %}">Correct<span class="visually-hidden"> {{ event.get_kind_display|lower }} of {{ event.occurred_at|date:"Y-m-d H:i" }}</span></a>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No thaw records" %}{% endif %}
+  {% else %}{% empty_state title="No thaw records" %}{% endif %}
 </section>
 
 <section class="card mt-3" aria-labelledby="history-heading">
@@ -210,10 +210,10 @@ A distributed specimen has no custodian and no position: both read "Outside the 
   <div class="card-body">
     {% if history %}
     <ol class="vr-timeline">
-      {% for item in history %}{% include "includes/history_item.html" with title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail changes=item.changes %}{% endfor %}
+      {% for item in history %}{% history_item title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail changes=item.changes %}{% endfor %}
     </ol>
-    {% else %}{% include "includes/empty_state.html" with title="No recorded events yet" %}{% endif %}
+    {% else %}{% empty_state title="No recorded events yet" %}{% endif %}
   </div>
 </section>
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=specimen.accession %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=specimen.accession %}{% endblock %}

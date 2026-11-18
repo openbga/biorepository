@@ -1,23 +1,23 @@
 {% extends "base.html" %}
-{% load distribution navigation %}
+{% load distribution navigation ui %}
 {% comment %}Shipments, newest first (List page, tab Shipments of the Shipments section). A shipment is created from an approved request's record page, so this list has no New button. Context: request_views.grid_response for request_lists.SPECS["shipment"]; rows carry planned_count (specimens in a draft or packed shipment), item_count (specimens sent) and receipt_condition (the effective receipt's). ?specimen=VP-000123 lists the shipments that contain or contained it.{% endcomment %}
 {% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
 {% block content %}
 {% section_tabs "distribution-shipments" %}
 <section class="card vr-table-card" aria-labelledby="shipments-heading">
   <h2 class="visually-hidden" id="shipments-heading">Shipments</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter shipments" q=q placeholder="Shipment or request number, tracking, institution" inline=inline more=more more_open=more_open grid="distribution.shipments" %}
+  {% grid_toolbar label="Filter shipments" q=q placeholder="Shipment or request number, tracking, institution" inline=inline more=more more_open=more_open grid="distribution.shipments" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.shipments" data-vr-grid-version="1" aria-labelledby="shipments-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Shipment" asc="number" desc="-number" first="desc" col="number" locked=True %}
-        {% include "includes/sort_header.html" with label="State" asc="state" desc="-state" col="state" %}
-        {% include "includes/sort_header.html" with label="Request" asc="request" desc="-request" first="desc" col="request" %}
-        {% include "includes/sort_header.html" with label="Ship to" asc="institution" desc="-institution" col="institution" %}
+        {% sort_header label="Shipment" asc="number" desc="-number" first="desc" col="number" locked=True %}
+        {% sort_header label="State" asc="state" desc="-state" col="state" %}
+        {% sort_header label="Request" asc="request" desc="-request" first="desc" col="request" %}
+        {% sort_header label="Ship to" asc="institution" desc="-institution" col="institution" %}
         <th scope="col" class="text-end" data-vr-col="specimens" data-vr-col-label="Specimens">Specimens</th>
-        {% include "includes/sort_header.html" with label="Packed" asc="packed" desc="-packed" first="desc" col="packed" %}
-        {% include "includes/sort_header.html" with label="Dispatched" asc="dispatched" desc="-dispatched" first="desc" col="dispatched" %}
+        {% sort_header label="Packed" asc="packed" desc="-packed" first="desc" col="packed" %}
+        {% sort_header label="Dispatched" asc="dispatched" desc="-dispatched" first="desc" col="dispatched" %}
         <th scope="col" data-vr-col="tracking" data-vr-col-label="Tracking number">Tracking number</th>
         <th scope="col" data-vr-col="receipt" data-vr-col-label="Receipt">Receipt</th>
       </tr></thead>
@@ -38,7 +38,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% include "storage/_list_states.html" with title_empty="No shipments recorded" body_empty="A shipment is started from an approved request with picked specimens (New shipment on the request)." %}
   {% endif %}

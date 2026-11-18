@@ -5,6 +5,32 @@
   ],
   "title": "Study",
   "purpose": "Read one study: its approval and consent basis, the collections it governs, its consent form versions and how many consents it has by status.",
+  "summary": "One study: its approval and consent basis, the collections it governs, its consent form versions and its consents by status.",
+  "tasks": [
+    {
+      "title": "Govern a collection",
+      "steps": [
+        "Admin and manager: select [[Link collection]]."
+      ]
+    },
+    {
+      "title": "Add a consent form version",
+      "steps": [
+        "Select [[Add consent form]]."
+      ]
+    },
+    {
+      "title": "Stop governing a collection",
+      "steps": [
+        "Select [[End link]] on the current link and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Linking governs the collection's specimens already stored, too.",
+    "Specimens of an unlinked collection cannot be distributed.",
+    "A status other than Active blocks allocating, picking, packing and dispatch."
+  ],
   "sections": [
     {
       "title": "Study",

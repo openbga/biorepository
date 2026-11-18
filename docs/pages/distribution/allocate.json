@@ -5,6 +5,28 @@
   ],
   "title": "Allocate",
   "purpose": "Reserve specimens for one line of an approved request, choosing among the available candidates.",
+  "summary": "Reserve specimens for one line of an approved request, choosing among the available candidates. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Allocate specimens",
+      "steps": [
+        "Tick specimens under [[Choose]], up to the number the line still needs.",
+        "Enter [[Allocated at]] and the [[Reason]], then select [[Allocate]]."
+      ]
+    },
+    {
+      "title": "Use specimens below the minimum amount",
+      "steps": [
+        "Tick [[Allocate specimens below the requested minimum amount]] to confirm."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A candidate the recorded facts refuse is disabled, with each reason named.",
+    "Consent restrictions are shown for you to read. The software never interprets them.",
+    "All chosen specimens are allocated or none.",
+    "Each allocated specimen gets a use hold until it is shipped or released."
+  ],
   "sections": [
     {
       "title": "Who can use it",

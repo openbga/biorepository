@@ -5,6 +5,26 @@
   ],
   "title": "Correct training record",
   "purpose": "Retain a reasoned correction to completed training evidence or metadata.",
+  "summary": "Correct a completed training record's evidence or details, with a reason. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Correct the record",
+      "steps": [
+        "Change the wrong fields, give the [[Reason]] and select [[Correct training record]]."
+      ]
+    },
+    {
+      "title": "End the record instead",
+      "steps": [
+        "Use Cancel training record when the record should not exist."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The earlier evidence stays in the history.",
+    "A correction that changes nothing is refused.",
+    "Completed on cannot be in the future."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

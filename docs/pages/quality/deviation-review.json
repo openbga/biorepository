@@ -5,6 +5,26 @@
   ],
   "title": "Record review",
   "purpose": "Close a submitted deviation or return it for revision.",
+  "summary": "Close a submitted deviation or return it for revision. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Close the report",
+      "steps": [
+        "Choose Close in [[Decision]], explain in [[Reason]] and select [[Record review]]."
+      ]
+    },
+    {
+      "title": "Send it back",
+      "steps": [
+        "Choose Return for revision and say what is needed."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "You cannot review a report you created or last submitted.",
+    "A reason is needed for either decision.",
+    "A closed report can be reopened later with a reason."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

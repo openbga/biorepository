@@ -5,6 +5,35 @@
   ],
   "title": "Make aliquots or derivatives",
   "purpose": "Split a specimen into new aliquots or derivatives, each with its own ID, amount and optional storage position.",
+  "summary": "Split a specimen into new aliquots or derivatives, each with its own ID, amount and optional storage position.",
+  "tasks": [
+    {
+      "title": "Make aliquots",
+      "steps": [
+        "Keep [[What are you making?]] on Aliquots and type the amount [[Taken from the parent]].",
+        "Fill one row per new specimen; use [[Add specimen]] for more rows. The amounts must add up to the amount taken.",
+        "Select [[Record split]]. The parent lists the new IDs."
+      ]
+    },
+    {
+      "title": "Make derivatives",
+      "steps": [
+        "Choose Derivatives, then set each row's type, container, unit and amount."
+      ]
+    },
+    {
+      "title": "Store the new specimens now",
+      "steps": [
+        "Give a box and position on each row, or leave both blank to place them later."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Aliquots keep the parent's specimen type and unit. Derivatives can differ.",
+    "New specimens inherit the parent's participant, collection, collection time, custodian and thaw history.",
+    "The parent must be in hand, not in a storage position.",
+    "Two rows cannot use the same position."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

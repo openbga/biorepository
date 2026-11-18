@@ -5,6 +5,26 @@
   ],
   "title": "End link",
   "purpose": "Stop a collection being governed by this study.",
+  "summary": "Stop a collection being governed by this study. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "End the link",
+      "steps": [
+        "Give the [[Reason]] and select [[End link]]."
+      ]
+    },
+    {
+      "title": "Clear what blocks it",
+      "steps": [
+        "Release or ship specimens of the collection that are allocated to requests first."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The collection's specimens are then governed by no study and cannot be distributed.",
+    "The ended link stays listed with its reason.",
+    "Link it again to restore distribution."
+  ],
   "sections": [
     {
       "title": "Fields",

@@ -1,1 +1,1 @@
-{% if status == 'closed' %}{% include "includes/status.html" with label="Closed" tone="success" %}{% elif status == 'awaiting_review' %}{% include "includes/status.html" with label="Awaiting review" tone="warning" %}{% else %}{% include "includes/status.html" with label="Open" tone="progress" %}{% endif %}
+{% load ui %}{% if status == 'closed' %}{% status label="Closed" tone="success" %}{% elif status == 'awaiting_review' %}{% status label="Awaiting review" tone="warning" %}{% else %}{% status label="Open" tone="progress" %}{% endif %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution distribution_requests specimens %}
+{% load distribution distribution_requests specimens ui %}
 {% comment %}
 Specimen request record: alerts, facts, lines with allocated/picked/shipped counts (per-line
 Allocate for managers), allocations (state, specimen, location, blockers at the pick stage),
@@ -12,12 +12,12 @@ decision_row), shipments (with planned_count, item_count), refusal (why this use
 or ""), today, use_categories, studies, actions, timeline, toc, history,
 can_manage, can_operate, can_decide.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'distribution:request-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Requests" section_url=list_url current=request_obj.number %}{% endblock %}
+{% block breadcrumbs %}{% url 'distribution:request-list' as list_url %}{% breadcrumbs section="Requests" section_url=list_url current=request_obj.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ request_obj.number }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "request" request_obj.status %}</li><li>{{ request_obj.title }}</li><li>{{ request_obj.investigator.name }}</li><li>{{ request_obj.institution.name }}</li></ul>{% endblock %}
 {% block page_actions %}{% include "distribution/requests/_header_actions.html" with actions=actions %}{% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if request_obj.status == "submitted" %}
 <div class="alert alert-info" role="status">{% distribution_status "request" request_obj.status plain=True %}<div>Submission {{ request_obj.latest_submission }} awaits a decision by a person with request decision permission who did not create or submit it.{% if refusal %} {{ refusal }}{% endif %}</div></div>
 {% elif request_obj.status == "returned" %}
@@ -25,7 +25,7 @@ can_manage, can_operate, can_decide.
 {% elif request_obj.status == "draft" and request_obj.latest_submission %}
 <div class="alert alert-warning" role="status">{% distribution_status "request" request_obj.status plain=True %}<div>Reopened after a decision. It needs a new decision; its allocations cannot be picked, packed or dispatched until then.</div></div>
 {% elif request_obj.status == "approved" and not request_obj.agreement %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="No agreement" tone="warning" plain=True %}<div>Dispatch needs an executed agreement with {{ request_obj.institution.name }} that is valid on the dispatch date.{% if can_manage %} Link one with Link agreement.{% endif %}</div></div>
+<div class="alert alert-warning" role="status">{% status label="No agreement" tone="warning" plain=True %}<div>Dispatch needs an executed agreement with {{ request_obj.institution.name }} that is valid on the dispatch date.{% if can_manage %} Link one with Link agreement.{% endif %}</div></div>
 {% endif %}
 
 {% include "distribution/requests/_progress.html" %}
@@ -66,7 +66,7 @@ can_manage, can_operate, can_decide.
         {% if can_manage and request_obj.status == "approved" %}<td>{% if item.remaining %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:allocate' request_obj.pk item.pk %}">Allocate<span class="visually-hidden"> line {{ item.line }}</span></a>{% else %}<span class="vr-muted small">All allocated</span>{% endif %}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% if can_operate and request_obj.is_editable %}{% url 'distribution:request-items' request_obj.pk as items_url %}{% include "includes/empty_state.html" with title="No lines yet" body="Add what kind of material is requested and how much before submitting." action_url=items_url action_label="Edit lines" %}{% else %}{% include "includes/empty_state.html" with title="No lines" body="The request has no lines." %}{% endif %}</div>{% endif %}
+  {% else %}<div class="card-body">{% if can_operate and request_obj.is_editable %}{% url 'distribution:request-items' request_obj.pk as items_url %}{% empty_state title="No lines yet" body="Add what kind of material is requested and how much before submitting." action_url=items_url action_label="Edit lines" %}{% else %}{% empty_state title="No lines" body="The request has no lines." %}{% endif %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="allocations-heading">
@@ -86,7 +86,7 @@ can_manage, can_operate, can_decide.
         <td>{% for b in a.blockers %}{% blocker_status b %}<span class="d-block small">{{ b.message }}</span>{% empty %}<span class="vr-muted">—</span>{% endfor %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% if request_obj.status == "approved" %}{% include "includes/empty_state.html" with title="Nothing allocated yet" body="A manager allocates specimens to each line with Allocate. Allocation reserves the specimen, not its position." %}{% else %}{% include "includes/empty_state.html" with title="Nothing allocated" body="Specimens are allocated once the request is approved." %}{% endif %}</div>{% endif %}
+  {% else %}<div class="card-body">{% if request_obj.status == "approved" %}{% empty_state title="Nothing allocated yet" body="A manager allocates specimens to each line with Allocate. Allocation reserves the specimen, not its position." %}{% else %}{% empty_state title="Nothing allocated" body="Specimens are allocated once the request is approved." %}{% endif %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="submissions-heading">
@@ -106,11 +106,11 @@ can_manage, can_operate, can_decide.
         <td class="vr-wrap">{{ d.reason|default:"" }}</td>
       </tr>{% endwith %}{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="Not submitted yet" body="Submitting keeps the request as it is then as a numbered submission for the decision." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="Not submitted yet" body="Submitting keeps the request as it is then as a numbered submission for the decision." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="shipments-heading">
-  <div class="card-header"><h2 class="card-title" id="shipments-heading">Shipments</h2><span class="vr-count">{{ shipments|length }}</span>{% if can_operate and request_obj.status == "approved" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:shipment-create' request_obj.pk %}">{% include "includes/icon.html" with name="plus-lg" %}New shipment</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="shipments-heading">Shipments</h2><span class="vr-count">{{ shipments|length }}</span>{% if can_operate and request_obj.status == "approved" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:shipment-create' request_obj.pk %}">{% icon name="plus-lg" %}New shipment</a>{% endif %}</div>
   {% if shipments %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Shipment</th><th scope="col">State</th><th scope="col">Ship to</th><th scope="col" class="text-end">Specimens</th><th scope="col">Dispatched</th></tr></thead>
@@ -123,16 +123,16 @@ can_manage, can_operate, can_decide.
         <td class="vr-nowrap">{% if s.dispatched_at %}<time datetime="{{ s.dispatched_at|date:'c' }}">{{ s.dispatched_at|date:"Y-m-d H:i" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No shipments" body="A shipment is prepared once specimens are picked." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No shipments" body="A shipment is prepared once specimens are picked." %}</div>{% endif %}
 </section>
 
 <section class="card mb-3" aria-labelledby="timeline-heading">
   <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ timeline|length }} entr{{ timeline|length|pluralize:"y,ies" }}, oldest first</span></div>
   <div class="card-body">{% if timeline %}<ol class="vr-timeline">
-    {% for e in timeline %}{% include "includes/history_item.html" with title=e.title at=e.at actor=e.actor reason=e.reason detail=e.detail %}{% endfor %}
-  </ol>{% else %}{% include "includes/empty_state.html" with title="Nothing recorded yet" %}{% endif %}</div>
+    {% for e in timeline %}{% history_item title=e.title at=e.at actor=e.actor reason=e.reason detail=e.detail %}{% endfor %}
+  </ol>{% else %}{% empty_state title="Nothing recorded yet" %}{% endif %}</div>
 </section>
 
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=request_obj.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=request_obj.number %}{% endblock %}

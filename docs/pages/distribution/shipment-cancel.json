@@ -5,6 +5,26 @@
   ],
   "title": "Cancel shipment",
   "purpose": "End a draft or packed shipment that will not be sent.",
+  "summary": "End a draft or packed shipment that will not be sent. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Cancel the shipment",
+      "steps": [
+        "Give the [[Reason]] and select [[Cancel shipment]]."
+      ]
+    },
+    {
+      "title": "Deal with its specimens",
+      "steps": [
+        "Put them back from the request, or add them to another shipment."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Cancelled is final. The timeline is kept.",
+    "Its specimens stay picked for the request.",
+    "A dispatched shipment cannot be cancelled."
+  ],
   "sections": [
     {
       "title": "Who can use it",

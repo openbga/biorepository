@@ -18,7 +18,7 @@ the published guidance splits, the rule below is a house decision and says so.
   copy the markup.
 - Templates carry no colours, no inline `style`, and no Bootstrap colour utilities that bypass
   the tokens (`bg-white`, `bg-light`, `text-dark`, `text-black`, `table-light`).
-- One term per thing. The sidebar label, the page title, the breadcrumb and the button that
+- One term per thing. The menu label, the page title, the breadcrumb and the button that
   leads to a page use the same words (section 9).
 - The server decides. Hidden controls are a courtesy; every rule here sits on top of server-side
   authorization and validation, never in place of them.
@@ -39,29 +39,36 @@ Every page is one of these. The type fixes its header, layout and navigation beh
 
 ## 3. Navigation
 
-1. The sidebar owns destinations. Every list and overview a user can go to is a sidebar item.
-   A destination appears in exactly one navigation component: never in the sidebar and again as
-   tabs, pills or header buttons.
-2. Section tabs exist for one case only: one sidebar item whose content is two to six sibling
-   lists that are not themselves sidebar items (Catalog: Specimen types, Container types, Storage classes), or sibling sub-views of one action (the sections of a specimen correction).
+1. The section menus in the top bar own destinations. Dashboard is a top-level link; every other
+   list and overview a user can go to is an item in exactly one section menu. A destination
+   appears in exactly one navigation component: never in a menu and again as tabs, pills or
+   header buttons.
+2. Section tabs exist for one case only: one menu item whose content is two to six sibling
+   lists that are not themselves menu items (Catalog: Specimen types, Container types, Storage classes), or sibling sub-views of one action (the sections of a specimen correction).
    They are links with their own URLs, rendered by `includes/section_tabs.html` directly under
    the page header, with `aria-current="page"` and no tab roles. One visual style. Tabs stay
    visible on every list in the set and never appear on record or form pages.
 3. A long page with four or more sections gets an "On this page" list of anchors
    (`includes/page_toc.html`). It is not a tab set and does not hide content.
-4. Every page marks exactly one sidebar item as current, including record, form and action pages
-   beneath a list. Pages reached from the user menu (password, two-factor) mark none. The mapping
-   from route to sidebar item is declared in one place and checked by a test (section 11). A
+4. Every page marks exactly one navigation item as current: the menu item carries
+   `aria-current="page"`, and its section shows as current. This includes record, form and
+   action pages beneath a list. Pages reached from the user menu (password, two-factor) mark none. The mapping
+   from route to menu item is declared in one place and checked by a test (section 11). A
    route shared by two kinds of record (history pages of a box or a rack) is
    declared as shared, and the view names the item for the record at hand.
 5. Breadcrumbs appear on every record, form, action, entry and document page, and never on lists
-   or overviews. The trail is `Sidebar item › Record identifier › Action`; the last crumb is the
+   or overviews. The trail is `Menu item › Record identifier › Action`; the last crumb is the
    current page and is not a link. Under a tabbed section the trail is `Section › Tab › …`, where
    the section is text and the tab links to its list. Rendered by `includes/breadcrumbs.html`.
    There is no separate Back link.
 6. Cross-links to another section belong in the content where they are relevant (a box identifier
    in a table cell), not in the page header as a button.
 7. Signed-in users keep the application shell on error pages (400, 403, 404).
+8. Storage path bar. On pages with a storage context (a record or action about a located thing,
+   the dashboard and storage overview, lists of located things), a bar under the top bar shows
+   where the thing is, from the site down to the position, with the storage unit's nominal
+   temperature; the current level carries `aria-current="location"`. Pages without a storage
+   context have no bar. It is wayfinding, not a list of destinations.
 
 ## 4. Page header
 
@@ -70,7 +77,7 @@ Top to bottom, all through the blocks of `templates/base.html`:
 | Part | Block | Rule |
 | --- | --- | --- |
 | Breadcrumbs | `breadcrumbs` | Section 3, rule 5 |
-| Title | `page_heading` | List and overview: the sidebar label. Record: the record's identifier. Form: `New <thing>` or `Edit <identifier>`. Action: the same words as the button that opened it |
+| Title | `page_heading` | List and overview: the menu label. Record: the record's identifier. Form: `New <thing>` or `Edit <identifier>`. Action: the same words as the button that opened it |
 | Key facts | `page_meta` | Record pages: status first (section 8), then at most four facts that identify the record. Not used for prose |
 | Description | `page_intro` | At most one sentence, under the title. Explanatory text never floats between the header and the first panel |
 | Actions | `page_actions` | Right of the title on one row at every width from 992px. Order left to right: destructive (outline danger), secondary actions, primary last. At most one primary and three secondary; anything further goes in a `More` dropdown |
@@ -229,7 +236,7 @@ Buttons:
 | Detach a child | `Remove` | |
 | Apply filters / reset them | `Apply` / `Clear all` | |
 
-Sentence case everywhere. A title, its breadcrumb, its sidebar item and the button that opens
+Sentence case everywhere. A title, its breadcrumb, its menu item and the button that opens
 it use the same words. Every page uses the same term for the same thing.
 
 ## 10. Roles and states
@@ -248,7 +255,7 @@ it use the same words. Every page uses the same term for the same thing.
   status spans, breadcrumbs and toolbars outside the shared includes, `Open` and `View` row
   links, more than one primary button in a page header.
 - `tests/test_navigation.py` resolves every HTML route and asserts that it marks exactly one
-  sidebar item (or is declared as an account page), and that the item's label equals
+  menu item (or is declared as an account page), and that the item's label equals
   the list page's title.
 - The browser suite keeps one journey per page type and the contrast check for both themes.
 

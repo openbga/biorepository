@@ -5,6 +5,26 @@
   ],
   "title": "Site",
   "purpose": "Review one site: its time zone, its rooms with their occupancy, and its history.",
+  "summary": "One site: its time zone, its rooms with their occupancy, and its history.",
+  "tasks": [
+    {
+      "title": "Add a room",
+      "steps": [
+        "Admin and manager: select [[Add room]]."
+      ]
+    },
+    {
+      "title": "Change the site",
+      "steps": [
+        "Select [[Edit]] to change the name or time zone, with a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Sites cannot be retired or deleted.",
+    "Counts cover active boxes in active structure only.",
+    "The history lists each change with who made it and why."
+  ],
   "sections": [
     {
       "title": "Site",

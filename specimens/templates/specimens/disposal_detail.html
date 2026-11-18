@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 One disposal request: its state, decision and execution, and the actions open to this user.
 Approvers who did not make the request approve or reject it; the requester sees the standard
 sentence instead (docs/ui-standards.md section 10). Context: req, specimen, state, decision,
 execution, requester, can_decide, can_cancel, can_execute, held_reason, timeline.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'specimens:disposal-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Disposal requests" section_url=list_url current=page_title %}{% endblock %}
+{% block breadcrumbs %}{% url 'specimens:disposal-list' as list_url %}{% breadcrumbs section="Disposal requests" section_url=list_url current=page_title %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% request_status state %}</li><li class="vr-id">{{ specimen.accession }}</li><li>{{ specimen.specimen_type.name }}</li><li><time datetime="{{ req.recorded_at|date:'c' }}">{{ req.recorded_at|date:"Y-m-d H:i" }}</time></li></ul>{% endblock %}
 {% block page_actions %}
 {% if can_cancel %}<a class="btn btn-outline-danger" href="{% url 'specimens:disposal-decide' req.pk %}?decision=cancel">Cancel disposal request</a>{% endif %}
@@ -46,9 +46,9 @@ execution, requester, can_decide, can_cancel, can_execute, held_reason, timeline
   <div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div>
   <div class="card-body">
     <ol class="vr-timeline">
-      {% for item in timeline %}{% include "includes/history_item.html" with title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail %}{% endfor %}
+      {% for item in timeline %}{% history_item title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail %}{% endfor %}
     </ol>
   </div>
 </section>
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

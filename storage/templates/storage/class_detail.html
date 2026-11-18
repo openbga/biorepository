@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}A storage class (catalogue). Context: obj (annotated unit_count), crumbs, units, history, can_manage.{% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ obj.code }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li></ul>{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:class-edit' obj.pk %}">Edit</a>{% endif %}{% endblock %}
@@ -20,8 +20,8 @@
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Room</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for u in units %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a></th><td>{{ u.name }}</td><td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td><td>{% include "storage/_status.html" with obj=u plain=True %}</td></tr>{% endfor %}</tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No storage units use this class" %}{% endif %}
+  {% else %}{% empty_state title="No storage units use this class" %}{% endif %}
 </section>
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=obj.code %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=obj.code %}{% endblock %}

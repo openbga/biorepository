@@ -5,6 +5,27 @@
   ],
   "title": "Repository administration history",
   "purpose": "Read maintenance actions recorded by Django administration for this object.",
+  "summary": "Read the maintenance actions Django administration recorded for the repository setup record, oldest first.",
+  "tasks": [
+    {
+      "title": "Read what changed and who changed it",
+      "steps": [
+        "Read Date/time, User and Action for each entry.",
+        "Use the page numbers to move through older or newer entries."
+      ]
+    },
+    {
+      "title": "Go back to the repository record",
+      "steps": [
+        "Select the repository in the breadcrumbs."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "This shows only actions taken in Django administration.",
+    "Each retention change also has its own audit event, with the reason and the statement before and after.",
+    "No change history does not mean nothing happened to the record."
+  ],
   "sections": [
     {
       "title": "Access and scope",

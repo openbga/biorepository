@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution specimens %}
+{% load distribution specimens ui %}
 {% comment %}
 Entry grid: retrieve a request's allocated specimens, one row per allocation in pick-list
 (walking) order. Each row posts the specimen and occupancy revisions read when the page was
@@ -9,7 +9,7 @@ would refuse now start on Not now and show the reasons. Context (request_views.p
 (PickForm), formset (prefix "lines", PickRowForm rows with row.info = queries.PickRow and
 row.errors_for_row), request_obj, blocked, submit_label, back_url, crumbs, facts.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}

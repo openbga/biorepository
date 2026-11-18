@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load navigation %}
+{% load navigation ui %}
 {% comment %}
 One distribution catalogue tab: scope categories, consent forms, institutions or investigators. An
 entry has no record page: its code opens the edit form for managers and is plain text for everyone
@@ -12,24 +12,24 @@ tab, create_noun, create_url, edit_route, can_manage.
 <section class="card vr-table-card" aria-labelledby="catalogue-heading">
   <h2 class="visually-hidden" id="catalogue-heading">{{ tab }}</h2>
   {% with grid_key="distribution.catalogue-"|add:kind %}
-  {% include "includes/grid_toolbar.html" with label="Filter "|add:noun q=q placeholder=placeholder inline=inline grid=grid_key %}
+  {% grid_toolbar label="Filter "|add:noun q=q placeholder=placeholder inline=inline grid=grid_key %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="{{ grid_key }}" data-vr-grid-version="1" aria-labelledby="catalogue-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% sort_header label="Code" asc="code" desc="-code" col="code" locked=True %}
         {% if kind == "consent_form" %}
         <th scope="col" data-vr-col="version" data-vr-col-label="Version">Version</th>
-        {% include "includes/sort_header.html" with label="Study" asc="study" desc="-study" col="study" %}
-        {% include "includes/sort_header.html" with label="Title" asc="title" desc="-title" col="title" %}
+        {% sort_header label="Study" asc="study" desc="-study" col="study" %}
+        {% sort_header label="Title" asc="title" desc="-title" col="title" %}
         <th scope="col" data-vr-col="kind" data-vr-col-label="Kind">Kind</th>
         <th scope="col" data-vr-col="categories" data-vr-col-label="Categories asked">Categories asked</th>
         {% else %}
-        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% sort_header label="Name" asc="name" desc="-name" col="name" %}
         {% endif %}
         {% if kind == "category" %}<th scope="col" data-vr-col="gates" data-vr-col-label="Governs use">Governs use</th>{% endif %}
-        {% if kind == "institution" %}{% include "includes/sort_header.html" with label="Country" asc="country" desc="-country" col="country" %}{% endif %}
-        {% if kind == "investigator" %}{% include "includes/sort_header.html" with label="Institution" asc="institution" desc="-institution" col="institution" %}<th scope="col" data-vr-col="email" data-vr-col-label="Professional email">Professional email</th>{% endif %}
+        {% if kind == "institution" %}{% sort_header label="Country" asc="country" desc="-country" col="country" %}{% endif %}
+        {% if kind == "investigator" %}{% sort_header label="Institution" asc="institution" desc="-institution" col="institution" %}<th scope="col" data-vr-col="email" data-vr-col-label="Professional email">Professional email</th>{% endif %}
         <th scope="col" data-vr-col="status" data-vr-col-label="Status">Status</th>
       </tr></thead>
       <tbody>
@@ -48,13 +48,13 @@ tab, create_noun, create_url, edit_route, can_manage.
           {% if kind == "category" %}<td>{{ row.gates_use|yesno:"Yes,No" }}</td>{% endif %}
           {% if kind == "institution" %}<td class="vr-id">{{ row.country|default:"—" }}</td>{% endif %}
           {% if kind == "investigator" %}<td class="vr-id">{{ row.institution.code }}</td><td>{{ row.email|default:"—" }}</td>{% endif %}
-          <td>{% if row.is_active %}{% include "includes/status.html" with label="Active" tone="success" plain=True %}{% else %}{% include "includes/status.html" with label="Inactive" tone="neutral" plain=True %}{% endif %}</td>
+          <td>{% if row.is_active %}{% status label="Active" tone="success" plain=True %}{% else %}{% status label="Inactive" tone="neutral" plain=True %}{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_manage %}{% with create_label="New "|add:create_noun %}{% include "storage/_list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="Consent records, requests and agreements are recorded with entries from these catalogues." create_url=create_url create_label=create_label %}{% endwith %}{% else %}{% include "storage/_list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="A repository manager adds the entries consent records, requests and agreements use." %}{% endif %}
   {% endif %}

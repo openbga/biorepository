@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}A container type version (catalogue): facts, a label preview of the top-left corner, versions, history. Context: obj (annotated box_count), crumbs, versions, used, preview_rows [(row label, [labels])], preview_columns, preview_cut, history, can_manage.{% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ obj }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li><li>{{ obj.rows }} × {{ obj.columns }}</li></ul>{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:container-type-create' %}?from={{ obj.pk }}">New version</a><a class="btn btn-outline-secondary" href="{% url 'storage:container-type-edit' obj.pk %}">Edit</a>{% endif %}{% endblock %}
@@ -34,4 +34,4 @@
 </section>
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

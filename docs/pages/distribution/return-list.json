@@ -5,6 +5,27 @@
   ],
   "title": "Returns",
   "purpose": "Find specimens that came back from a shipment and see which still await a manager's review.",
+  "summary": "Specimens that came back from a shipment, and which still await a manager's review.",
+  "tasks": [
+    {
+      "title": "Find returns to review",
+      "steps": [
+        "Set [[Review]] to Awaiting review and select [[Apply]].",
+        "Managers and administrators: select the row's Review button."
+      ]
+    },
+    {
+      "title": "Record a return",
+      "steps": [
+        "Open the shipment and select Record return on the item."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A returned specimen stays on a use hold until a manager releases it for use.",
+    "Kept on hold can be reviewed again later.",
+    "Thaws reported are as the recipient reported them."
+  ],
   "sections": [
     {
       "title": "What the page shows",

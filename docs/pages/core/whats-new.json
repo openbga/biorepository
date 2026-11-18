@@ -5,6 +5,29 @@
   ],
   "title": "What's new",
   "purpose": "Read what was added or changed in this application, newest first, grouped by month and ranked by impact.",
+  "summary": "The changes made to this application, newest first. Each month lists high-impact changes first, then medium and low.",
+  "tasks": [
+    {
+      "title": "See what changed since you last looked",
+      "steps": [
+        "Select [[What's new]] in the top bar. A number beside it counts the changes you have not seen.",
+        "Read the changes marked [[New]]. Opening the page marks them as seen and clears the number."
+      ]
+    },
+    {
+      "title": "Try a change in the application",
+      "steps": [
+        "Under the change, select its [[Go to]] link to open the page where the change is found.",
+        "Open [[Technical notes]] for details an administrator or deployer may need, such as upgrade steps."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The list comes with the application itself and is updated when the application is.",
+    "Each browser keeps its own record of what you have seen. The first visit in a browser marks nothing as new.",
+    "A Go to page still checks your role, so it may refuse access.",
+    "The list describes the software. It is not a record of your repository's work and changes no records."
+  ],
   "sections": [
     {
       "title": "The list",

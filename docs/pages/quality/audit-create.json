@@ -5,6 +5,27 @@
   ],
   "title": "New inventory audit",
   "purpose": "Freeze the expected contents and location of one box before checking its positions.",
+  "summary": "Freeze the expected contents and location of one box before checking its positions.",
+  "tasks": [
+    {
+      "title": "Start an audit",
+      "steps": [
+        "Choose the [[Box]] and give the [[Reason for the audit]].",
+        "Select [[Create audit]]. The snapshot is taken now."
+      ]
+    },
+    {
+      "title": "Repeat an earlier audit",
+      "steps": [
+        "Choose the finalized audit of the same box in [[Earlier audit]], or use New audit of this box on it."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only active boxes in active storage can be audited.",
+    "Any storage change in the box after the snapshot makes the audit stale. Cancel it and start a new one.",
+    "Do not enter identifying information in the reason."
+  ],
   "sections": [
     {
       "title": "Who can use it",

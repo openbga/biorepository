@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution distribution_governance %}
+{% load distribution distribution_governance ui %}
 {% comment %}
 Consent record of one coded participant in one study. Order: alerts that need action, the current
 record's facts, its answer per scope category, the participant's specimens in custody (held or not
@@ -14,19 +14,19 @@ withdrawals (with follow_ups, reinstated), open_withdrawal, impact (queries.Impa
 distributed [{shipment, items, follow_ups}], destructive, secondary, more, primary, toc, history,
 can_manage.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'distribution:consent-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Consent" section_url=list_url current=page_title %}{% endblock %}
+{% block breadcrumbs %}{% url 'distribution:consent-list' as list_url %}{% breadcrumbs section="Consent" section_url=list_url current=page_title %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ page_title }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "consent" consent.status %}</li><li>Participant <span class="vr-id">{{ consent.participant.code }}</span></li><li>Study <a class="vr-id" href="{% url 'distribution:study-detail' consent.study_id %}">{{ consent.study.code }}</a></li>{% if consent.no_contact %}<li>Do not contact</li>{% endif %}</ul>{% endblock %}
 {% block page_actions %}{% include "distribution/governance/_header_actions.html" %}{% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if open_withdrawal %}
 {% with instruction=open_withdrawal.escalation|default:open_withdrawal %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Withdrawn" tone="hold" plain=True %}<div>{{ open_withdrawal.get_effective_kind_display }}, effective <time datetime="{{ instruction.effective_on|date:'Y-m-d' }}">{{ instruction.effective_on|date:"Y-m-d" }}</time>, recorded by {{ instruction.actor|person }}.</div></div>
+<div class="alert alert-warning" role="status">{% status label="Withdrawn" tone="hold" plain=True %}<div>{{ open_withdrawal.get_effective_kind_display }}, effective <time datetime="{{ instruction.effective_on|date:'Y-m-d' }}">{{ instruction.effective_on|date:"Y-m-d" }}</time>, recorded by {{ instruction.actor|person }}.</div></div>
 {% endwith %}
 {% endif %}
 {% if open_withdrawal and impact.unheld %}
-<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Not held" tone="danger" plain=True %}<div>{{ impact.unheld|length }} specimen{{ impact.unheld|pluralize }} in custody without a hold from the withdrawal (for example registered after it). The distribution gate still blocks them; {% if can_manage %}use Hold withdrawn specimens to hold them.{% else %}a manager can hold them.{% endif %}</div></div>
+<div class="alert alert-danger" role="alert">{% status label="Not held" tone="danger" plain=True %}<div>{{ impact.unheld|length }} specimen{{ impact.unheld|pluralize }} in custody without a hold from the withdrawal (for example registered after it). The distribution gate still blocks them; {% if can_manage %}use Hold withdrawn specimens to hold them.{% else %}a manager can hold them.{% endif %}</div></div>
 {% endif %}
 
 <section class="card mb-3" aria-labelledby="facts-heading">
@@ -47,7 +47,7 @@ can_manage.
     <div><dt>Restrictions</dt><dd>{% if current.restrictions %}<details><summary>Restrictions recorded</summary><p class="mb-0">{{ current.restrictions|linebreaksbr }}</p></details>{% else %}None recorded{% endif %}<span class="d-block vr-muted small">Shown to reviewers, allocators and pickers; the software does not interpret them.</span></dd></div>
   </dl>
   {% else %}
-  {% include "includes/empty_state.html" with title="No consent record" body="Record the participant's consent from the filed original." %}
+  {% empty_state title="No consent record" body="Record the participant's consent from the filed original." %}
   {% endif %}
   </div>
 </section>
@@ -67,7 +67,7 @@ can_manage.
     </tbody>
   </table></div>
   <div class="card-body pt-0"><p class="vr-muted small mb-0">As recorded on {{ current.form }}. A category the form does not ask is not addressed and does not permit a use.{% if current.decision == "refused" %} The participant refused the whole form, so no category is answered.{% endif %}</p></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No categories answered" body="A refusal answers no categories; a consent answers each category its form asks." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No categories answered" body="A refusal answers no categories; a consent answers each category its form asks." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="impact-heading">
@@ -76,12 +76,12 @@ can_manage.
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Specimen ID</th><th scope="col">Type</th><th scope="col">Status</th><th scope="col">Withdrawal hold</th></tr></thead>
     <tbody>
-      {% for s in impact.held %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td>{{ s.get_status_display }}</td><td>{% include "includes/status.html" with label="Held" tone="hold" plain=True %}</td></tr>{% endfor %}
-      {% for s in impact.unheld %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td>{{ s.get_status_display }}</td><td>{% if open_withdrawal %}{% include "includes/status.html" with label="Not held" tone="danger" plain=True %}{% else %}<span class="vr-muted">—</span>{% endif %}</td></tr>{% endfor %}
+      {% for s in impact.held %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td>{{ s.get_status_display }}</td><td>{% status label="Held" tone="hold" plain=True %}</td></tr>{% endfor %}
+      {% for s in impact.unheld %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td>{{ s.get_status_display }}</td><td>{% if open_withdrawal %}{% status label="Not held" tone="danger" plain=True %}{% else %}<span class="vr-muted">—</span>{% endif %}</td></tr>{% endfor %}
     </tbody>
   </table></div>
   <div class="card-body pt-0"><p class="vr-muted small mb-0">Available or exhausted specimens of {{ consent.participant.code }} in the collections {{ consent.study.code }} governs now.</p></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No specimens in custody" body="No available or exhausted specimen of this participant is in a collection the study governs." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No specimens in custody" body="No available or exhausted specimen of this participant is in a collection the study governs." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="allocations-heading">
@@ -94,7 +94,7 @@ can_manage.
     </tbody>
   </table></div>
   {% if open_withdrawal %}<div class="card-body pt-0"><p class="vr-muted small mb-0">Picked specimens stay picked after a withdrawal; the use hold blocks packing and dispatch until staff put them back.</p></div>{% endif %}
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No open allocations" body="None of these specimens is allocated or picked for a request." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No open allocations" body="None of these specimens is allocated or picked for a request." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="distributed-heading">
@@ -116,14 +116,14 @@ can_manage.
     </tbody>
   </table></div>
   <div class="card-body pt-0"><p class="vr-muted small mb-0">Material that left the repository in dispatched shipments, with the agreement terms it went under. The software sends nothing and recalls nothing; record what was done as follow-up.</p></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="Nothing distributed" body="No shipment has carried this participant's material in this study." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="Nothing distributed" body="No shipment has carried this participant's material in this study." %}</div>{% endif %}
 </section>
 
 <section class="card mb-3" aria-labelledby="records-heading">
   <div class="card-header"><h2 class="card-title" id="records-heading">Records</h2><span class="vr-count">{{ records|length }}, oldest first</span></div>
   <div class="card-body">{% if records %}<ol class="vr-timeline">
-    {% for r in records %}{% with summary=r.get_decision_display|add:" on "|add:r.form.code|add:" v"|add:r.form.version %}{% include "includes/history_item.html" with title=r.title at=r.recorded_at actor=r.recorded_by by="Recorded by" reason=r.reason changes=r.change_rows detail=r.answer_text|default:summary %}{% endwith %}{% endfor %}
-  </ol>{% else %}{% include "includes/empty_state.html" with title="No records" %}{% endif %}</div>
+    {% for r in records %}{% with summary=r.get_decision_display|add:" on "|add:r.form.code|add:" v"|add:r.form.version %}{% history_item title=r.title at=r.recorded_at actor=r.recorded_by by="Recorded by" reason=r.reason changes=r.change_rows detail=r.answer_text|default:summary %}{% endwith %}{% endfor %}
+  </ol>{% else %}{% empty_state title="No records" %}{% endif %}</div>
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="withdrawals-heading">
@@ -156,9 +156,9 @@ can_manage.
     </tbody>
   </table></div>
   <div class="card-body pt-0"><p class="vr-muted small mb-0">Counts are what the withdrawal did when it was recorded.</p></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No withdrawals recorded" %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No withdrawals recorded" %}</div>{% endif %}
 </section>
 
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

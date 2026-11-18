@@ -5,6 +5,34 @@
   ],
   "title": "Import",
   "purpose": "Review one validated CSV file and, if it is valid, register all of its specimens in one step.",
+  "summary": "Review one validated CSV file and, if it is valid, register all of its specimens in one step.",
+  "tasks": [
+    {
+      "title": "Register the specimens",
+      "steps": [
+        "Check the state is Ready to commit and the rows are right.",
+        "Give the reason and select the Register button, which shows the number of specimens."
+      ]
+    },
+    {
+      "title": "Fix a file with errors",
+      "steps": [
+        "Read each problem's line, row key and column, correct the file and upload it again."
+      ]
+    },
+    {
+      "title": "Print labels for the new specimens",
+      "steps": [
+        "After the commit, select [[Print labels]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "All rows are registered or none. If anything changed since validation, nothing is registered and the problems are listed.",
+    "An import is never edited. Upload a corrected file instead.",
+    "A Check notice means the same file was validated before. Commit again only if these are different specimens.",
+    "Only the person who validated the file, or an admin or manager, can commit it."
+  ],
   "sections": [
     {
       "title": "What the page shows",

@@ -5,6 +5,26 @@
   ],
   "title": "Accounts are issued by the repository",
   "purpose": "This deployment does not offer public account registration.",
+  "summary": "Accounts are issued by the repository. There is no public sign-up.",
+  "tasks": [
+    {
+      "title": "Get an account",
+      "steps": [
+        "Ask the repository to issue an account for you."
+      ]
+    },
+    {
+      "title": "Sign in with an issued account",
+      "steps": [
+        "Select the OpenBGA Biorepository name at the top to go to sign in."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "This page has no registration form or sign-up action.",
+    "Accounts and their roles are set up by a repository administrator.",
+    "The OpenBGA Biorepository name at the top returns to the application."
+  ],
   "sections": [
     {
       "title": "Closed registration",

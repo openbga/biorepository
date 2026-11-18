@@ -5,6 +5,26 @@
   ],
   "title": "Storage classes",
   "purpose": "Maintain the storage conditions a unit can be assigned, for example cryogenic or ultra-low. The Storage catalogues tabs also cover container types and templates.",
+  "summary": "The storage conditions a unit can be assigned, for example cryogenic or ultra-low.",
+  "tasks": [
+    {
+      "title": "Add a storage class",
+      "steps": [
+        "Admin and manager: select [[New storage class]]."
+      ]
+    },
+    {
+      "title": "See which units use a class",
+      "steps": [
+        "Select the class's code."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Inactive classes stay on existing units but cannot be chosen for new ones.",
+    "Storage units counts active units only.",
+    "The other Storage catalogues tabs cover container types and templates."
+  ],
   "sections": [
     {
       "title": "Search, filters and sorting",

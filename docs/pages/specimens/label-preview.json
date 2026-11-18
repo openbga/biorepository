@@ -5,6 +5,26 @@
   ],
   "title": "Labels",
   "purpose": "Check the labels for the chosen specimens before downloading them as a PDF.",
+  "summary": "Check the labels for the chosen specimens before downloading them as a PDF.",
+  "tasks": [
+    {
+      "title": "Print the labels",
+      "steps": [
+        "Check each label, then select [[Download PDF]]. There is one page per label, in the order shown."
+      ]
+    },
+    {
+      "title": "Choose other specimens",
+      "steps": [
+        "Go back to the specimen list, tick them and select Print labels."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A label shows only the specimen ID, as text and as a Code 128 barcode.",
+    "Up to 200 labels at a time. A specimen listed twice prints twice.",
+    "A label marked Does not fit needs a larger label stock, which is a deployment setting."
+  ],
   "sections": [
     {
       "title": "What the page shows",

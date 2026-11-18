@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Governance form or action form (docs/ui-standards.md: Form, Action form), in the shared dialog with
 this page as the no-JavaScript fallback. Context (distribution.governance_views._action):
@@ -7,14 +7,14 @@ side by side from 768px), submit_label, back_url, crumbs, blocked (why the actio
 now: alert, fields disabled, no submit), notes, facts ((label, value) pairs about the record acted
 on), destructive (the submit is the outline-danger button, first in the row).
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form" method="post"{% if form.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
   {% csrf_token %}
-  {% include "includes/form_errors.html" with form=form %}
+  {% form_errors form=form %}
   {% if blocked %}
   <div class="alert alert-warning" role="alert">
-    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
+    {% status label="Not available" tone="warning" plain=True %}
     <div>{{ blocked }}</div>
   </div>
   {% else %}
@@ -33,10 +33,10 @@ on), destructive (the submit is the outline-danger button, first in the row).
     {% for row in rows %}
     {% if row|length > 1 %}
     <div class="row g-3 mb-4">
-      {% for field in row %}<div class="col-md">{% include "includes/field.html" with field=field %}</div>{% endfor %}
+      {% for field in row %}<div class="col-md">{% field field=field %}</div>{% endfor %}
     </div>
     {% else %}
-    {% include "includes/field.html" with field=row.0 %}
+    {% field field=row.0 %}
     {% endif %}
     {% endfor %}
   </fieldset>

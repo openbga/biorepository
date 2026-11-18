@@ -6,7 +6,7 @@ from django.shortcuts import redirect, resolve_url
 from django.urls import include, path
 from django.views.decorators.cache import never_cache
 
-from core import announcement_views, views
+from core import announcement_views, lookups, views
 
 
 @never_cache
@@ -51,6 +51,7 @@ urlpatterns = [
         name="announcement-withdraw",
     ),
     path("ready/", views.ready, name="ready"),
+    path("lookups/<slug:name>/", lookups.lookup, name="lookup"),
     path("storage/", include("storage.urls")),
     path("specimens/", include("specimens.urls")),
     path("equipment/", include("equipment.urls")),

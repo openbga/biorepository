@@ -5,6 +5,26 @@
   ],
   "title": "Link collection",
   "purpose": "Govern a specimen collection under this study.",
+  "summary": "Govern a specimen collection under this study. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Link the collection",
+      "steps": [
+        "Choose the [[Collection]], give the [[Reason]] and select [[Link collection]]."
+      ]
+    },
+    {
+      "title": "Move a collection from another study",
+      "steps": [
+        "End its link on the other study first. Only collections no study governs are offered."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The collection's specimens, including those already stored, are governed by this study's consent basis from now on.",
+    "The link is kept in the study's history.",
+    "A participant's recorded refusal or withdrawal still applies."
+  ],
   "sections": [
     {
       "title": "Fields",

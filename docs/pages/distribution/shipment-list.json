@@ -5,6 +5,32 @@
   ],
   "title": "Shipments",
   "purpose": "Find shipments of distributed specimens and follow each from preparation to receipt.",
+  "summary": "Shipments of distributed specimens, followed from preparation to receipt.",
+  "tasks": [
+    {
+      "title": "Start a shipment",
+      "steps": [
+        "Open the approved request and select New shipment there."
+      ]
+    },
+    {
+      "title": "Find shipments waiting to go",
+      "steps": [
+        "Set [[State]] to Packed and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Find a shipment",
+      "steps": [
+        "Type the SH or RQ number, tracking number or institution in [[Search]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Shipments start from requests, so this list has no New button.",
+    "Receipt shows the condition as corrected, or Not yet recorded after dispatch.",
+    "[[Specimen]] under More filters finds shipments that hold or sent that specimen."
+  ],
   "sections": [
     {
       "title": "What the page shows",

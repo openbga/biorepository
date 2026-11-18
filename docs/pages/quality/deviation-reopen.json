@@ -5,6 +5,26 @@
   ],
   "title": "Reopen deviation",
   "purpose": "Open a closed deviation for further investigation or correction.",
+  "summary": "Open a closed deviation for further investigation or correction. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Reopen the report",
+      "steps": [
+        "Explain why work is restarting and select [[Reopen deviation]]."
+      ]
+    },
+    {
+      "title": "Finish it again",
+      "steps": [
+        "Edit and submit the report again. A different reviewer closes it."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The earlier closure and review reasons stay in the history.",
+    "Reopening never changes linked evidence or holds.",
+    "The reviewer must differ from the creator and the latest submitter."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

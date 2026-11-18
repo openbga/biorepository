@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment ui %}
 {% comment %}
 Temperature excursion record: facts, the specimens that were in the unit during it (computed live
 until it is closed, then the list captured at closing), the readings during it, the timeline and
@@ -10,7 +10,7 @@ specimens (Page of rows with specimen_id, accession, present_from, present_until
 specimen_count, capture (closing ExcursionEvent or None), computed_until, readings, reading_count,
 shown, events (with change_rows, detail), own_submission, toc, history, can_manage, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'equipment:excursion-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Temperature excursions" section_url=list_url current=excursion.number %}{% endblock %}
+{% block breadcrumbs %}{% url 'equipment:excursion-list' as list_url %}{% breadcrumbs section="Temperature excursions" section_url=list_url current=excursion.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ excursion.number }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% excursion_status excursion.status %}</li><li><a class="vr-id" href="{% url 'equipment:equipment-detail' excursion.equipment_id %}">{{ excursion.equipment.code }}</a></li>{% if excursion.storage_unit %}<li>Storage unit <a class="vr-id" href="{% url 'storage:unit-detail' excursion.storage_unit_id %}">{{ excursion.storage_unit.code }}</a></li>{% endif %}<li>Started <time datetime="{{ excursion.started_at|date:'c' }}">{{ excursion.started_at|date:"Y-m-d H:i" }}</time></li></ul>{% endblock %}
 {% block page_actions %}
@@ -30,7 +30,7 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
 {% endif %}
 {% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if excursion.status == "review" %}
 <div class="alert alert-info" role="status">{% excursion_status excursion.status plain=True %}<div>Submitted <time datetime="{{ excursion.submitted_at|date:'c' }}">{{ excursion.submitted_at|date:"Y-m-d H:i" }}</time> by {{ excursion.submitted_by|person }}. A manager or administrator who did not submit it reviews and closes it.</div></div>
 {% elif excursion.status == "closed" %}
@@ -68,8 +68,8 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
         <td class="vr-id">{{ row.location|default:"—" }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% include "includes/pagination.html" with page_obj=specimens noun="specimens" %}
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No specimens were in the unit" body="No stored specimen was recorded in the storage unit during this period." %}</div>{% endif %}
+  {% pagination page_obj=specimens noun="specimens" %}
+  {% else %}<div class="card-body">{% empty_state title="No specimens were in the unit" body="No stored specimen was recorded in the storage unit during this period." %}</div>{% endif %}
 </section>
 
 <section class="card vr-table-card mb-3" aria-labelledby="readings-heading">
@@ -88,16 +88,16 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
         <td>{{ row.recorded_by|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No readings in this period" body="Readings of the equipment between the start and the end (or now) are listed here." %}</div>{% endif %}
+  {% else %}<div class="card-body">{% empty_state title="No readings in this period" body="Readings of the equipment between the start and the end (or now) are listed here." %}</div>{% endif %}
 </section>
 
 <section class="card mb-3" aria-labelledby="timeline-heading">
   <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first</span></div>
   <div class="card-body"><ol class="vr-timeline">
-    {% for e in events %}{% include "includes/history_item.html" with title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note changes=e.change_rows detail=e.detail extra="equipment/_event_extra.html" %}{% endfor %}
+    {% for e in events %}{% history_item title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note changes=e.change_rows detail=e.detail extra="equipment/_event_extra.html" %}{% endfor %}
   </ol></div>
 </section>
 
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=excursion.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=excursion.number %}{% endblock %}

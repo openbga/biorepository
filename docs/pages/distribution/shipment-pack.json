@@ -5,6 +5,29 @@
   ],
   "title": "Pack",
   "purpose": "Record that a draft shipment was packed, with the declarations the shipper made, and freeze its contents.",
+  "summary": "Record that a draft shipment was packed, with the shipper's declarations, and freeze its contents.",
+  "tasks": [
+    {
+      "title": "Pack the shipment",
+      "steps": [
+        "Choose the [[Temperature class]], [[Refrigerant]] and [[Classification as declared by the shipper]].",
+        "Enter [[Packages]], the [[Emergency contact]] and whether the [[Packer confirmed current shipping training]].",
+        "Enter [[Packed at]] and the [[Reason]], then select [[Pack]]."
+      ]
+    },
+    {
+      "title": "Have someone check it",
+      "steps": [
+        "Choose the second person in [[Checked by]]. It cannot be you."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The software records the shipper's declarations. It does not classify the shipment.",
+    "Training is as stated by the packer. Training records are not checked.",
+    "Participant codes are printed only if ticked and the agreement's data level allows it.",
+    "Every specimen is checked again when you pack."
+  ],
   "sections": [
     {
       "title": "Who can use it",

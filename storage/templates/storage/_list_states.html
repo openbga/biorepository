@@ -1,8 +1,8 @@
-{% comment %}Empty, no-results and filter-error states for a storage list (docs/ui-standards.md section 5, rule 7). Parameters: title_empty, body_empty, create_url, create_label (create only for users who may), noun.{% endcomment %}
+{% load ui %}{% comment %}Empty, no-results and filter-error states for a storage list (docs/ui-standards.md section 5, rule 7). Parameters: title_empty, body_empty, create_url, create_label (create only for users who may), noun.{% endcomment %}
 {% if filter_form.errors %}
-{% include "includes/empty_state.html" with kind="error" title="These filters cannot be applied" body="Correct the highlighted filter above." clear_url=request.path %}
+{% empty_state kind="error" title="These filters cannot be applied" body="Correct the highlighted filter above." clear_url=request.path %}
 {% elif filtered %}
-{% include "includes/empty_state.html" with kind="no-results" title="Nothing matches these filters" body="Change or clear the filters." clear_url=request.path %}
+{% empty_state kind="no-results" title="Nothing matches these filters" body="Change or clear the filters." clear_url=request.path %}
 {% else %}
-{% include "includes/empty_state.html" with title=title_empty body=body_empty action_url=create_url action_label=create_label %}
+{% empty_state title=title_empty body=body_empty action_url=create_url action_label=create_label %}
 {% endif %}

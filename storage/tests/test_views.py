@@ -135,6 +135,7 @@ def test_box_page_shows_grid_states(client, tree, people):
     content = client.get(reverse("storage:box-detail", args=[tree.box.pk])).content.decode()
     assert "Occupied" in content and str(item.pk)[:8] in content
     assert content.count('id="position-') == 81
+    assert "data-vr-blocked-count>0</dd>" in content  # zero is shown, not left blank
 
 
 def test_manager_defines_storage_through_the_forms(client, tree, people):

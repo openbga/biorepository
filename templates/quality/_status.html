@@ -1,1 +1,1 @@
-{% if status == 'completed' %}{% include "includes/status.html" with label="Completed" tone="success" %}{% elif status == 'cancelled' %}{% include "includes/status.html" with label="Cancelled" tone="neutral" %}{% else %}{% include "includes/status.html" with label="Open" tone="progress" %}{% endif %}
+{% load ui %}{% if status == 'completed' %}{% status label="Completed" tone="success" %}{% elif status == 'cancelled' %}{% status label="Cancelled" tone="neutral" %}{% else %}{% status label="Open" tone="progress" %}{% endif %}

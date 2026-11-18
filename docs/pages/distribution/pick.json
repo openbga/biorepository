@@ -5,6 +5,27 @@
   ],
   "title": "Pick specimens",
   "purpose": "Record the retrieval of a request's allocated specimens from storage, or that one was not found.",
+  "summary": "Record retrieving a request's allocated specimens from storage, or that one was not found.",
+  "tasks": [
+    {
+      "title": "Record the pick",
+      "steps": [
+        "Set each row's [[Outcome]]: Picked, Not found or Not now.",
+        "Choose [[Picked by (custodian)]], enter [[Picked at]] and the [[Reason]], then select [[Record pick]]."
+      ]
+    },
+    {
+      "title": "Print the list first",
+      "steps": [
+        "Open the pick list from the request and select Download PDF."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Picked checks the specimen out of storage. Its position is freed and time out of storage starts.",
+    "Not found records only that it was not at its location.",
+    "Not now leaves it allocated."
+  ],
   "sections": [
     {
       "title": "Who can use it",

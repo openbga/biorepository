@@ -1,14 +1,14 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Create or edit one specimen catalogue entry (form dialog; managers). A catalogue entry has no
 record page, so this form shows its history. Context: form (CatalogueForm, grouped), obj or
 None, tab, list_url, submit_label, in_use_note, history (AuditEvents, newest first).
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with section="Specimen catalogues" tab=tab tab_url=list_url %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs section="Specimen catalogues" tab=tab tab_url=list_url %}{% endblock %}
 {% block content %}
 <form class="vr-form" method="post" novalidate>
   {% csrf_token %}
-  {% include "includes/form_errors.html" with form=form %}
+  {% form_errors form=form %}
   <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Changes are recorded in the history with the reason.</p>
   {% if in_use_note %}<p class="vr-form-note">{{ in_use_note }}</p>{% endif %}
   {% for legend, fields in form.grouped %}

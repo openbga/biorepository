@@ -5,6 +5,26 @@
   ],
   "title": "Reopen request",
   "purpose": "Return an approved request to draft so it can be changed and decided again.",
+  "summary": "Return an approved request to draft so it can be changed and decided again. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Reopen the request",
+      "steps": [
+        "Give the [[Reason]] and select [[Reopen request]]."
+      ]
+    },
+    {
+      "title": "Clear what blocks reopening",
+      "steps": [
+        "Put picked specimens back and unpack shipments first. The form says which."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "It needs a new submission and decision.",
+    "Allocations stay, but cannot be picked or shipped until it is approved again.",
+    "The reason is kept in the timeline."
+  ],
   "sections": [
     {
       "title": "Who can use it",

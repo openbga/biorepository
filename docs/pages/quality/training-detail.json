@@ -5,6 +5,32 @@
   ],
   "title": "Training record",
   "purpose": "Read one training assignment, its completion evidence and retained history.",
+  "summary": "One training assignment, its completion evidence and its history.",
+  "tasks": [
+    {
+      "title": "Record completion",
+      "steps": [
+        "Managers and administrators: select [[Record completion]] while it is Assigned."
+      ]
+    },
+    {
+      "title": "Fix a mistake",
+      "steps": [
+        "Select [[Edit]] before completion, or [[Correct training record]] after it."
+      ]
+    },
+    {
+      "title": "End the record",
+      "steps": [
+        "Select [[Cancel training record]] and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Cancellation is final and keeps all completion evidence.",
+    "Earlier values stay in the history after every correction.",
+    "The record documents a human decision. The application does not certify competence."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

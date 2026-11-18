@@ -5,6 +5,27 @@
   ],
   "title": "Add note",
   "purpose": "Add a note, a file, or both to a shipment's timeline at any stage, for example a waybill, a photo or logger output.",
+  "summary": "Add a note, a file, or both to a shipment's timeline, for example a waybill, a photo or logger output.",
+  "tasks": [
+    {
+      "title": "Add a note or file",
+      "steps": [
+        "Type the [[Note]], choose an [[Attachment]], or both, and set [[When]].",
+        "Select [[Add note]]."
+      ]
+    },
+    {
+      "title": "Record a receipt instead",
+      "steps": [
+        "Use Record receipt on a dispatched shipment."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Notes never change the shipment and cannot be edited or deleted.",
+    "Never upload consent forms, signatures or documents that identify a participant.",
+    "Files are checked by content, up to 10 MiB."
+  ],
   "sections": [
     {
       "title": "Who can use it",

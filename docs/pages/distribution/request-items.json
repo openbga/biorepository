@@ -5,6 +5,28 @@
   ],
   "title": "Edit lines",
   "purpose": "Enter what kind of material a request asks for and how much, one line per kind.",
+  "summary": "What kind of material a request asks for and how much, one line per kind.",
+  "tasks": [
+    {
+      "title": "Enter the lines",
+      "steps": [
+        "For each kind of material choose the [[Specimen type]] and [[Count (specimens)]], and optionally a minimum amount and [[Study]].",
+        "Use [[Add line]] for more rows.",
+        "Give the reason and select [[Save lines]]."
+      ]
+    },
+    {
+      "title": "Submit the request",
+      "steps": [
+        "Back on the request, select [[Submit for decision]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Lines can be changed only while the request is a draft or returned for changes.",
+    "Saving replaces all lines with the grid. The change is kept in the timeline.",
+    "A minimum amount is a warning at allocation, which can be confirmed."
+  ],
   "sections": [
     {
       "title": "Who can use it",

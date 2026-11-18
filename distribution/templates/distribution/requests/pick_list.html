@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution specimens %}
+{% load distribution specimens ui %}
 {% comment %}
 Pick list (Document page): a request's allocated specimens in walking order (site, room, unit,
 rack slots, box, position; not in storage last), each with type, amount, location, consent
@@ -7,9 +7,9 @@ restrictions and what would stop it being picked now. It is a printout, not a re
 PDF records who generated it. Context (documents.pick_list_context): request_obj, rows
 (queries.PickRow), blocked_count, repository_name, generated_at, crumbs, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li class="vr-id">{{ request_obj.number }}</li><li>{{ rows|length }} specimen{{ rows|length|pluralize }}</li>{% if blocked_count %}<li>{{ blocked_count }} cannot be picked now</li>{% endif %}</ul>{% endblock %}
-{% block page_actions %}{% if rows %}<a class="btn btn-primary" href="{% url 'distribution:pick-list-pdf' request_obj.pk %}">{% include "includes/icon.html" with name="download" %}Download PDF</a>{% endif %}{% endblock %}
+{% block page_actions %}{% if rows %}<a class="btn btn-primary" href="{% url 'distribution:pick-list-pdf' request_obj.pk %}">{% icon name="download" %}Download PDF</a>{% endif %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="pick-heading">
   <div class="card-header"><h2 class="card-title" id="pick-heading">Allocated specimens in walking order</h2><span class="vr-count">{{ rows|length }}</span>{% if can_operate and rows %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:pick' request_obj.pk %}">Pick specimens</a>{% endif %}</div>
@@ -29,7 +29,7 @@ PDF records who generated it. Context (documents.pick_list_context): request_obj
     </tbody></table></div>
   <div class="card-body pt-0"><p class="vr-muted small mb-0">Locations as recorded now, <time datetime="{{ generated_at|date:'c' }}">{{ generated_at|date:"Y-m-d H:i" }}</time>. Picking checks every specimen again.</p></div>
   {% else %}
-  <div class="card-body">{% include "includes/empty_state.html" with title="Nothing to pick" body="No specimens of this request are allocated and waiting to be picked." %}</div>
+  <div class="card-body">{% empty_state title="Nothing to pick" body="No specimens of this request are allocated and waiting to be picked." %}</div>
   {% endif %}
 </section>
 {% endblock %}

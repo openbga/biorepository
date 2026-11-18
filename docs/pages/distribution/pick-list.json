@@ -5,6 +5,26 @@
   ],
   "title": "Pick list",
   "purpose": "Preview and print the list of a request's allocated specimens in the order to walk the store.",
+  "summary": "Preview and print a request's allocated specimens in the order to walk the store.",
+  "tasks": [
+    {
+      "title": "Print the pick list",
+      "steps": [
+        "Select [[Download PDF]]."
+      ]
+    },
+    {
+      "title": "Record what you picked",
+      "steps": [
+        "Select [[Pick specimens]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A pick list is a printout, not a record. Each pick is recorded with Pick specimens.",
+    "Specimens not in storage are listed last.",
+    "Each PDF produced is noted on the request."
+  ],
   "sections": [
     {
       "title": "What the page shows",

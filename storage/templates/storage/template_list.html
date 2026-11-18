@@ -1,21 +1,21 @@
 {% extends "base.html" %}
-{% load navigation storage_labels %}
+{% load navigation storage_labels ui %}
 {% comment %}Storage templates: versioned unit layout recipes (catalogue tab). Context: grid_response for lists.CATALOGUE_SPECS["template"].{% endcomment %}
 {% block page_actions %}{% url 'storage:template-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New storage template" %}{% endblock %}
 {% block content %}
 {% section_tabs "storage-catalogues" %}
 <section class="card vr-table-card" aria-labelledby="templates-heading">
   <h2 class="visually-hidden" id="templates-heading">Storage templates</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter storage templates" q=q placeholder="Code or name" inline=inline grid="storage.templates" %}
+  {% grid_toolbar label="Filter storage templates" q=q placeholder="Code or name" inline=inline grid="storage.templates" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.templates" data-vr-grid-version="1" aria-labelledby="templates-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% sort_header label="Code" asc="code" desc="-code" col="code" locked=True %}
         <th scope="col" class="text-end" data-vr-col="version" data-vr-col-label="Version">Version</th>
-        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% sort_header label="Name" asc="name" desc="-name" col="name" %}
         <th scope="col" data-vr-col="technology" data-vr-col-label="Technology">Technology</th>
-        {% include "includes/sort_header.html" with label="Units created" asc="units" desc="-units" col="units" class="text-end" %}
+        {% sort_header label="Units created" asc="units" desc="-units" col="units" class="text-end" %}
         <th scope="col" data-vr-col="status" data-vr-col-label="Status">Status</th>
       </tr></thead>
       <tbody>
@@ -32,7 +32,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_manage %}{% url 'storage:template-create' as create_url %}{% endif %}
   {% include "storage/_list_states.html" with title_empty="No storage templates yet" body_empty="A template records a unit layout once, so identical tanks or freezers are set up in one step. Save an existing unit's layout from its page." create_url=create_url create_label="New storage template" %}

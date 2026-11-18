@@ -6,6 +6,29 @@
   ],
   "title": "New request, Edit request",
   "purpose": "Record a specimen request as it was received, or change a draft or returned one.",
+  "summary": "Record a specimen request as it was received, or change a draft or returned one.",
+  "tasks": [
+    {
+      "title": "Record a request",
+      "steps": [
+        "Type the [[Title]], choose the [[Investigator]] and how it was [[Received by]], and type the [[Purpose]].",
+        "Tick the [[Uses requested]] and any [[Studies]].",
+        "Select [[Create request]]. Edit lines opens next."
+      ]
+    },
+    {
+      "title": "Change a draft or returned request",
+      "steps": [
+        "Change the fields, give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Each allocated specimen's consent must permit every use requested.",
+    "Leaving all studies unticked allows material of any study.",
+    "The ethics approval date is shown, not checked.",
+    "Never enter participant names, signatures or contact details."
+  ],
   "sections": [
     {
       "title": "Who can use it",

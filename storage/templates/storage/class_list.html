@@ -1,20 +1,20 @@
 {% extends "base.html" %}
-{% load navigation %}
+{% load navigation ui %}
 {% comment %}Storage classes (catalogue tab). Context: grid_response for lists.CATALOGUE_SPECS["class"].{% endcomment %}
 {% block page_actions %}{% url 'storage:class-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New storage class" %}{% endblock %}
 {% block content %}
 {% section_tabs "storage-catalogues" %}
 <section class="card vr-table-card" aria-labelledby="classes-heading">
   <h2 class="visually-hidden" id="classes-heading">Storage classes</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter storage classes" q=q placeholder="Code or name" inline=inline grid="storage.classes" %}
+  {% grid_toolbar label="Filter storage classes" q=q placeholder="Code or name" inline=inline grid="storage.classes" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.classes" data-vr-grid-version="1" aria-labelledby="classes-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
-        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
+        {% sort_header label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% sort_header label="Name" asc="name" desc="-name" col="name" %}
         <th scope="col" data-vr-col="description" data-vr-col-label="Description">Description</th>
-        {% include "includes/sort_header.html" with label="Storage units" asc="units" desc="-units" col="units" class="text-end" %}
+        {% sort_header label="Storage units" asc="units" desc="-units" col="units" class="text-end" %}
         <th scope="col" data-vr-col="status" data-vr-col-label="Status">Status</th>
       </tr></thead>
       <tbody>
@@ -30,7 +30,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_manage %}{% url 'storage:class-create' as create_url %}{% endif %}
   {% include "storage/_list_states.html" with title_empty="No storage classes yet" body_empty="Storage classes describe storage conditions, for example cryogenic, ultra-low, refrigerated or ambient." create_url=create_url create_label="New storage class" %}

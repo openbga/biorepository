@@ -5,6 +5,28 @@
   ],
   "title": "Record disposal",
   "purpose": "Record that an approved disposal was carried out.",
+  "summary": "Record that an approved disposal was carried out.",
+  "tasks": [
+    {
+      "title": "Record the disposal",
+      "steps": [
+        "Enter [[When it happened]] and describe how it was done in [[Reason]].",
+        "Select [[Record disposal]]. The specimen becomes Disposed."
+      ]
+    },
+    {
+      "title": "Check the approval first",
+      "steps": [
+        "Open the request from Disposal requests. Its state must be Approved, not yet disposed."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only an approved request whose approval is still current can be recorded.",
+    "Recording frees the position and writes off the whole remaining amount.",
+    "The specimen record and its history are kept for good.",
+    "A disposal hold or an all-use hold blocks recording."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution distribution_requests specimens %}
+{% load distribution distribution_requests specimens ui %}
 {% comment %}
 Shipment record: alerts, facts (request, ship-to, courier, declarations recorded at packing, who
 packed, checked and dispatched), contents (draft and packed: the picked allocations in it; sent:
@@ -11,14 +11,14 @@ request_obj, planned (allocations), items (ShipmentItem with return_row), return
 receipts (newest first, with is_effective), effective, dispatch_blockers ([(accession, blockers)]
 for a packed shipment), actions, events, toc, history, can_manage, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'distribution:shipment-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Shipments" section_url=list_url current=shipment.number %}{% endblock %}
+{% block breadcrumbs %}{% url 'distribution:shipment-list' as list_url %}{% breadcrumbs section="Shipments" section_url=list_url current=shipment.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ shipment.number }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "shipment" shipment.state %}</li><li><a class="vr-id" href="{% url 'distribution:request-detail' request_obj.pk %}">{{ request_obj.number }}</a></li><li>{{ shipment.ship_to_institution }}</li>{% if shipment.dispatched_at %}<li>Dispatched <time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time></li>{% endif %}</ul>{% endblock %}
 {% block page_actions %}{% include "distribution/requests/_header_actions.html" with actions=actions %}{% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if shipment.state == "packed" and dispatch_blockers %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Dispatch would be refused now" tone="warning" plain=True %}<div><ul class="mb-0 ps-3">{% for accession, blockers in dispatch_blockers %}<li><span class="vr-id">{{ accession }}</span>: {% for b in blockers %}{{ b.message }}{% if not forloop.last %} {% endif %}{% endfor %}</li>{% endfor %}</ul></div></div>
+<div class="alert alert-warning" role="status">{% status label="Dispatch would be refused now" tone="warning" plain=True %}<div><ul class="mb-0 ps-3">{% for accession, blockers in dispatch_blockers %}<li><span class="vr-id">{{ accession }}</span>: {% for b in blockers %}{{ b.message }}{% if not forloop.last %} {% endif %}{% endfor %}</li>{% endfor %}</ul></div></div>
 {% elif shipment.state == "dispatched" %}
 <div class="alert alert-info" role="status">{% distribution_status "shipment" shipment.state plain=True %}<div>Its specimens are outside the repository. Record the receipt when the recipient reports it.</div></div>
 {% elif shipment.state == "cancelled" %}
@@ -86,7 +86,7 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}
-  <div class="card-body">{% if can_operate and shipment.state == "draft" %}{% url 'distribution:shipment-contents' shipment.pk as contents_url %}{% include "includes/empty_state.html" with title="No specimens in this shipment" body="Add picked specimens of the request with Change contents." action_url=contents_url action_label="Change contents" %}{% else %}{% include "includes/empty_state.html" with title="No specimens in this shipment" %}{% endif %}</div>
+  <div class="card-body">{% if can_operate and shipment.state == "draft" %}{% url 'distribution:shipment-contents' shipment.pk as contents_url %}{% empty_state title="No specimens in this shipment" body="Add picked specimens of the request with Change contents." action_url=contents_url action_label="Change contents" %}{% else %}{% empty_state title="No specimens in this shipment" %}{% endif %}</div>
   {% endif %}
 </section>
 
@@ -108,11 +108,11 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
     </dl>
     {% if receipts|length > 1 %}
     <details class="mt-3"><summary>Earlier versions ({{ receipts|length|add:"-1" }})</summary>
-      <ol class="vr-timeline">{% for r in receipts %}{% if not r.is_effective %}{% include "includes/history_item.html" with title="Receipt as first recorded, since corrected" at=r.recorded_at actor=r.actor reason=r.reason detail=r.get_condition_display %}{% endif %}{% endfor %}</ol>
+      <ol class="vr-timeline">{% for r in receipts %}{% if not r.is_effective %}{% history_item title="Receipt as first recorded, since corrected" at=r.recorded_at actor=r.actor reason=r.reason detail=r.get_condition_display %}{% endif %}{% endfor %}</ol>
     </details>
     {% endif %}
   {% else %}
-    {% if can_operate and shipment.state == "dispatched" %}{% url 'distribution:shipment-receipt' shipment.pk as receipt_url %}{% include "includes/empty_state.html" with title="No receipt recorded yet" body="Record what the recipient reports: who received it, when, its condition and any exceptions." action_url=receipt_url action_label="Record receipt" %}{% else %}{% include "includes/empty_state.html" with title="No receipt recorded yet" %}{% endif %}
+    {% if can_operate and shipment.state == "dispatched" %}{% url 'distribution:shipment-receipt' shipment.pk as receipt_url %}{% empty_state title="No receipt recorded yet" body="Record what the recipient reports: who received it, when, its condition and any exceptions." action_url=receipt_url action_label="Record receipt" %}{% else %}{% empty_state title="No receipt recorded yet" %}{% endif %}
   {% endif %}
   </div>
 </section>
@@ -138,10 +138,10 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
 <section class="card mb-3" aria-labelledby="timeline-heading">
   <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first</span></div>
   <div class="card-body"><ol class="vr-timeline">
-    {% for e in events %}{% include "includes/history_item.html" with title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note detail=e.detail extra="distribution/shipments/_event_extra.html" %}{% endfor %}
+    {% for e in events %}{% history_item title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note detail=e.detail extra="distribution/shipments/_event_extra.html" %}{% endfor %}
   </ol></div>
 </section>
 
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=shipment.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=shipment.number %}{% endblock %}

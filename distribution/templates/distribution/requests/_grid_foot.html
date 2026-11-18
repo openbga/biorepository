@@ -1,9 +1,9 @@
-{% comment %}End of a distribution entry grid: the top-level form's fields and the sticky action row. Parameters: form, blocked, back_url, submit_label.{% endcomment %}
+{% load ui %}{% comment %}End of a distribution entry grid: the top-level form's fields and the sticky action row. Parameters: form, blocked, back_url, submit_label.{% endcomment %}
 {% with sections=form.grouped %}{% for legend, rows, note in sections %}
 <fieldset class="vr-form-section">
   {% if legend %}<legend>{{ legend }}</legend>{% endif %}
   {% if note %}<p class="vr-form-note">{{ note }}</p>{% endif %}
-  {% for row in rows %}{% for field in row %}{% include "includes/field.html" with field=field suffix=field.field.suffix %}{% endfor %}{% endfor %}
+  {% for row in rows %}{% for field in row %}{% field field=field suffix=field.field.suffix %}{% endfor %}{% endfor %}
 </fieldset>
 {% endfor %}{% endwith %}
 {% for field in form.hidden_fields %}{{ field }}{% endfor %}

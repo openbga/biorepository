@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load storage_labels %}
+{% load storage_labels ui %}
 {% comment %}A box: facts, the position grid with its occupancy counts (as seen from the labelled top-left corner), occupied positions with their specimen IDs (when the specimens app is installed) or storage keys, moves, history. Context: box (annotated), chain, grid_rows [(row, [Position with .claim])], columns, occupied, status_label, status_tone, retire_blocked, moves, history, can_manage, can_operate. Storage imports nothing from specimens: _attach_specimens.html (included only when specimens is installed) sets p.claim.specimen through the specimens tag library; without it the storage key shows.{% endcomment %}
-{% block breadcrumbs %}{% url 'storage:box-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Boxes" section_url=list_url current=box.code %}{% endblock %}
+{% block breadcrumbs %}{% url 'storage:box-list' as list_url %}{% breadcrumbs section="Boxes" section_url=list_url current=box.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ box.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% include "includes/status.html" with label=status_label tone=status_tone %}</li><li>{{ box.container_type }}</li><li class="vr-id">{{ box.node.unit.code }}</li><li>{{ box.occupied }} of {{ box.installed }} occupied</li></ul>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ box.container_type }}</li><li class="vr-id">{{ box.node.unit.code }}</li><li>{{ box.occupied }} of {{ box.installed }} occupied</li></ul>{% endblock %}
 {% block page_actions %}
 {% if box.is_active %}
 {% if can_manage %}
@@ -14,7 +14,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if not box.is_active %}<div class="alert alert-secondary" role="status">{% include "includes/status.html" with label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ box.retired_at|date:'c' }}">{{ box.retired_at|date:"Y-m-d H:i" }}</time> by {{ box.retired_by.get_full_name|default:box.retired_by.get_username }}: {{ box.retirement_reason }}</div></div>{% endif %}
+{% if not box.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ box.retired_at|date:'c' }}">{{ box.retired_at|date:"Y-m-d H:i" }}</time> by {{ box.retired_by.get_full_name|default:box.retired_by.get_username }}: {{ box.retirement_reason }}</div></div>{% endif %}
 <section class="card mb-3" aria-labelledby="box-facts">
   <div class="card-header"><h2 class="card-title" id="box-facts">Box</h2></div>
   <div class="card-body"><dl class="vr-facts">
@@ -33,7 +33,7 @@
     <dl class="vr-facts vr-boxmap-legend">
       <div><dt><span class="vr-boxmap-swatch" data-state="occupied"></span>Occupied</dt><dd class="vr-id">{{ box.occupied }}</dd></div>
       <div><dt><span class="vr-boxmap-swatch" data-state="free"></span>Free</dt><dd class="vr-id">{{ box.free }}</dd></div>
-      <div><dt><span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked</dt><dd class="vr-id">{% firstof box.blocked_count 0 %}</dd></div>
+      <div><dt><span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked</dt><dd class="vr-id" data-vr-blocked-count>{{ box.blocked_count|default:0 }}</dd></div>
       <div><dt>Positions</dt><dd class="vr-id">{{ box.installed }}</dd></div>
     </dl>
     <div class="vr-boxmap-wrap">
@@ -66,9 +66,9 @@
       <tr><th scope="row" class="vr-id">{{ p.label }}</th><td>{% if p.claim.specimen %}<a class="vr-id" href="{{ p.claim.specimen.url }}">{{ p.claim.specimen.accession }}</a> <span class="vr-muted small">{{ p.claim.specimen.type_code }}</span>{% else %}—{% endif %}</td><td class="vr-id" title="{{ p.claim.pk }}">{{ p.claim.pk|stringformat:"s"|slice:":8" }}</td><td class="text-end vr-id">{{ p.claim.revision }}</td></tr>
     {% endfor %}</tbody></table></div>
   <p class="vr-muted small px-3 pb-3 mb-0">Storage records each item by an opaque storage key; the Specimen column and the wells name the specimen in it.</p>
-  {% else %}{% include "includes/empty_state.html" with title="The box is empty" body="Specimens are stored in its positions from the specimen pages." %}{% endif %}
+  {% else %}{% empty_state title="The box is empty" body="Specimens are stored in its positions from the specimen pages." %}{% endif %}
 </section>
 {% include "storage/_moves.html" with noun="box" kind="box" obj=box %}
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=box.code %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=box.code %}{% endblock %}

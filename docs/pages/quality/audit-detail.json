@@ -5,6 +5,32 @@
   ],
   "title": "Inventory audit",
   "purpose": "Read a frozen box snapshot, record its comparison and retain the result for later review.",
+  "summary": "One box audit: the frozen snapshot, what was observed at each position, the result and its history.",
+  "tasks": [
+    {
+      "title": "Record what you found",
+      "steps": [
+        "Select [[Complete audit]] while the audit is open and its snapshot is current."
+      ]
+    },
+    {
+      "title": "End an audit that cannot be finished",
+      "steps": [
+        "Select [[Cancel audit]] and give a reason."
+      ]
+    },
+    {
+      "title": "Check the box again",
+      "steps": [
+        "After it is finished, select [[New audit of this box]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Match, Missing, Unexpected and Mismatch compare expected and observed contents at each position.",
+    "Moving specimens in or out of the box after the snapshot makes the audit stale, even if moved back.",
+    "Results cannot be edited after completion or cancellation."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

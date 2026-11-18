@@ -1,22 +1,22 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment ui %}
 {% comment %}Current next-due dates: the latest effective service event of each kind per piece of equipment in use that carries a date. Context: equipment.views.grid_response for lists.SPECS["due"].{% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Dates your repository recorded on the latest maintenance, calibration, mapping or qualification; nothing is computed from an interval.</p>{% endblock %}
 {% block page_actions %}{% include "equipment/_list_actions.html" %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="due-heading">
   <h2 class="visually-hidden" id="due-heading">Maintenance due</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter due dates" q=q placeholder="Asset ID or name" inline=inline more=more more_open=more_open grid="equipment.due" %}
+  {% grid_toolbar label="Filter due dates" q=q placeholder="Asset ID or name" inline=inline more=more more_open=more_open grid="equipment.due" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.due" data-vr-grid-version="1" aria-labelledby="due-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Asset ID" asc="equipment" desc="-equipment" col="equipment" locked=True %}
+        {% sort_header label="Asset ID" asc="equipment" desc="-equipment" col="equipment" locked=True %}
         <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
-        {% include "includes/sort_header.html" with label="Service" asc="kind" desc="-kind" col="kind" %}
-        {% include "includes/sort_header.html" with label="Next due" asc="due" desc="-due" col="due" %}
+        {% sort_header label="Service" asc="kind" desc="-kind" col="kind" %}
+        {% sort_header label="Next due" asc="due" desc="-due" col="due" %}
         <th scope="col" class="text-end" data-vr-col="days" data-vr-col-label="Days">Days</th>
-        {% include "includes/sort_header.html" with label="Last performed" asc="performed" desc="-performed" first="desc" col="performed" %}
+        {% sort_header label="Last performed" asc="performed" desc="-performed" first="desc" col="performed" %}
         <th scope="col" data-vr-col="outcome" data-vr-col-label="Outcome">Outcome</th>
         <th scope="col" data-vr-col="name" data-vr-col-label="Equipment">Equipment</th>
         {% if can_operate %}<th scope="col" data-vr-col="actions" data-vr-col-locked data-vr-col-label="Actions"><span class="visually-hidden">Actions</span></th>{% endif %}
@@ -38,7 +38,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% include "storage/_list_states.html" with title_empty="No due dates recorded" body_empty="A due date appears here when a maintenance, calibration, mapping or qualification event is recorded with the next due date." %}
   {% endif %}

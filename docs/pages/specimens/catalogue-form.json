@@ -14,6 +14,34 @@
   ],
   "title": "Catalogue entry form",
   "purpose": "Add an entry to one of the specimen catalogues, or change an existing one.",
+  "summary": "Add an entry to one of the specimen catalogues, or change an existing one. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Add an entry",
+      "steps": [
+        "Type the [[Code]] and, except for participants, the [[Name]].",
+        "Select the Create button. A reason is optional for a new entry."
+      ]
+    },
+    {
+      "title": "Change an entry",
+      "steps": [
+        "Change the fields and give the [[Reason]], then select [[Save changes]]."
+      ]
+    },
+    {
+      "title": "Stop offering an entry",
+      "steps": [
+        "Clear [[Active]], give a reason and save. Existing specimens keep it."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Codes are stored in capitals.",
+    "Once a specimen uses an entry, its code can no longer change.",
+    "Entries are never deleted.",
+    "Never enter names, record numbers or other identifying text."
+  ],
   "sections": [
     {
       "title": "Who can use it and how saving works",

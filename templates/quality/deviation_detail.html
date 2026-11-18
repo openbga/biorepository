@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block breadcrumbs %}{% url 'quality:deviation-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Deviations" section_url=list_url current=deviation.number %}{% endblock %}
+{% extends "base.html" %}{% load ui %}
+{% block breadcrumbs %}{% url 'quality:deviation-list' as list_url %}{% breadcrumbs section="Deviations" section_url=list_url current=deviation.number %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "quality/_deviation_status.html" with status=deviation.status %}</li><li>Revision {{ deviation.revision }}</li></ul>{% endblock %}
 {% block page_actions %}
 {% if can_operate and deviation.status == 'open' %}
@@ -12,7 +12,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if not can_operate %}<p class="vr-muted">Read-only access. Operators record and submit deviations; another manager or administrator reviews them.</p>{% elif deviation.status == 'awaiting_review' %}<p class="vr-muted">The report is frozen for review. A reviewer can close it or return it for revision.</p>{% elif deviation.status == 'closed' %}<p class="vr-muted">This report is closed. A manager or administrator can reopen it with a reason.</p>{% endif %}
 <section class="card mb-3" aria-labelledby="report-heading"><div class="card-header"><h2 class="card-title" id="report-heading">Report</h2></div><div class="card-body"><dl class="vr-facts">
   <div><dt>Title</dt><dd>{{ deviation.title }}</dd></div>
@@ -34,7 +34,7 @@
   <div><dt>Closed</dt><dd>{% if deviation.closed_at %}<time datetime="{{ deviation.closed_at|date:'c' }}">{{ deviation.closed_at|date:"Y-m-d H:i:s T" }}</time> by {{ deviation.closed_by.get_full_name|default:deviation.closed_by.get_username }}{% else %}Not closed; prior decisions remain in history{% endif %}</dd></div>
 </dl></div></section>
 <section class="card mb-3" aria-labelledby="history-heading"><div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div><div class="card-body"><ol class="vr-timeline">
-{% for event, changes in history %}{% include "includes/history_item.html" with title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
+{% for event, changes in history %}{% history_item title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
 </ol></div></section>
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=deviation.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=deviation.number %}{% endblock %}

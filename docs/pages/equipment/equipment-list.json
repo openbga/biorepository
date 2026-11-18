@@ -5,6 +5,34 @@
   ],
   "title": "Equipment",
   "purpose": "See every tank, freezer, supply dewar and temperature monitor your repository has registered, with its latest reading and level, next due date and open excursions, and open one to work with it.",
+  "summary": "Every tank, freezer, supply dewar and temperature monitor your repository registered, with its latest reading and level, next due date and open excursions.",
+  "tasks": [
+    {
+      "title": "Find a piece of equipment",
+      "steps": [
+        "Type part of the asset ID or name in [[Search]], or choose the [[Kind]] or [[Storage unit]], then select [[Apply]].",
+        "Select the asset ID to open the record."
+      ]
+    },
+    {
+      "title": "Find tanks that need filling",
+      "steps": [
+        "Open [[More filters]], tick [[Below the low level]] and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Register equipment",
+      "steps": [
+        "Managers and administrators: select [[New equipment]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Retired equipment is hidden until you change [[Status]].",
+    "Latest reading ignores readings that were corrected or withdrawn.",
+    "Next due is the date your repository entered. The application never calculates it.",
+    "Critical marks your repository's own list. It changes no rule."
+  ],
   "sections": [
     {
       "title": "What the page is for",

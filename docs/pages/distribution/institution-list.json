@@ -5,6 +5,26 @@
   ],
   "title": "Distribution catalogues",
   "purpose": "Find and maintain the institutions used by investigators, requests and agreements.",
+  "summary": "The institutions used by investigators, requests and agreements.",
+  "tasks": [
+    {
+      "title": "Add an institution",
+      "steps": [
+        "Admin and manager: select [[New institution]]."
+      ]
+    },
+    {
+      "title": "Change or retire one",
+      "steps": [
+        "Select its code, change it or clear Active, and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Inactive entries stay on existing records but are not offered for new ones.",
+    "Entries are never deleted.",
+    "Entries have no record page. The code opens the edit form."
+  ],
   "sections": [
     {
       "title": "Tabs",

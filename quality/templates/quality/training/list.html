@@ -1,24 +1,24 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% block page_actions %}
-  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}
+  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}
   {% if can_manage %}<a class="btn btn-primary" href="{% url 'quality:training-create' %}">New training record</a>{% endif %}{% endblock %}
 {% block page_intro %}<p class="vr-page-intro">Due dates reflect repository follow-up dates. They do not determine an expired qualification or change access.</p>{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="training-heading">
   <h2 class="visually-hidden" id="training-heading">Training records</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter training records" q=q inline=inline grid="quality.training" %}
+  {% grid_toolbar label="Filter training records" q=q inline=inline grid="quality.training" %}
   {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.training" data-vr-grid-version="1" aria-labelledby="training-heading"><thead><tr>
-    {% include "includes/sort_header.html" with label="Training record" asc="number" desc="-number" col="number" locked=True %}
-    {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
-    {% include "includes/sort_header.html" with label="Trainee" asc="trainee" desc="-trainee" col="trainee" %}
-    {% include "includes/sort_header.html" with label="Topic" asc="topic" desc="-topic" col="topic" %}
+    {% sort_header label="Training record" asc="number" desc="-number" col="number" locked=True %}
+    {% sort_header label="Status" asc="status" desc="-status" col="status" %}
+    {% sort_header label="Trainee" asc="trainee" desc="-trainee" col="trainee" %}
+    {% sort_header label="Topic" asc="topic" desc="-topic" col="topic" %}
     <th scope="col" data-vr-col="reference">Procedure / version reference</th>
-    {% include "includes/sort_header.html" with label="Assignment due" asc="due" desc="-due" col="due" %}
-    {% include "includes/sort_header.html" with label="Completed on" asc="completed" desc="-completed" col="completed" %}
-    {% include "includes/sort_header.html" with label="Renewal due" asc="renewal" desc="-renewal" col="renewal" %}
-    {% include "includes/sort_header.html" with label="Updated" asc="updated" desc="-updated" col="updated" %}
+    {% sort_header label="Assignment due" asc="due" desc="-due" col="due" %}
+    {% sort_header label="Completed on" asc="completed" desc="-completed" col="completed" %}
+    {% sort_header label="Renewal due" asc="renewal" desc="-renewal" col="renewal" %}
+    {% sort_header label="Updated" asc="updated" desc="-updated" col="updated" %}
   </tr></thead><tbody>{% for training in page_obj %}<tr>
     <th scope="row"><a class="vr-row-link vr-id" href="{% url 'quality:training-detail' training.pk %}">{{ training.number }}</a></th>
     <td>{% include "quality/training/_status.html" with status=training.status plain=True %}</td>
@@ -30,7 +30,7 @@
     <td class="vr-nowrap">{% if training.renewal_due %}<time datetime="{{ training.renewal_due|date:'Y-m-d' }}">{{ training.renewal_due|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}</td>
     <td class="vr-nowrap"><time datetime="{{ training.updated_at|date:'c' }}">{{ training.updated_at|date:"Y-m-d H:i" }}</time></td>
   </tr>{% endfor %}</tbody></table></div>
-  {% include "includes/pagination.html" with noun="training records" filtered=filtered %}
+  {% pagination noun="training records" filtered=filtered %}
   {% else %}
     {% if can_manage %}{% url 'quality:training-create' as create_url %}{% endif %}
     {% include "storage/_list_states.html" with title_empty="No training records yet" body_empty="Record staff training assignments, completion evidence and human assessments." create_label="New training record" %}

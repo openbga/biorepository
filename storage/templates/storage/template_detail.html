@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}A storage template version (catalogue): facts, the layout outline, units created from it, versions, history. Context: obj, crumbs, outline [(depth, node, boxes)], technology (label), storage_class (or None), units, versions, history, can_manage.{% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ obj }}</span>{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li></ul>{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:template-create' %}?from={{ obj.pk }}">New version</a><a class="btn btn-outline-secondary" href="{% url 'storage:template-edit' obj.pk %}">Edit</a>{% if obj.is_active %}<a class="btn btn-primary" href="{% url 'storage:template-apply' obj.pk %}">Apply template</a>{% endif %}{% endif %}{% endblock %}
@@ -30,7 +30,7 @@
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Room</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for u in units %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a></th><td>{{ u.name }}</td><td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td><td>{% include "storage/_status.html" with obj=u plain=True %}</td></tr>{% endfor %}</tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="Not applied yet" body="While no unit uses this version, its layout can still be edited." %}{% endif %}
+  {% else %}{% empty_state title="Not applied yet" body="While no unit uses this version, its layout can still be edited." %}{% endif %}
 </section>
 <section class="card vr-table-card mb-3" aria-labelledby="tpl-versions">
   <div class="card-header"><h2 class="card-title" id="tpl-versions">Versions</h2><span class="vr-count">{{ versions|length }}</span></div>
@@ -41,4 +41,4 @@
 </section>
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

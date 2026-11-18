@@ -5,6 +5,39 @@
   ],
   "title": "Shipment",
   "purpose": "Read one shipment: where it goes, what is in it, the declarations made at packing, the receipt reported and returns.",
+  "summary": "One shipment: where it goes, what is in it, the declarations made at packing, the receipt reported and any returns.",
+  "tasks": [
+    {
+      "title": "Prepare and pack it",
+      "steps": [
+        "Use [[Change contents]] in the Contents panel, then select [[Pack]]."
+      ]
+    },
+    {
+      "title": "Send it",
+      "steps": [
+        "Select [[Manifest]] to print the manifest, then [[Dispatch]]."
+      ]
+    },
+    {
+      "title": "Record what the recipient reported",
+      "steps": [
+        "Select [[Record receipt]]. Record a specimen that came back with [[Record return]] on its item."
+      ]
+    },
+    {
+      "title": "Undo packing",
+      "steps": [
+        "Select [[Unpack]] to change the contents or declarations."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Progress shows the four steps. Next names what is needed, or why dispatch would be refused now.",
+    "Dispatch checks every specimen again: consent, holds, the pick and a valid agreement.",
+    "A packed specimen changed since packing is refused at dispatch.",
+    "The timeline cannot be edited."
+  ],
   "sections": [
     {
       "title": "Header actions by state",

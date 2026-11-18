@@ -5,6 +5,27 @@
   ],
   "title": "Record consumption",
   "purpose": "Record that part of a specimen's amount was used up.",
+  "summary": "Record that part of a specimen's amount was used up.",
+  "tasks": [
+    {
+      "title": "Record what was used",
+      "steps": [
+        "Type the [[Amount used]] in the specimen's unit, exactly as measured.",
+        "Enter [[Used at]] and the [[Reason]], then select [[Record consumption]]."
+      ]
+    },
+    {
+      "title": "Undo a wrong entry",
+      "steps": [
+        "Admin and manager: reverse the Consumed entry from the amount ledger on the specimen record."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The specimen must be in hand: checked out, returned and not yet stored, or never stored.",
+    "When nothing is left, the specimen becomes Exhausted.",
+    "The amount on hand is never edited directly. Each use adds a ledger entry."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

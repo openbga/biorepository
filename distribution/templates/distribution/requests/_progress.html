@@ -1,4 +1,4 @@
-{% comment %}
+{% load ui %}{% comment %}
 Where the request is in its flow, and what the next step needs. Presentation only: the current step
 is read from the request's status, its allocation counts and the header's primary action (built
 by request_views.request_actions, whose reason says what blocks it). Steps: prepare, decision,
@@ -31,9 +31,9 @@ allocate, pick, ship, close; one _progress_step.html each. Parameters: request_o
     {% if s != "closed" and s != "rejected" and s != "cancelled" %}
     <p class="vr-steps-next{% if p.reason %} is-blocked{% endif %}">
       {% if p %}
-        <span class="vr-steps-next-label">Next</span> {{ p.label }}{% if p.reason %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>{% endif %}
+        <span class="vr-steps-next-label">Next</span> {{ p.label }}{% if p.reason %}<span class="vr-steps-blocker">{% status label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>{% endif %}
       {% elif s == "submitted" %}
-        <span class="vr-steps-next-label">Next</span> A decision by a person with request decision permission who did not create or submit it.{% if can_decide and refusal %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Not you" tone="neutral" plain=True %} {{ refusal }}</span>{% endif %}
+        <span class="vr-steps-next-label">Next</span> A decision by a person with request decision permission who did not create or submit it.{% if can_decide and refusal %}<span class="vr-steps-blocker">{% status label="Not you" tone="neutral" plain=True %} {{ refusal }}</span>{% endif %}
       {% elif s == "draft" or s == "returned" %}
         <span class="vr-steps-next-label">Next</span> Submit for decision, once the lines are complete.
       {% elif st == 3 %}<span class="vr-steps-next-label">Next</span> A manager allocates specimens to the lines.

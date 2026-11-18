@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Equipment form or action form (docs/ui-standards.md: Form, Action form), in the shared dialog with
 this page as the no-JavaScript fallback. Context (equipment.action_views._action): page_title,
@@ -8,15 +8,15 @@ crumbs, blocked (why the action is not available now: alert, fields disabled, no
 facts ((label, value) pairs about the record acted on), tabs (sub-views of the action, e.g. level
 check / fill), destructive.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 {% if tabs %}{% include "includes/section_tabs.html" with tabs=tabs label="Kind of entry" %}{% endif %}
 <form class="vr-form" method="post"{% if form.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
   {% csrf_token %}
-  {% include "includes/form_errors.html" with form=form %}
+  {% form_errors form=form %}
   {% if blocked %}
   <div class="alert alert-warning" role="alert">
-    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
+    {% status label="Not available" tone="warning" plain=True %}
     <div>{{ blocked }}</div>
   </div>
   {% else %}
@@ -35,10 +35,10 @@ check / fill), destructive.
     {% for row in rows %}
     {% if row|length > 1 %}
     <div class="row g-3 mb-4">
-      {% for field in row %}<div class="col-md">{% include "includes/field.html" with field=field suffix=field.field.suffix %}</div>{% endfor %}
+      {% for field in row %}<div class="col-md">{% field field=field suffix=field.field.suffix %}</div>{% endfor %}
     </div>
     {% else %}
-    {% include "includes/field.html" with field=row.0 suffix=row.0.field.suffix %}
+    {% field field=row.0 suffix=row.0.field.suffix %}
     {% endif %}
     {% endfor %}
   </fieldset>

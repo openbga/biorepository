@@ -1,4 +1,4 @@
-{% comment %}
+{% load ui %}{% comment %}
 Where the shipment is in its flow (contents, pack, dispatch, receipt) and what the next step needs,
 with the .vr-steps component of requests/_progress.html. Presentation only: the current step is read
 from the shipment's state and contents; the Next line names the header's primary action (built by
@@ -32,8 +32,8 @@ items, effective, actions, dispatch_blockers.
       {% elif s == "draft" %}Pack: declare the packaging, refrigerant and classification; packing freezes the contents.
       {% elif s == "packed" %}Dispatch: record the courier and hand-over; every specimen is checked again.
       {% else %}Receipt: entered once the recipient reports how the shipment arrived.{% endif %}
-      {% if p.reason %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>
-      {% elif s == "packed" and dispatch_blockers %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ dispatch_blockers|length }} specimen{{ dispatch_blockers|length|pluralize }} would be refused now (listed above).</span>{% endif %}
+      {% if p.reason %}<span class="vr-steps-blocker">{% status label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>
+      {% elif s == "packed" and dispatch_blockers %}<span class="vr-steps-blocker">{% status label="Blocked" tone="warning" plain=True %} {{ dispatch_blockers|length }} specimen{{ dispatch_blockers|length|pluralize }} would be refused now (listed above).</span>{% endif %}
     </p>
     {% endif %}
   </div>

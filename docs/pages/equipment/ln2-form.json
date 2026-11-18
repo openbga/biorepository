@@ -5,6 +5,28 @@
   ],
   "title": "Record LN2 entry",
   "purpose": "Record a level check or a fill of an LN2 tank or supply dewar.",
+  "summary": "Record a level check or a fill of an LN2 tank or supply dewar.",
+  "tasks": [
+    {
+      "title": "Record a level check",
+      "steps": [
+        "Choose the [[Vessel]] and check [[When]].",
+        "Type the level read and its [[Level unit]], then select [[Record LN2 entry]]."
+      ]
+    },
+    {
+      "title": "Record a fill",
+      "steps": [
+        "Enter the level before and after, the amount added, or both, with their units.",
+        "Choose the [[Supply dewar]] if it came from one, then save."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A percentage cannot exceed 100.",
+    "Left empty, the level unit set on the vessel is used.",
+    "A vessel cannot be filled from itself."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

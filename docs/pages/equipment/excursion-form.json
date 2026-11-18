@@ -6,6 +6,27 @@
   ],
   "title": "Excursion form",
   "purpose": "Record a new temperature excursion, or change the details of one that is still open.",
+  "summary": "Record a new temperature excursion, or change the details of one that is still open.",
+  "tasks": [
+    {
+      "title": "Record an excursion",
+      "steps": [
+        "Choose the [[Equipment]] and enter [[Started]]. Leave [[Ended]] blank while it is ongoing.",
+        "Choose [[Detected by]] and [[Cause category]], then select [[Create excursion]]."
+      ]
+    },
+    {
+      "title": "Complete the details",
+      "steps": [
+        "Add [[Ended]], [[Cause]], [[Action taken]] and [[Impact assessment]], then select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The equipment's storage unit and current limits are saved with the excursion.",
+    "End, cause, action taken and impact assessment are needed before submitting.",
+    "Do not enter donor, patient or participant names in any field."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

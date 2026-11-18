@@ -5,6 +5,28 @@
   ],
   "title": "Place hold",
   "purpose": "Put a hold on a specimen to stop it being disposed of, to stop its use, or both.",
+  "summary": "Put a hold on a specimen to stop it being disposed of, to stop its use, or both.",
+  "tasks": [
+    {
+      "title": "Place a hold",
+      "steps": [
+        "Choose the [[Kind of hold]].",
+        "Enter [[Placed at]] and the [[Reason]], then select [[Place hold]]."
+      ]
+    },
+    {
+      "title": "Release it later",
+      "steps": [
+        "Admin and manager: release it from the Holds section of the specimen record, with a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A disposal hold blocks disposal only. A use hold blocks check-out, splitting, consumption and transfer. An all-use hold blocks both.",
+    "Holds stack. Each is listed separately.",
+    "A hold never changes the amount or location.",
+    "A distributed specimen can be held too."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

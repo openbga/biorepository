@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block breadcrumbs %}{% url 'quality:training-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Training records" section_url=list_url current=training.number %}{% endblock %}
+{% extends "base.html" %}{% load ui %}
+{% block breadcrumbs %}{% url 'quality:training-list' as list_url %}{% breadcrumbs section="Training records" section_url=list_url current=training.number %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "quality/training/_status.html" with status=training.status %}</li><li>{{ training.topic }}</li><li>Revision {{ training.revision }}</li></ul>{% endblock %}
 {% block page_actions %}
 {% if can_manage %}
@@ -11,7 +11,7 @@
 {% block content %}
 {% if not can_manage %}<p class="vr-muted">Read-only access. A repository manager or administrator records changes.</p>{% endif %}
 {% if training.status == "cancelled" %}<p class="vr-muted">Cancelled records are terminal. Earlier assignment and completion evidence remain in history.</p>{% endif %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 <section class="card mb-3" aria-labelledby="assignment-heading"><div class="card-header"><h2 class="card-title" id="assignment-heading">Assignment</h2></div><div class="card-body"><dl class="vr-facts">
   <div><dt>Trainee</dt><dd>{% if training.trainee.get_full_name %}{{ training.trainee.get_full_name }} ({{ training.trainee.username }}){% else %}{{ training.trainee.username }}{% endif %}</dd></div>
   <div><dt>Topic</dt><dd>{{ training.topic }}</dd></div>
@@ -31,7 +31,7 @@
   <div><dt>Revision</dt><dd>{{ training.revision }}</dd></div>
 </dl></div></section>
 <section class="card mb-3" aria-labelledby="history-heading"><div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div><div class="card-body"><ol class="vr-timeline">
-{% for event, changes in history %}{% include "includes/history_item.html" with title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
+{% for event, changes in history %}{% history_item title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
 </ol></div></section>
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=training.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=training.number %}{% endblock %}

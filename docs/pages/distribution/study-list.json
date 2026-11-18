@@ -5,6 +5,26 @@
   ],
   "title": "Studies",
   "purpose": "Find a study and see which consent basis governs the specimens of its collections.",
+  "summary": "Studies and the consent basis that governs the specimens of their collections.",
+  "tasks": [
+    {
+      "title": "Record a study",
+      "steps": [
+        "Admin and manager: select [[New study]], then link the collections it governs."
+      ]
+    },
+    {
+      "title": "Find a study",
+      "steps": [
+        "Type a code, title, investigator or ethics reference in [[Search]], or choose [[Status]] or [[Consent basis]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A collection is governed by at most one study at a time.",
+    "Material of a suspended or closed study cannot be distributed.",
+    "Ethics approved until is shown only. Nothing is blocked when it passes."
+  ],
   "sections": [
     {
       "title": "What a study is",

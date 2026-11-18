@@ -5,6 +5,26 @@
   ],
   "title": "Storage class",
   "purpose": "Review one storage class and the units that use it.",
+  "summary": "One storage class and the units that use it.",
+  "tasks": [
+    {
+      "title": "Change the class",
+      "steps": [
+        "Admin and manager: select [[Edit]], change it and give a reason."
+      ]
+    },
+    {
+      "title": "Open a unit of this class",
+      "steps": [
+        "Select its code under Storage units."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Up to the first 100 units are listed, active and retired alike.",
+    "The code is fixed and never reused.",
+    "Classes are never deleted. Clear Active to stop offering one."
+  ],
   "sections": [
     {
       "title": "Storage class",

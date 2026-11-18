@@ -5,6 +5,27 @@
   ],
   "title": "Review return",
   "purpose": "Decide whether a returned specimen may be used again.",
+  "summary": "Decide whether a returned specimen may be used again. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Review the return",
+      "steps": [
+        "Choose Release for use or Keep on hold in [[Decision]].",
+        "Enter [[Reviewed at]] and the [[Reason]], then select [[Record review]]."
+      ]
+    },
+    {
+      "title": "Find returns awaiting review",
+      "steps": [
+        "On Returns, set Review to Awaiting review."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Release for use releases the hold placed on return.",
+    "Keep on hold can be reviewed again later.",
+    "Earlier reviews are shown on the form."
+  ],
   "sections": [
     {
       "title": "Who can use it",

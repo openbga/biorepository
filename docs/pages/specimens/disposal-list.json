@@ -5,6 +5,32 @@
   ],
   "title": "Disposal requests",
   "purpose": "Follow every disposal request from request to approval to recorded disposal. Each disposal needs approval by a different person who holds disposal approval.",
+  "summary": "Follow every disposal request from request to approval to recorded disposal. Each disposal needs approval by a different person who holds disposal approval.",
+  "tasks": [
+    {
+      "title": "Find requests waiting for you",
+      "steps": [
+        "Tick [[Awaiting my approval]] and select [[Apply]]. Open a request to decide it."
+      ]
+    },
+    {
+      "title": "Find approved disposals to carry out",
+      "steps": [
+        "Set [[State]] to Approved, not yet disposed and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Start a new request",
+      "steps": [
+        "Open the specimen and select Request disposal there."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Out of date means the specimen changed after the request or approval. A new request is needed.",
+    "Approval is a permission given to named people, not part of any role.",
+    "Rejected and cancelled requests stay in the list and the specimen's history."
+  ],
   "sections": [
     {
       "title": "Who can use it",

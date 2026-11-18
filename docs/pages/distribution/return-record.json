@@ -5,6 +5,27 @@
   ],
   "title": "Record return",
   "purpose": "Record that a specimen sent in a shipment came back to the repository.",
+  "summary": "Record that a specimen sent in a shipment came back to the repository.",
+  "tasks": [
+    {
+      "title": "Record the return",
+      "steps": [
+        "Type the [[Amount returned]] exactly as measured, and the [[Thaws reported while away]] if known.",
+        "Choose [[Received by (custodian)]], enter [[Returned at]] and the [[Reason]], then select [[Record return]]."
+      ]
+    },
+    {
+      "title": "Store it",
+      "steps": [
+        "Open the specimen and select Record check-in."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The specimen comes back on a use hold until a manager reviews the return.",
+    "Left empty, thaws are recorded as not known, never as zero.",
+    "Enter 0 when nothing is left. The specimen becomes Exhausted."
+  ],
   "sections": [
     {
       "title": "Who can use it",

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution_requests specimens %}
+{% load distribution_requests specimens ui %}
 {% comment %}
 Entry grid: return picked specimens of a request to storage (an ordinary check-in to a free
 position). Tick a row, choose its box and type the position label; the thaw answer is what was
@@ -11,12 +11,12 @@ Context (request_views.put_back): form (PutBackForm), formset (prefix "lines", P
 rows with row.info = the Allocation), packed (allocations in a packed shipment), suggestions
 (free positions text), request_obj, blocked, submit_label, back_url, crumbs, facts.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% include "distribution/requests/_grid_head.html" with formset_label="specimens" note="Putting back is an ordinary check-in: the position is checked again when you save." %}
-  {% if packed %}<div class="alert alert-info" role="status">{% include "includes/status.html" with label="In a packed shipment" tone="info" plain=True %}<div>{% for a in packed %}<span class="vr-id">{{ a.specimen.accession }}</span> ({{ a.shipment.number }}){% if not forloop.last %}, {% endif %}{% endfor %}: unpack the shipment before putting {{ packed|length|pluralize:"it,them" }} back.</div></div>{% endif %}
+  {% if packed %}<div class="alert alert-info" role="status">{% status label="In a packed shipment" tone="info" plain=True %}<div>{% for a in packed %}<span class="vr-id">{{ a.specimen.accession }}</span> ({{ a.shipment.number }}){% if not forloop.last %}, {% endif %}{% endfor %}: unpack the shipment before putting {{ packed|length|pluralize:"it,them" }} back.</div></div>{% endif %}
   <fieldset class="vr-form-section">
     <legend>Picked specimens</legend>
     {{ formset.management_form }}
@@ -41,7 +41,7 @@ rows with row.info = the Allocation), packed (allocations in a packed shipment),
             <td>{{ a.specimen.open_checkout.to_custodian|person }}</td>
             <td>{% if a.shipment %}<span class="vr-id">{{ a.shipment.number }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
             {% if a.in_storage %}
-            <td colspan="3">{% include "includes/status.html" with label="Already in storage" tone="info" plain=True %} <span class="small">Checked in from the specimen record since it was picked. Putting it back records that; nothing is moved.</span></td>
+            <td colspan="3">{% status label="Already in storage" tone="info" plain=True %} <span class="small">Checked in from the specimen record since it was picked. Putting it back records that; nothing is moved.</span></td>
             {% else %}
             <td><label class="visually-hidden" for="{{ row.box.id_for_label }}">Box, row {{ forloop.counter }}</label>{{ row.box }}{% if row.box.errors %}<ul class="vr-field-errors">{% for error in row.box.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</td>
             <td><label class="visually-hidden" for="{{ row.position_label.id_for_label }}">Position, row {{ forloop.counter }}</label>{{ row.position_label }}{% if row.position_label.errors %}<ul class="vr-field-errors">{% for error in row.position_label.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}</td>
@@ -54,7 +54,7 @@ rows with row.info = the Allocation), packed (allocations in a packed shipment),
       </table>
     </div>
     {% else %}
-    {% include "includes/empty_state.html" with title="No picked specimens to put back" body="Only picked specimens of this request that are not in a packed shipment can be put back here." %}
+    {% empty_state title="No picked specimens to put back" body="Only picked specimens of this request that are not in a packed shipment can be put back here." %}
     {% endif %}
   </fieldset>
   {% include "distribution/requests/_grid_foot.html" %}

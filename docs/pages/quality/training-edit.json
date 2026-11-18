@@ -5,6 +5,26 @@
   ],
   "title": "Edit training assignment",
   "purpose": "Correct assignment metadata before completion.",
+  "summary": "Correct an assignment's details before it is completed. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Change the assignment",
+      "steps": [
+        "Change the topic, reference or due date, give the [[Reason]] and select [[Save changes]]."
+      ]
+    },
+    {
+      "title": "Change a completed record",
+      "steps": [
+        "Use Correct training record instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The trainee is fixed once the record exists.",
+    "A save that changes nothing is refused.",
+    "If someone else saved first, your save is blocked. Reopen the record and start again."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

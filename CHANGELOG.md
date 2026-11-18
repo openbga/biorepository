@@ -10,6 +10,10 @@ The same list is shown in the application under What's new.
 
 ### High impact
 
+- **Changed:** A new look with section menus in the top bar (2026-11-18)
+
+  The sidebar is replaced by a light top bar: each section (Specimens, Distribution, Storage, Equipment, Quality, Setup) opens a menu of its pages, and the repository name shows beside the product name. New type and colours run through the application in light and dark themes.
+
 - **Added:** Escalate a withdrawal to destruction while keeping its holds (2026-11-17, Consent records)
 
   Managers can escalate an active no-further-use withdrawal to destruction from its consent record. Consent stays withdrawn and its existing holds remain in place; the original instruction and escalation remain visible in history. Disposal still requires an ordinary request and a different person's approval.
@@ -64,6 +68,10 @@ The same list is shown in the application under What's new.
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
 
+- **Changed:** Page help opens with a summary, common tasks and good-to-know notes (2026-11-18)
+
+  Help on every page now starts with a short summary, the common tasks with the exact buttons to use, and a few things good to know. The full field reference is still there, collapsed behind a filter.
+
 - **Added:** Export the training register to CSV (2026-11-17, Training records)
 
   On Training records, use Export CSV to download assignments and renewal dates across all matching pages. The file follows the filters and sort order you applied.
@@ -97,6 +105,10 @@ The same list is shown in the application under What's new.
   > No migration. The selection is rechecked when submitted and expires after one hour. No temperature triggers a hold automatically.
 
 ### Low impact
+
+- **Changed:** Status labels show an icon for their tone (2026-11-18)
+
+  Every status label now carries an icon for its tone, so colour is never the only cue. A box with no blocked positions now shows 0 blocked instead of a blank.
 
 - **Fixed:** Demonstration data no longer fails to load after a daylight-saving change (2026-11-15, [#10](https://github.com/openbga/biorepository/pull/10))
 

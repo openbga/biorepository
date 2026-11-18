@@ -5,6 +5,38 @@
   ],
   "title": "Equipment record",
   "purpose": "Review one piece of equipment: its details, limits, due dates, service events, recent LN2 entries and readings, excursions and status history, and reach the actions to record against it.",
+  "summary": "One piece of equipment: details, limits, due dates, service events, recent LN2 entries and readings, excursions and status history.",
+  "tasks": [
+    {
+      "title": "Record maintenance or calibration",
+      "steps": [
+        "Select [[Record service event]] and attach the certificate or report."
+      ]
+    },
+    {
+      "title": "Record a reading or LN2 entry",
+      "steps": [
+        "Select [[Record reading]] or [[Record LN2 entry]] in its section."
+      ]
+    },
+    {
+      "title": "Take it out of service",
+      "steps": [
+        "Managers and administrators: select [[Change status]] and give a reason."
+      ]
+    },
+    {
+      "title": "Fix an entry recorded wrongly",
+      "steps": [
+        "Select [[Correct]] on the entry. The original stays visible."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Limits and low levels are the values your repository set. The application sets none.",
+    "Corrections and withdrawals add an entry. Nothing is edited in place.",
+    "Anyone who can read the record can download its attachments."
+  ],
   "sections": [
     {
       "title": "What the page shows",

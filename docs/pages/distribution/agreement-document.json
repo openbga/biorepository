@@ -5,6 +5,27 @@
   ],
   "title": "Add document",
   "purpose": "Attach a document to an agreement: the executed copy, an amendment, a draft or correspondence.",
+  "summary": "Attach a document to an agreement: the executed copy, an amendment, a draft or correspondence. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Attach a document",
+      "steps": [
+        "Choose the [[Kind]], type the [[Title]] and choose the [[File]].",
+        "Select [[Add document]]."
+      ]
+    },
+    {
+      "title": "Replace an earlier document",
+      "steps": [
+        "Choose it in [[Supersedes]]. Both stay listed."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Documents cannot be edited or removed. Add a newer one that supersedes it.",
+    "Never upload consent forms or documents that identify a participant.",
+    "Files are checked by content, up to 10 MiB."
+  ],
   "sections": [
     {
       "title": "Fields",

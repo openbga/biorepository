@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 One validated CSV import: warnings, file and row errors, a preview of the normalized rows, then
 either the commit form (valid, unexpired, not committed) or the specimens it registered.
@@ -7,12 +7,12 @@ Context: batch (errors keeps the first importing.MAX_ERRORS; total_errors, error
 state, file_errors, row_errors, rows, commit, created, label_query, may_commit,
 form (ImportCommitForm).
 {% endcomment %}
-{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Imports" section_url=list_url current=page_title %}{% endblock %}
+{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% breadcrumbs section="Imports" section_url=list_url current=page_title %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% import_status state %}</li><li>{{ batch.row_count }} row{{ batch.row_count|pluralize }}</li><li>Validated <time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor.get_full_name|default:batch.actor.get_username }}</li></ul>{% endblock %}
-{% block page_actions %}{% if created %}<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?{{ label_query }}">{% include "includes/icon.html" with name="printer" %}Print labels</a>{% endif %}{% endblock %}
+{% block page_actions %}{% if created %}<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?{{ label_query }}">{% icon name="printer" %}Print labels</a>{% endif %}{% endblock %}
 {% block content %}
 {% for warning in batch.warnings %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Check" tone="warning" plain=True %}<div>{{ warning }}</div></div>
+<div class="alert alert-warning" role="status">{% status label="Check" tone="warning" plain=True %}<div>{{ warning }}</div></div>
 {% endfor %}
 {% if state == "invalid" %}
 <div class="alert alert-danger" role="alert">{% import_status state plain=True %}<div>Nothing can be registered from this file. Correct the errors below in your file and upload it again.</div></div>
@@ -88,4 +88,4 @@ form (ImportCommitForm).
 </section>
 {% endif %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

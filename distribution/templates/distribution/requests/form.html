@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Distribution form or action form (docs/ui-standards.md: Form, Action form), in the shared dialog
 with this page as the no-JavaScript fallback. Context (request_views._action): page_title, form
@@ -9,14 +9,14 @@ facts ((label, value) pairs about the record acted on), destructive, blockers ([
 [label])] from a refused gate check, shown per specimen), precheck ([(accession, [message])]: what
 the gate would refuse now; the service checks again on submit).
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form" method="post"{% if form.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
   {% csrf_token %}
-  {% include "includes/form_errors.html" with form=form %}
+  {% form_errors form=form %}
   {% if blockers %}
   <div class="alert alert-danger" role="alert">
-    {% include "includes/status.html" with label="Refused" tone="danger" plain=True %}
+    {% status label="Refused" tone="danger" plain=True %}
     <div><p class="mb-1">The recorded facts do not allow this for these specimens:</p>
       <ul class="mb-0 ps-3">{% for accession, labels in blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul>
     </div>
@@ -24,7 +24,7 @@ the gate would refuse now; the service checks again on submit).
   {% endif %}
   {% if blocked %}
   <div class="alert alert-warning" role="alert">
-    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
+    {% status label="Not available" tone="warning" plain=True %}
     <div>{{ blocked }}</div>
   </div>
   {% else %}
@@ -32,7 +32,7 @@ the gate would refuse now; the service checks again on submit).
   {% endif %}
   {% if precheck %}
   <div class="alert alert-warning" role="status">
-    {% include "includes/status.html" with label="Would be refused now" tone="warning" plain=True %}
+    {% status label="Would be refused now" tone="warning" plain=True %}
     <div><ul class="mb-0 ps-3">{% for accession, reasons in precheck %}<li><span class="vr-id">{{ accession }}</span>: {{ reasons|join:" " }}</li>{% endfor %}</ul>
       <p class="mb-0">Correct the record named, or unpack and change the contents. Dispatch checks again when you submit.</p></div>
   </div>
@@ -50,10 +50,10 @@ the gate would refuse now; the service checks again on submit).
     {% for row in rows %}
     {% if row|length > 1 %}
     <div class="row g-3 mb-4">
-      {% for field in row %}<div class="col-md">{% include "includes/field.html" with field=field suffix=field.field.suffix %}</div>{% endfor %}
+      {% for field in row %}<div class="col-md">{% field field=field suffix=field.field.suffix %}</div>{% endfor %}
     </div>
     {% else %}
-    {% include "includes/field.html" with field=row.0 suffix=row.0.field.suffix %}
+    {% field field=row.0 suffix=row.0.field.suffix %}
     {% endif %}
     {% endfor %}
   </fieldset>

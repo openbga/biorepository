@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment ui %}
 {% comment %}
 One validated readings CSV (Document page): warnings, errors by row, the readings as read, then
 either the commit form (valid, unexpired, not committed; operators) or the commit that recorded
@@ -7,11 +7,11 @@ them. Context: batch, state (validated | rejected | committed | expired), commit
 `shown` normalized rows with measured, number, device_code), row_total, shown, readings_url,
 form (ImportCommitForm), crumbs, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% import_status state %}</li><li>{{ batch.row_count }} reading{{ batch.row_count|pluralize }}</li>{% if batch.equipment %}<li><a class="vr-id" href="{% url 'equipment:equipment-detail' batch.equipment_id %}">{{ batch.equipment.code }}</a></li>{% endif %}<li>Validated <time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor|person }}</li></ul>{% endblock %}
 {% block content %}
 {% for warning in batch.warnings %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Check" tone="warning" plain=True %}<div>{{ warning }}</div></div>
+<div class="alert alert-warning" role="status">{% status label="Check" tone="warning" plain=True %}<div>{{ warning }}</div></div>
 {% endfor %}
 {% if state == "rejected" %}
 <div class="alert alert-danger" role="alert">{% import_status state plain=True %}<div>{% if batch.errors %}Nothing can be recorded from this file. Correct the errors below in your file and upload it again.{% else %}The file has no readings.{% endif %}</div></div>
@@ -63,7 +63,7 @@ form (ImportCommitForm), crumbs, can_operate.
     {% if can_operate %}
     <form class="vr-form" method="post" novalidate>
       {% csrf_token %}
-      {% include "includes/form_errors.html" with form=form %}
+      {% form_errors form=form %}
       <p class="vr-form-note">All {{ batch.row_count }} readings are recorded together, or none if anything changed since the check. Each keeps the limits set on its equipment when it is recorded. The check expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.</p>
       <fieldset class="vr-form-section">{{ form.reason.as_field_group }}</fieldset>
       <div class="vr-form-actions"><button class="btn btn-primary" type="submit">Record {{ batch.row_count }} reading{{ batch.row_count|pluralize }}</button></div>
@@ -75,4 +75,4 @@ form (ImportCommitForm), crumbs, can_operate.
 </section>
 {% endif %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

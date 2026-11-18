@@ -1,19 +1,19 @@
 {% extends "base.html" %}
-{% load equipment navigation %}
+{% load equipment navigation ui %}
 {% comment %}Effective temperature readings (Readings tab), each with the limits recorded with it. Readings have no page of their own: the time is plain text, and Correct is the row action for the person who recorded it and for managers. Context: equipment.views.grid_response for lists.SPECS["reading"], create_url.{% endcomment %}
 {% block page_actions %}{% include "equipment/_list_actions.html" with create_label="Record reading" may_create=can_operate %}{% endblock %}
 {% block content %}
 {% section_tabs "equipment-readings" %}
 <section class="card vr-table-card" aria-labelledby="readings-heading">
   <h2 class="visually-hidden" id="readings-heading">Readings</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter readings" q=q placeholder="Asset ID or probe position" inline=inline more=more more_open=more_open grid="equipment.readings" %}
+  {% grid_toolbar label="Filter readings" q=q placeholder="Asset ID or probe position" inline=inline more=more more_open=more_open grid="equipment.readings" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.readings" data-vr-grid-version="1" aria-labelledby="readings-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Read at" asc="measured" desc="-measured" first="desc" col="measured" locked=True %}
-        {% include "includes/sort_header.html" with label="Equipment" asc="equipment" desc="-equipment" col="equipment" %}
-        {% include "includes/sort_header.html" with label="Temperature (°C)" asc="value" desc="-value" col="value" class="text-end" %}
+        {% sort_header label="Read at" asc="measured" desc="-measured" first="desc" col="measured" locked=True %}
+        {% sort_header label="Equipment" asc="equipment" desc="-equipment" col="equipment" %}
+        {% sort_header label="Temperature (°C)" asc="value" desc="-value" col="value" class="text-end" %}
         <th scope="col" data-vr-col="outside" data-vr-col-label="Limits">Limits</th>
         <th scope="col" class="text-end" data-vr-col="limits" data-vr-col-label="Limits recorded (°C)">Limits recorded (°C)</th>
         <th scope="col" data-vr-col="probe" data-vr-col-label="Probe position">Probe position</th>
@@ -40,7 +40,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No temperature readings yet" body_empty="Record readings by hand, or upload a logger's CSV under Imports." create_url=create_url create_label="Record reading" %}{% else %}{% include "storage/_list_states.html" with title_empty="No temperature readings yet" body_empty="Readings entered by hand or imported from a CSV appear here." %}{% endif %}
   {% endif %}

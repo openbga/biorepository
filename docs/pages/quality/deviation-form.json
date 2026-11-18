@@ -6,6 +6,27 @@
   ],
   "title": "Record or edit a deviation",
   "purpose": "Record an observed quality deviation or correct its open report.",
+  "summary": "Record an observed quality deviation, or correct an open report.",
+  "tasks": [
+    {
+      "title": "Report a deviation",
+      "steps": [
+        "Type the [[Title]], [[Occurred at]] and [[Description]], and any [[Immediate action]].",
+        "Link an [[Excursion]] or inventory audit if one applies, give the [[Reason]] and select [[Create deviation]]."
+      ]
+    },
+    {
+      "title": "Add the investigation",
+      "steps": [
+        "Fill in [[Investigation]], [[Corrective action]] and [[Effectiveness]], then select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Investigation, corrective action and effectiveness are needed before submitting. Explain when unknown or not applicable.",
+    "Every change needs a reason and is kept in the history.",
+    "Do not enter identifying information."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

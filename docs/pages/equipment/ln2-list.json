@@ -5,6 +5,32 @@
   ],
   "title": "LN2 log",
   "purpose": "Review the level checks and fills of LN2 tanks and supply dewars, with the change since the previous entry, and record new ones.",
+  "summary": "Level checks and fills of LN2 tanks and supply dewars, with the change since the previous entry.",
+  "tasks": [
+    {
+      "title": "Record a level check or fill",
+      "steps": [
+        "Select [[Record LN2 entry]]. Filter to one [[Vessel]] first to preselect it."
+      ]
+    },
+    {
+      "title": "Review one vessel's history",
+      "steps": [
+        "Choose the [[Vessel]] and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Fix an entry",
+      "steps": [
+        "Select [[Correct]] on the row."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Change since previous is worked out from the entries, never typed.",
+    "Corrected rows replace the earlier entry, which stays visible.",
+    "The low level is the one your repository set."
+  ],
   "sections": [
     {
       "title": "What the page shows",

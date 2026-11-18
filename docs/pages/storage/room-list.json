@@ -5,6 +5,26 @@
   ],
   "title": "Rooms",
   "purpose": "Find the rooms where storage units stand, with the space left in each.",
+  "summary": "The rooms where storage units stand, with the space left in each.",
+  "tasks": [
+    {
+      "title": "Find a room",
+      "steps": [
+        "Choose the [[Site]] and select [[Apply]], then select the room's code."
+      ]
+    },
+    {
+      "title": "Add a room",
+      "steps": [
+        "Admin and manager: select [[New room]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Rooms cannot be retired or deleted.",
+    "Room codes are unique within their site.",
+    "Counts cover the room's active units only."
+  ],
   "sections": [
     {
       "title": "Search, filters and sorting",

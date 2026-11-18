@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 Shipment manifest (Document page) and the decision about it: Download PDF. A draft or packed
 shipment shows its current contents under a "Not dispatched" notice; a dispatched or received one
@@ -8,12 +8,12 @@ codes appear only when the shipment includes them; collection dates never. The c
 the one the shipper declared. Context (documents.manifest_context): shipment, request_number,
 lines (ManifestLine), studies, show_participants, sent, repository_name, generated_at, crumbs.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li class="vr-id">{{ shipment.number }}</li><li>Revision {{ shipment.revision }}</li><li>{{ lines|length }} specimen{{ lines|length|pluralize }}</li></ul>{% endblock %}
-{% block page_actions %}<a class="btn btn-primary" href="{% url 'distribution:manifest-pdf' shipment.pk %}">{% include "includes/icon.html" with name="download" %}Download PDF</a>{% endblock %}
+{% block page_actions %}<a class="btn btn-primary" href="{% url 'distribution:manifest-pdf' shipment.pk %}">{% icon name="download" %}Download PDF</a>{% endblock %}
 {% block content %}
 {% if not sent %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Not dispatched" tone="warning" plain=True %}<div>This manifest shows the shipment's contents as they are now and is marked Not dispatched. Once dispatched, the manifest is fixed from what was sent.</div></div>
+<div class="alert alert-warning" role="status">{% status label="Not dispatched" tone="warning" plain=True %}<div>This manifest shows the shipment's contents as they are now and is marked Not dispatched. Once dispatched, the manifest is fixed from what was sent.</div></div>
 {% endif %}
 <section class="card mb-3" aria-labelledby="manifest-heading">
   <div class="card-header"><h2 class="card-title" id="manifest-heading">Manifest {{ shipment.number }}</h2></div>
@@ -48,7 +48,7 @@ lines (ManifestLine), studies, show_participants, sent, repository_name, generat
     </tbody></table></div>
   <div class="card-body pt-0"><p class="vr-muted small mb-0">{% if sent %}As recorded at dispatch on <time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time>.{% else %}Current contents, <time datetime="{{ generated_at|date:'c' }}">{{ generated_at|date:"Y-m-d H:i" }}</time>.{% endif %} The declarations are the shipper's, recorded as entered.</p></div>
   {% else %}
-  <div class="card-body">{% include "includes/empty_state.html" with title="No specimens in this shipment" %}</div>
+  <div class="card-body">{% empty_state title="No specimens in this shipment" %}</div>
   {% endif %}
 </section>
 {% endblock %}

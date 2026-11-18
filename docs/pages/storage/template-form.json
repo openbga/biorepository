@@ -6,6 +6,27 @@
   ],
   "title": "Storage template form",
   "purpose": "Record a unit layout as a template, add a new version, or change an existing version.",
+  "summary": "Record a unit layout as a template, add a new version, or change an existing version.",
+  "tasks": [
+    {
+      "title": "Record a layout",
+      "steps": [
+        "Type the [[Code]] and [[Name]], and the [[Layout recipe]].",
+        "Select [[Create storage template]]. Errors name the part of the recipe at fault."
+      ]
+    },
+    {
+      "title": "Start from an existing unit",
+      "steps": [
+        "Use Save layout as template on the unit's page. The recipe is filled in for you."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "An existing code adds the next version.",
+    "The recipe is plain data, checked against the same rules as creating units directly.",
+    "Once a unit is created from a version, its recipe is no longer offered for editing."
+  ],
   "sections": [
     {
       "title": "Fields",

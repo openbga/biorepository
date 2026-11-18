@@ -5,6 +5,27 @@
   ],
   "title": "Free positions",
   "purpose": "List positions that are unblocked and unoccupied in active boxes, in the order a technician fills boxes. Nothing is reserved: a position is claimed only when an item is stored in it.",
+  "summary": "Positions that are free and unblocked in active boxes, in the order boxes are filled.",
+  "tasks": [
+    {
+      "title": "Find the next free position",
+      "steps": [
+        "Choose the [[Storage unit]], [[Rack or shelf]] or [[Box]], then select [[Apply]].",
+        "Use the first row. Select it to open the box at that position."
+      ]
+    },
+    {
+      "title": "Download the list",
+      "steps": [
+        "Select [[Export CSV]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Nothing is reserved. A position is taken only when an item is stored in it.",
+    "The order is fixed so boxes fill in sequence. Columns cannot be sorted.",
+    "Retired boxes and structure are never included."
+  ],
   "sections": [
     {
       "title": "Search, filters and sorting",

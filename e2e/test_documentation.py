@@ -54,15 +54,17 @@ def test_each_page_shows_its_own_authored_help(page: Page, sign_in_as):
         # A direct form URL opens the dialog; its help is the form's, not the list's.
         expect(help_article(page)).to_have_attribute("data-vr-documentation-id", expected["id"])
         expect(panel.get_by_role("heading", level=2)).to_have_text(expected["title"])
-        expect(panel).to_contain_text(expected["purpose"][:60])
-        first_section = expected["sections"][0]["title"]
+        expect(panel).to_contain_text(expected["summary"][:60])
+        expect(panel.get_by_role("heading", level=3, name="Common tasks")).to_be_visible()
         expect(
-            panel.get_by_role("heading", level=3, name=first_section, exact=True)
+            panel.get_by_role("heading", level=4, name=expected["tasks"][0]["title"], exact=True)
         ).to_be_visible()
+        # The reference sections are collapsed; each one's title stays visible in its summary.
+        sections = panel.locator("[data-vr-help-section] > summary")
+        first_section = expected["sections"][0]["title"]
+        expect(sections.filter(has_text=first_section).first).to_be_visible()
         if name != "core/shared":
-            expect(
-                panel.get_by_role("heading", level=3, name=shared["sections"][0]["title"])
-            ).to_be_visible()
+            expect(sections.filter(has_text=shared["sections"][0]["title"]).first).to_be_visible()
     assert page.console_errors == []
 
 
@@ -74,6 +76,7 @@ def test_help_follows_navigation_and_persists_width_and_closed_state(page: Page,
     assert dashboard_help == doc("core/dashboard")["id"]
     expect(panel.get_by_role("heading", level=2)).to_be_focused()
     # This is a reference sheet, so the page remains keyboard and pointer accessible.
+    page.get_by_role("button", name="Setup", exact=True).click()
     page.get_by_role("link", name="Record retention", exact=True).first.click()
     expect(
         page.get_by_role("heading", level=1, name="Record retention", exact=True)
@@ -183,12 +186,12 @@ def test_help_narrow_anonymous_and_per_user_preferences(page: Page, demo):
     assert help_id(page) == doc("core/dashboard")["id"]
     page.reload()
     expect(panel).to_be_visible()
-    sign_out(page, who="^Account$")
+    sign_out(page)
     expect(panel).to_be_hidden()  # The anonymous preference was closed.
     sign_in(page, "demo_viewer", demo.password, visit=False)
     expect(panel).to_be_visible()  # The viewer's preference survived sign-out.
     # Another account keeps its own, closed, preference.
-    sign_out(page, who="^Account$")
+    sign_out(page)
     sign_in(page, "demo_technician", demo.password, visit=False)
     expect(panel).to_be_hidden()
 
@@ -254,7 +257,10 @@ def test_admin_help_follows_index_users_form_and_resizes(page: Page, tmp_path):
     assert help_id(page) == doc("admin/users")["id"]
     page.locator("#result_list").get_by_role("link", name=owner.username, exact=True).click()
     expect(panel.get_by_role("heading", level=2)).to_have_text(doc("admin/user-form")["title"])
-    expect(panel.get_by_role("rowheader", name="Groups", exact=True)).to_be_visible()
+    # The field reference is collapsed under "All fields and actions"; the item is in it.
+    expect(
+        panel.locator("[data-vr-help-section] dt").filter(has_text="Groups").first
+    ).to_be_attached()
     separator = panel.get_by_role("separator", name="Documentation panel width")
     separator.focus()
     separator.press("Home")

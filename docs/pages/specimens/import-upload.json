@@ -5,6 +5,27 @@
   ],
   "title": "Upload CSV",
   "purpose": "Check a CSV file of new specimens against the catalogues and storage positions before anything is registered.",
+  "summary": "Check a CSV file of new specimens against the catalogues and storage positions before anything is registered.",
+  "tasks": [
+    {
+      "title": "Prepare the file",
+      "steps": [
+        "Select [[Download the CSV template]] and fill one row per specimen."
+      ]
+    },
+    {
+      "title": "Check the file",
+      "steps": [
+        "Choose it in [[CSV file]] and select [[Validate file]]. The import page shows any problems."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Validating registers nothing, uses no specimen ID and claims no position.",
+    "Catalogue values are codes, and participant codes must already exist.",
+    "Times are ISO 8601. A time without an offset is read in repository time.",
+    "Never put names, record numbers or other identifying text in the file."
+  ],
   "sections": [
     {
       "title": "Steps",

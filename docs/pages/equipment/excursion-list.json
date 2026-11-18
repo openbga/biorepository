@@ -5,6 +5,32 @@
   ],
   "title": "Temperature excursions",
   "purpose": "Track the times a tank or freezer went outside the limits your repository set, from first record through review and closure.",
+  "summary": "The times a tank or freezer went outside the limits your repository set, from first record through review and closure.",
+  "tasks": [
+    {
+      "title": "Record an excursion",
+      "steps": [
+        "Select [[New excursion]]."
+      ]
+    },
+    {
+      "title": "Find excursions to review",
+      "steps": [
+        "Managers and administrators: open [[More filters]], tick [[Awaiting my review]] and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Check whether a specimen was affected",
+      "steps": [
+        "Type its ID in [[Affected specimen]] under More filters."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Affected specimen searches closed excursions only, whose specimen list is captured at closing.",
+    "You never review an excursion you submitted.",
+    "Holds are placed and released on specimens, not by the excursion's status."
+  ],
   "sections": [
     {
       "title": "What the page shows",

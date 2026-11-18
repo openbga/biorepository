@@ -5,6 +5,39 @@
   ],
   "title": "Box",
   "purpose": "Review one box: its facts, the grid of positions with their state and counts, the specimen IDs and storage keys of what is stored, recorded moves and history.",
+  "summary": "One box: its grid of positions, the specimens stored in it, recorded moves and history.",
+  "tasks": [
+    {
+      "title": "See what is in a position",
+      "steps": [
+        "Hover over a filled well, or select it to open the specimen record."
+      ]
+    },
+    {
+      "title": "Take a position out of use",
+      "steps": [
+        "Admin and manager: select an empty position in the grid and block it with a reason."
+      ]
+    },
+    {
+      "title": "Move the box",
+      "steps": [
+        "Select [[Move box]], choose the rack or shelf and slot, and give a reason."
+      ]
+    },
+    {
+      "title": "List the specimens in the box",
+      "steps": [
+        "Select [[Specimens in this box]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The grid is seen from the labelled top-left corner.",
+    "A checked-out item's position counts as free. Free positions are not reserved.",
+    "An occupied position cannot be blocked. Move the item out first.",
+    "[[Retire box]] is available only when the box is empty."
+  ],
   "sections": [
     {
       "title": "Box",

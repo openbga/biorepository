@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment ui %}
 {% comment %}Equipment register with the latest reading and level, next due date and active excursions. Context: equipment.views.grid_response for lists.SPECS["equipment"].{% endcomment %}
 {% block page_actions %}{% url 'equipment:equipment-create' as create_url %}{% include "equipment/_list_actions.html" with create_label="New equipment" may_create=can_manage %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="equipment-heading">
   <h2 class="visually-hidden" id="equipment-heading">Equipment</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter equipment" q=q placeholder="Asset ID, name, serial number or location" inline=inline more=more more_open=more_open grid="equipment.equipment" %}
+  {% grid_toolbar label="Filter equipment" q=q placeholder="Asset ID, name, serial number or location" inline=inline more=more more_open=more_open grid="equipment.equipment" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.equipment" data-vr-grid-version="1" aria-labelledby="equipment-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Asset ID" asc="code" desc="-code" col="code" locked=True %}
-        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
-        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
-        {% include "includes/sort_header.html" with label="Kind" asc="kind" desc="-kind" col="kind" %}
-        {% include "includes/sort_header.html" with label="Storage unit" asc="unit" desc="-unit" col="unit" %}
+        {% sort_header label="Asset ID" asc="code" desc="-code" col="code" locked=True %}
+        {% sort_header label="Status" asc="status" desc="-status" col="status" %}
+        {% sort_header label="Name" asc="name" desc="-name" col="name" %}
+        {% sort_header label="Kind" asc="kind" desc="-kind" col="kind" %}
+        {% sort_header label="Storage unit" asc="unit" desc="-unit" col="unit" %}
         <th scope="col" class="text-end" data-vr-col="reading" data-vr-col-label="Latest reading (°C)">Latest reading (°C)</th>
-        {% include "includes/sort_header.html" with label="Read at" asc="reading" desc="-reading" first="desc" col="reading_at" hidden=True %}
+        {% sort_header label="Read at" asc="reading" desc="-reading" first="desc" col="reading_at" hidden=True %}
         <th scope="col" class="text-end" data-vr-col="level" data-vr-col-label="Latest level">Latest level</th>
-        {% include "includes/sort_header.html" with label="Next due" asc="due" desc="-due" col="due" %}
-        {% include "includes/sort_header.html" with label="Active excursions" asc="excursions" desc="-excursions" first="desc" col="excursions" class="text-end" %}
+        {% sort_header label="Next due" asc="due" desc="-due" col="due" %}
+        {% sort_header label="Active excursions" asc="excursions" desc="-excursions" first="desc" col="excursions" class="text-end" %}
       </tr></thead>
       <tbody>
         {% for row in page_obj %}
@@ -39,7 +39,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_manage %}{% url 'equipment:equipment-create' as create_url %}{% endif %}
   {% include "storage/_list_states.html" with title_empty="No equipment registered yet" body_empty="Register each tank, freezer, supply dewar and temperature monitor, with the limits your repository sets." create_url=create_url create_label="New equipment" %}

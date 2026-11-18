@@ -5,6 +5,27 @@
   ],
   "title": "Review excursion",
   "purpose": "Return an excursion for more work, or close it after review.",
+  "summary": "Return an excursion for more work, or close it after review. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Close the excursion",
+      "steps": [
+        "Choose Close the excursion in [[Decision]] and explain in [[Review note]].",
+        "Select [[Record review]]."
+      ]
+    },
+    {
+      "title": "Send it back",
+      "steps": [
+        "Choose Return for more work and say what is missing."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "If you submitted it, you can only return it.",
+    "Closing captures the specimens that were in the unit during the excursion.",
+    "Closing never releases holds."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

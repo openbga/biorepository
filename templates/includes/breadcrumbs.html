@@ -1,4 +1,4 @@
-{% comment %}
+{% load ui %}{% comment %}
 Breadcrumb trail for record, form, action, entry and document pages; never on lists or overviews
 (docs/ui-standards.md section 3, rule 5). The trail is Sidebar item › Record › Action; the last crumb
 is the current page and is never a link. Under a tabbed section it is Section › Tab › …, where the
@@ -13,10 +13,10 @@ or the parts written in the template (each optional except current):
   child, child_url       a record inside that record (Storage units › Tank VP-01 › Box 3 › Move box)
   current                the current page; defaults to page_title
 Examples:
-  record page  {% url 'specimens:specimen-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Specimens" section_url=list_url current=specimen.identifier %}
-  action page  {% include "includes/breadcrumbs.html" with section="Storage units" section_url=list_url record=unit.name record_url=unit_url %}
-  tabbed form  {% include "includes/breadcrumbs.html" with section="Storage" tab="Racks" tab_url=racks_url %}
-  view trail   {% include "includes/breadcrumbs.html" with crumbs=crumbs %}
+  record page  {% url 'specimens:specimen-list' as list_url %}{% breadcrumbs section="Specimens" section_url=list_url current=specimen.identifier %}
+  action page  {% breadcrumbs section="Storage units" section_url=list_url record=unit.name record_url=unit_url %}
+  tabbed form  {% breadcrumbs section="Storage" tab="Racks" tab_url=racks_url %}
+  view trail   {% breadcrumbs crumbs=crumbs %}
 {% endcomment %}
 <nav aria-label="Breadcrumb">
   <ol class="breadcrumb">

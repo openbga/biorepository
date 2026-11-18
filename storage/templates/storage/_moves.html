@@ -1,4 +1,4 @@
-{% comment %}Recorded container moves of one box or node, newest first. Parameters: moves (MoveEvent list), heading_id, noun ("box", "rack"...), kind ("box" or "node"), obj (the container), correctable (its latest uncorrected move, or None; managers and admins may correct it), can_manage.{% endcomment %}
+{% load ui %}{% comment %}Recorded container moves of one box or node, newest first. Parameters: moves (MoveEvent list), heading_id, noun ("box", "rack"...), kind ("box" or "node"), obj (the container), correctable (its latest uncorrected move, or None; managers and admins may correct it), can_manage.{% endcomment %}
 <section class="card vr-table-card mb-3" aria-labelledby="{{ heading_id|default:'moves-heading' }}">
   <div class="card-header"><h2 class="card-title" id="{{ heading_id|default:'moves-heading' }}">Moves</h2><span class="vr-count">{{ moves|length }}{% if moves|length >= 20 %}, newest 20 shown{% endif %}</span></div>
   {% if moves %}
@@ -8,7 +8,7 @@
       <tbody>
         {% for m in moves %}
         <tr>
-          <th scope="row" class="vr-nowrap"><time datetime="{{ m.occurred_at|date:'c' }}">{{ m.occurred_at|date:"Y-m-d H:i" }}</time>{% if m.kind == "correction" %} {% include "includes/status.html" with label="Correction" tone="info" plain=True %}{% endif %}</th>
+          <th scope="row" class="vr-nowrap"><time datetime="{{ m.occurred_at|date:'c' }}">{{ m.occurred_at|date:"Y-m-d H:i" }}</time>{% if m.kind == "correction" %} {% status label="Correction" tone="info" plain=True %}{% endif %}</th>
           <td class="vr-id vr-path">{% include "storage/_path.html" with p=m.from_path %}{% if m.from_path.slot %}, <span class="vr-path-part">slot {{ m.from_path.slot }}</span>{% endif %}</td>
           <td class="vr-id vr-path">{% include "storage/_path.html" with p=m.to_path %}{% if m.to_path.slot %}, <span class="vr-path-part">slot {{ m.to_path.slot }}</span>{% endif %}</td>
           <td class="text-end vr-id">{{ m.members.count }}</td>
@@ -20,5 +20,5 @@
       </tbody>
     </table>
   </div>
-  {% else %}{% include "includes/empty_state.html" with title="Not moved since it was set up" body="Moves of this "|add:noun|add:" are recorded here with the items carried." %}{% endif %}
+  {% else %}{% empty_state title="Not moved since it was set up" body="Moves of this "|add:noun|add:" are recorded here with the items carried." %}{% endif %}
 </section>

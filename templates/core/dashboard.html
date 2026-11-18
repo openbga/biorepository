@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load announcements %}
+{% load announcements ui %}
 {% comment %}
 Staff start page: the repository's current announcements for staff (the announcements tag), what
 needs doing now, then the newest stored specimens. No vanity counts.
@@ -25,7 +25,7 @@ groups; a queue with nothing waiting is one compact line. A role with no queues 
           <tr class="vr-queue-group"><th scope="rowgroup" colspan="3">{% if area == "/spec" %}Specimens{% elif area == "/equi" %}Equipment{% elif area == "/dist" %}Distribution{% elif area == "/stor" %}Storage{% else %}{{ queue.area|default:"Other work" }}{% endif %}</th></tr>{% endifchanged %}
           <tr{% if not queue.count %} class="vr-queue-idle"{% endif %}>
             <th scope="row" class="vr-wrap">{% if queue.count %}<a class="vr-row-link" href="{{ queue.url }}">{{ queue.label }}</a>{% if queue.note %}<div class="vr-muted small fw-normal">{{ queue.note }}</div>{% endif %}{% else %}{{ queue.label }}{% endif %}</th>
-            <td class="text-end">{% if queue.count %}{% include "includes/status.html" with label=queue.count|floatformat:"0g" tone=queue.tone|default:"info" plain=True %}{% else %}<span class="vr-muted">0</span>{% endif %}</td>
+            <td class="text-end">{% if queue.count %}{% status label=queue.count|floatformat:"0g" tone=queue.tone|default:"info" plain=True %}{% else %}<span class="vr-muted">0</span>{% endif %}</td>
             <td class="vr-nowrap">{% if queue.oldest_at %}{% with ago=queue.oldest_at|timesince %}<time datetime="{{ queue.oldest_at|date:'c' }}" title="{{ queue.oldest_at|date:'Y-m-d H:i T' }}">{% if ago|first == "0" %}just now{% else %}{{ ago }} ago{% endif %}</time>{% endwith %}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           </tr>
           {% if forloop.last %}</tbody>{% endif %}
@@ -33,7 +33,7 @@ groups; a queue with nothing waiting is one compact line. A role with no queues 
       </table>
     </div>
     {% else %}
-    {% include "includes/empty_state.html" with title="Nothing is waiting for you" body="Check-outs to return, disposals to approve, equipment due dates, excursions, requests, shipments, withdrawals and other work will be listed here once storage, specimens, equipment and distribution are in use." %}
+    {% empty_state title="Nothing is waiting for you" body="Check-outs to return, disposals to approve, equipment due dates, excursions, requests, shipments, withdrawals and other work will be listed here once storage, specimens, equipment and distribution are in use." %}
     {% endif %}
   </div>
 </section>
@@ -59,7 +59,7 @@ groups; a queue with nothing waiting is one compact line. A role with no queues 
   </div>
   {% else %}
   <div class="card-body">
-    {% include "includes/empty_state.html" with title="No specimens stored yet" body="Specimens appear here once they are registered and placed in a storage position." %}
+    {% empty_state title="No specimens stored yet" body="Specimens appear here once they are registered and placed in a storage position." %}
   </div>
   {% endif %}
 </section>

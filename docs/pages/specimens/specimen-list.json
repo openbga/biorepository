@@ -5,6 +5,41 @@
   ],
   "title": "Specimens",
   "purpose": "Find specimens, aliquots and derivatives, see what is on hand and where each one is, export the result, and print labels.",
+  "summary": "Find specimens, aliquots and derivatives, see what is on hand and where each one is, export the list and print labels.",
+  "tasks": [
+    {
+      "title": "Open a specimen you have in hand",
+      "steps": [
+        "Scan or type its whole ID in Find specimen ID in the top bar. The record opens."
+      ]
+    },
+    {
+      "title": "Find specimens",
+      "steps": [
+        "Type part of a specimen ID, participant code or collection code in [[Search]].",
+        "Narrow with [[Status]], [[Specimen type]] or [[On hold]], or open [[More filters]], then select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Print labels",
+      "steps": [
+        "Tick the specimens on this page.",
+        "Select [[Print labels]] and check the preview."
+      ]
+    },
+    {
+      "title": "Register a specimen",
+      "steps": [
+        "Select [[Register specimen]]. To register many at once, use Imports."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Specimen IDs are opaque. They never contain a location, participant, study or date, and are never reused.",
+    "Without filters the list includes exhausted, disposed and distributed specimens.",
+    "A typed participant or box code that does not exist shows no rows, never an unfiltered list.",
+    "[[Export CSV]] downloads exactly what the current search, filters and sort show."
+  ],
   "sections": [
     {
       "title": "Who can use it",

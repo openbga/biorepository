@@ -1,25 +1,25 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 CSV import batches, newest first (technicians and managers). Context: page_obj (ImportBatch rows
 with .state, .name, .error_total), filter_form, q, sort, active_filters, filtered.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Register many specimens from a CSV file: validate first, then commit all rows or none.</p>{% endblock %}
-{% block page_actions %}<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% include "includes/icon.html" with name="plus-lg" %}Upload CSV</a>{% endblock %}
+{% block page_actions %}<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% icon name="plus-lg" %}Upload CSV</a>{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="imports-heading">
   <h2 class="visually-hidden" id="imports-heading">Imports</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter imports" q=q placeholder="File name" grid="specimens.imports" %}
+  {% grid_toolbar label="Filter imports" q=q placeholder="File name" grid="specimens.imports" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.imports" data-vr-grid-version="1" aria-labelledby="imports-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Import" asc="filename" desc="-filename" col="import" locked=True %}
+        {% sort_header label="Import" asc="filename" desc="-filename" col="import" locked=True %}
         <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
-        {% include "includes/sort_header.html" with label="Rows" asc="rows" desc="-rows" col="rows" class="text-end" %}
+        {% sort_header label="Rows" asc="rows" desc="-rows" col="rows" class="text-end" %}
         <th scope="col" class="text-end" data-vr-col="errors" data-vr-col-label="Errors">Errors</th>
         <th scope="col" data-vr-col="validated_by" data-vr-col-label="Validated by">Validated by</th>
-        {% include "includes/sort_header.html" with label="Validated" asc="recorded_at" desc="-recorded_at" first="desc" col="recorded_at" %}
+        {% sort_header label="Validated" asc="recorded_at" desc="-recorded_at" first="desc" col="recorded_at" %}
       </tr></thead>
       <tbody>
         {% for batch in page_obj %}
@@ -35,7 +35,7 @@ with .state, .name, .error_total), filter_form, q, sort, active_filters, filtere
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun="imports" filtered=filtered %}
+  {% pagination noun="imports" filtered=filtered %}
   {% else %}
   {% url 'specimens:import-upload' as create_url %}
   {% include "specimens/includes/list_states.html" with title_empty="No imports yet" body_empty="Download the CSV template, fill one row per specimen and upload it. Nothing is registered until you commit a valid file." create_url=create_url create_label="Upload CSV" %}

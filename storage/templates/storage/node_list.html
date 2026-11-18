@@ -1,19 +1,19 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}Racks, towers, shelves and canisters with position counts. Context: grid_response for lists.SPECS["node"].{% endcomment %}
 {% block page_actions %}{% url 'storage:node-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New rack or shelf" %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="nodes-heading">
   <h2 class="visually-hidden" id="nodes-heading">Racks and shelves</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter racks and shelves" q=q placeholder="Code or name" inline=inline more=more more_open=more_open grid="storage.nodes" %}
+  {% grid_toolbar label="Filter racks and shelves" q=q placeholder="Code or name" inline=inline more=more more_open=more_open grid="storage.nodes" %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.nodes" data-vr-grid-version="1" aria-labelledby="nodes-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Code" asc="code" desc="-code" col="code" locked=True %}
-        {% include "includes/sort_header.html" with label="Name" asc="name" desc="-name" col="name" %}
-        {% include "includes/sort_header.html" with label="Kind" asc="kind" desc="-kind" col="kind" %}
-        {% include "includes/sort_header.html" with label="Storage unit" asc="unit" desc="-unit" col="unit" %}
-        {% include "includes/sort_header.html" with label="Location" asc="path" desc="-path" col="path" %}
+        {% sort_header label="Code" asc="code" desc="-code" col="code" locked=True %}
+        {% sort_header label="Name" asc="name" desc="-name" col="name" %}
+        {% sort_header label="Kind" asc="kind" desc="-kind" col="kind" %}
+        {% sort_header label="Storage unit" asc="unit" desc="-unit" col="unit" %}
+        {% sort_header label="Location" asc="path" desc="-path" col="path" %}
         <th scope="col" class="text-end" data-vr-col="slot" data-vr-col-label="Slot">Slot</th>
         <th scope="col" data-vr-col="holds" data-vr-col-label="Holds">Holds</th>
         {% include "storage/_capacity_headers.html" %}
@@ -36,7 +36,7 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
+  {% pagination noun=noun filtered=filtered %}
   {% else %}
   {% if can_manage %}{% url 'storage:node-create' as create_url %}{% endif %}
   {% include "storage/_list_states.html" with title_empty="No racks or shelves yet" body_empty="Add the racks, towers, shelves or canisters of a storage unit; boxes go on the ones with box slots." create_url=create_url create_label="New rack or shelf" %}

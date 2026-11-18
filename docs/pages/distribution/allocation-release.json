@@ -5,6 +5,27 @@
   ],
   "title": "Release allocations",
   "purpose": "Take allocated specimens back out of a request before they are picked.",
+  "summary": "Take allocated specimens back out of a request before they are picked. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Release allocations",
+      "steps": [
+        "Tick the specimens under [[Allocated specimens to release]].",
+        "Enter [[Released at]] and the [[Reason]], then select [[Release allocations]]."
+      ]
+    },
+    {
+      "title": "Release picked specimens",
+      "steps": [
+        "Use Put back on the request instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Their allocation holds are released, so the specimens can be allocated again.",
+    "The specimens stay where they are in storage.",
+    "The reason is kept in each specimen's allocation history."
+  ],
   "sections": [
     {
       "title": "Who can use it",

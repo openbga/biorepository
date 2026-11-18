@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 What's new: every change recorded in changelog.d/, in the groups and order of CHANGELOG.md
 (core.changelog). Reached from the top bar (includes/whats_new_button.html); marks no sidebar item.
@@ -9,7 +9,7 @@ browser had not seen yet, then stores everything as seen; a browser without a ma
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Changes to this application, newest first, grouped by month and ranked by impact.</p>{% endblock %}
 {% block content %}
-<div class="alert alert-info" role="status" data-vr-whats-new-notice hidden>{% include "includes/status.html" with label="New" tone="info" plain=True %}<div><span data-vr-whats-new-notice-text></span></div></div>
+<div class="alert alert-info" role="status" data-vr-whats-new-notice hidden>{% status label="New" tone="info" plain=True %}<div><span data-vr-whats-new-notice-text></span></div></div>
 {% for group in groups %}
 <section class="card mb-3 vr-narrow" aria-labelledby="whats-new-{{ group.key }}-heading">
   <div class="card-header"><h2 class="card-title" id="whats-new-{{ group.key }}-heading">{{ group.label }}</h2><span class="vr-count"><time datetime="{{ group.start|date:'Y-m-d' }}">{{ group.start|date:"Y-m-d" }}</time>{% if group.end != group.start %} to <time datetime="{{ group.end|date:'Y-m-d' }}">{{ group.end|date:"Y-m-d" }}</time>{% endif %} · {{ group.count }} change{{ group.count|pluralize }}</span></div>
@@ -22,7 +22,7 @@ browser had not seen yet, then stores everything as seen; a browser without a ma
         <div class="vr-change-head">
           <span class="vr-change-type">{{ entry.type_label }}</span>
           <span class="vr-change-title">{{ entry.title }}</span>
-          <span data-vr-whats-new-mark hidden>{% include "includes/status.html" with label="New" tone="info" %}</span>
+          <span data-vr-whats-new-mark hidden>{% status label="New" tone="info" %}</span>
         </div>
         <p class="vr-change-meta"><time datetime="{{ entry.date|date:'Y-m-d' }}">{{ entry.date|date:"Y-m-d" }}</time>{% if entry.area %} · {{ entry.area }}{% endif %}{% if entry.pr %} · Change #{{ entry.pr }}{% endif %}</p>
         <div class="vr-change-summary">{{ entry.summary|linebreaks }}</div>
@@ -42,7 +42,7 @@ browser had not seen yet, then stores everything as seen; a browser without a ma
 <section class="card vr-narrow" aria-labelledby="whats-new-heading">
   <div class="card-header"><h2 class="card-title" id="whats-new-heading">Changes</h2></div>
   <div class="card-body">
-    {% include "includes/empty_state.html" with title="No changes recorded yet" body="Changes to the application are listed here, newest first, once they are recorded." %}
+    {% empty_state title="No changes recorded yet" body="Changes to the application are listed here, newest first, once they are recorded." %}
   </div>
 </section>
 {% endfor %}

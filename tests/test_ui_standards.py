@@ -12,22 +12,38 @@ from pathlib import Path
 from django.apps import apps
 from django.conf import settings
 
+from core.templatetags.ui import COMPONENTS
+
 ROOT = Path(settings.BASE_DIR)
 
 # Print documents rendered to PDF carry their own stylesheet; they are not workspace pages.
-# None exist yet.
-DOCUMENTS: set[str] = set()
+DOCUMENTS = {
+    "distribution/templates/distribution/pdf/manifest.html",
+    "distribution/templates/distribution/pdf/pick_list.html",
+    "specimens/templates/specimens/pdf/labels.html",
+}
 
 
 def page_actions(source):
     return "".join(re.findall(r"{% block page_actions %}(.*?){% endblock", source, re.S))
 
 
+PRIMARY_POST_BUTTON = re.compile(
+    r"""{%\s*(?:post_button\b|include\s+["']includes/post_button\.html["'])[^%]*"""
+    r"""\bvariant=["']primary["']"""
+)
+
+
+def primaries(text):
+    """Primary buttons written out, and post_button tags that render one."""
+    return text.count("btn-primary") + len(PRIMARY_POST_BUTTON.findall(text))
+
+
 def most_primaries(source):
-    """btn-primary count on the fullest path through {% if %} branches (they exclude each other)."""
+    """Primary count on the fullest path through {% if %} branches (they exclude each other)."""
     stack, pos = [[0]], 0
     for tag in re.finditer(r"{%\s*(if|elif|else|endif)\b.*?%}", source):
-        stack[-1][-1] += source[pos : tag.start()].count("btn-primary")
+        stack[-1][-1] += primaries(source[pos : tag.start()])
         pos = tag.end()
         if tag.group(1) == "if":
             stack.append([0])
@@ -36,7 +52,7 @@ def most_primaries(source):
             stack[-1][-1] += max(branches)
         elif tag.group(1) != "endif":
             stack[-1].append(0)
-    stack[-1][-1] += source[pos:].count("btn-primary")
+    stack[-1][-1] += primaries(source[pos:])
     return sum(sum(level) for level in stack)
 
 
@@ -94,6 +110,75 @@ RULES = {
         None,  # counted below
         set(),
     ),
+    # Phase 1 component rules (docs/ui-standards.md section 8). Owners ending in "/" are folders.
+    "card-markup": (
+        "Panels and table cards only through {% panel %} (includes/panel.html)",
+        re.compile(r"""class="[^"]*\bcard(?:-header|-body|-footer|-title)?\b"""),
+        {"templates/includes/panel.html", "templates/includes/panel_section.html"},
+    ),
+    "alert-markup": (
+        "Notices only through {% notice %} (includes/notice.html)",
+        re.compile(r"""class="[^"]*\balert\b"""),
+        {"templates/includes/notice.html"},
+    ),
+    "list-state": (
+        "Empty, no-results and filter-error states only through {% list_results %}",
+        re.compile(r"""kind=["']no-results["']"""),
+        {"templates/includes/list_results.html", "templates/includes/empty_state.html"},
+    ),
+    "history-panel": (
+        "History only through {% history_panel %} (includes/history_panel.html)",
+        re.compile(r"\bvr-timeline\b"),
+        {"templates/includes/history_panel.html", "templates/includes/history_item.html"},
+    ),
+    "fact-row": (
+        "Facts only through {% fact %} (includes/fact.html); no hand-written <dt>",
+        re.compile(r"<dt\b"),
+        {"templates/includes/fact.html"},
+    ),
+    "page-meta-list": (
+        "Key facts under the title only through {% page_meta %} (includes/page_meta.html)",
+        re.compile(r"\bvr-page-meta\b"),
+        {"templates/includes/page_meta.html"},
+    ),
+    "raw-input": (
+        "Inputs through form fields or the shared includes (row_select, grid_search, select_all)",
+        re.compile(r"""<input\b(?![^>]*\btype=["']hidden["'])"""),
+        {"templates/includes/", "templates/django/forms/"},
+    ),
+    "required-note": (
+        "The required-fields sentence only through includes/required_note.html",
+        re.compile(r"Fields marked"),
+        {"templates/includes/required_note.html"},
+    ),
+    "form-actions": (
+        "Form action rows only through includes/form_actions.html",
+        re.compile(r"\bvr-form-actions\b"),
+        {"templates/includes/form_actions.html"},
+    ),
+    "component-include": (
+        "Shared components render through their {% load ui %} tags, never a plain include: a tag "
+        "gives the component a context of its own (tests/test_include_isolation.py)",
+        re.compile(
+            r"""{%\s*include\s+["']includes/(?:"""
+            + "|".join(sorted(map(re.escape, COMPONENTS)))
+            + r""")\.html["']"""
+        ),
+        set(),
+    ),
+    "colour-utility": (
+        "Muted text is .vr-muted; no Bootstrap colour utility app.css does not theme",
+        re.compile(
+            r"""(?<=[\s"'])(?:text-(?:muted|body-secondary|body-tertiary|primary|secondary|success|danger"""
+            r"""|warning|info|light|dark|white)|text-bg-[a-z]+|text-[a-z]+-emphasis|bg-[a-z]+-subtle"""
+            r"""|bg-(?:primary|secondary|success|danger|warning|info|dark|body|body-secondary|body-tertiary)"""
+            r"""|border-(?:primary|secondary|success|danger|warning|info|light|dark)"""
+            r"""|link-(?:primary|secondary|success|danger|warning|info|light|dark|body-emphasis)"""
+            r"""|btn-(?:secondary|success|warning|info|light|dark)|btn-outline-(?:success|warning|info|light|dark)"""
+            r"""|table-(?:primary|success|warning|info|dark|active))(?=[\s"'])"""
+        ),
+        set(),
+    ),
 }
 
 # Templates that offend today (2026-11-09), per rule. Delete entries as pages are converted.
@@ -107,6 +192,248 @@ BASELINE = {
     "breadcrumbs": {},
     "toolbar": {},
     "open-view-link": {},
+    # Component rules, pending until the template migration converts each page (2026-11-18).
+    "card-markup": {
+        "distribution/templates/distribution/governance/agreement_detail.html",
+        "distribution/templates/distribution/governance/agreement_list.html",
+        "distribution/templates/distribution/governance/catalogue_list.html",
+        "distribution/templates/distribution/governance/consent_detail.html",
+        "distribution/templates/distribution/governance/consent_list.html",
+        "distribution/templates/distribution/governance/study_detail.html",
+        "distribution/templates/distribution/governance/study_list.html",
+        "distribution/templates/distribution/governance/withdrawal_list.html",
+        "distribution/templates/distribution/requests/_progress.html",
+        "distribution/templates/distribution/requests/pick_list.html",
+        "distribution/templates/distribution/requests/request_detail.html",
+        "distribution/templates/distribution/requests/request_list.html",
+        "distribution/templates/distribution/shipments/_progress.html",
+        "distribution/templates/distribution/shipments/manifest.html",
+        "distribution/templates/distribution/shipments/return_list.html",
+        "distribution/templates/distribution/shipments/shipment_detail.html",
+        "distribution/templates/distribution/shipments/shipment_list.html",
+        "equipment/templates/equipment/due_list.html",
+        "equipment/templates/equipment/equipment_detail.html",
+        "equipment/templates/equipment/equipment_list.html",
+        "equipment/templates/equipment/excursion_detail.html",
+        "equipment/templates/equipment/excursion_list.html",
+        "equipment/templates/equipment/import_detail.html",
+        "equipment/templates/equipment/import_list.html",
+        "equipment/templates/equipment/ln2_list.html",
+        "equipment/templates/equipment/reading_list.html",
+        "quality/templates/quality/training/detail.html",
+        "quality/templates/quality/training/list.html",
+        "specimens/templates/specimens/catalogue_list.html",
+        "specimens/templates/specimens/disposal_detail.html",
+        "specimens/templates/specimens/disposal_list.html",
+        "specimens/templates/specimens/import_detail.html",
+        "specimens/templates/specimens/import_list.html",
+        "specimens/templates/specimens/includes/audit_history.html",
+        "specimens/templates/specimens/label_preview.html",
+        "specimens/templates/specimens/specimen_detail.html",
+        "specimens/templates/specimens/specimen_list.html",
+        "storage/templates/storage/_capacity.html",
+        "storage/templates/storage/_history.html",
+        "storage/templates/storage/_moves.html",
+        "storage/templates/storage/box_detail.html",
+        "storage/templates/storage/box_list.html",
+        "storage/templates/storage/class_detail.html",
+        "storage/templates/storage/class_list.html",
+        "storage/templates/storage/container_type_detail.html",
+        "storage/templates/storage/container_type_list.html",
+        "storage/templates/storage/free_position_list.html",
+        "storage/templates/storage/node_detail.html",
+        "storage/templates/storage/node_list.html",
+        "storage/templates/storage/overview.html",
+        "storage/templates/storage/room_detail.html",
+        "storage/templates/storage/room_list.html",
+        "storage/templates/storage/site_detail.html",
+        "storage/templates/storage/site_list.html",
+        "storage/templates/storage/template_detail.html",
+        "storage/templates/storage/template_list.html",
+        "storage/templates/storage/unit_detail.html",
+        "storage/templates/storage/unit_list.html",
+        "templates/allauth/elements/panel.html",
+        "templates/core/announcement_form.html",
+        "templates/core/announcement_list.html",
+        "templates/core/dashboard.html",
+        "templates/core/record_retention.html",
+        "templates/core/whats_new.html",
+        "templates/quality/audit_detail.html",
+        "templates/quality/audit_list.html",
+        "templates/quality/deviation_detail.html",
+        "templates/quality/deviation_list.html",
+    },
+    "alert-markup": {
+        "distribution/templates/distribution/governance/agreement_detail.html",
+        "distribution/templates/distribution/governance/consent_detail.html",
+        "distribution/templates/distribution/governance/form.html",
+        "distribution/templates/distribution/governance/study_detail.html",
+        "distribution/templates/distribution/requests/_grid_head.html",
+        "distribution/templates/distribution/requests/allocate.html",
+        "distribution/templates/distribution/requests/form.html",
+        "distribution/templates/distribution/requests/put_back.html",
+        "distribution/templates/distribution/requests/request_detail.html",
+        "distribution/templates/distribution/shipments/manifest.html",
+        "distribution/templates/distribution/shipments/shipment_detail.html",
+        "equipment/templates/equipment/equipment_detail.html",
+        "equipment/templates/equipment/excursion_detail.html",
+        "equipment/templates/equipment/excursion_holds.html",
+        "equipment/templates/equipment/form.html",
+        "equipment/templates/equipment/import_detail.html",
+        "specimens/templates/specimens/actions/derive.html",
+        "specimens/templates/specimens/actions/form.html",
+        "specimens/templates/specimens/disposal_detail.html",
+        "specimens/templates/specimens/import_detail.html",
+        "specimens/templates/specimens/specimen_detail.html",
+        "storage/templates/storage/box_detail.html",
+        "storage/templates/storage/node_detail.html",
+        "storage/templates/storage/unit_detail.html",
+        "templates/allauth/elements/alert.html",
+        "templates/core/announcement_form.html",
+        "templates/core/whats_new.html",
+        "templates/includes/form_dialog.html",
+        "templates/quality/audit_detail.html",
+        "templates/quality/complete.html",
+        "templates/quality/form.html",
+    },
+    "list-state": {
+        "distribution/templates/distribution/requests/allocate.html",
+        "specimens/templates/specimens/includes/list_states.html",
+        "storage/templates/storage/_list_states.html",
+        "templates/core/announcement_list.html",
+    },
+    "history-panel": {
+        "distribution/templates/distribution/governance/agreement_detail.html",
+        "distribution/templates/distribution/governance/consent_detail.html",
+        "distribution/templates/distribution/requests/request_detail.html",
+        "distribution/templates/distribution/shipments/shipment_detail.html",
+        "equipment/templates/equipment/excursion_detail.html",
+        "quality/templates/quality/training/detail.html",
+        "specimens/templates/specimens/disposal_detail.html",
+        "specimens/templates/specimens/includes/audit_history.html",
+        "specimens/templates/specimens/specimen_detail.html",
+        "storage/templates/storage/_history.html",
+        "templates/core/announcement_form.html",
+        "templates/core/record_retention.html",
+        "templates/quality/audit_detail.html",
+        "templates/quality/deviation_detail.html",
+    },
+    "fact-row": {
+        "distribution/templates/distribution/governance/agreement_detail.html",
+        "distribution/templates/distribution/governance/consent_detail.html",
+        "distribution/templates/distribution/governance/form.html",
+        "distribution/templates/distribution/governance/study_detail.html",
+        "distribution/templates/distribution/requests/_grid_head.html",
+        "distribution/templates/distribution/requests/form.html",
+        "distribution/templates/distribution/requests/request_detail.html",
+        "distribution/templates/distribution/shipments/manifest.html",
+        "distribution/templates/distribution/shipments/shipment_detail.html",
+        "equipment/templates/equipment/equipment_detail.html",
+        "equipment/templates/equipment/excursion_detail.html",
+        "equipment/templates/equipment/form.html",
+        "quality/templates/quality/training/detail.html",
+        "specimens/templates/specimens/actions/_context.html",
+        "specimens/templates/specimens/disposal_detail.html",
+        "specimens/templates/specimens/specimen_detail.html",
+        "storage/templates/storage/_capacity.html",
+        "storage/templates/storage/box_detail.html",
+        "storage/templates/storage/class_detail.html",
+        "storage/templates/storage/container_type_detail.html",
+        "storage/templates/storage/node_detail.html",
+        "storage/templates/storage/overview.html",
+        "storage/templates/storage/room_detail.html",
+        "storage/templates/storage/site_detail.html",
+        "storage/templates/storage/template_detail.html",
+        "storage/templates/storage/unit_detail.html",
+        "templates/quality/audit_detail.html",
+        "templates/quality/complete.html",
+        "templates/quality/deviation_detail.html",
+        "templates/quality/form.html",
+    },
+    "page-meta-list": {
+        "distribution/templates/distribution/governance/agreement_detail.html",
+        "distribution/templates/distribution/governance/consent_detail.html",
+        "distribution/templates/distribution/governance/study_detail.html",
+        "distribution/templates/distribution/requests/pick_list.html",
+        "distribution/templates/distribution/requests/request_detail.html",
+        "distribution/templates/distribution/shipments/manifest.html",
+        "distribution/templates/distribution/shipments/shipment_detail.html",
+        "equipment/templates/equipment/equipment_detail.html",
+        "equipment/templates/equipment/excursion_detail.html",
+        "equipment/templates/equipment/import_detail.html",
+        "quality/templates/quality/training/detail.html",
+        "specimens/templates/specimens/disposal_detail.html",
+        "specimens/templates/specimens/import_detail.html",
+        "specimens/templates/specimens/label_preview.html",
+        "specimens/templates/specimens/specimen_detail.html",
+        "storage/templates/storage/box_detail.html",
+        "storage/templates/storage/class_detail.html",
+        "storage/templates/storage/container_type_detail.html",
+        "storage/templates/storage/form.html",
+        "storage/templates/storage/node_detail.html",
+        "storage/templates/storage/room_detail.html",
+        "storage/templates/storage/site_detail.html",
+        "storage/templates/storage/template_detail.html",
+        "storage/templates/storage/unit_detail.html",
+        "templates/quality/audit_detail.html",
+        "templates/quality/deviation_detail.html",
+    },
+    "raw-input": {
+        "distribution/templates/distribution/requests/allocate.html",
+        "distribution/templates/distribution/shipments/contents.html",
+        "equipment/templates/equipment/excursion_holds.html",
+        "specimens/templates/specimens/specimen_list.html",
+        "templates/layouts/document.html",
+    },
+    "required-note": {
+        "distribution/templates/distribution/governance/form.html",
+        "distribution/templates/distribution/requests/_grid_head.html",
+        "distribution/templates/distribution/requests/form.html",
+        "equipment/templates/equipment/excursion_holds.html",
+        "equipment/templates/equipment/form.html",
+        "specimens/templates/specimens/actions/derive.html",
+        "specimens/templates/specimens/actions/form.html",
+        "specimens/templates/specimens/catalogue_form.html",
+        "specimens/templates/specimens/import_upload.html",
+        "storage/templates/storage/form.html",
+        "templates/core/announcement_form.html",
+        "templates/quality/complete.html",
+        "templates/quality/form.html",
+    },
+    "form-actions": {
+        "distribution/templates/distribution/governance/form.html",
+        "distribution/templates/distribution/requests/_grid_foot.html",
+        "distribution/templates/distribution/requests/form.html",
+        "equipment/templates/equipment/excursion_holds.html",
+        "equipment/templates/equipment/form.html",
+        "equipment/templates/equipment/import_detail.html",
+        "specimens/templates/specimens/actions/derive.html",
+        "specimens/templates/specimens/actions/form.html",
+        "specimens/templates/specimens/catalogue_form.html",
+        "specimens/templates/specimens/import_detail.html",
+        "specimens/templates/specimens/import_upload.html",
+        "storage/templates/storage/form.html",
+        "templates/allauth/elements/form.html",
+        "templates/allauth/elements/panel.html",
+        "templates/core/announcement_form.html",
+        "templates/quality/complete.html",
+        "templates/quality/form.html",
+    },
+    "component-include": {
+        "templates/account/login.html",
+        "templates/account/request_login_code.html",
+        "templates/allauth/elements/fields.html",
+        "templates/allauth/elements/form.html",
+        "templates/includes/nav_link.html",
+        "templates/includes/theme_menu.html",
+        "templates/includes/user_menu.html",
+        "templates/includes/whats_new_button.html",
+        "templates/layouts/document.html",
+        "templates/layouts/entrance.html",
+    },
+    "colour-utility": {
+        "equipment/templates/equipment/excursion_holds.html",
+    },
 }
 
 
@@ -133,7 +460,7 @@ def offenders():
             continue
         source = strip_comments(source)
         for rule, (_, pattern, owners) in RULES.items():
-            if name in owners:
+            if name in owners or any(o.endswith("/") and name.startswith(o) for o in owners):
                 continue
             if pattern is None:
                 offends = most_primaries(page_actions(source)) > 1
@@ -171,10 +498,14 @@ def test_header_primaries_counts_one_path_through_branches():
     both = f"{primary}{{% if b %}}{primary}{{% endif %}}"
     assert most_primaries(exclusive) == 1
     assert most_primaries(both) == 2
+    post = '{% post_button action=u label="Approve" variant="primary" %}'
+    secondary = '{% post_button action=u label="Withdraw" %}'
+    assert most_primaries(f"{post}{secondary}") == 1
+    assert most_primaries(f"{post}{{% if b %}}{primary}{{% endif %}}") == 2
 
 
 def test_shared_includes_render_their_documented_parameters(rf, django_user_model):
-    """No page uses the new includes yet; render each once so phase D starts from working parts."""
+    """Render each shared include once with its documented parameters."""
     from datetime import UTC, datetime
 
     from django import forms
@@ -251,3 +582,20 @@ def test_shared_includes_render_their_documented_parameters(rf, django_user_mode
     assert ">OpenBGA Biorepository</span>" in brand and "An OpenBGA project" not in brand
     named = render_to_string("includes/brand.html", {"href": "/", "name": "Example Biorepository"})
     assert ">Example Biorepository</span>" in named and "OpenBGA" not in named
+
+
+def test_row_select_ignores_the_page_form():
+    """The page's own `form` must not become the checkbox's form attribute."""
+    from django import forms
+    from django.template import Context, Template
+
+    class PageForm(forms.Form):
+        title = forms.CharField()
+
+    page = Template(
+        '{% load ui %}{% row_select name="specimens" value=1 %}'
+        '{% row_select name="specimens" value=2 form_id="bulk" %}'
+    ).render(Context({"form": PageForm()}))
+    first, second = page.split("<input", 2)[1:]
+    assert "form=" not in first and 'name="title"' not in page
+    assert 'form="bulk"' in second

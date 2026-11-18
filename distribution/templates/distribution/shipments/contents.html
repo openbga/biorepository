@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution_requests specimens %}
+{% load distribution_requests specimens ui %}
 {% comment %}
 Entry grid: choose which picked specimens of the request go in this draft shipment. Offered:
 picked allocations of the request not in another shipment; ticked: those in this one now.
@@ -7,7 +7,7 @@ Unticking takes a specimen out (it stays picked). Context (request_views.shipmen
 form (ContentsForm: allocations, reason, expected_revision), rows [{allocation, checked}],
 shipment, blocked, submit_label, back_url, crumbs, facts.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
@@ -34,7 +34,7 @@ shipment, blocked, submit_label, back_url, crumbs, facts.
       </table>
     </div>
     {% else %}
-    {% include "includes/empty_state.html" with title="No picked specimens available" body="Pick specimens for the request first; a specimen in another shipment of the request is not offered." %}
+    {% empty_state title="No picked specimens available" body="Pick specimens for the request first; a specimen in another shipment of the request is not offered." %}
     {% endif %}
   </fieldset>
   {% include "distribution/requests/_grid_foot.html" %}

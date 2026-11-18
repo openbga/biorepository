@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}Storage overview: repository-wide position counts, occupancy by active storage unit, recent box and rack moves. Every count links to the list it counts. Context: units (annotated with capacity), totals (queries.Capacity), box_count, recent_moves.{% endcomment %}
 {% block page_dateline %}{% include "includes/dateline.html" %}{% endblock %}
 {% block page_intro %}<p class="vr-page-intro">Where there is room, by storage unit.</p>{% endblock %}
@@ -27,12 +27,12 @@
         <td class="text-end vr-id">{{ u.nominal_temperature }}</td>
         <td class="text-end vr-id">{{ u.installed|floatformat:"0g" }}</td>
         <td class="text-end vr-id">{{ u.occupied|floatformat:"0g" }}</td>
-        <td class="text-end vr-id">{% if u.free %}<a href="{% url 'storage:free-position-list' %}?unit={{ u.pk }}">{{ u.free|floatformat:"0g" }}</a>{% elif u.installed %}{% include "includes/status.html" with label="Full" tone="warning" plain=True %}{% else %}<span class="vr-muted">No positions</span>{% endif %}</td>
+        <td class="text-end vr-id">{% if u.free %}<a href="{% url 'storage:free-position-list' %}?unit={{ u.pk }}">{{ u.free|floatformat:"0g" }}</a>{% elif u.installed %}{% status label="Full" tone="warning" plain=True %}{% else %}<span class="vr-muted">No positions</span>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}
   {% if can_manage %}{% url 'storage:unit-create' as create_url %}{% endif %}
-  {% include "includes/empty_state.html" with title="No storage defined yet" body="Define a site, a room and a storage unit, then its racks, shelves and boxes." action_url=create_url action_label="New storage unit" %}
+  {% empty_state title="No storage defined yet" body="Define a site, a room and a storage unit, then its racks, shelves and boxes." action_url=create_url action_label="New storage unit" %}
   {% endif %}
 </section>
 <section class="card vr-table-card mb-3" aria-labelledby="moves-heading">
@@ -42,13 +42,13 @@
     <thead><tr><th scope="col">Moved</th><th scope="col">Moved at</th><th scope="col">From</th><th scope="col">To</th><th scope="col">By</th></tr></thead>
     <tbody>{% for m in recent_moves %}
       <tr>
-        <th scope="row">{% if m.box_id %}<a class="vr-row-link vr-id" href="{% url 'storage:box-detail' m.box_id %}">{{ m.box.code }}</a>{% else %}<a class="vr-row-link vr-id" href="{% url 'storage:node-detail' m.node_id %}">{{ m.node.code }}</a>{% endif %}{% if m.kind == "correction" %} {% include "includes/status.html" with label="Correction" tone="info" plain=True %}{% endif %}</th>
+        <th scope="row">{% if m.box_id %}<a class="vr-row-link vr-id" href="{% url 'storage:box-detail' m.box_id %}">{{ m.box.code }}</a>{% else %}<a class="vr-row-link vr-id" href="{% url 'storage:node-detail' m.node_id %}">{{ m.node.code }}</a>{% endif %}{% if m.kind == "correction" %} {% status label="Correction" tone="info" plain=True %}{% endif %}</th>
         <td class="vr-nowrap"><time datetime="{{ m.occurred_at|date:'c' }}">{{ m.occurred_at|date:"Y-m-d H:i" }}</time></td>
         <td class="vr-id vr-path">{% include "storage/_path.html" with p=m.from_path %}, <span class="vr-path-part">slot {{ m.from_path.slot }}</span></td>
         <td class="vr-id vr-path">{% include "storage/_path.html" with p=m.to_path %}, <span class="vr-path-part">slot {{ m.to_path.slot }}</span></td>
         <td>{{ m.actor.get_full_name|default:m.actor.get_username }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No box or rack moves yet" body="A move of a box or rack with its contents is listed here once recorded." %}{% endif %}
+  {% else %}{% empty_state title="No box or rack moves yet" body="A move of a box or rack with its contents is listed here once recorded." %}{% endif %}
 </section>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% load history %}
-{% block breadcrumbs %}{% url 'quality:audit-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Inventory audits" section_url=list_url current=audit.number %}{% endblock %}
+{% load history ui %}
+{% block breadcrumbs %}{% url 'quality:audit-list' as list_url %}{% breadcrumbs section="Inventory audits" section_url=list_url current=audit.number %}{% endblock %}
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "quality/_status.html" with status=audit.status %}</li><li><a class="vr-id" href="{% url 'storage:box-detail' audit.box_id %}">{{ audit.box_code }}</a></li></ul>{% endblock %}
 {% block page_actions %}
 {% if can_operate %}
@@ -11,9 +11,9 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
-{% if stale %}<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Snapshot changed" tone="warning" plain=True %}<div>Storage changed since this audit began. Cancel it and start a new audit. The original snapshot remains in history.</div></div>{% endif %}
-<div class="alert alert-info" role="status">{% include "includes/status.html" with label="Evidence only" tone="info" plain=True %}<div>Audits never change storage, specimens, quantities, statuses or holds. Follow up discrepancies through the ordinary inventory workflows.</div></div>
+{% page_toc items=toc %}
+{% if stale %}<div class="alert alert-warning" role="status">{% status label="Snapshot changed" tone="warning" plain=True %}<div>Storage changed since this audit began. Cancel it and start a new audit. The original snapshot remains in history.</div></div>{% endif %}
+<div class="alert alert-info" role="status">{% status label="Evidence only" tone="info" plain=True %}<div>Audits never change storage, specimens, quantities, statuses or holds. Follow up discrepancies through the ordinary inventory workflows.</div></div>
 <section class="card mb-3" aria-labelledby="snapshot-heading"><div class="card-header"><h2 class="card-title" id="snapshot-heading">Audit snapshot</h2></div><div class="card-body"><dl class="vr-facts">
   <div><dt>Box</dt><dd>{{ audit.box_code }}</dd></div><div><dt>Location at creation</dt><dd class="vr-id">{{ audit.location.display }}</dd></div><div><dt>Created</dt><dd><time datetime="{{ audit.created_at|date:'c' }}">{{ audit.created_at|date:"Y-m-d H:i T" }}</time> by {{ audit.created_by.get_full_name|default:audit.created_by.get_username }}</dd></div><div><dt>Reason</dt><dd>{{ audit.reason|linebreaksbr }}</dd></div><div><dt>Earlier audit</dt><dd>{% if audit.supersedes %}<a href="{% url 'quality:audit-detail' audit.supersedes_id %}">{{ audit.supersedes.number }}</a>{% else %}None{% endif %}</dd></div>
 </dl></div></section>
@@ -21,10 +21,10 @@
   <div><dt>Finalized</dt><dd><time datetime="{{ final.recorded_at|date:'c' }}">{{ final.recorded_at|date:"Y-m-d H:i T" }}</time> by {{ final.actor.get_full_name|default:final.actor.get_username }}</dd></div><div><dt>Reason</dt><dd>{{ final.reason|linebreaksbr }}</dd></div>
   {% if final.outcome == 'completed' %}<div><dt>Matches</dt><dd>{{ final.counts.match }}</dd></div><div><dt>Missing</dt><dd>{{ final.counts.missing }}</dd></div><div><dt>Unexpected</dt><dd>{{ final.counts.unexpected }}</dd></div><div><dt>Mismatches</dt><dd>{{ final.counts.mismatch }}</dd></div><div><dt>Discrepancy explanation</dt><dd>{{ final.observations.discrepancy_explanation|default:"No discrepancies"|linebreaksbr }}</dd></div>{% endif %}
 </dl><p class="vr-muted">This result is immutable. Record corrections in a new audit of this box, linked to this audit.</p></div></section>{% endif %}
-<section class="card vr-table-card mb-3" aria-labelledby="positions-heading"><div class="card-header"><h2 class="card-title" id="positions-heading">Positions</h2><span class="vr-count">{{ rows|length }}</span>{% include "includes/grid_columns_button.html" with grid="quality.positions" %}</div>
+<section class="card vr-table-card mb-3" aria-labelledby="positions-heading"><div class="card-header"><h2 class="card-title" id="positions-heading">Positions</h2><span class="vr-count">{{ rows|length }}</span>{% grid_columns_button grid="quality.positions" %}</div>
 <div class="vr-table-wrap"><table class="table vr-table" data-vr-grid="quality.positions" data-vr-grid-version="1" aria-labelledby="positions-heading"><thead><tr><th scope="col" data-vr-col="position" data-vr-col-locked="true">Position</th><th scope="col" data-vr-col="expected">Expected accession</th><th scope="col" data-vr-col="blocked">Blocked at snapshot</th><th scope="col" data-vr-col="observed">Observed accession</th><th scope="col" data-vr-col="result">Result</th></tr></thead><tbody>
 {% for row in rows %}<tr><th scope="row" class="vr-id">{{ row.label }}</th><td class="vr-id">{{ row.expected|default:"Empty" }}</td><td>{% if row.blocked %}Yes: {{ row.block_reason }}{% else %}No{% endif %}</td><td class="vr-id">{% if final.outcome == 'completed' %}{{ row.observed|default:"Empty" }}{% else %}Not observed{% endif %}</td><td>{{ row.result|default:"Not recorded"|capfirst }}</td></tr>{% endfor %}
 </tbody></table></div></section>
-<section class="card mb-3" aria-labelledby="history-heading"><div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div><div class="card-body"><ol class="vr-timeline">{% for event in history %}{% include "includes/history_item.html" with title=event.action|action_label at=event.occurred_at actor=event.actor reason=event.reason %}{% endfor %}</ol></div></section>
+<section class="card mb-3" aria-labelledby="history-heading"><div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div><div class="card-body"><ol class="vr-timeline">{% for event in history %}{% history_item title=event.action|action_label at=event.occurred_at actor=event.actor reason=event.reason %}{% endfor %}</ol></div></section>
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=audit.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=audit.number %}{% endblock %}

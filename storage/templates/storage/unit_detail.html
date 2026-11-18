@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% load storage_labels %}
+{% load storage_labels ui %}
 {% comment %}A storage unit: facts, occupancy, its racks and shelves, its boxes, history. Context: unit (annotated with capacity), nodes, (equipment link when that app is installed), boxes, status_label, status_tone, retire_blocked, history, can_manage, can_operate.{% endcomment %}
-{% block breadcrumbs %}{% url 'storage:unit-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Storage units" section_url=list_url current=unit.code %}{% endblock %}
+{% block breadcrumbs %}{% url 'storage:unit-list' as list_url %}{% breadcrumbs section="Storage units" section_url=list_url current=unit.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ unit.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% include "includes/status.html" with label=status_label tone=status_tone %}</li><li>{{ unit.name }}</li><li>{{ unit.get_technology_display }}</li><li>{{ unit.nominal_temperature }} {{ unit.temperature_unit }} nominal</li></ul>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ unit.name }}</li><li>{{ unit.get_technology_display }}</li><li>{{ unit.nominal_temperature }} {{ unit.temperature_unit }} nominal</li></ul>{% endblock %}
 {% block page_actions %}
 {% if can_manage and unit.is_active %}
 {% if retire_blocked %}<button class="btn btn-outline-danger" type="button" disabled aria-describedby="retire-why">Retire storage unit</button>{% else %}<a class="btn btn-outline-danger" href="{% url 'storage:retire' 'unit' unit.pk %}">Retire storage unit</a>{% endif %}
@@ -13,7 +13,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if not unit.is_active %}<div class="alert alert-secondary" role="status">{% include "includes/status.html" with label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ unit.retired_at|date:'c' }}">{{ unit.retired_at|date:"Y-m-d H:i" }}</time> by {{ unit.retired_by.get_full_name|default:unit.retired_by.get_username }}: {{ unit.retirement_reason }}</div></div>{% endif %}
+{% if not unit.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ unit.retired_at|date:'c' }}">{{ unit.retired_at|date:"Y-m-d H:i" }}</time> by {{ unit.retired_by.get_full_name|default:unit.retired_by.get_username }}: {{ unit.retirement_reason }}</div></div>{% endif %}
 <section class="card mb-3" aria-labelledby="unit-facts">
   <div class="card-header"><h2 class="card-title" id="unit-facts">Storage unit</h2></div>
   <div class="card-body"><dl class="vr-facts">
@@ -31,7 +31,7 @@
 </section>
 {% include "storage/_capacity.html" with c=unit %}
 <section class="card vr-table-card mb-3" aria-labelledby="unit-nodes">
-  <div class="card-header"><h2 class="card-title" id="unit-nodes">Racks and shelves</h2><span class="vr-count">{{ nodes|length }}</span>{% if can_manage and unit.is_active %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?unit={{ unit.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Add rack or shelf</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="unit-nodes">Racks and shelves</h2><span class="vr-count">{{ nodes|length }}</span>{% if can_manage and unit.is_active %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?unit={{ unit.pk }}">{% icon name="plus-lg" %}Add rack or shelf</a>{% endif %}</div>
   {% if nodes %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Kind</th><th scope="col">Location</th><th scope="col" class="text-end">Slot</th><th scope="col">Holds</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th><th scope="col">Status</th></tr></thead>
@@ -46,7 +46,7 @@
         <td>{% include "storage/_status.html" with obj=row plain=True %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No racks or shelves yet" body="Add the racks, towers, shelves or canisters this unit holds. Boxes go on nodes with box slots." %}{% endif %}
+  {% else %}{% empty_state title="No racks or shelves yet" body="Add the racks, towers, shelves or canisters this unit holds. Boxes go on nodes with box slots." %}{% endif %}
 </section>
 <section class="card vr-table-card mb-3" aria-labelledby="unit-boxes">
   <div class="card-header"><h2 class="card-title" id="unit-boxes">Boxes</h2><span class="vr-count">{{ boxes|length }} active</span></div>
@@ -62,8 +62,8 @@
         <td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{{ row.free }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="No boxes in this unit" body="Add boxes from a rack or shelf with box slots." %}{% endif %}
+  {% else %}{% empty_state title="No boxes in this unit" body="Add boxes from a rack or shelf with box slots." %}{% endif %}
 </section>
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=unit.code %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=unit.code %}{% endblock %}

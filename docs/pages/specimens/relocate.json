@@ -5,6 +5,27 @@
   ],
   "title": "Relocate specimen",
   "purpose": "Move a stored specimen from its position to a different free position, or record the correction of a movement that was recorded wrongly.",
+  "summary": "Move a stored specimen to a different free position, or record the correction of a movement recorded wrongly.",
+  "tasks": [
+    {
+      "title": "Move the specimen",
+      "steps": [
+        "Choose the new [[Box]] and type the [[Position]] label.",
+        "Enter [[Moved at]] and the [[Reason]], then select [[Relocate specimen]]."
+      ]
+    },
+    {
+      "title": "Correct a wrong movement",
+      "steps": [
+        "Admin and manager: choose the earlier movement in [[This corrects a wrong movement]], then save the right position."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The old position is freed and the new one taken in one step.",
+    "Movements are never edited. A correction adds a new movement linked to the wrong one.",
+    "To move a whole box or rack, use Storage instead."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

@@ -1,8 +1,8 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}A rack, tower, shelf or canister: facts, occupancy, its slots (child nodes or boxes), moves, history. Context: node (annotated), chain (top-level node down to it), slots or box_slots [(slot, node/box or None)], status_label, status_tone, retire_blocked, moves, history, can_manage, can_operate.{% endcomment %}
-{% block breadcrumbs %}{% url 'storage:node-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Racks and shelves" section_url=list_url current=node.code %}{% endblock %}
+{% block breadcrumbs %}{% url 'storage:node-list' as list_url %}{% breadcrumbs section="Racks and shelves" section_url=list_url current=node.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ node.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% include "includes/status.html" with label=status_label tone=status_tone %}</li><li>{{ node.get_kind_display }}</li><li>{{ node.name }}</li><li class="vr-id">{{ node.unit.code }}</li></ul>{% endblock %}
+{% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ node.get_kind_display }}</li><li>{{ node.name }}</li><li class="vr-id">{{ node.unit.code }}</li></ul>{% endblock %}
 {% block page_actions %}
 {% if node.is_active %}
 {% if can_manage %}
@@ -14,7 +14,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if not node.is_active %}<div class="alert alert-secondary" role="status">{% include "includes/status.html" with label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ node.retired_at|date:'c' }}">{{ node.retired_at|date:"Y-m-d H:i" }}</time> by {{ node.retired_by.get_full_name|default:node.retired_by.get_username }}: {{ node.retirement_reason }}</div></div>{% endif %}
+{% if not node.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ node.retired_at|date:'c' }}">{{ node.retired_at|date:"Y-m-d H:i" }}</time> by {{ node.retired_by.get_full_name|default:node.retired_by.get_username }}: {{ node.retirement_reason }}</div></div>{% endif %}
 <section class="card mb-3" aria-labelledby="node-facts">
   <div class="card-header"><h2 class="card-title" id="node-facts">{{ node.get_kind_display }}</h2></div>
   <div class="card-body"><dl class="vr-facts">
@@ -29,7 +29,7 @@
 {% include "storage/_capacity.html" with c=node %}
 {% if node.box_slots %}
 <section class="card vr-table-card mb-3" aria-labelledby="node-slots">
-  <div class="card-header"><h2 class="card-title" id="node-slots">Box slots</h2><span class="vr-count">{{ node.box_count }} of {{ node.box_slots }} used</span>{% if can_manage and node.is_active and node.box_count < node.box_slots %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:box-create' %}?node={{ node.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Add box</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="node-slots">Box slots</h2><span class="vr-count">{{ node.box_count }} of {{ node.box_slots }} used</span>{% if can_manage and node.is_active and node.box_count < node.box_slots %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:box-create' %}?node={{ node.pk }}">{% icon name="plus-lg" %}Add box</a>{% endif %}</div>
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col" class="text-end">Slot</th><th scope="col">Box</th><th scope="col">Container type</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for slot, box in box_slots %}
@@ -42,7 +42,7 @@
 </section>
 {% else %}
 <section class="card vr-table-card mb-3" aria-labelledby="node-slots">
-  <div class="card-header"><h2 class="card-title" id="node-slots">Node slots</h2><span class="vr-count">{{ node.child_count }} of {{ node.child_slots }} used</span>{% if can_manage and node.is_active and node.child_count < node.child_slots %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?parent={{ node.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Add {% if node.kind == "shelf" %}rack{% else %}shelf{% endif %}</a>{% endif %}</div>
+  <div class="card-header"><h2 class="card-title" id="node-slots">Node slots</h2><span class="vr-count">{{ node.child_count }} of {{ node.child_slots }} used</span>{% if can_manage and node.is_active and node.child_count < node.child_slots %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?parent={{ node.pk }}">{% icon name="plus-lg" %}Add {% if node.kind == "shelf" %}rack{% else %}shelf{% endif %}</a>{% endif %}</div>
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col" class="text-end">Slot</th><th scope="col">Holds</th><th scope="col">Kind</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for slot, child in slots %}
@@ -57,4 +57,4 @@
 {% include "storage/_moves.html" with noun=node.get_kind_display|lower kind="node" obj=node %}
 {% include "storage/_history.html" %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=node.code %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=node.code %}{% endblock %}

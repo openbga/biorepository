@@ -5,6 +5,30 @@
   ],
   "title": "Complete audit",
   "purpose": "Record or load what was physically observed at every position, review the observations and freeze the comparison results.",
+  "summary": "Record or load what was physically observed at every position, review it and freeze the comparison results.",
+  "tasks": [
+    {
+      "title": "Record observations by hand",
+      "steps": [
+        "For each position choose Empty or Accession in [[Observed contents]] and type the [[Observed accession]].",
+        "Give the [[Completion reason]], and the [[Discrepancy explanation]] if anything differs.",
+        "Select [[Complete audit]]."
+      ]
+    },
+    {
+      "title": "Load observations from a file",
+      "steps": [
+        "Choose the file in [[Scanner CSV (optional)]] and select [[Load observations]].",
+        "Review the loaded grid, then complete the audit."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Every position needs an explicit observation, including empty ones.",
+    "Loading a file does not finish the audit or save a draft. Leaving the page loses unsaved values.",
+    "The file format is a project format. Native scanner output is not verified.",
+    "Completing changes no inventory."
+  ],
   "sections": [
     {
       "title": "Access and prerequisites",

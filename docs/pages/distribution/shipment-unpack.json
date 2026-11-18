@@ -5,6 +5,26 @@
   ],
   "title": "Unpack",
   "purpose": "Return a packed shipment to draft to change its contents or declarations.",
+  "summary": "Return a packed shipment to draft to change its contents or declarations.",
+  "tasks": [
+    {
+      "title": "Unpack the shipment",
+      "steps": [
+        "Give the [[Reason]] and select [[Unpack]]."
+      ]
+    },
+    {
+      "title": "Pack it again",
+      "steps": [
+        "Change what is needed, then select Pack on the shipment."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The stored specimen versions, packer and checker are cleared.",
+    "Its specimens stay picked and in the shipment.",
+    "The reason is kept in the timeline."
+  ],
   "sections": [
     {
       "title": "Who can use it",
