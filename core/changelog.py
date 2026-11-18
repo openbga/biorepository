@@ -3,7 +3,7 @@
 Each changelog.d/YYYY-MM-DD-slug.md file has flat `key: value` front matter between `---` lines
 (date, type, impact, title; optional area, link, pr), then a plain-text summary for the people who
 use the application and an optional `## Technical notes` section for deployers. The how-to is the
-`changelog` skill (skills/changelog/SKILL.md).
+`changelog` skill (.agents/skills/changelog/SKILL.md).
 
 The same entries feed CHANGELOG.md (`manage.py changelog` writes it, `--check` fails when it is
 stale) and the What's new page (core.views.whats_new). The deployment has no version tags, so

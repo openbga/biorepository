@@ -4,7 +4,7 @@
     uv run python manage.py changelog --check  exit non-zero when an entry is invalid, a link
                                                names no page, or CHANGELOG.md is stale
 
-The skill skills/changelog/SKILL.md says when an entry is needed and how to write it.
+The skill .agents/skills/changelog/SKILL.md says when an entry is needed and how to write it.
 """
 
 from django.core.management.base import BaseCommand, CommandError

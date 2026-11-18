@@ -39,3 +39,6 @@ build/
 *.egg-info/
 .DS_Store
 .idea/
+.claude/*
+!.claude/skills
+!.claude/rules

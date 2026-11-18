@@ -56,14 +56,14 @@ Follow [Local development](README.md#local-development) in the README. You need 
   custody and history, position uniqueness and concurrency, disposal and distribution gates and exact quantities. Do not add tests that only restate framework behaviour or templates.
 - **Update the page help.** Every page has operator help under `docs/pages/`. When a page, form,
   field, action, permission, filter or workflow rule changes, update its help in the same pull
-  request. The [`document-page` skill](skills/document-page/SKILL.md) describes the standard and
+  request. The [`document-page` skill](.agents/skills/document-page/SKILL.md) describes the standard and
   `tests/test_page_docs.py` checks coverage.
 - Follow the [UI standards](docs/ui-standards.md) for templates, navigation and tables.
 - **Record the change for What's new.** Every change that users, deployers or integrators can
   observe (a feature, fix, removal, security fix, migration, setting, dependency or upgrade step)
   adds one file in `changelog.d/` and regenerates `CHANGELOG.md` with
   `uv run python manage.py changelog`. Never edit `CHANGELOG.md` by hand. The
-  [`changelog` skill](skills/changelog/SKILL.md) describes the format, how to rate impact and how
+  [`changelog` skill](.agents/skills/changelog/SKILL.md) describes the format, how to rate impact and how
   to word the entry. A pull request with nothing observable (refactoring, tests, CI,
   documentation) says so; a maintainer then adds the `no-changelog` label.
 - Migrations must stay backward compatible with the previous release. Never edit a migration
@@ -143,3 +143,21 @@ keep third-party notices intact (see [Third-party notices](THIRD_PARTY_NOTICES.m
 [`AGENTS.md`](AGENTS.md) holds the working rules for AI coding agents in this repository. They
 are the same rules as above, in more detail. If you use an agent, you remain responsible for
 the change you submit.
+
+### Agent tooling
+
+Shared agent instructions live in `.agents/`. `.claude/skills` and `.claude/rules` are symlinks
+to `.agents/skills` and `.agents/rules`, so agents that read either directory load the same
+files. `.claude/` itself stays a real directory for personal, untracked settings.
+
+| Kind | File | Use |
+|---|---|---|
+| Skill | [`build-page`](.agents/skills/build-page/SKILL.md) | Building or changing any page, form, dialog or template: page types, `{% load ui %}` components, the Cryo tokens, controls, lists, icons |
+| Skill | [`document-page`](.agents/skills/document-page/SKILL.md) | Writing or updating the in-app page help in `docs/pages/` |
+| Skill | [`changelog`](.agents/skills/changelog/SKILL.md) | Writing the `changelog.d/` entry of a change, rating its impact, regenerating `CHANGELOG.md` |
+| Skill | [`project-code-review`](.agents/skills/project-code-review/SKILL.md) | The pre-PR gate: diff review against `AGENTS.md` and the UI rules, fixes, the CI checks, browser journeys, before/after screenshots |
+| Rule | [`backend.md`](.agents/rules/backend.md) | The helpers behind the backend rules: roles and approval permissions, audited transitions, append-only events, position occupancy, exact quantities, migrations, tests |
+| Rule | [`frontend.md`](.agents/rules/frontend.md) | Short frontend rules: components, tokens, icons, controls, the form dialog, page help |
+
+Before/after screenshots for pull requests come from `scripts/ui_compare/capture.py` (see its
+README and the `project-code-review` skill).

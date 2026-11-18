@@ -624,4 +624,4 @@ right panel. It explains the page's purpose, actions, fields and workflow rules.
 navigation and remembers its width and open/closed state for each account in this browser.
 Drag its left edge or focus the separator and use the arrow keys to resize; use its close button
 or Escape from inside the panel to close it. Contributors use the
-[`document-page` skill](../skills/document-page/SKILL.md) to update help with each page change.
+[`document-page` skill](../.agents/skills/document-page/SKILL.md) to update help with each page change.

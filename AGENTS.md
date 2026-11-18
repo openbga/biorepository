@@ -79,7 +79,7 @@ standards sources are fine. New spending or access changes require maintainer au
 
 ## Page documentation
 
-Use [`document-page`](skills/document-page/SKILL.md) whenever a page, form, displayed field,
+Use [`document-page`](.agents/skills/document-page/SKILL.md) whenever a page, form, displayed field,
 action, tab, permission, filter or underlying workflow rule changes. Update its help under
 `docs/pages/` in the same increment. `core/page_docs.py` defines the content contract and route
 selection; `tests/test_page_docs.py` enforces coverage. Verify changed help beside the rendered
@@ -90,4 +90,4 @@ page.
 Every change that users, deployers or integrators can observe adds an entry file in
 `changelog.d/` in the same change and regenerates `CHANGELOG.md` (never edited by hand); a
 change with nothing observable says so in the pull request. How: the
-[`changelog`](skills/changelog/SKILL.md) skill.
+[`changelog`](.agents/skills/changelog/SKILL.md) skill.

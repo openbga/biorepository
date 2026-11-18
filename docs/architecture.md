@@ -42,7 +42,7 @@ controls and reset. No Ajax row API, server preference model, or second table/qu
 
 OpenBGA Biorepository is the sibling of OpenBGA Environmental LIMS and deliberately shares its platform layer:
 `config/`, `accounts/`, `core/`, root `templates/` and `static/`, the `e2e/` harness, platform
-tests, `skills/document-page`, `docs/ui-standards.md`, CI and deployment files. Keep those files as
+tests, the agent skills and rules in `.agents/`, `docs/ui-standards.md`, CI and deployment files. Keep those files as
 close to the Environmental LIMS originals as the rename allows, so fixes can move between the two products
 as patches. The bootstrap of 2026-11-12 is the baseline for that comparison.
 
