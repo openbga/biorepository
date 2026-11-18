@@ -82,9 +82,10 @@ def distribution_status(kind, value, plain=False):
 
 
 @register.simple_tag
-def status_parts(kind, value):
-    """{% status_parts "request" request.status as st %}: the label and tone distribution_status
-    shows, for a {% notice tone=st.tone label=st.label %} that opens with the record's status."""
+def distribution_status_parts(kind, value):
+    """{% distribution_status_parts "request" request.status as st %}: the label and tone
+    distribution_status shows, for a {% notice tone=st.tone label=st.label %} that opens with the
+    record's status. Named per app: a template loading several libraries keeps the last tag."""
     return {"label": MODELS[kind](value).label, "tone": TONES[kind][value]}
 
 

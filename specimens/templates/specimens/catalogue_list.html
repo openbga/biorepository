@@ -10,11 +10,11 @@ export_url, can_manage.
 {% block page_actions %}<a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% icon name="download" %}Export CSV</a>{% if can_manage %}<a class="btn btn-primary" href="{{ create_url }}">{% icon name="plus-lg" %}New {{ noun }}</a>{% endif %}{% endblock %}
 {% block content %}
 {% section_tabs "specimen-catalogues" %}
-<section class="card vr-table-card" aria-labelledby="catalogue-heading">
-  <h2 class="visually-hidden" id="catalogue-heading">{{ tab }}</h2>
+{% panel heading_id="catalogue-heading" table=True hidden_title=True %}{% fill title %}{{ tab }}{% endfill %}
   {% with grid_key="specimens.catalogue-"|add:kind %}
   {% if kind == "participant" %}{% grid_toolbar label="Filter "|add:plural q=q placeholder="Code" inline=inline grid=grid_key %}{% else %}{% grid_toolbar label="Filter "|add:plural q=q placeholder="Code or name" inline=inline grid=grid_key %}{% endif %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% firstof create_url as action_url %}{% firstof "New "|add:noun as create_label %}{% firstof "Specimens are registered with entries from these catalogues." as empty_body %}{% else %}{% firstof "A repository manager adds the entries specimens are registered with." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=plural filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="Nothing in this catalogue yet" empty_body=empty_body action_url=action_url action_label=create_label no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="{{ grid_key }}" data-vr-grid-version="1" aria-labelledby="catalogue-heading">
       <thead><tr>
@@ -37,10 +37,7 @@ export_url, can_manage.
       </tbody>
     </table>
   </div>
-  {% pagination noun=plural filtered=filtered %}
-  {% else %}
-  {% if can_manage %}{% with create_label="New "|add:noun %}{% include "specimens/includes/list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="Specimens are registered with entries from these catalogues." create_url=create_url create_label=create_label %}{% endwith %}{% else %}{% include "specimens/includes/list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="A repository manager adds the entries specimens are registered with." %}{% endif %}
-  {% endif %}
+  {% endlist_results %}
   {% endwith %}
-</section>
+{% endpanel %}
 {% endblock %}

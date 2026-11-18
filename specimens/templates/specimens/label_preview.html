@@ -6,19 +6,16 @@ library SVG of a validated identifier). Context: stock (labels.LabelStock), item
 [{specimen, barcode, problem}], error, printable, query (the id parameters for the PDF).
 {% endcomment %}
 {% block breadcrumbs %}{% url 'specimens:specimen-list' as list_url %}{% breadcrumbs section="Specimens" section_url=list_url current="Labels" %}{% endblock %}
-{% block page_meta %}{% if items %}<ul class="vr-page-meta"><li>{{ items|length }} label{{ items|length|pluralize }}</li><li>Stock {{ stock.description }}</li></ul>{% endif %}{% endblock %}
+{% block page_meta %}{% if items %}{% page_meta %}{% meta_item label="Labels" value=items|length class="vr-id" %}{% meta_item label="Stock" value=stock.description %}{% endpage_meta %}{% endif %}{% endblock %}
 {% block page_actions %}{% if printable %}<a class="btn btn-primary" href="{% url 'specimens:label-pdf' %}?{{ query }}">{% icon name="download" %}Download PDF</a>{% endif %}{% endblock %}
 {% block content %}
 {% if error %}
-<section class="card" aria-labelledby="labels-heading">
-  <div class="card-header"><h2 class="card-title" id="labels-heading">Labels</h2></div>
-  <div class="card-body">{% url 'specimens:specimen-list' as list_url %}{% empty_state kind="error" title="No labels to preview" body=error action_url=list_url action_label="Choose specimens" %}</div>
-</section>
+{% panel title="Labels" heading_id="labels-heading" %}
+{% url 'specimens:specimen-list' as list_url %}{% empty_state kind="error" title="No labels to preview" body=error action_url=list_url action_label="Choose specimens" %}
+{% endpanel %}
 {% else %}
-<section class="card" aria-labelledby="labels-heading">
-  <div class="card-header"><h2 class="card-title" id="labels-heading">Labels</h2><span class="vr-count">{{ items|length }}</span></div>
-  <div class="card-body">
-    <p class="vr-muted small">Print at actual size. Labels show the specimen ID only. Stock: {{ stock.description }}.</p>
+{% panel title="Labels" heading_id="labels-heading" %}{% fill count %}{{ items|length }}{% endfill %}
+<p class="vr-muted small">Print at actual size. Labels show the specimen ID only. Stock: {{ stock.description }}.</p>
     <ul class="list-unstyled d-flex flex-wrap gap-3 mb-0">
       {% for item in items %}
       <li class="border p-2">
@@ -31,7 +28,6 @@ library SVG of a validated identifier). Context: stock (labels.LabelStock), item
       </li>
       {% endfor %}
     </ul>
-  </div>
-</section>
+{% endpanel %}
 {% endif %}
 {% endblock %}

@@ -23,5 +23,5 @@ None, tab, list_url, submit_label, in_use_note, history (AuditEvents, newest fir
     <button class="btn btn-primary" type="submit">{{ submit_label }}</button>
   </div>
 </form>
-{% if obj %}{% include "specimens/includes/audit_history.html" %}{% endif %}
+{% if obj %}{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}{% endif %}
 {% endblock %}

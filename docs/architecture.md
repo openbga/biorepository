@@ -111,6 +111,12 @@ Intentional divergences from Environmental LIMS (keep this list current):
   covers every registered component, and `tests/test_ui_standards.py` also counts
   `{% post_button variant="primary" %}` as a primary action.
 - `_event_extra.html` history extras emit block lines inside the item's `.vr-timeline-meta`.
+- Cross-app presentation seams (2026-11-18), one registry per seam, filled in `AppConfig.ready`;
+  neither side imports the other's models, views or forms: `storage.pathbar.EXCURSION_SOURCES`
+  (equipment registers the units with an open excursion for the path bar census) and
+  `specimens.record_links.DISTRIBUTION_SOURCES` (distribution registers
+  `record_rows.specimen_rows(user, specimen)`, which returns nothing unless the user may read
+  distribution). The box map's held wells come through the existing `{% attach_specimens %}` seam.
 - `core/grids.py` exposes the sorted queryset before pagination so the training register
   and its CSV share the same ordering, including ties.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control

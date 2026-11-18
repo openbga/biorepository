@@ -20,11 +20,11 @@ can_manage, can_operate, can_decide.
 {% block content %}
 {% page_toc items=toc %}
 {% if request_obj.status == "submitted" %}
-{% status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}Submission {{ request_obj.latest_submission }} awaits a decision by a person with request decision permission who did not create or submit it.{% if refusal %} {{ refusal }}{% endif %}{% endnotice %}
+{% distribution_status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}Submission {{ request_obj.latest_submission }} awaits a decision by a person with request decision permission who did not create or submit it.{% if refusal %} {{ refusal }}{% endif %}{% endnotice %}
 {% elif request_obj.status == "returned" %}
-{% status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}The decision returned it for changes. Edit it and submit it again.{% endnotice %}
+{% distribution_status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}The decision returned it for changes. Edit it and submit it again.{% endnotice %}
 {% elif request_obj.status == "draft" and request_obj.latest_submission %}
-{% status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}Reopened after a decision. It needs a new decision; its allocations cannot be picked, packed or dispatched until then.{% endnotice %}
+{% distribution_status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}Reopened after a decision. It needs a new decision; its allocations cannot be picked, packed or dispatched until then.{% endnotice %}
 {% elif request_obj.status == "approved" and not request_obj.agreement %}
 {% notice tone="warning" label="No agreement" %}Dispatch needs an executed agreement with {{ request_obj.institution.name }} that is valid on the dispatch date.{% if can_manage %} Link one with Link agreement.{% endif %}{% endnotice %}
 {% endif %}

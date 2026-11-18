@@ -32,9 +32,9 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
 {% block content %}
 {% page_toc items=toc %}
 {% if excursion.status == "review" %}
-{% status_parts "excursion" excursion.status as st %}{% notice tone=st.tone label=st.label %}Submitted <time datetime="{{ excursion.submitted_at|date:'c' }}">{{ excursion.submitted_at|date:"Y-m-d H:i" }}</time> by {{ excursion.submitted_by|person }}. A manager or administrator who did not submit it reviews and closes it.{% endnotice %}
+{% equipment_status_parts "excursion" excursion.status as st %}{% notice tone=st.tone label=st.label %}Submitted <time datetime="{{ excursion.submitted_at|date:'c' }}">{{ excursion.submitted_at|date:"Y-m-d H:i" }}</time> by {{ excursion.submitted_by|person }}. A manager or administrator who did not submit it reviews and closes it.{% endnotice %}
 {% elif excursion.status == "closed" %}
-{% status_parts "excursion" excursion.status as st %}{% notice tone=st.tone label=st.label %}Reviewed and closed <time datetime="{{ excursion.closed_at|date:'c' }}">{{ excursion.closed_at|date:"Y-m-d H:i" }}</time> by {{ excursion.closed_by|person }}: {{ excursion.closure_note }}{% endnotice %}
+{% equipment_status_parts "excursion" excursion.status as st %}{% notice tone=st.tone label=st.label %}Reviewed and closed <time datetime="{{ excursion.closed_at|date:'c' }}">{{ excursion.closed_at|date:"Y-m-d H:i" }}</time> by {{ excursion.closed_by|person }}: {{ excursion.closure_note }}{% endnotice %}
 {% endif %}
 
 {% panel title="Excursion" heading_id="facts-heading" class="mb-3" %}<dl class="vr-facts">

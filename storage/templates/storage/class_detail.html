@@ -2,7 +2,7 @@
 {% comment %}A storage class (catalogue). Context: obj (annotated unit_count), crumbs, units, history, can_manage.{% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ obj.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% include "storage/_status.html" with obj=obj catalogue=True %}{% endmeta_item %}{% meta_item label="Name" value=obj.name %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:class-edit' obj.pk %}">Edit</a>{% endif %}{% endblock %}
 {% block content %}
 {% panel title="Storage class" heading_id="class-facts" class="mb-3" %}
@@ -20,7 +20,7 @@
     <tbody>{% for u in units %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a></th><td>{{ u.name }}</td><td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td><td>{% include "storage/_status.html" with obj=u plain=True %}</td></tr>{% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No storage units use this class" %}{% endif %}
 {% endpanel %}
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=obj.code %}{% endblock %}

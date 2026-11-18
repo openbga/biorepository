@@ -69,6 +69,24 @@ def hold_status(scope, plain=False):
     return {"label": label, "tone": "hold", "plain": plain}
 
 
+@register.simple_tag
+def status_parts(kind, value):
+    """{label, tone} of a status, for components that open with it ({% notice %}):
+    {% status_parts "request" state as st %}{% notice tone=st.tone label=st.label %}…"""
+    if kind == "specimen":
+        label, tone = SPECIMEN_STATES[value.status]
+    elif kind == "request":
+        label, tone = REQUEST_STATES[value]
+    elif kind == "import":
+        label, tone = IMPORT_STATES[value]
+    elif kind == "hold":
+        label = Hold.Scope(value).label if value in Hold.Scope.values else str(value)
+        tone = "hold"
+    else:
+        raise ValueError(f"Unknown status kind {kind!r}.")
+    return {"label": label, "tone": tone}
+
+
 @register.filter
 def amount(value, unit=None):
     """Exact decimal without trailing zeros, with the unit code: 0.500000 -> '0.5 mL'."""

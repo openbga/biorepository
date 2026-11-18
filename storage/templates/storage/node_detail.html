@@ -2,7 +2,7 @@
 {% comment %}A rack, tower, shelf or canister: facts, occupancy, its slots (child nodes or boxes), moves, history. Context: node (annotated), chain (top-level node down to it), slots or box_slots [(slot, node/box or None)], status_label, status_tone, retire_blocked, moves, history, can_manage, can_operate.{% endcomment %}
 {% block breadcrumbs %}{% url 'storage:node-list' as list_url %}{% breadcrumbs section="Racks and shelves" section_url=list_url current=node.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ node.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ node.get_kind_display }}</li><li>{{ node.name }}</li><li class="vr-id">{{ node.unit.code }}</li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% status label=status_label tone=status_tone size="lg" %}{% endmeta_item %}{% meta_item label="Kind" value=node.get_kind_display %}{% meta_item label="Name" value=node.name %}{% meta_item label="Unit" value=node.unit.code class="vr-id" %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if node.is_active %}
 {% if can_manage %}
@@ -14,7 +14,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if not node.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ node.retired_at|date:'c' }}">{{ node.retired_at|date:"Y-m-d H:i" }}</time> by {{ node.retired_by.get_full_name|default:node.retired_by.get_username }}: {{ node.retirement_reason }}</div></div>{% endif %}
+{% if not node.is_active %}{% notice tone="neutral" label="Retired" %}Retired <time datetime="{{ node.retired_at|date:'c' }}">{{ node.retired_at|date:"Y-m-d H:i" }}</time> by {{ node.retired_by.get_full_name|default:node.retired_by.get_username }}: {{ node.retirement_reason }}{% endnotice %}{% endif %}
 {% panel heading_id="node-facts" class="mb-3" %}{% fill title %}{{ node.get_kind_display }}{% endfill %}
 <dl class="vr-facts">
     {% fact label="Code" class="vr-id" %}{{ node.code }}{% endfact %}
@@ -52,7 +52,7 @@
 {% endpanel %}
 {% endif %}
 {% include "storage/_moves.html" with noun=node.get_kind_display|lower kind="node" obj=node %}
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=node.code %}{% endblock %}

@@ -15,7 +15,7 @@ categories), consent_counts [(status, label, count)], consent_total, toc, histor
 {% block content %}
 {% page_toc items=toc %}
 {% if study.status != "active" %}
-{% status_parts "study" study.status as st %}{% notice tone=st.tone label=st.label %}Material governed by this study cannot be allocated, picked, packed or dispatched while the study is {{ study.get_status_display|lower }}.{% endnotice %}
+{% distribution_status_parts "study" study.status as st %}{% notice tone=st.tone label=st.label %}Material governed by this study cannot be allocated, picked, packed or dispatched while the study is {{ study.get_status_display|lower }}.{% endnotice %}
 {% endif %}
 
 {% panel title="Study" heading_id="facts-heading" class="mb-3" %}<dl class="vr-facts">

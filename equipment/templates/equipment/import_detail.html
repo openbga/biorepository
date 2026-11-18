@@ -14,9 +14,9 @@ form (ImportCommitForm), crumbs, can_operate.
 {% notice tone="warning" label="Check" %}{{ warning }}{% endnotice %}
 {% endfor %}
 {% if state == "rejected" %}
-{% status_parts "import" state as st %}{% notice tone=st.tone label=st.label blocking=True %}{% if batch.errors %}Nothing can be recorded from this file. Correct the errors below in your file and upload it again.{% else %}The file has no readings.{% endif %}{% endnotice %}
+{% equipment_status_parts "import" state as st %}{% notice tone=st.tone label=st.label blocking=True %}{% if batch.errors %}Nothing can be recorded from this file. Correct the errors below in your file and upload it again.{% else %}The file has no readings.{% endif %}{% endnotice %}
 {% elif state == "expired" %}
-{% status_parts "import" state as st %}{% notice tone=st.tone label=st.label %}This check expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to check it against the current register.{% endnotice %}
+{% equipment_status_parts "import" state as st %}{% notice tone=st.tone label=st.label %}This check expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to check it against the current register.{% endnotice %}
 {% endif %}
 
 {% if batch.errors %}

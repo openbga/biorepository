@@ -7,10 +7,10 @@ with .state, .name, .error_total), filter_form, q, sort, active_filters, filtere
 {% block page_intro %}<p class="vr-page-intro">Register many specimens from a CSV file: validate first, then commit all rows or none.</p>{% endblock %}
 {% block page_actions %}<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% icon name="plus-lg" %}Upload CSV</a>{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="imports-heading">
-  <h2 class="visually-hidden" id="imports-heading">Imports</h2>
+{% panel title="Imports" heading_id="imports-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter imports" q=q placeholder="File name" grid="specimens.imports" %}
-  {% if page_obj.paginator.count %}
+  {% url 'specimens:import-upload' as create_url %}
+  {% list_results items=page_obj noun="imports" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No imports yet" empty_body="Download the CSV template, fill one row per specimen and upload it. Nothing is registered until you commit a valid file." action_url=create_url action_label="Upload CSV" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.imports" data-vr-grid-version="1" aria-labelledby="imports-heading">
       <thead><tr>
@@ -35,10 +35,6 @@ with .state, .name, .error_total), filter_form, q, sort, active_filters, filtere
       </tbody>
     </table>
   </div>
-  {% pagination noun="imports" filtered=filtered %}
-  {% else %}
-  {% url 'specimens:import-upload' as create_url %}
-  {% include "specimens/includes/list_states.html" with title_empty="No imports yet" body_empty="Download the CSV template, fill one row per specimen and upload it. Nothing is registered until you commit a valid file." create_url=create_url create_label="Upload CSV" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

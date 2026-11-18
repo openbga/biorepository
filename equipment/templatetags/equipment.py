@@ -45,9 +45,10 @@ def import_status(state, plain=False):
 
 
 @register.simple_tag
-def status_parts(kind, value):
-    """{% status_parts "excursion" excursion.status as st %}: the label and tone the matching status
-    tag shows, for a {% notice tone=st.tone label=st.label %} opening with the record's status."""
+def equipment_status_parts(kind, value):
+    """{% equipment_status_parts "excursion" excursion.status as st %}: the label and tone the
+    matching status tag shows, for a {% notice tone=st.tone label=st.label %} opening with the
+    record's status."""
     if kind == "equipment":
         return {"label": Equipment.Status(value).label, "tone": EQUIPMENT_TONES[value]}
     if kind == "excursion":

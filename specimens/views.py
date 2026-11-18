@@ -27,7 +27,7 @@ from storage import pathbar
 from storage import queries as storage_queries
 from storage.forms import apply_errors
 
-from . import exports, importing, labels, queries, services
+from . import exports, importing, labels, queries, record_links, services
 from .action_views import refusal
 from .list_forms import (
     CatalogueFilter,
@@ -149,8 +149,17 @@ def specimen_list(request):
     page_obj = _page(queryset, grid)
     rows = list(page_obj.object_list)
     paths = queries.locations_for(actor=request.user, specimens=rows) if rows else {}
+    # How long each checked-out row has been out, for its clock: one query for the page.
+    out_since = dict(
+        CustodyEvent.objects.filter(
+            pk__in=[row.open_checkout_id for row in rows if row.open_checkout_id]
+        ).values_list("pk", "occurred_at")
+    )
+    now = timezone.now()
     for row in rows:
         row.path = paths.get(row.pk)
+        since = out_since.get(row.open_checkout_id)
+        row.out_for = queries.format_duration(now - since) if since else ""
     page_obj.object_list = rows
     query = _without_page(request)
     return render(
@@ -451,6 +460,7 @@ def specimen_detail(request, pk):
             "returned": returned,
             "away_now": away_now,
             "distribution_links": distribution_links(specimen),
+            "distribution_rows": record_links.distribution_rows(user, specimen),
             "disposals": disposals,
             "open_request": open_request,
             "execution": execution,

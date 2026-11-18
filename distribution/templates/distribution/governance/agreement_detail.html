@@ -26,9 +26,9 @@ edit_reason, terminate_reason, toc, history, can_manage.
 {% block content %}
 {% page_toc items=toc %}
 {% if agreement.status == "terminated" %}
-{% status_parts "agreement" agreement.status as st %}{% notice tone=st.tone label=st.label %}Terminated from <time datetime="{{ agreement.terminated_on|date:'Y-m-d' }}">{{ agreement.terminated_on|date:"Y-m-d" }}</time>. Nothing can be dispatched under it from that date.{% endnotice %}
+{% distribution_status_parts "agreement" agreement.status as st %}{% notice tone=st.tone label=st.label %}Terminated from <time datetime="{{ agreement.terminated_on|date:'Y-m-d' }}">{{ agreement.terminated_on|date:"Y-m-d" }}</time>. Nothing can be dispatched under it from that date.{% endnotice %}
 {% elif agreement.status == "draft" %}
-{% status_parts "agreement" agreement.status as st %}{% notice tone=st.tone label=st.label %}Not executed. A request can be linked to it, but nothing can be dispatched under it until its execution is recorded and it is in effect.{% endnotice %}
+{% distribution_status_parts "agreement" agreement.status as st %}{% notice tone=st.tone label=st.label %}Not executed. A request can be linked to it, but nothing can be dispatched under it until its execution is recorded and it is in effect.{% endnotice %}
 {% endif %}
 
 {% panel title="Agreement" heading_id="facts-heading" class="mb-3" %}<dl class="vr-facts">

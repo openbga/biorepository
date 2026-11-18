@@ -1,8 +1,8 @@
-{% comment %}Position capacity facts of a unit, room, node or box. Parameters: c (object with installed, blocked_count or blocked, usable, occupied, free), heading_id. Counts positions in active boxes only; retired structure is never free capacity.{% endcomment %}
+{% load ui %}{% comment %}Position capacity facts of a unit, room, node or box. Parameters: c (object with installed, blocked_count or blocked, usable, occupied, free), heading_id. Counts positions in active boxes only; retired structure is never free capacity.{% endcomment %}
 {% panel title="Occupancy" heading_id="{{ heading_id|default:'capacity-heading' }}" class="mb-3" %}
 <dl class="vr-facts">
       {% fact label="Positions" class="vr-id" %}{{ c.installed|floatformat:"0g" }}{% endfact %}
-      {% fact label="Blocked" class="vr-id" %}{% firstof c.blocked_count c.blocked 0 %}{% endfact %}
+      {% fact label="Blocked" class="vr-id" %}{% firstof c.blocked_count c.blocked as blocked %}{{ blocked|default:0 }}{% endfact %}
       {% fact label="Occupied" class="vr-id" %}{{ c.occupied|floatformat:"0g" }}{% endfact %}
       {% fact label="Free" class="vr-id" %}{{ c.free|floatformat:"0g" }}{% endfact %}
     </dl>

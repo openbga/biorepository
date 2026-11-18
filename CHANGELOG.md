@@ -146,6 +146,10 @@ The same list is shown in the application under What's new.
 
   Printed pick lists and shipment manifests take the new look in black and white. A manifest printed before dispatch now shows its "Not dispatched" watermark, which was hidden before.
 
+- **Added:** Specimen records list their requests and consents; box maps mark holds (2026-11-18)
+
+  A specimen's record lists the requests it was allocated to and its participant's consents, each with its status, for people who may read distribution. The box map marks specimens on hold and counts them.
+
 - **Changed:** Status labels show an icon for their tone (2026-11-18)
 
   Every status label now carries an icon for its tone, so colour is never the only cue. A box with no blocked positions now shows 0 blocked instead of a blank.

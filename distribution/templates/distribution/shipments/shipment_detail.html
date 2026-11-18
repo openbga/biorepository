@@ -21,9 +21,9 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
 {% if shipment.state == "packed" and dispatch_blockers %}
 {% notice tone="warning" label="Dispatch would be refused now" %}<ul class="mb-0 ps-3">{% for accession, blockers in dispatch_blockers %}<li><span class="vr-id">{{ accession }}</span>: {% for b in blockers %}{{ b.message }}{% if not forloop.last %} {% endif %}{% endfor %}</li>{% endfor %}</ul>{% endnotice %}
 {% elif shipment.state == "dispatched" %}
-{% status_parts "shipment" shipment.state as st %}{% notice tone=st.tone label=st.label %}Its specimens are outside the repository. Record the receipt when the recipient reports it.{% endnotice %}
+{% distribution_status_parts "shipment" shipment.state as st %}{% notice tone=st.tone label=st.label %}Its specimens are outside the repository. Record the receipt when the recipient reports it.{% endnotice %}
 {% elif shipment.state == "cancelled" %}
-{% status_parts "shipment" shipment.state as st %}{% notice tone=st.tone label=st.label %}Cancelled. Its specimens stayed picked for the request; the record and its timeline are kept.{% endnotice %}
+{% distribution_status_parts "shipment" shipment.state as st %}{% notice tone=st.tone label=st.label %}Cancelled. Its specimens stayed picked for the request; the record and its timeline are kept.{% endnotice %}
 {% endif %}
 {% include "distribution/shipments/_progress.html" %}
 

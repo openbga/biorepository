@@ -135,7 +135,8 @@ def test_box_page_shows_grid_states(client, tree, people):
     content = client.get(reverse("storage:box-detail", args=[tree.box.pk])).content.decode()
     assert "Occupied" in content and str(item.pk)[:8] in content
     assert content.count('id="position-') == 81
-    assert "data-vr-blocked-count>0</dd>" in content  # zero is shown, not left blank
+    blocked = 'data-state="blocked"></span>Blocked</dt><dd class="vr-id">0</dd>'
+    assert blocked in content  # zero is shown, not left blank
 
 
 def test_manager_defines_storage_through_the_forms(client, tree, people):
@@ -390,6 +391,26 @@ def test_box_wells_and_table_name_specimens_through_the_specimens_tag(client, pe
     # A reader without a staff role cannot open the page at all.
     client.force_login(people["nobody"])
     assert client.get(detail).status_code == 403
+    # A specimen under an active hold shows as held, and the key counts it.
+    from django.utils import timezone
+
+    from specimens import services as specimen_services
+
+    assert 'data-state="held"></span>On hold</dt><dd class="vr-id">0</dd>' in page
+    held = sum(1 for _ in re.finditer(r'<td id="position-[^"]+" data-state="held"', page))
+    assert held == 0
+    specimen_services.place_hold(
+        actor=m,
+        specimen_id=specimen.pk,
+        expected_revision=specimen.revision,
+        scope="use",
+        occurred_at=timezone.now(),
+        reason="Synthetic quality check",
+    )
+    client.force_login(people["viewer"])
+    page = client.get(detail).content.decode()
+    assert re.search(rf'<td id="position-{position.pk}" data-state="held"', page)
+    assert 'data-state="held"></span>On hold</dt><dd class="vr-id">1</dd>' in page
 
 
 def test_box_and_unit_pages_render_without_the_specimens_and_equipment_apps(

@@ -8,10 +8,10 @@ Selecting rows prints their labels (label preview, at most max_labels).
 {% endcomment %}
 {% block page_actions %}<a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% icon name="download" %}Export CSV</a>{% if can_operate %}<a class="btn btn-primary" href="{% url 'specimens:specimen-create' %}">{% icon name="plus-lg" %}Register specimen</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="specimens-heading">
-  <h2 class="visually-hidden" id="specimens-heading">Specimens</h2>
+{% panel title="Specimens" heading_id="specimens-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter specimens" q=q placeholder="Specimen ID, participant or collection code" inline=inline more=more more_open=more_open grid="specimens.specimens" %}
-  {% if page_obj.paginator.count %}
+  {% if can_operate %}{% url 'specimens:specimen-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun="specimens" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No specimens registered yet" empty_body="Register a specimen, or import many at once from a CSV file." action_url=create_url action_label="Register specimen" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <form method="get" action="{% url 'specimens:label-preview' %}" aria-label="Print labels for selected specimens">
     <div class="vr-bulkbar">
       <button class="btn btn-sm btn-outline-secondary" type="submit">{% icon name="printer" %}Print labels</button>
@@ -38,12 +38,12 @@ Selecting rows prints their labels (label preview, at most max_labels).
           <tr>
             <td><input class="form-check-input" type="checkbox" name="id" value="{{ row.pk }}" aria-label="Select {{ row.accession }}"></td>
             <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' row.pk %}">{{ row.accession }}</a></th>
-            <td class="vr-nowrap">{% specimen_status row plain=True %}{% if row.held %} {% status label="On hold" tone="hold" plain=True %}{% endif %}</td>
+            <td class="vr-nowrap">{% specimen_status row plain=True held=True %}</td>
             <td>{{ row.specimen_type.name }}</td>
             <td class="text-end vr-id vr-nowrap">{{ row.quantity_on_hand|amount:row.unit }}</td>
             <td class="vr-id">{{ row.participant.code|default:"—" }}</td>
             <td class="vr-id">{{ row.collection.code|default:"—" }}</td>
-            <td class="vr-id vr-path">{% if row.path %}{% include "storage/_path.html" with p=row.path %}{% elif row.open_checkout_id %}<span class="vr-muted">Checked out</span>{% elif row.status == "distributed" %}<span class="vr-muted">Distributed: outside the repository</span>{% else %}<span class="vr-muted">Not in storage</span>{% endif %}</td>
+            <td class="vr-id vr-path">{% if row.path %}{% include "storage/_path.html" with p=row.path %}{% elif row.open_checkout_id %}<span class="vr-muted">Checked out</span> · {% clock value=row.out_for running=True label="Out of storage for" %}{% elif row.status == "distributed" %}<span class="vr-muted">Distributed: outside the repository</span>{% else %}<span class="vr-muted">Not in storage</span>{% endif %}</td>
             <td>{% if row.custodian %}{{ row.custodian.get_full_name|default:row.custodian.get_username }}{% else %}<span class="vr-muted">Outside the repository</span>{% endif %}</td>
             <td class="vr-nowrap"><time datetime="{{ row.collected_at|date:'c' }}">{{ row.collected_at|date:"Y-m-d H:i" }}</time></td>
             <td class="vr-nowrap"><time datetime="{{ row.registered_at|date:'c' }}">{{ row.registered_at|date:"Y-m-d H:i" }}</time></td>
@@ -53,10 +53,6 @@ Selecting rows prints their labels (label preview, at most max_labels).
       </table>
     </div>
   </form>
-  {% pagination noun="specimens" filtered=filtered %}
-  {% else %}
-  {% if can_operate %}{% url 'specimens:specimen-create' as create_url %}{% endif %}
-  {% include "specimens/includes/list_states.html" with title_empty="No specimens registered yet" body_empty="Register a specimen, or import many at once from a CSV file." create_url=create_url create_label="Register specimen" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

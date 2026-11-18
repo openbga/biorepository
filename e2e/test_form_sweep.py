@@ -36,6 +36,7 @@ from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import Page, expect
 from test_sweeps import LINKS, local, shape
 
+from accounts.models import User
 from core.form_surfaces import FORM_SURFACES
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -165,9 +166,38 @@ OPENED = """opener => {
 }"""
 
 
+# What the sweep's accounts need to confirm access (set by the test: password, app secret).
+SESSION = {}
+
+
+def confirm_access(page: Page) -> None:
+    """Answer allauth's recent-authentication step: the password, or a code from the app."""
+    if page.get_by_label("Password").count():
+        page.get_by_label("Password").fill(SESSION["password"])
+        page.get_by_role("button", name="Confirm").click()
+    else:
+        page.get_by_label("Code").fill(totp_code())
+        page.get_by_role("button", name="Confirm").click()
+
+
+def totp_code() -> str:
+    from allauth.mfa.totp.internal.auth import (
+        format_hotp_value,
+        hotp_value,
+        yield_hotp_counters_from_time,
+    )
+
+    return format_hotp_value(hotp_value(SESSION["secret"], next(yield_hotp_counters_from_time())))
+
+
 def ready(page: Page, opener: str = ""):
     if opener:
         outcome = page.wait_for_function(OPENED, arg=opener, timeout=10000).json_value()
+        if outcome.startswith("left:") and "reauthenticate" in outcome:
+            # By design: a two-factor change asks to confirm access on its own page first,
+            # then opens in the dialog (tests/test_form_dialog.py guards that).
+            confirm_access(page)
+            outcome = "dialog"
         if outcome.startswith("left:"):
             raise LeftPage(outcome[5:])
     dialog = page.locator("#vr-form-dialog")
@@ -236,6 +266,33 @@ DESCRIBE_FOCUS = """() => {
     if (!el || !el.closest('#vr-form-dialog')) return 'outside: ' + (el ? el.tagName : '');
     return el.outerHTML.slice(0, 80);
 }"""
+
+
+def enter(page: Page, account: str, live_server) -> None:
+    """Sign in as one of the sweep's accounts."""
+    from sweep_states import NO_PASSWORD, WITH_APP
+
+    if account == NO_PASSWORD:  # no usable password: a session made on the server
+        from django.test import Client
+
+        client = Client()
+        client.force_login(User.objects.get(username=account))
+        page.context.add_cookies(
+            [
+                {
+                    "name": "sessionid",
+                    "value": client.cookies["sessionid"].value,
+                    "url": live_server.url,
+                }
+            ]
+        )
+        page.goto("/")
+        return
+    sign_in(page, account, SESSION["password"])
+    if account == WITH_APP:
+        page.get_by_label("Code").fill(totp_code())
+        page.get_by_role("button", name="Sign In").click()
+        page.wait_for_load_state()
 
 
 def leave(page: Page) -> None:
@@ -415,13 +472,34 @@ def fill_and_submit(page: Page, item: dict, notes: dict) -> None:
 
 
 def test_every_form_opens_and_works_by_mouse_and_keyboard(page: Page, full_demo, live_server):
+    from sweep_states import prepare
+
     base = live_server.url
+    SESSION["password"] = full_demo
+    openers, SESSION["secret"] = prepare(full_demo)
+    apps = selected_apps()
     found = {}
     for account in ("demo_manager", "demo_admin"):
-        sign_in(page, account, full_demo)
-        discover(page, base, account, found, selected_apps())
+        enter(page, account, live_server)
+        discover(page, base, account, found, apps)
         leave(page)
-    apps = selected_apps()
+    # Forms the crawl did not reach: open the page prepared for them, as the account that can.
+    pending = {}
+    for route, (account, opener) in openers.items():
+        if (route not in found or account not in ("demo_manager", "demo_admin")) and (
+            not apps or app_of(route) in apps
+        ):
+            pending.setdefault(account, []).append((route, opener))
+    for account, routes in pending.items():
+        enter(page, account, live_server)
+        for route, opener in routes:
+            page.goto(opener)
+            for href, _nav in page.evaluate(LINKS):
+                target = local(href, base, page.url)
+                if target and form_route(target) == route:
+                    found[route] = {"account": account, "opener": opener, "href": href}
+                    break
+        leave(page)
     items = sorted(
         (dict(route=route, **info) for route, info in found.items()),
         key=lambda i: (bool(STATE_CHANGE.search(i["route"])), i["route"]),
@@ -430,12 +508,16 @@ def test_every_form_opens_and_works_by_mouse_and_keyboard(page: Page, full_demo,
         items = [i for i in items if app_of(i["route"]) in apps]
     assert items, "the crawl found no form links"
     problems, report = [], {}
+    not_linked = sorted(
+        route for route in set(FORM_SURFACES) - set(found) if not apps or app_of(route) in apps
+    )
+    problems += [f"{route}: no page links this form for the sweep to open" for route in not_linked]
     by_account = {}
     for item in items:
         by_account.setdefault(item["account"], []).append(item)
     for phase in ("checks", "submit"):
         for account, group in by_account.items():
-            sign_in(page, account, full_demo)
+            enter(page, account, live_server)
             for item in group:
                 notes = report.setdefault(item["route"], {"opener": item["opener"]})
                 steps = (
@@ -469,7 +551,7 @@ def test_every_form_opens_and_works_by_mouse_and_keyboard(page: Page, full_demo,
     if os.environ.get("FORM_SWEEP_REPORT"):
         with open(os.environ["FORM_SWEEP_REPORT"], "w") as handle:
             json.dump(
-                {"forms": report, "not_linked": sorted(set(FORM_SURFACES) - set(found))},
+                {"forms": report, "not_linked": not_linked},
                 handle,
                 indent=2,
             )

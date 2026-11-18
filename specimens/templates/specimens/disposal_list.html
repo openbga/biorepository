@@ -8,10 +8,9 @@ no New button.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Every disposal needs approval by a different person with disposal approval.</p>{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="disposals-heading">
-  <h2 class="visually-hidden" id="disposals-heading">Disposal requests</h2>
+{% panel title="Disposal requests" heading_id="disposals-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter disposal requests" q=q placeholder="Specimen ID" inline=inline grid="specimens.disposals" %}
-  {% if page_obj.paginator.count %}
+  {% list_results items=page_obj noun="disposal requests" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No disposal requests yet" empty_body="Request a disposal from the specimen's record. It is listed here until it is approved and recorded." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.disposals" data-vr-grid-version="1" aria-labelledby="disposals-heading">
       <thead><tr>
@@ -38,9 +37,6 @@ no New button.
       </tbody>
     </table>
   </div>
-  {% pagination noun="disposal requests" filtered=filtered %}
-  {% else %}
-  {% include "specimens/includes/list_states.html" with title_empty="No disposal requests yet" body_empty="Request a disposal from the specimen's record. It is listed here until it is approved and recorded." %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

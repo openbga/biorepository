@@ -3,7 +3,7 @@
 {% comment %}A storage unit: facts, occupancy, its racks and shelves, its boxes, history. Context: unit (annotated with capacity), nodes, (equipment link when that app is installed), boxes, status_label, status_tone, retire_blocked, history, can_manage, can_operate.{% endcomment %}
 {% block breadcrumbs %}{% url 'storage:unit-list' as list_url %}{% breadcrumbs section="Storage units" section_url=list_url current=unit.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ unit.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ unit.name }}</li><li>{{ unit.get_technology_display }}</li><li>{{ unit.nominal_temperature }} {{ unit.temperature_unit }} nominal</li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% status label=status_label tone=status_tone size="lg" %}{% endmeta_item %}{% meta_item label="Name" value=unit.name %}{% meta_item label="Technology" value=unit.get_technology_display %}{% meta_item label="Nominal" class="vr-id" %}{{ unit.nominal_temperature }} {{ unit.temperature_unit }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if can_manage and unit.is_active %}
 {% if retire_blocked %}<button class="btn btn-outline-danger" type="button" disabled aria-describedby="retire-why">Retire storage unit</button>{% else %}<a class="btn btn-outline-danger" href="{% url 'storage:retire' 'unit' unit.pk %}">Retire storage unit</a>{% endif %}
@@ -13,7 +13,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if not unit.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ unit.retired_at|date:'c' }}">{{ unit.retired_at|date:"Y-m-d H:i" }}</time> by {{ unit.retired_by.get_full_name|default:unit.retired_by.get_username }}: {{ unit.retirement_reason }}</div></div>{% endif %}
+{% if not unit.is_active %}{% notice tone="neutral" label="Retired" %}Retired <time datetime="{{ unit.retired_at|date:'c' }}">{{ unit.retired_at|date:"Y-m-d H:i" }}</time> by {{ unit.retired_by.get_full_name|default:unit.retired_by.get_username }}: {{ unit.retirement_reason }}{% endnotice %}{% endif %}
 {% panel title="Storage unit" heading_id="unit-facts" class="mb-3" %}
 <dl class="vr-facts">
     {% fact label="Code" class="vr-id" %}{{ unit.code }}{% endfact %}
@@ -61,7 +61,7 @@
     </tbody></table></div>
   {% else %}{% empty_state title="No boxes in this unit" body="Add boxes from a rack or shelf with box slots." %}{% endif %}
 {% endpanel %}
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=unit.code %}{% endblock %}

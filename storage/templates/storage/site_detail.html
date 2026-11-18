@@ -2,7 +2,7 @@
 {% comment %}A site: facts, rooms, history. Context: site, rooms (annotated with capacity), status_label, status_tone, history, can_manage.{% endcomment %}
 {% block breadcrumbs %}{% url 'storage:site-list' as list_url %}{% breadcrumbs section="Sites" section_url=list_url current=site.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ site.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ site.name }}</li><li>{{ site.timezone }}</li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% status label=status_label tone=status_tone size="lg" %}{% endmeta_item %}{% meta_item label="Name" value=site.name %}{% meta_item label="Time zone" value=site.timezone %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:site-edit' site.pk %}">Edit</a>{% endif %}{% endblock %}
 {% block content %}
 {% panel title="Site" heading_id="site-facts" class="mb-3" %}
@@ -22,7 +22,7 @@
     {% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No rooms yet" body="Add the rooms where this site's storage units stand." %}{% endif %}
 {% endpanel %}
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=site.code %}{% endblock %}
