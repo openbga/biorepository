@@ -32,11 +32,11 @@ from .action_views import refusal
 from .list_forms import (
     CatalogueFilter,
     CatalogueForm,
-    DisposalFilter,
     ImportCommitForm,
     ImportUploadForm,
     ListFilter,
     SpecimenFilter,
+    disposal_selection,
     label_ids,
 )
 from .models import (
@@ -500,31 +500,32 @@ def specimen_detail(request, pk):
 
 # --- disposal requests ----------------------------------------------------------------------
 
-DISPOSAL_COLUMNS = {"recorded_at": "recorded_at", "specimen": "specimen__accession"}
-
 
 @staff_role_required(*READ)
 def disposal_list(request):
-    grid = _grid(request, DISPOSAL_COLUMNS, "-recorded_at")
-    if grid is None:
-        return HttpResponseBadRequest("Invalid page size. Choose 25, 50 or 100.")
-    approver = can_approve_disposal(request.user)
-    form = DisposalFilter(request.GET, approver=approver)
-    if form.is_valid():
-        queryset = queries.disposal_queryset(form.filters(request.user))
-        chips = _chips(request, form)
-    else:
-        queryset, chips = DisposalRequest.objects.none(), []
-    page_obj = grid.page(queryset, DISPOSAL_COLUMNS)
+    try:
+        grid, form, rows = disposal_selection(request.user, request.GET)
+    except ValueError as exc:
+        return HttpResponseBadRequest(str(exc))
+    page_obj = _page(rows, grid)
     page_obj.object_list = queries.with_states(page_obj.object_list)
+    chips = _chips(request, form) if form.is_valid() else []
     inline = [form["state"], form["mine"]]
-    if approver:
+    if "awaiting_me" in form.fields:
         inline.append(form["awaiting_me"])
+    over_limit = page_obj.paginator.count > exports.MAX_ROWS
+    export_url = None
+    if form.is_valid() and not over_limit:
+        export_url = reverse(
+            "specimens:disposal-export", query={**form.filters(), "sort": grid.sort}
+        )
     return render(
         request,
         "specimens/disposal_list.html",
         {
             "page_title": "Disposal requests",
+            "export_url": export_url,
+            "exceeded_export_limit": f"{exports.MAX_ROWS:,}" if over_limit else "",
             "page_obj": page_obj,
             "filter_form": form,
             "q": request.GET.get("q", "").strip(),
@@ -535,6 +536,18 @@ def disposal_list(request):
             **flags(request.user),
         },
     )
+
+
+@staff_role_required(*READ)
+@require_GET
+def disposal_export(request):
+    try:
+        content = exports.export_disposals(actor=request.user, params=request.GET)
+    except ValidationError as exc:
+        return HttpResponseBadRequest(
+            " ".join(exc.messages), content_type="text/plain; charset=utf-8"
+        )
+    return _csv(content, "disposal-requests.csv")
 
 
 @staff_role_required(*READ)

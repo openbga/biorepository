@@ -9,6 +9,8 @@ import uuid
 from django import forms
 from django.core.exceptions import ValidationError
 
+from accounts.roles import can_approve_disposal
+from core.grids import GridRequest
 from storage.forms import GroupedForm
 from storage.models import Box
 
@@ -17,13 +19,14 @@ from .labels import MAX_LABELS
 from .models import (
     NO_IDENTIFYING_TEXT,
     Collection,
+    DisposalRequest,
     Participant,
     QuantityUnit,
     Specimen,
     SpecimenContainerType,
     SpecimenType,
 )
-from .queries import DISPOSAL_STATES
+from .queries import DISPOSAL_STATES, disposal_queryset
 
 PAGE_SIZES = [(size, f"{size} rows") for size in (25, 50, 100)]
 YES_NO = [("", "Any"), ("yes", "Yes"), ("no", "No")]
@@ -141,13 +144,36 @@ class DisposalFilter(ListFilter):
                 label="Awaiting my approval", required=False
             )
 
-    def filters(self, actor):
+    def clean(self):
+        # An unchecked personal filter allows every requester. Omit it from the applied chips.
+        return {name: value for name, value in super().clean().items() if value is not False}
+
+    def filters(self):
         data = self.cleaned_data
-        filters = {"actor": actor}
+        filters = {}
         for name in ("q", "state", "mine", "awaiting_me"):
             if data.get(name):
                 filters[name] = data[name]
         return filters
+
+
+DISPOSAL_COLUMNS = {"recorded_at": "recorded_at", "specimen": "specimen__accession"}
+
+
+def disposal_selection(actor, params):
+    """Bind the register and download to the same actor, filters and total ordering."""
+    grid = GridRequest.parse(params, DISPOSAL_COLUMNS, "-recorded_at")
+    form = DisposalFilter(params, approver=can_approve_disposal(actor))
+    if set(params) - (form.fields.keys() | {"page"}):
+        form.add_error(None, "This filter is unavailable. Clear the filters and try again.")
+    if params.get("sort", grid.sort) != grid.sort:
+        form.add_error(None, "Choose Request or Specimen to sort.")
+    rows = (
+        disposal_queryset({**form.filters(), "actor": actor})
+        if form.is_valid()
+        else DisposalRequest.objects.none()
+    )
+    return grid, form, grid.ordered(rows, DISPOSAL_COLUMNS)
 
 
 class CatalogueFilter(ListFilter):

@@ -80,6 +80,10 @@ The same list is shown in the application under What's new.
 
   Distribution and quality records open with their status and labelled key facts, one main action with the rest under More, and their history in its own panels. Institutions, investigators and specimen types show their names before their codes.
 
+- **Added:** Export the disposal request register (2026-11-18, Disposal requests)
+
+  In Disposal requests, staff can download all matching requests in the selected order. The CSV includes each request’s current state, requester and decision maker.
+
 - **Added:** Export the filtered deviation register (2026-11-18, Deviations)
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
@@ -150,6 +154,10 @@ The same list is shown in the application under What's new.
 - **Changed:** Ongoing excursions show a running clock and their extreme (2026-11-18)
 
   Ongoing temperature excursions show a running clock, and their extreme temperature beside the unit's nominal temperature.
+
+- **Fixed:** Page help describes the specimen lookup and What's new link as they work (2026-11-18)
+
+  The help for the top bar now says that Find specimen ID opens the specimen with that ID, or the specimen list with a warning when none matches, and that the field is hidden on very narrow screens. The What's new help says the link appears on signed-in pages.
 
 - **Fixed:** Pick lists and manifests take the new look; draft manifests show their watermark (2026-11-18)
 

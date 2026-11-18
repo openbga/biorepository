@@ -682,12 +682,26 @@ def disposal_queryset(filters):
     if set(filters) - DISPOSAL_FILTERS:
         raise ValidationError("Unknown filter.", code="invalid")
     queryset = DisposalRequest.objects.select_related(
-        "specimen__unit",
-        "specimen__occupancy",
-        "specimen__specimen_type",
-        "requested_by",
-        "decision__actor",
-        "execution__actor",
+        "specimen__occupancy", "requested_by", "decision__actor", "execution"
+    ).only(
+        "recorded_at",
+        "method",
+        "destination",
+        "specimen_revision",
+        "occupancy_revision",
+        "specimen__accession",
+        "specimen__revision",
+        "specimen__occupancy__revision",
+        "requested_by__username",
+        "requested_by__first_name",
+        "requested_by__last_name",
+        "decision__decision",
+        "decision__approved_revision",
+        "decision__approved_occupancy_revision",
+        "decision__actor__username",
+        "decision__actor__first_name",
+        "decision__actor__last_name",
+        "execution__id",
     )
     if text := (filters.get("q") or "").strip():
         queryset = queryset.filter(specimen__accession__icontains=text)

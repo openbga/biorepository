@@ -44,7 +44,7 @@ application's page help and in [workflows](workflows.md).
 | Consent basis per study | Either individual consent records, or a recorded study-level determination (for example a waiver) that covers material without a record. A recorded refusal or withdrawal blocks in both cases |
 | Material without a consent basis | No participant, no collection, or a collection no study governs: cannot be requested, allocated or sent. There is no override; a wrong record is corrected with a reason |
 | Who records consent and withdrawal | Administrator and repository manager |
-| Withdrawal escalation | A manager can append a destruction instruction to an active no-further-use withdrawal without reinstating consent or releasing holds. Disposal still requires ordinary requests and separate approval. The original withdrawal and escalation recorders cannot reinstate it; any new consent used for reinstatement must be recorded after the escalation |
+| Withdrawal escalation | A manager can append a destruction instruction to an active no-further-use withdrawal without reinstating consent or releasing holds. Disposal still requires ordinary requests and separate approval; nothing is disposed of, recalled or contacted automatically. Whoever recorded the withdrawal, the escalation or the new consent cannot reinstate it; any new consent used for reinstatement must be recorded after the escalation |
 | Withdrawal kinds | No further contact; no further use; no further use and destroy. The last two place a use hold on the participant's specimens in custody and release their allocations; destroy offers ordinary disposal requests, each approved by another person. Nothing is deleted or anonymized, and material already distributed is listed for recorded follow-up, not recalled |
 | Agreements | Every shipment needs a valid executed agreement (MTA or DUA) with the request's institution. Valid from its effective date through the day before it expires or is terminated; dates are shown and nothing ends automatically |
 | Allocation | Whole containers; send part of a specimen by deriving an aliquot first. Allocation reserves the specimen, not its position. Remaining stock is shown, not gated |
@@ -75,8 +75,7 @@ in code.
 
 ## The journey
 
-The product was built one complete path at a time, each working end to end before breadth was
-added. The synthetic demonstration (`seed_demo --full`) walks the journey below. Staff can
+The synthetic demonstration (`seed_demo --full`) walks the journey below. Staff can
 create inventory audits for its seeded boxes.
 
 ```
@@ -110,6 +109,8 @@ Acceptance outcomes:
 8. A box or rack moves with all its contents in one recorded event.
 9. Disposal records reason, method, who and when, needs approval by a different person holding
    that permission, frees the position and keeps the electronic history. A hold blocks disposal.
+   Staff can download the seven disposal request register columns across all matching pages in
+   the selected order, including requests they made or those awaiting their approval.
 10. Specimens import in bulk from CSV with a validation pass before anything is committed.
 11. Lists filter, sort, paginate and export to CSV.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,
@@ -204,10 +205,6 @@ rule" means no source read states it; it is a design choice.
 | 5. Equipment and quality | Equipment records, service events and due dates, LN2 level and fill log, temperature readings, reviewed excursions and explicitly selected manual holds from excursions; box inventory audits with manual entry and normalized scanner CSV import; deviations with investigation, corrective action and separate manager review; staff training assignments, completion and assessment evidence, explicit due dates and retained corrections | Built |
 | Later | Monitoring ingest and alarms, requester accounts, billing, site-scoped permissions | Later, each when a repository needs it |
 | Exploring | Standards exports (SPREC, MIABIS), electronic signatures, spatial storage maps | Not committed |
-
-Withdrawal escalation shipped as an extension of milestone 4 on 2026-11-17. It records an
-explicit destruction instruction while the existing restriction stays in effect; it creates no
-automatic disposal, recall or contact obligation. This is a product default, not laboratory policy.
 
 No further milestone is currently committed. Later and exploring items need a demonstrated
 repository need or the dependencies described below.

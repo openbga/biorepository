@@ -32,7 +32,7 @@
       "items": [
         {
           "label": "OpenBGA Biorepository / Find specimen ID",
-          "description": "The brand (the mark and OpenBGA Biorepository) returns to the workspace home. On staff pages, Find specimen ID submits a search to the specimen list; it appears once the specimen pages exist. Press Enter to search. On wide screens the repository name beside the brand identifies this deployment."
+          "description": "The brand (the mark and OpenBGA Biorepository) returns to the workspace home. On staff pages, Find specimen ID opens the specimen with the ID you enter; when no specimen has that ID, the specimen list opens searched for it, with a warning. Press Enter to search. The field is hidden on very narrow screens. On wide screens the repository name beside the brand identifies this deployment."
         },
         {
           "label": "Menus and section tabs",

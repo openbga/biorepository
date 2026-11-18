@@ -30,7 +30,7 @@ compliance or accreditation.
   unknown.
 - **Holds and disposal:** disposal, use and all-use holds; disposal as a request, a decision by a
   different person who holds the approval permission, and a recorded act that frees the position
-  and keeps the record.
+  and keeps the record. Staff can export the filtered disposal request register to CSV.
 - **Throughput:** Code 128 label PDFs, scan-to-lookup in the top bar, CSV import with a validation
   pass before anything is committed, filters, sorting, pagination and CSV export.
 - **Equipment:** a register of the tanks, freezers, monitors and supply dewars that hold or watch
@@ -143,14 +143,10 @@ and `demo_viewer`, using the supplied password. The organization is "Example Bio
 seed is explicit and idempotent: it never resets existing passwords or deletes records. It
 refuses an existing non-demo repository, so run `setup_repository` with a real name only on a
 database you will not seed. No seed or reset runs during normal deployment.
-Add `--full` for a synthetic working repository: about 350 specimens from 70 coded participants
-in seven storage units and thirty boxes (from empty to full), aliquot families, check-outs in
-progress for up to a month, holds, disposal requests in every state, bulk imports and
-corrections, plus the equipment record of every unit with about three months of service events,
-LN2 level checks, temperature readings and excursions, and distribution (studies, consent
-records with a withdrawal, agreements, requests, a received shipment with a return and a packed
-one), inventory audits, deviations and training records in several states, all made through the application's own services. It takes from about 30 seconds to a minute and a half, depending on the machine, and adds
-nothing when run again.
+Add `--full` for a synthetic working repository of about 350 specimens with their custody,
+equipment and distribution history, made through the application's own services
+([contents](docs/workflows.md#demonstration-accounts-and-reset)). It takes from about 30 seconds
+to a minute and a half, depending on the machine, and adds nothing when run again.
 
 For a public demonstration, `seed_demo --announce-accounts` also posts an announcement on the
 sign-in page that lists the manager, technician and viewer accounts and `DEMO_PASSWORD`, where

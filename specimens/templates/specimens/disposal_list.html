@@ -7,9 +7,12 @@ inline, active_filters, filtered. A request is made from its specimen's record, 
 no New button.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Every disposal needs approval by a different person with disposal approval.</p>{% endblock %}
+{% block page_actions %}{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}{% endblock %}
 {% block content %}
 {% panel title="Disposal requests" heading_id="disposals-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter disposal requests" q=q placeholder="Specimen ID" inline=inline grid="specimens.disposals" %}
+  {% if filter_form.non_field_errors %}{% notice tone="danger" %}{{ filter_form.non_field_errors|join:" " }}{% endnotice %}{% endif %}
+  {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% list_results items=page_obj noun="disposal requests" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No disposal requests yet" empty_body="Request a disposal from the specimen's record. It is listed here until it is approved and recorded." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.disposals" data-vr-grid-version="1" aria-labelledby="disposals-heading">

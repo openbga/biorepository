@@ -75,7 +75,7 @@
       "items": [
         {
           "label": "What's new (top bar)",
-          "description": "Always in the top bar. When there are changes newer than the ones you saw last, it shows their number; its tooltip and accessible name read, for example, What's new: 3 new changes. A new account, or the first visit in a browser, shows no number."
+          "description": "In the top bar of every signed-in page. When there are changes newer than the ones you saw last, it shows their number; its tooltip and accessible name read, for example, What's new: 3 new changes. A new account, or the first visit in a browser, shows no number."
         },
         {
           "label": "Seen changes",

@@ -7,13 +7,25 @@ with its contents; the technician requests disposal and another person holding t
 approval permission approves and records it. The record keeps every step in its history.
 """
 
+import csv
+import io
 import re
 from datetime import timedelta
 from decimal import Decimal
 
 import pytest
 from django.contrib.auth.models import Permission
-from helpers import field, local_input, make_user, nav, pdf_text, pick, sign_in, sign_out
+from helpers import (
+    field,
+    local_input,
+    make_user,
+    nav,
+    pdf_text,
+    pick,
+    save_download,
+    sign_in,
+    sign_out,
+)
 from playwright.sync_api import Page, expect
 
 from specimens import services as specimen_services
@@ -278,6 +290,13 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     sign_in(page, approver.username, PASSWORD)
     queues = page.get_by_role("region", name="Your work queues")
     queues.get_by_role("link", name=re.compile("awaiting my approval", re.I)).click()
+    export = page.get_by_role("link", name="Export CSV", exact=True)
+    expect(page.get_by_label("Awaiting my approval", exact=True)).to_be_checked()
+    data = save_download(page, export.click, tmp_path / "disposal-requests.csv")
+    rows = list(csv.DictReader(io.StringIO(data.decode(), newline="")))
+    assert [(row["Specimen"], row["State"], row["Decided by"]) for row in rows] == [
+        (accession, "Awaiting approval", "")
+    ]
     page.get_by_role("link", name=re.compile(r"^Request \d{4}-")).first.click()
     page.locator(".vr-page-actions").get_by_role("link", name="Approve disposal").click()
     form = dialog(page)

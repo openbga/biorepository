@@ -239,6 +239,12 @@ Disposal is a request, a decision by a different person, and a recorded act, eac
 The specimen record, its history and its position history remain. A disposed specimen cannot be
 returned, moved or used again; only an annotation can be added.
 
+In **Disposal requests**, all four staff roles can use **Export CSV** to download up to 10,000
+matching requests across pages in the selected order. The file includes the request time in
+UTC, current state, specimen ID, method, destination, requester and decision maker. The
+personal filters use the signed-in account. The export records the account, filters, sort and
+number of rows in the audit trail.
+
 ## Corrections
 
 A correction adds a record with its reason and leaves the original in place. Admin and manager may:
@@ -602,7 +608,10 @@ reading left without an excursion. For distribution it adds studies governing th
 consent records, one by a study-level determination, one collection left ungoverned), consent
 records with a refusal and a withdrawal whose holds sit on that participant's specimens, a second
 institution whose agreement ends within 60 days, and a request approved, picked and packed awaiting
-dispatch. The limits and low levels in it are labelled demonstration values.
+dispatch. For quality it adds inventory audits (completed with and without a discrepancy,
+cancelled and open), deviations (open, awaiting review, closed and returned for revision) and
+training records (assigned, overdue, completed, renewal due, corrected and cancelled). The limits
+and low levels in it are labelled demonstration values.
 It uses only the services the application uses, and adds nothing when run again. Its events carry
 times relative to the moment of seeding, except approvals, disposals and other steps the services
 stamp with the current time.
