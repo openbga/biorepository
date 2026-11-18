@@ -503,12 +503,24 @@ def test_export_rejects_invalid_selection_without_an_audit(client, people, param
     assert not AuditEvent.objects.filter(action="quality.training_exported").exists()
 
 
+def test_training_search_validation_precedes_list_and_download(client, people):
+    client.force_login(people["viewer"])
+    for route in ("quality:training-list", "quality:training-export"):
+        response = client.get(reverse(route), {"q": "Synthetic\x00course"})
+        assert response.status_code == 400
+        assert b"Search contains an invalid character" in response.content
+    assert not AuditEvent.objects.filter(action="quality.training_exported").exists()
+
+
 def test_export_refuses_more_than_the_row_limit(client, people, monkeypatch):
     monkeypatch.setattr("quality.training_exports.EXPORT_CAP", 1)
     selected = create(people, topic="Synthetic selected course")
     create(people)
     client.force_login(people["viewer"])
     url = reverse("quality:training-export")
+    register = client.get(reverse("quality:training-list")).content.decode()
+    assert "Export CSV</a>" not in register
+    assert "Narrow the filters to export CSV. The row limit is 1." in register
 
     response = client.get(url)
 

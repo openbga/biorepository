@@ -5,7 +5,8 @@ from datetime import timedelta
 from django.db.models import Q
 from django.utils import timezone
 
-DEFAULT_SORT = "-updated"
+from core.grids import GridRequest
+
 COLUMNS = {
     "number": "pk",
     "trainee": "trainee__username",
@@ -16,6 +17,13 @@ COLUMNS = {
     "renewal": "renewal_due",
     "updated": "updated_at",
 }
+
+
+def training_grid(params):
+    grid = GridRequest.parse(params, COLUMNS, "-updated")
+    if "\x00" in grid.query:
+        raise ValueError("Search contains an invalid character. Enter the search again.")
+    return grid
 
 
 def applied_filters(form, query):

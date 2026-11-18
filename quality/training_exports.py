@@ -6,12 +6,11 @@ import io
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from core.grids import GridRequest
 from core.models import AuditEvent
 from storage.exports import EXPORT_CAP, safe_cell
 
 from .training_forms import FilterForm
-from .training_lists import COLUMNS, DEFAULT_SORT, applied_filters, filter_training
+from .training_lists import COLUMNS, applied_filters, filter_training, training_grid
 from .training_services import training_records
 
 
@@ -23,7 +22,7 @@ def export_training(*, actor, params):
             "Unknown training filter. Return to the register and apply your filters."
         )
     try:
-        grid = GridRequest.parse(params, COLUMNS, DEFAULT_SORT)
+        grid = training_grid(params)
     except ValueError as exc:
         raise ValidationError(str(exc)) from exc
     if not form.is_valid() or params.get("sort", grid.sort) != grid.sort:

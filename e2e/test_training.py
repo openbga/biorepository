@@ -161,4 +161,8 @@ def test_viewer_downloads_the_applied_training_selection(page, people, tmp_path)
 
     records = list(csv.DictReader(io.StringIO(download.decode(), newline="")))
     assert [row["Training record"] for row in records] == [second.number, first.number]
+    page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
+    help_panel = page.locator("#vr-documentation")
+    expect(help_panel.get_by_text("Export CSV", exact=True)).to_be_visible()
+    expect(help_panel).to_contain_text("10,000 records")
     assert page.console_errors == []
