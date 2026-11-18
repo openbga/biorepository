@@ -7,10 +7,13 @@ inline, active_filters, filtered. A request is made from its specimen's record, 
 no New button.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Every disposal needs approval by a different person with disposal approval.</p>{% endblock %}
+{% block page_actions %}{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="disposals-heading">
   <h2 class="visually-hidden" id="disposals-heading">Disposal requests</h2>
   {% include "includes/grid_toolbar.html" with label="Filter disposal requests" q=q placeholder="Specimen ID" inline=inline grid="specimens.disposals" %}
+  {{ filter_form.non_field_errors }}
+  {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.disposals" data-vr-grid-version="1" aria-labelledby="disposals-heading">

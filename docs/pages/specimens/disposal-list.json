@@ -88,6 +88,14 @@
       ]
     },
     {
+      "title": "Export CSV",
+      "paragraphs": [
+        "All four staff roles can download disposal-requests.csv. Apply a search or filters, choose the sort order, then select Export CSV. Requested by me and Awaiting my approval use the signed-in account. The file includes all seven register columns across all matching pages, even when a column is hidden on screen.",
+        "Request gives the time in UTC with its offset. State is the state when the register is exported. Decided by is blank until someone records a decision. A selection with no matches downloads the column headings.",
+        "Narrow the filters when more than 10,000 requests match. Correct invalid filters before downloading. Each successful export records your account, the applied filters, sort order and row count in the audit trail."
+      ]
+    },
+    {
       "title": "Empty states",
       "paragraphs": [
         "With no requests the page says “No disposal requests yet”. With filters that match nothing it says “Nothing matches these filters”. The dashboard counts link here with the matching state or Awaiting my approval already applied."
@@ -104,6 +112,8 @@
     "specimens/dashboard.py",
     "specimens/templates/specimens/disposal_list.html",
     "specimens/tests/test_disposal.py",
-    "specimens/tests/test_views_records.py"
+    "specimens/tests/test_views_records.py",
+    "specimens/exports.py",
+    "specimens/tests/test_disposal_export.py"
   ]
 }

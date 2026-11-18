@@ -110,6 +110,8 @@ Acceptance outcomes:
 8. A box or rack moves with all its contents in one recorded event.
 9. Disposal records reason, method, who and when, needs approval by a different person holding
    that permission, frees the position and keeps the electronic history. A hold blocks disposal.
+   Staff can download the seven disposal request register columns across all matching pages in
+   the selected order, including requests they made or those awaiting their approval.
 10. Specimens import in bulk from CSV with a validation pass before anything is committed.
 11. Lists filter, sort, paginate and export to CSV.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,

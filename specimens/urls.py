@@ -23,6 +23,7 @@ urlpatterns = [
     path("labels/pdf/", views.label_pdf, name="label-pdf"),
     path("<uuid:pk>/", views.specimen_detail, name="specimen-detail"),
     path("disposals/", views.disposal_list, name="disposal-list"),
+    path("disposals/export/", views.disposal_export, name="disposal-export"),
     path("disposals/<uuid:pk>/", views.disposal_detail, name="disposal-detail"),
     path("imports/", views.import_list, name="import-list"),
     path("imports/upload/", views.import_upload, name="import-upload"),

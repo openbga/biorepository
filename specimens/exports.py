@@ -16,9 +16,10 @@ from accounts.roles import require_role
 from core.audit import record_event
 from storage import queries as storage_queries
 
+from .list_forms import DISPOSAL_STATE_LABELS, disposal_selection
 from .models import OutputRecord
 from .queries import catalogue_queryset, specimen_queryset
-from .services import CATALOGUE_FIELDS, READ_ROLES
+from .services import CATALOGUE_FIELDS, READ_ROLES, request_state
 
 MAX_ROWS = 10000
 FORMULA_START = ("=", "+", "-", "@", "\t", "\r")
@@ -115,6 +116,46 @@ def export_specimens(*, actor, filters, sort="accession"):
         actor, OutputRecord.Kind.EXPORT, len(rows), {"filters": _selection(filters), "sort": sort}
     )
     return data
+
+
+def export_disposals(*, actor, params):
+    require_role(actor, *READ_ROLES)
+    try:
+        grid, form, rows = disposal_selection(actor, params)
+    except ValueError as exc:
+        raise ValidationError(str(exc)) from exc
+    if not form.is_valid():
+        raise ValidationError("These disposal request filters or sort order cannot be applied.")
+
+    header = ("Request", "State", "Specimen", "Method", "Destination", "Requested by", "Decided by")
+    buffer = io.StringIO(newline="")
+    writer = csv.writer(buffer)
+    writer.writerow(header)
+    count = 0
+    for row in rows[: MAX_ROWS + 1].iterator(chunk_size=100):
+        if count == MAX_ROWS:
+            raise ValidationError(f"Narrow the filters to {MAX_ROWS:,} disposal requests or fewer.")
+        decision = getattr(row, "decision", None)
+        state = request_state(row, row.specimen, row.specimen.occupancy)
+        values = (
+            row.recorded_at,
+            DISPOSAL_STATE_LABELS[state],
+            row.specimen.accession,
+            row.method,
+            row.destination,
+            row.requested_by.get_full_name() or row.requested_by.get_username(),
+            (decision.actor.get_full_name() or decision.actor.get_username()) if decision else "",
+        )
+        writer.writerow(safe_cell(value) for value in values)
+        count += 1
+    content = buffer.getvalue().encode("utf-8")
+    _record(
+        actor,
+        OutputRecord.Kind.EXPORT,
+        count,
+        {"list": "disposal", "filters": form.filters(), "sort": grid.sort},
+    )
+    return content
 
 
 def export_catalogue(*, actor, kind, filters, sort="code"):

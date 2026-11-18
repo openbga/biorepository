@@ -37,6 +37,7 @@ NON_PAGE_ROUTES = {
     "storage:catalogue-export": "CSV download from the storage catalogue lists",
     "specimens:lookup": "Redirect from the top-bar specimen lookup",
     "specimens:export": "CSV download from the specimen list",
+    "specimens:disposal-export": "CSV download from Disposal requests",
     "specimens:label-pdf": "PDF download from the label preview",
     "specimens:catalogue-export": "CSV download from the specimen catalogue lists",
     "specimens:import-commit": "POST action on the import page",
