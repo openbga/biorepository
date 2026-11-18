@@ -21,6 +21,7 @@ urlpatterns = [
     path("deviations/<int:pk>/review/", deviation_views.deviation_review, name="deviation-review"),
     path("deviations/<int:pk>/reopen/", deviation_views.deviation_reopen, name="deviation-reopen"),
     path("audits/", views.audit_list, name="audit-list"),
+    path("audits/export/", views.audit_export, name="audit-export"),
     path("audits/new/", views.audit_create, name="audit-create"),
     path("audits/<int:pk>/", views.audit_detail, name="audit-detail"),
     path("audits/<int:pk>/complete/", views.audit_complete, name="audit-complete"),
