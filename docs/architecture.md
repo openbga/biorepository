@@ -134,6 +134,9 @@ Intentional divergences from Environmental LIMS (keep this list current):
   for the bounded excursion hold picker; the default pagination behavior is unchanged.
 - The `checks` workflow's `application` job allows 60 minutes (Environmental LIMS: 30): the OpenBGA Biorepository
   suite is larger. Lower it if CI runs leave room.
+- The `checks` workflow's `browser` job allows 45 minutes (Environmental LIMS: 20): it includes the
+  form sweep over every dialog form and the per-role page sweeps. The job keeps its name, which the
+  `main` ruleset requires.
 - What's new (2026-11-17) shares `core/changelog.py`, the `changelog` management command, the
   `changelog` workflow and the entry format with Environmental LIMS. It differs in where an
   account's seen entries live: there is no server preference model here, so

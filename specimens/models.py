@@ -695,6 +695,12 @@ class Correction(models.Model):
 class ImportBatch(models.Model):
     """An immutable validation result: normalized rows and errors; no raw file is kept."""
 
+    class State(models.TextChoices):
+        INVALID = "invalid", "Has errors"
+        VALID = "valid", "Ready to commit"
+        EXPIRED = "expired", "Expired"
+        COMMITTED = "committed", "Committed"
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="+")
     recorded_at = models.DateTimeField(default=timezone.now)
@@ -713,6 +719,19 @@ class ImportBatch(models.Model):
         ordering = ["-recorded_at", "id"]
         verbose_name_plural = "import batches"
         indexes = [models.Index(fields=["sha256"], name="specimens_import_sha")]
+
+    @property
+    def name(self):
+        return self.filename or f"Import {timezone.localtime(self.recorded_at):%Y-%m-%d %H:%M}"
+
+    def state_at(self, now, *, error_total):
+        if error_total or not self.row_count:
+            return self.State.INVALID
+        if hasattr(self, "commit"):
+            return self.State.COMMITTED
+        if self.expires_at < now:
+            return self.State.EXPIRED
+        return self.State.VALID
 
     @property
     def total_errors(self):

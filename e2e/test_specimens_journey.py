@@ -28,6 +28,7 @@ from helpers import (
 )
 from playwright.sync_api import Page, expect
 
+from specimens import importing
 from specimens import services as specimen_services
 from specimens.models import Specimen
 from storage import services
@@ -327,3 +328,43 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     assert specimen.disposal.request.requested_by == tech
     assert specimen.disposal.decision.actor == approver
     assert Box.objects.get(pk=box.pk).node_id == other_shelf.pk
+
+
+def test_download_filtered_specimen_import_register(page: Page, tmp_path):
+    tech = make_user("specimen_import_tech", PASSWORD, "technician")
+    importing.validate_import(actor=tech, filename="Synthetic Monday.csv", csv_bytes=b"")
+    sign_in(page, tech.username, PASSWORD)
+    page.goto("/specimens/imports/")
+    page.get_by_role("link", name="Upload CSV", exact=True).first.click()
+    form = dialog(page)
+    filename = "Synthetic Tuesday.csv"
+    field(form, "CSV file").set_input_files(
+        {
+            "name": filename,
+            "mimeType": "text/csv",
+            "buffer": b"unrecognized_header\nSYNTHETIC-ROW\n",
+        }
+    )
+    form.get_by_role("button", name="Validate file", exact=True).click()
+    expect(page.get_by_role("heading", level=1)).to_have_text(filename)
+    page.get_by_role("link", name="Imports", exact=True).first.click()
+
+    toolbar = page.get_by_role("search", name="Filter imports")
+    search = toolbar.get_by_role("searchbox")
+    search.fill("tuesday")
+    toolbar.get_by_role("button", name="Apply", exact=True).click()
+    page.get_by_role("link", name="Import", exact=True).click()
+    expect(page.get_by_role("link", name=filename)).to_be_visible()
+    expect(page.get_by_role("link", name="Synthetic Monday.csv")).to_have_count(0)
+    search.fill("unapplied change")
+    export = page.get_by_role("link", name="Export CSV", exact=True)
+    content = save_download(page, export.click, tmp_path / "specimen-imports.csv")
+    rows = list(csv.DictReader(io.StringIO(content.decode(), newline="")))
+    assert [(row["Import"], row["State"], row["Validated by"]) for row in rows] == [
+        (filename, "Has errors", tech.get_full_name()),
+    ]
+    page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
+    expect(
+        page.locator("#vr-documentation").get_by_role("heading", name="Export CSV")
+    ).to_be_visible()
+    assert page.console_errors == []

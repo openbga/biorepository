@@ -12,8 +12,6 @@ from django.apps import apps
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.db.models import Func, IntegerField
-from django.db.models.functions import Coalesce
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import NoReverseMatch, reverse
@@ -34,9 +32,9 @@ from .list_forms import (
     CatalogueForm,
     ImportCommitForm,
     ImportUploadForm,
-    ListFilter,
     SpecimenFilter,
     disposal_selection,
+    import_selection,
     label_ids,
 )
 from .models import (
@@ -629,18 +627,6 @@ def disposal_detail(request, pk):
 
 # --- imports --------------------------------------------------------------------------------
 
-IMPORT_COLUMNS = {"recorded_at": "recorded_at", "filename": "filename", "rows": "row_count"}
-
-
-def import_state(batch, now=None, error_total=None):
-    if (batch.total_errors if error_total is None else error_total) or not batch.row_count:
-        return "invalid"
-    if hasattr(batch, "commit"):
-        return "committed"
-    if batch.expires_at < (now or timezone.now()):
-        return "expired"
-    return "valid"
-
 
 def _local(value):
     """An ISO 8601 string from a batch row, as a repository-time datetime (None if absent)."""
@@ -650,47 +636,28 @@ def _local(value):
         return None
 
 
-def import_name(batch):
-    return batch.filename or f"Import {timezone.localtime(batch.recorded_at):%Y-%m-%d %H:%M}"
-
-
 @staff_role_required(*OPERATE)
 def import_list(request):
-    grid = _grid(request, IMPORT_COLUMNS, "-recorded_at")
-    if grid is None:
-        return HttpResponseBadRequest("Invalid page size. Choose 25, 50 or 100.")
-    form = ListFilter(request.GET)
-    form.fields["q"].widget.attrs["placeholder"] = "File name"
-    # Summaries only: the stored rows and errors are never loaded for the list.
-    queryset = (
-        ImportBatch.objects.select_related("actor", "commit")
-        .defer("normalized_rows", "errors", "warnings", "commit__specimen_ids")
-        .annotate(
-            error_total=Coalesce(
-                "error_count",
-                Func("errors", function="jsonb_array_length"),
-                output_field=IntegerField(),
-            )
-        )
-    )
-    if form.is_valid():
-        if form.cleaned_data.get("q"):
-            queryset = queryset.filter(filename__icontains=form.cleaned_data["q"])
-        chips = _chips(request, form)
-    else:
-        queryset, chips = queryset.none(), []
-    page_obj = grid.page(queryset, IMPORT_COLUMNS)
-    rows = list(page_obj.object_list)
+    try:
+        grid, form, rows = import_selection(request.GET)
+    except ValueError as exc:
+        return HttpResponseBadRequest(str(exc))
+    page_obj = _page(rows, grid)
     now = timezone.now()
-    for batch in rows:
-        batch.state = import_state(batch, now, batch.error_total)
-        batch.name = import_name(batch)
-    page_obj.object_list = rows
+    for batch in page_obj:
+        batch.state = batch.state_at(now, error_total=batch.error_total)
+    chips = _chips(request, form) if form.is_valid() else []
+    over_limit = page_obj.paginator.count > exports.MAX_ROWS
+    export_url = None
+    if form.is_valid() and not over_limit:
+        export_url = reverse("specimens:import-export", query={"q": grid.query, "sort": grid.sort})
     return render(
         request,
         "specimens/import_list.html",
         {
             "page_title": "Imports",
+            "export_url": export_url,
+            "exceeded_export_limit": f"{exports.MAX_ROWS:,}" if over_limit else "",
             "page_obj": page_obj,
             "filter_form": form,
             "q": request.GET.get("q", "").strip(),
@@ -700,6 +667,18 @@ def import_list(request):
             **flags(request.user),
         },
     )
+
+
+@staff_role_required(*OPERATE)
+@require_GET
+def import_export(request):
+    try:
+        content = exports.export_imports(actor=request.user, params=request.GET)
+    except ValidationError as exc:
+        return HttpResponseBadRequest(
+            " ".join(exc.messages), content_type="text/plain; charset=utf-8"
+        )
+    return _csv(content, "specimen-imports.csv")
 
 
 @staff_role_required(*OPERATE)
@@ -746,7 +725,7 @@ def import_template(request):
 @staff_role_required(*OPERATE)
 def import_detail(request, pk):
     batch = get_object_or_404(ImportBatch.objects.select_related("actor", "commit__actor"), pk=pk)
-    state = import_state(batch)
+    state = batch.state_at(timezone.now(), error_total=batch.total_errors)
     commit = getattr(batch, "commit", None) if state == "committed" else None
     created = []
     if commit:
@@ -763,7 +742,7 @@ def import_detail(request, pk):
         request,
         "specimens/import_detail.html",
         {
-            "page_title": import_name(batch),
+            "page_title": batch.name,
             "batch": batch,
             "state": state,
             "file_errors": [e for e in batch.errors if not e.get("line")],

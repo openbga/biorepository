@@ -4,7 +4,7 @@
     "specimens:import-list"
   ],
   "title": "Imports",
-  "purpose": "Find CSV files that were uploaded to register many specimens at once, and open each to review or commit it.",
+  "purpose": "Find specimen CSV uploads, review their validation results, export the register or open an import to commit it.",
   "summary": "The CSV files uploaded to register many specimens at once. Open one to review or commit it.",
   "tasks": [
     {
@@ -12,6 +12,12 @@
       "steps": [
         "Select [[Upload CSV]] and validate your file.",
         "Open the import, check it has no errors and commit it."
+      ]
+    },
+    {
+      "title": "Export the register",
+      "steps": [
+        "Filter the list, then select [[Export CSV]]."
       ]
     },
     {
@@ -30,7 +36,7 @@
     {
       "title": "Who can use it",
       "paragraphs": [
-        "Admin, manager and technician only; a viewer is refused. Uploading validates a file and registers nothing. Specimens are registered only when a valid file is committed, and then all rows or none."
+        "Administrators, managers and technicians can open and export this register. Uploading a file validates it. Technicians can commit their own valid imports. Managers and administrators can also commit files validated by other staff. A commit registers all rows together."
       ]
     },
     {
@@ -66,16 +72,24 @@
       "paragraphs": [
         "Upload CSV opens the upload form. With no imports the page says “No imports yet” and explains the steps; with a search that matches nothing it says so and offers to clear it."
       ]
+    },
+    {
+      "title": "Export CSV",
+      "paragraphs": [
+        "Select Export CSV to download the six register columns for every import matching your applied search, in the selected sort order. An empty selection downloads the headings. If more than 10,000 imports match, narrow the file-name search and select Apply. Correct any filter errors before downloading.",
+        "Each row gives the state at download time and the validation time in UTC. Open the individual import for specimen rows and validation messages. The download history records who exported the register, the applied search and sort, and the number of rows."
+      ]
     }
   ],
   "sources": [
     "specimens/urls.py",
     "specimens/views.py",
-    "specimens/services.py",
-    "specimens/queries.py",
+    "specimens/list_forms.py",
+    "specimens/models.py",
+    "specimens/exports.py",
     "accounts/roles.py",
     "specimens/importing.py",
     "specimens/templates/specimens/import_list.html",
-    "specimens/tests/test_registration.py"
+    "specimens/tests/test_import_register_export.py"
   ]
 }

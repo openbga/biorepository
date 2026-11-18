@@ -14,7 +14,7 @@ from decimal import Decimal
 
 from django import template
 
-from ..models import Hold
+from ..models import Hold, ImportBatch
 from ..queries import format_duration
 
 register = template.Library()
@@ -33,11 +33,11 @@ REQUEST_STATES = {
     "cancelled": ("Cancelled", "neutral"),
     "executed": ("Disposed", "neutral"),
 }
-IMPORT_STATES = {
-    "invalid": ("Has errors", "danger"),
-    "valid": ("Ready to commit", "progress"),
-    "expired": ("Expired", "neutral"),
-    "committed": ("Committed", "success"),
+IMPORT_TONES = {
+    ImportBatch.State.INVALID: "danger",
+    ImportBatch.State.VALID: "progress",
+    ImportBatch.State.EXPIRED: "neutral",
+    ImportBatch.State.COMMITTED: "success",
 }
 
 
@@ -59,8 +59,7 @@ def request_status(state, plain=False):
 
 @register.inclusion_tag("includes/status.html")
 def import_status(state, plain=False):
-    label, tone = IMPORT_STATES[state]
-    return {"label": label, "tone": tone, "plain": plain}
+    return {"label": ImportBatch.State(state).label, "tone": IMPORT_TONES[state], "plain": plain}
 
 
 @register.inclusion_tag("includes/status.html")
@@ -78,7 +77,7 @@ def specimen_status_parts(kind, value):
     elif kind == "request":
         label, tone = REQUEST_STATES[value]
     elif kind == "import":
-        label, tone = IMPORT_STATES[value]
+        label, tone = ImportBatch.State(value).label, IMPORT_TONES[value]
     elif kind == "hold":
         label = Hold.Scope(value).label if value in Hold.Scope.values else str(value)
         tone = "hold"
