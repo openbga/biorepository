@@ -4,7 +4,7 @@ import re
 from datetime import timedelta
 
 import pytest
-from helpers import field, local_input, make_user, sign_in, sign_out
+from helpers import field, local_input, make_user, pick, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 from storage import services
@@ -65,10 +65,10 @@ def test_manager_defines_tank_views_occupancy_and_technician_moves_a_box(
     expect(dialog).to_be_visible()
     field(dialog, "Code").fill("VP-01")
     field(dialog, "Name").fill("Tank VP-01")
-    field(dialog, "Room").select_option(index=1)
-    field(dialog, "Storage class").select_option(label="Cryogenic")
-    field(dialog, "Technology").select_option(label="LN2 vapor phase")
-    field(dialog, "Nominal temperature (°C)").fill("-160.00")
+    pick(field(dialog, "Room"), index=1)
+    pick(field(dialog, "Storage class"), label="Cryogenic")
+    pick(field(dialog, "Technology"), label="LN2 vapor phase")
+    field(dialog, "Nominal temperature").fill("-160.00")
     dialog.get_by_role("button", name="Create storage unit", exact=True).click()
     expect(page.get_by_role("heading", level=1)).to_have_text("VP-01")
     unit_url = page.url
@@ -78,7 +78,7 @@ def test_manager_defines_tank_views_occupancy_and_technician_moves_a_box(
     page.get_by_role("link", name="Add rack or shelf").click()
     dialog = page.locator("#vr-form-dialog")
     expect(dialog).to_be_visible()
-    field(dialog, "Kind").select_option(label="Tower")
+    pick(field(dialog, "Kind"), label="Tower")
     field(dialog, "Code").fill("T-01")
     field(dialog, "Name").fill("Tower T-01")
     field(dialog, "Slot").fill("1")
@@ -92,7 +92,7 @@ def test_manager_defines_tank_views_occupancy_and_technician_moves_a_box(
         page.get_by_role("link", name="Add shelf").click()
         dialog = page.locator("#vr-form-dialog")
         expect(dialog).to_be_visible()
-        field(dialog, "Kind").select_option(label="Shelf")
+        pick(field(dialog, "Kind"), label="Shelf")
         field(dialog, "Code").fill(f"T-01-S{slot}")
         field(dialog, "Name").fill(f"Shelf {slot}")
         field(dialog, "Slot").fill(str(slot))
@@ -109,7 +109,7 @@ def test_manager_defines_tank_views_occupancy_and_technician_moves_a_box(
     dialog = page.locator("#vr-form-dialog")
     expect(dialog).to_be_visible()
     field(dialog, "Box slot").fill("1")
-    field(dialog, "Container type").select_option(index=1)
+    pick(field(dialog, "Container type"), index=1)
     field(dialog, "Code").fill("BOX-001")
     dialog.get_by_role("button", name="Create box", exact=True).click()
     expect(page.get_by_role("heading", level=1)).to_have_text("BOX-001")
@@ -164,7 +164,7 @@ def test_manager_defines_tank_views_occupancy_and_technician_moves_a_box(
     expect(dialog).to_be_visible()
     target = field(dialog, "Move to")
     option = target.locator("option", has_text="T-01-S2").first
-    target.select_option(value=option.get_attribute("value"))
+    pick(target, value=option.get_attribute("value"))
     field(dialog, "Slot").fill("1")
     field(dialog, "Moved at").fill(local_input(timedelta(minutes=-5)))
     field(dialog, "Reason for the move").fill("Consolidating shelves")

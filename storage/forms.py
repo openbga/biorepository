@@ -132,10 +132,11 @@ class UnitForm(DefinitionForm):
     )
     technology = forms.ChoiceField(label="Technology", choices=StorageUnit.Technology.choices)
     nominal_temperature = forms.DecimalField(
-        label="Nominal temperature (°C)",
+        label="Nominal temperature",
         max_digits=6,
         decimal_places=2,
         min_value=-273.15,
+        widget=forms.NumberInput(attrs={"unit": "°C"}),
         help_text="The unit's nominal set point as stated, e.g. -160.00. A definition, not a "
         "measurement; it never blocks storing an item.",
     )

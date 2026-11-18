@@ -14,6 +14,7 @@ from .queries import disposal_queryset, specimen_queryset
 from .services import OPERATE_ROLES, READ_ROLES
 
 UNSTORED = {"status": "available", "placed": "no", "checked_out": "no"}
+STORED = {"placed": "yes"}
 
 
 def _url(name, params):
@@ -28,6 +29,7 @@ def queues(user):
     checked_out = specimen_queryset({"checked_out": "yes"})
     result.append(
         {
+            "key": "checked_out",
             "label": "Checked out",
             "count": checked_out.count(),
             "url": _url("specimens:specimen-list", {"checked_out": "yes"}),
@@ -39,6 +41,7 @@ def queues(user):
     unstored = specimen_queryset(UNSTORED)
     result.append(
         {
+            "key": "unstored",
             "label": "Registered, not stored",
             "count": unstored.count(),
             "url": _url("specimens:specimen-list", UNSTORED),
@@ -50,6 +53,7 @@ def queues(user):
     held = specimen_queryset({"held": "yes"})
     result.append(
         {
+            "key": "held",
             "label": "On hold",
             "count": held.count(),
             "url": _url("specimens:specimen-list", {"held": "yes"}),
@@ -64,6 +68,7 @@ def queues(user):
         awaiting = disposal_queryset({"awaiting_me": True, "actor": user})
         result.append(
             {
+                "key": "disposal_awaiting",
                 "label": "Disposal requests awaiting my approval",
                 "count": awaiting.count(),
                 "url": _url("specimens:disposal-list", {"awaiting_me": "on"}),
@@ -76,6 +81,7 @@ def queues(user):
         approved = disposal_queryset({"state": "approved"})
         result.append(
             {
+                "key": "disposal_approved",
                 "label": "Approved disposals to record",
                 "count": approved.count(),
                 "url": _url("specimens:disposal-list", {"state": "approved"}),
@@ -85,6 +91,17 @@ def queues(user):
             }
         )
     return result
+
+
+def in_storage(user):
+    """{count, url}: specimens that occupy a storage position, counted with the specimen list's
+    "In storage: Yes" filter that the url opens; None without a read role."""
+    if not has_role(user, *READ_ROLES):
+        return None
+    return {
+        "count": specimen_queryset(STORED).count(),
+        "url": _url("specimens:specimen-list", STORED),
+    }
 
 
 def recently_stored(user, limit=10):

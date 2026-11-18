@@ -65,11 +65,11 @@
         },
         {
           "label": "Specimens to pick",
-          "description": "Under More filters. Requests with allocated specimens that are not yet picked. The dashboard queue \"Approved requests with specimens to pick\" links here with this filter and Status set to Approved."
+          "description": "Under More filters. Requests with allocated specimens that are not yet picked. The dashboard queue \"Approved requests with allocations to pick\" links here with this filter and Status set to Approved."
         },
         {
           "label": "Awaiting my decision",
-          "description": "Under More filters, only for people with the request decision permission. Requests awaiting a decision that you neither created nor submitted, so you may decide them."
+          "description": "Under More filters, only for people with the request decision permission. Requests awaiting a decision that you neither created nor submitted, so you may decide them. The dashboard queue \"Requests awaiting my decision\" links here with this filter."
         }
       ]
     },

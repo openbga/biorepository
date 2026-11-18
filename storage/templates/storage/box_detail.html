@@ -65,7 +65,7 @@
     <tbody>{% for p in occupied %}
       <tr><th scope="row" class="vr-id">{{ p.label }}</th><td>{% if p.claim.specimen %}<a class="vr-id" href="{{ p.claim.specimen.url }}">{{ p.claim.specimen.accession }}</a> <span class="vr-muted small">{{ p.claim.specimen.type_code }}</span>{% else %}—{% endif %}</td><td class="vr-id" title="{{ p.claim.pk }}">{{ p.claim.pk|stringformat:"s"|slice:":8" }}</td><td class="text-end vr-id">{{ p.claim.revision }}</td></tr>
     {% endfor %}</tbody></table></div>
-  <p class="vr-muted small px-3 pb-3 mb-0">Storage records each item by an opaque storage key; the Specimen column and the wells name the specimen in it.</p>
+  <p class="vr-muted small mb-0">Storage records each item by an opaque storage key; the Specimen column and the wells name the specimen in it.</p>
   {% else %}{% empty_state title="The box is empty" body="Specimens are stored in its positions from the specimen pages." %}{% endif %}
 </section>
 {% include "storage/_moves.html" with noun="box" kind="box" obj=box %}

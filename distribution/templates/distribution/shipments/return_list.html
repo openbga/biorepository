@@ -4,10 +4,9 @@
 {% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
 {% block content %}
 {% section_tabs "distribution-shipments" %}
-<section class="card vr-table-card" aria-labelledby="returns-heading">
-  <h2 class="visually-hidden" id="returns-heading">Returns</h2>
+{% panel title="Returns" heading_id="returns-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter returns" q=q placeholder="Specimen ID or shipment number" inline=inline more=more more_open=more_open grid="distribution.returns" %}
-  {% if page_obj.paginator.count %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No returns recorded" empty_body="Specimens that come back from a shipment are recorded on the shipment's page and listed here until and after review." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.returns" data-vr-grid-version="1" aria-labelledby="returns-heading">
       <thead><tr>
@@ -36,9 +35,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% include "storage/_list_states.html" with title_empty="No returns recorded" body_empty="Specimens that come back from a shipment are recorded on the shipment's page and listed here until and after review." %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

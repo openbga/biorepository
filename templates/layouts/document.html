@@ -36,10 +36,13 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   <link rel="icon" href="{% static 'img/mark.svg' %}" type="image/svg+xml">
   <link rel="icon" href="{% static 'img/favicon-32.png' %}" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
-  <meta name="theme-color" content="#fbfdfe">
+  <meta name="theme-color" content="#fbfdfe" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111c24" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-5.3.8/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap5.min.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/datatables/colReorder.bootstrap5.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/tom-select/tom-select.bootstrap5.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/vanilla-calendar-pro-3.4.0/layout.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/documentation.css' %}">
   {% block extra_css %}{% endblock %}
@@ -50,6 +53,9 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   <script src="{% static 'vendor/datatables/dataTables.colReorder.min.js' %}" defer></script>
   <script src="{% static 'js/app.js' %}" defer></script>
   <script src="{% static 'js/grid.js' %}" defer></script>
+  <script src="{% static 'vendor/tom-select/tom-select.complete.min.js' %}" defer></script>
+  <script src="{% static 'vendor/vanilla-calendar-pro-3.4.0/index.js' %}" defer></script>
+  <script src="{% static 'js/controls.js' %}" defer></script>
   <script src="{% static 'js/documentation.js' %}" defer></script>
   <script src="{% static 'js/whats-new.js' %}" defer></script>
   <script src="{% static 'js/form-dialog.js' %}" defer></script>
@@ -60,8 +66,8 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   {% url 'dashboard' as dashboard_url %}
   {% block topbar %}
   <header class="vr-topbar">
-    <button class="btn btn-sm vr-topbar-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#vr-nav" aria-controls="vr-nav">{% include "includes/icon.html" with name="list" %}<span>Menu</span></button>
-    {% include "includes/brand.html" with href=dashboard_url|default:"/" repository=repository.name %}
+    <button class="btn btn-sm vr-topbar-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#vr-nav" aria-controls="vr-nav">{% icon name="list" %}<span>Menu</span></button>
+    {% brand href=dashboard_url|default:"/" repository=repository.name %}
     {% block sidenav %}
     {# Legacy class name vr-sidenav (tests and e2e address it): it is the top menus from lg up and the phone offcanvas below. #}
     <nav class="vr-sidenav vr-topnav offcanvas-lg offcanvas-start" id="vr-nav" tabindex="-1" aria-label="Primary">
@@ -79,7 +85,7 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
       {% if specimen_lookup_url %}
       <form class="vr-lookup d-none d-sm-block" action="{{ specimen_lookup_url }}" method="get" role="search">
         <label class="visually-hidden" for="vr-lookup-q">Find a specimen by its ID</label>
-        {% include "includes/icon.html" with name="upc-scan" %}
+        {% icon name="upc-scan" %}
         <input class="form-control" type="search" id="vr-lookup-q" name="q" placeholder="Scan or type ID" autocomplete="off" spellcheck="false">
       </form>
       {% endif %}
@@ -110,7 +116,7 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
       {% include "includes/messages.html" %}
       {% block content %}{% endblock %}
       {% block record_foot %}{% endblock %}
-      {% include "includes/source_footer.html" %}
+      {% source_footer %}
     </main>
   </div>
   {% endblock body %}

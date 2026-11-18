@@ -113,7 +113,9 @@ not something to add on the way.
 - Cryo's meaning colours: **ice** (`--vr-ink` = `--vr-pen`, `--vr-cold-*`) is the primary action,
   links, where you are and what is in the cold. **Warm** (`--vr-warm-*`) marks time out of storage
   and nothing else; warnings keep the amber tone. Status is an outlined capsule with icon and
-  word (`{% status %}`), never a filled pill.
+  word (`{% status %}`), plain inside notices. The one filled capsule is the record's own status,
+  first in the header's key facts (`.vr-page-meta > li:first-child > .vr-status`), which gets
+  its tone wash automatically.
 - Shape: panels are rounded and borderless, separated by tone and soft shadow; buttons, path
   segments, counts, chips and the pager are pills; fields are outlined (no grey filled fields,
   no bottom-border fields, no dark bars).

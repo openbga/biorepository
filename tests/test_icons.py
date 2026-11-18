@@ -20,9 +20,9 @@ SVG_TEMPLATES = {"templates/includes/icon.html"}
 
 # Offences the Cryo restyle removes (designer: the sign-in scene and app.css). Each entry must
 # still offend; delete it when it no longer does. Empty by the end of the UI modernization.
-PENDING_SVG_TEMPLATES = {"templates/includes/entrance_scene.html"}
-PENDING_DATA_URIS = {"feTurbulence": "the sign-in scene's noise texture"}
-PENDING_STATUS_SHAPE = True  # .vr-status::before, the dot the status glyph replaces
+PENDING_SVG_TEMPLATES: set[str] = set()
+PENDING_DATA_URIS: dict[str, str] = {}
+PENDING_STATUS_SHAPE = False  # .vr-status::before, the dot the status glyph replaces
 
 # SVG data URIs app.css may keep, by the path or filter that identifies each, with the reason.
 DATA_URIS = {

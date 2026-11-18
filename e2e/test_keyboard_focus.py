@@ -3,7 +3,7 @@
 import re
 
 import pytest
-from helpers import field, make_announcement
+from helpers import field, make_announcement, pick
 from playwright.sync_api import Page, expect
 
 from core.models import Announcement
@@ -182,10 +182,10 @@ def test_selects_wait_for_explicit_submission(page: Page, sign_in_as):
     sign_in_as("admin")
     make_announcement("Synthetic notice")
     page.goto("/repository/announcements/")
-    control = page.get_by_label("Rows per page", exact=True)
+    control = page.get_by_role("combobox", name="Rows per page", exact=True)
     control.focus()
     before = page.url
-    control.select_option("50")
+    pick(control, "50")
     # A frame boundary allows change handlers and navigation to settle.
     page.evaluate(
         "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
@@ -201,7 +201,7 @@ def test_selects_wait_for_explicit_submission(page: Page, sign_in_as):
 
     # The status and audience filters wait for Apply too.
     status = page.get_by_label("Status", exact=True)
-    status.select_option("showing")
+    pick(status, "showing")
     page.evaluate(
         "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
     )

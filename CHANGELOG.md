@@ -12,7 +12,7 @@ The same list is shown in the application under What's new.
 
 - **Changed:** A new look with section menus in the top bar (2026-11-18)
 
-  The sidebar is replaced by a light top bar: each section (Specimens, Distribution, Storage, Equipment, Quality, Setup) opens a menu of its pages, and the repository name shows beside the product name. New type and colours run through the application in light and dark themes.
+  The sidebar is replaced by a light top bar: each section (Specimens, Distribution, Storage, Equipment, Quality, Setup) opens a menu of its pages, and the repository name shows beside the product name. New type and colours run through the application in light and dark themes, with a new sign-in illustration and icon.
 
 - **Added:** Escalate a withdrawal to destruction while keeping its holds (2026-11-17, Consent records)
 
@@ -64,6 +64,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Fixed:** Dashboard counts open exactly the rows they count, with a specimen journey (2026-11-18)
+
+  Requests awaiting my decision now opens exactly the requests it counts, and every dashboard count matches the rows its link opens. A specimen journey at the top of the dashboard shows where work is waiting, from receipt and storage through check-out to distribution or disposal.
+
 - **Added:** Export the filtered deviation register (2026-11-18, Deviations)
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
@@ -105,6 +109,10 @@ The same list is shown in the application under What's new.
   > No migration. The selection is rechecked when submitted and expires after one hour. No temperature triggers a hold automatically.
 
 ### Low impact
+
+- **Fixed:** Pick lists and manifests take the new look; draft manifests show their watermark (2026-11-18)
+
+  Printed pick lists and shipment manifests take the new look in black and white. A manifest printed before dispatch now shows its "Not dispatched" watermark, which was hidden before.
 
 - **Changed:** Status labels show an icon for their tone (2026-11-18)
 

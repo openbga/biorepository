@@ -10,7 +10,7 @@ import re
 from datetime import timedelta
 
 import pytest
-from helpers import field, make_user, sign_in, sign_out
+from helpers import field, make_user, pick, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -32,7 +32,7 @@ def pick_option(select, pattern):
     """Select the first option whose text matches `pattern`."""
     texts = select.locator("option").all_text_contents()
     label = next(t for t in texts if re.search(pattern, t))
-    select.select_option(label=label)
+    pick(select, label=label)
 
 
 def action(page: Page, name):
@@ -162,8 +162,8 @@ def test_request_to_return_and_withdrawal(page: Page, transactional_db):
     page.goto(f"/distribution/consents/new/?participant=P-000123&study={study.pk}")
     form = dialog(page) if page.locator("#vr-form-dialog").is_visible() else page.locator("main")
     form.get_by_label("Consented", exact=True).check()
-    form.get_by_label(re.compile("^GENERAL")).select_option(label="Permitted")
-    form.get_by_label(re.compile("^COMMERCIAL")).select_option(label="Refused")
+    pick(form.get_by_label(re.compile("^GENERAL")), label="Permitted")
+    pick(form.get_by_label(re.compile("^COMMERCIAL")), label="Refused")
     field(form, "Date of the decision").fill(
         (__import__("datetime").date.today() - timedelta(days=30)).isoformat()
     )
@@ -181,7 +181,7 @@ def test_request_to_return_and_withdrawal(page: Page, transactional_db):
     field(form, "Title").fill("Plasma for assay development")
     pick_option(field(form, "Investigator"), "INV-001")
     field(form, "Purpose").fill("Method validation (synthetic)")
-    field(form, "Received by").select_option(label="Email")
+    pick(field(form, "Received by"), label="Email")
     form.get_by_label(re.compile("GENERAL")).check()
     submit(form, "Create request")
     # Creating a request continues straight to its lines.
@@ -214,7 +214,7 @@ def test_request_to_return_and_withdrawal(page: Page, transactional_db):
     page.goto(request_url)
     action(page, "Link agreement")
     form = dialog(page)
-    field(form, "Agreement").select_option(index=1)
+    pick(field(form, "Agreement"), index=1)
     field(form, "Reason").fill("Umbrella MTA")
     submit(form, "Link agreement")
     expect(page.locator("main")).not_to_contain_text("No agreement")
@@ -260,10 +260,10 @@ def test_request_to_return_and_withdrawal(page: Page, transactional_db):
     shipment_url = page.url
     action(page, "Pack")
     form = dialog(page)
-    field(form, "Temperature class").select_option(label="−80 °C")
-    field(form, "Refrigerant").select_option(label="Dry ice")
+    pick(field(form, "Temperature class"), label="−80 °C")
+    pick(field(form, "Refrigerant"), label="Dry ice")
     field(form, "Dry ice").fill("5.00")
-    field(form, "Classification as declared by the shipper").select_option(label="Exempt specimen")
+    pick(field(form, "Classification as declared by the shipper"), label="Exempt specimen")
     field(form, "Packages").fill("1")
     field(form, "Emergency contact").fill("Repository duty phone +1 555 0199")
     form.get_by_role("group", name=re.compile("training")).get_by_label("Yes").check()
@@ -296,9 +296,9 @@ def test_request_to_return_and_withdrawal(page: Page, transactional_db):
 
     field(form, "Received at").fill(datetime.now(REPOSITORY_TZ).strftime("%Y-%m-%dT%H:%M:%S"))
     field(form, "Received by").fill("Example Receiving Desk")
-    field(form, "Condition").select_option(label="As expected")
-    field(form, "Refrigerant on arrival").select_option(label="Refrigerant remaining")
-    field(form, "Reported by").select_option(label="Email")
+    pick(field(form, "Condition"), label="As expected")
+    pick(field(form, "Refrigerant on arrival"), label="Refrigerant remaining")
+    pick(field(form, "Reported by"), label="Email")
     field(form, "Reason").fill("Recipient's email")
     submit(form, "Record receipt")
     expect(page.locator("main")).to_contain_text("Receipt recorded")

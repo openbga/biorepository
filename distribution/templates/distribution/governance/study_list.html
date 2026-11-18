@@ -4,10 +4,11 @@
 {% block page_intro %}<p class="vr-page-intro">Studies and the collections they govern: the consent basis that applies to each collection's specimens.</p>{% endblock %}
 {% block page_actions %}{% url 'distribution:study-create' as create_url %}{% include "distribution/governance/_list_actions.html" with create_label="New study" may_create=can_manage %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="studies-heading">
-  <h2 class="visually-hidden" id="studies-heading">Studies</h2>
+{% panel title="Studies" heading_id="studies-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter studies" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.studies" %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% url 'distribution:study-create' as create_url %}{% endif %}
+  {% if can_manage %}{% firstof "Record a study, then link the collections it governs." as empty_body %}{% else %}{% firstof "A repository manager records studies and the collections they govern." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No studies recorded" empty_body=empty_body action_url=create_url action_label="New study" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.studies" data-vr-grid-version="1" aria-labelledby="studies-heading">
       <thead><tr>
@@ -36,10 +37,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% url 'distribution:study-create' as create_url %}
-  {% if can_manage %}{% include "storage/_list_states.html" with title_empty="No studies recorded" body_empty="Record a study, then link the collections it governs." create_url=create_url create_label="New study" %}{% else %}{% include "storage/_list_states.html" with title_empty="No studies recorded" body_empty="A repository manager records studies and the collections they govern." %}{% endif %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

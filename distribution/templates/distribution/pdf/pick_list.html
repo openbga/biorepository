@@ -18,7 +18,7 @@ repository_name, generated_at.
 <p class="sub">{{ repository_name }} · {{ request_obj.title }} · {{ rows|length }} specimen{{ rows|length|pluralize }} allocated, in walking order</p>
 {% if blocked_count %}<p class="notice">{{ blocked_count }} specimen{{ blocked_count|pluralize }} cannot be picked now; the reasons are listed on the row. Picking checks every specimen again.</p>{% endif %}
 <table>
-  <thead><tr><th class="check">Got</th><th>#</th><th>Specimen ID</th><th>Type</th><th class="num">Amount</th><th>Location</th><th>Notes</th></tr></thead>
+  <thead><tr><th class="check">Got</th><th class="num">#</th><th>Specimen ID</th><th>Type</th><th class="num">Amount</th><th>Location</th><th>Notes</th></tr></thead>
   <tbody>
   {% for row in rows %}
   <tr>

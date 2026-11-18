@@ -60,8 +60,6 @@ PENDING = {
     "storage/templates/storage/form.html": 1,
     "templates/core/announcement_form.html": 1,
     "templates/layouts/document.html": 1,
-    "templates/quality/complete.html": 1,
-    "templates/quality/form.html": 1,
 }
 
 

@@ -1,28 +1,20 @@
 """Distribution work queues for the staff dashboard (core.views).
 
-Each queue's label links to the list with the filter its count is computed with: request-list
-`status=submitted` and `status=approved&to_pick=1`, shipment-list `state=packed` and
-`state=dispatched`, return-list `review=awaiting` (the request pages own those filters),
-withdrawal-list `attention=1` and agreement-list `horizon=1` (governance_lists). Request
-decisions count only requests the user may decide (not created or submitted by them), so that
-count can be lower than the list, which shows every request awaiting a decision. The 60-day
-agreement horizon is a display choice, not a rule. Empty tables give zero counts.
+Each queue counts the rows its linked list shows: the count runs the list's own filter
+(`request_lists.filtered` / `governance_lists.filtered`) with the same parameters as the link,
+so the two cannot drift. Request decisions use the list's "Awaiting my decision" filter
+(requests the user neither created nor submitted). The 60-day agreement horizon is a display
+choice, not a rule. Empty tables give zero counts.
 """
 
-from django.db.models import Exists, Min, OuterRef
+from django.db.models import Min
 from django.urls import reverse
 
 from accounts.roles import can_decide_requests, has_role
 
-from . import governance_lists
-from .models import (
-    Allocation,
-    RequestSubmission,
-    ReturnReview,
-    Shipment,
-    SpecimenRequest,
-    SpecimenReturn,
-)
+from . import governance_lists, request_lists
+from .models import Allocation, RequestSubmission
+from .request_lists import awaiting_decision  # noqa: F401 (the decision rule, used by tests)
 from .services import MANAGE_ROLES, OPERATE_ROLES, READ_ROLES
 
 
@@ -30,32 +22,9 @@ def _url(name, params):
     return reverse(name) + "?" + "&".join(f"{k}={v}" for k, v in params.items())
 
 
-def awaiting_decision(user):
-    """Submitted requests this user may decide: not created by them, latest submission not
-    theirs (the service repeats both checks under lock)."""
-    mine = RequestSubmission.objects.filter(
-        request=OuterRef("pk"), submitted_by=user, number=OuterRef("latest_submission")
-    )
-    return (
-        SpecimenRequest.objects.filter(status=SpecimenRequest.Status.SUBMITTED)
-        .exclude(created_by=user)
-        .exclude(Exists(mine))
-    )
-
-
-def to_pick():
-    """Approved requests with allocations still to pick."""
-    allocated = Allocation.objects.filter(request=OuterRef("pk"), state=Allocation.State.ALLOCATED)
-    return SpecimenRequest.objects.filter(status=SpecimenRequest.Status.APPROVED).filter(
-        Exists(allocated)
-    )
-
-
-def returns_awaiting_review():
-    """Returns without a review that released them or kept them on hold."""
-    return SpecimenReturn.objects.exclude(
-        Exists(ReturnReview.objects.filter(specimen_return=OuterRef("pk")))
-    )
+def _rows(lists, key, params, user):
+    """The rows the list at `key` shows for `params` (no search, any sort)."""
+    return lists.filtered(lists.SPECS[key], params, user)[1]
 
 
 AREA = "Distribution"  # the dashboard row group (templates/core/dashboard.html)
@@ -68,13 +37,15 @@ def queues(user):
         return []
     result = []
     if can_decide_requests(user) and has_role(user, *OPERATE_ROLES):
-        awaiting = awaiting_decision(user)
+        params = {"awaiting_me": "on"}
+        awaiting = _rows(request_lists, "request", params, user)
         result.append(
             {
                 "area": AREA,
+                "key": "request_decide",
                 "label": "Requests awaiting my decision",
                 "count": awaiting.count(),
-                "url": _url("distribution:request-list", {"status": "submitted"}),
+                "url": _url("distribution:request-list", params),
                 "oldest_at": RequestSubmission.objects.filter(
                     request__in=awaiting.values("pk")
                 ).aggregate(at=Min("submitted_at"))["at"],
@@ -84,13 +55,15 @@ def queues(user):
             }
         )
     if has_role(user, *OPERATE_ROLES):
-        picking = to_pick()
+        params = {"status": "approved", "to_pick": "1"}
+        picking = _rows(request_lists, "request", params, user)
         result.append(
             {
                 "area": AREA,
+                "key": "request_pick",
                 "label": "Approved requests with allocations to pick",
                 "count": picking.count(),
-                "url": _url("distribution:request-list", {"status": "approved", "to_pick": "1"}),
+                "url": _url("distribution:request-list", params),
                 "oldest_at": Allocation.objects.filter(
                     request__in=picking.values("pk"), state=Allocation.State.ALLOCATED
                 ).aggregate(at=Min("allocated_at"))["at"],
@@ -98,64 +71,71 @@ def queues(user):
                 "tone": "info",
             }
         )
-        packed = Shipment.objects.filter(state=Shipment.State.PACKED)
+        params = {"state": "packed"}
+        packed = _rows(request_lists, "shipment", params, user)
         result.append(
             {
                 "area": AREA,
+                "key": "shipment_packed",
                 "label": "Shipments packed, awaiting dispatch",
                 "count": packed.count(),
-                "url": _url("distribution:shipment-list", {"state": "packed"}),
+                "url": _url("distribution:shipment-list", params),
                 "oldest_at": packed.aggregate(at=Min("packed_at"))["at"],
                 "note": "",
                 "tone": "progress",
             }
         )
-        dispatched = Shipment.objects.filter(state=Shipment.State.DISPATCHED)
+        params = {"state": "dispatched"}
+        dispatched = _rows(request_lists, "shipment", params, user)
         result.append(
             {
                 "area": AREA,
                 "label": "Dispatched shipments without a recorded receipt",
                 "count": dispatched.count(),
-                "url": _url("distribution:shipment-list", {"state": "dispatched"}),
+                "url": _url("distribution:shipment-list", params),
                 "oldest_at": dispatched.aggregate(at=Min("dispatched_at"))["at"],
                 "note": "Record the recipient's confirmation when it arrives.",
                 "tone": "info",
             }
         )
     if has_role(user, *MANAGE_ROLES):
-        returns = returns_awaiting_review()
+        params = {"review": "awaiting"}
+        returns = _rows(request_lists, "return", params, user)
         result.append(
             {
                 "area": AREA,
+                "key": "returns_review",
                 "label": "Returns awaiting review",
                 "count": returns.count(),
-                "url": _url("distribution:return-list", {"review": "awaiting"}),
+                "url": _url("distribution:return-list", params),
                 "oldest_at": returns.aggregate(at=Min("occurred_at"))["at"],
                 "note": "Returned specimens stay on a use hold until a manager reviews them.",
                 "tone": "hold",
             }
         )
-        attention = governance_lists.needing_attention()
+        params = {"attention": "1"}
+        attention = _rows(governance_lists, "withdrawal", params, user)
         result.append(
             {
                 "area": AREA,
                 "label": "Withdrawals needing follow-up",
                 "count": attention.count(),
-                "url": _url("distribution:withdrawal-list", {"attention": "1"}),
+                "url": _url("distribution:withdrawal-list", params),
                 "oldest_at": attention.aggregate(at=Min("recorded_at"))["at"],
                 "note": "Specimens in custody without a withdrawal hold, or distributed material "
                 "without recorded follow-up.",
                 "tone": "danger",
             }
         )
-        horizon = governance_lists.within_horizon()
+        params = {"horizon": "1"}
+        horizon = _rows(governance_lists, "agreement", params, user)
         result.append(
             {
                 "area": AREA,
                 "label": "Agreements expiring or with reporting due within "
                 f"{governance_lists.HORIZON_DAYS} days",
                 "count": horizon.count(),
-                "url": _url("distribution:agreement-list", {"horizon": "1"}),
+                "url": _url("distribution:agreement-list", params),
                 "oldest_at": None,
                 "note": "Dates as recorded on the agreements; nothing expires or is enforced "
                 "automatically except validity at dispatch.",

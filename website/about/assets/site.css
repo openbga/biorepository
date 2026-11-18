@@ -1,160 +1,344 @@
-/* The application’s frost, paper and navy palette, adapted for its presentation. */
+/* The application's Cryo look, adapted for its presentation: clear cold neutrals; ice for what is
+   cold, primary, linked and current; warm for time out of storage only. Values follow the Tokens
+   section of static/css/app.css, light and dark. */
+@font-face {
+  font-family: "Geologica";
+  src: url("Geologica-Cryo.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Martian Mono";
+  src: url("MartianMono-Cryo.woff2") format("woff2");
+  font-weight: 300 700;
+  font-stretch: 75% 100%;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
-  --paper: #fff;
-  --frost: #e9edf3;
-  --surface: #f4f6f8;
-  --ink: #182434;
-  --muted: #535c68;
-  --rule: #ccd1d9;
-  --link: #0c6289;
-  --action: #16293f;
-  --action-hover: #0e1c2d;
-  --highlight: #ffe08a;
-  --on-navy: #f6f7fa;
-  --on-navy-muted: #ced6df;
-  --navy-rule: #3b4f69;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --paper: #eef3f6;
+  --surface: #fbfdfe;
+  --surface-2: #f2f6f9;
+  --surface-hover: #e5edf2;
+  --rule: #d6e1e8;
+  --rule-strong: #6b8393;
+  --ink: #0f2230;
+  --muted: #4a5f6e;
+  --faint: #5f7584;
+  --action: #0a6e8e;
+  --action-hover: #075a75;
+  --on-action: #f4fbfd;
+  --cold-text: #075a75;
+  --cold-bg: #d9f0f7;
+  --cold-bg-strong: #bfe5f1;
+  --cold-border: #8ccbe0;
+  --ln2: #0b4a63;
+  --selection: #bfe5f1;
+  --band: #0b3446;
+  --band-text: #e7f4f9;
+  --band-muted: #b5d3df;
+  --band-rule: #2a5a70;
+  --band-code: #082736;
+  --frost-edge: rgba(255, 255, 255, .75);
+  --shadow-soft: 0 1px 2px rgba(15, 34, 48, .06), 0 2px 8px -4px rgba(15, 34, 48, .1);
+  --shadow: 0 2px 4px rgba(15, 34, 48, .06), 0 16px 40px -16px rgba(15, 34, 48, .28);
+  --shadow-shot: 0 2px 4px rgba(15, 34, 48, .06), 0 32px 64px -28px rgba(15, 34, 48, .38);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+  --sans: "Geologica", "Segoe UI", system-ui, sans-serif;
+  --data: "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* Dark: the same cold world at night. Without the theme menu (no JavaScript) the system setting
+   decides; with it, <html data-theme> pins the choice. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0b141a;
+    --surface: #111c24;
+    --surface-2: #16242e;
+    --surface-hover: #1d2f3b;
+    --rule: #233744;
+    --rule-strong: #5f7c8e;
+    --ink: #e1ebf1;
+    --muted: #9fb3c0;
+    --faint: #8aa2b2;
+    --action: #5ccbf0;
+    --action-hover: #86d9f5;
+    --on-action: #03202b;
+    --cold-text: #8fdcf5;
+    --cold-bg: #0f3444;
+    --cold-bg-strong: #134457;
+    --cold-border: #2c7593;
+    --ln2: #1a6b8a;
+    --selection: #134457;
+    --band: #081d27;
+    --band-text: #e1ebf1;
+    --band-muted: #a9c4d0;
+    --band-rule: #21485a;
+    --band-code: #05121a;
+    --frost-edge: rgba(160, 220, 245, .06);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 8px -4px rgba(0, 0, 0, .4);
+    --shadow: 0 2px 4px rgba(0, 0, 0, .3), 0 16px 40px -16px rgba(0, 0, 0, .6);
+    --shadow-shot: 0 2px 4px rgba(0, 0, 0, .3), 0 32px 64px -28px rgba(0, 0, 0, .75);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0b141a;
+  --surface: #111c24;
+  --surface-2: #16242e;
+  --surface-hover: #1d2f3b;
+  --rule: #233744;
+  --rule-strong: #5f7c8e;
+  --ink: #e1ebf1;
+  --muted: #9fb3c0;
+  --faint: #8aa2b2;
+  --action: #5ccbf0;
+  --action-hover: #86d9f5;
+  --on-action: #03202b;
+  --cold-text: #8fdcf5;
+  --cold-bg: #0f3444;
+  --cold-bg-strong: #134457;
+  --cold-border: #2c7593;
+  --ln2: #1a6b8a;
+  --selection: #134457;
+  --band: #081d27;
+  --band-text: #e1ebf1;
+  --band-muted: #a9c4d0;
+  --band-rule: #21485a;
+  --band-code: #05121a;
+  --frost-edge: rgba(160, 220, 245, .06);
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, .3), 0 2px 8px -4px rgba(0, 0, 0, .4);
+  --shadow: 0 2px 4px rgba(0, 0, 0, .3), 0 16px 40px -16px rgba(0, 0, 0, .6);
+  --shadow-shot: 0 2px 4px rgba(0, 0, 0, .3), 0 32px 64px -28px rgba(0, 0, 0, .75);
+}
+
+:root {
+  font-family: var(--sans);
+  font-weight: 380;
   color: var(--ink);
   background: var(--paper);
   line-height: 1.6;
-  scrollbar-color: var(--muted) var(--surface);
+  scrollbar-color: var(--rule-strong) var(--paper);
+  -webkit-font-smoothing: antialiased;
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; }
-::selection { background: var(--highlight); color: var(--ink); }
-a { color: var(--link); text-underline-offset: .2em; }
-a:hover { text-decoration-thickness: 2px; }
-a:focus-visible, .commands:focus-visible { outline: 3px solid var(--link); outline-offset: 5px; }
+body { margin: 0; background: radial-gradient(70% 760px at 88% 0, var(--cold-bg), transparent) no-repeat, var(--paper); }
+/* The inline icon sprite: the hidden attribute does not hide an SVG element by itself. */
+svg[hidden] { display: none; }
+::selection { background: var(--selection); color: var(--ink); }
+a { color: var(--action); text-underline-offset: .2em; }
+a:hover { color: var(--action-hover); text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--action); outline-offset: 3px; }
 h1, h2, h3, p, figure, dl, dd { margin: 0; }
-h1, h2, h3 { text-wrap: balance; }
-h1 { font-size: clamp(2.75rem, 6vw, 5.25rem); line-height: 1.05; letter-spacing: -.035em; font-weight: 650; }
-h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.15; letter-spacing: -.025em; font-weight: 650; }
-h3 { font-size: 1.125rem; line-height: 1.3; }
+h1, h2, h3 { text-wrap: balance; font-weight: 600; }
+h1 { font-size: clamp(2.75rem, 6vw, 5rem); line-height: 1.04; letter-spacing: -.035em; }
+h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.12; letter-spacing: -.025em; }
+h3 { font-size: 1.125rem; line-height: 1.3; letter-spacing: -.01em; }
 p { max-width: 68ch; }
 p + p { margin-top: 1rem; }
 img { max-width: 100%; height: auto; }
 code, pre { font-family: var(--mono); }
 section[id] { scroll-margin-top: 2rem; }
+.icon { width: 1em; height: 1em; flex: none; fill: currentColor; vertical-align: -.125em; }
 
-.skip-link { position: absolute; top: -8rem; left: 1rem; z-index: 2; padding: .75rem 1rem; background: var(--paper); }
+.skip-link { position: absolute; top: -8rem; left: 1rem; z-index: 40; padding: .75rem 1rem; border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow); }
 .skip-link:focus { top: 1rem; }
-.site-header, .site-footer, .wrap { width: min(1160px, calc(100% - 5rem)); margin-inline: auto; }
-.site-header { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; padding-block: 1.5rem; }
-.brand { display: inline-flex; align-items: center; gap: .75rem; color: var(--ink); font-size: 1.125rem; font-weight: 650; text-decoration: none; white-space: nowrap; }
-.brand img { flex: none; }
-.wordmark { display: grid; gap: .125rem; line-height: 1.15; }
-.wordmark-name { font-size: 1.25rem; letter-spacing: -.015em; }
-nav { display: flex; flex-wrap: wrap; gap: .5rem 1.75rem; }
-nav a { padding-block: .5rem; font-size: .9375rem; color: var(--ink); }
 
-/* The frost band can stop short of the hero's end so a figure sits across its edge (--overlap);
-   the overview has no figure yet, so its band runs the full height. */
-.hero { --overlap: 0px; background: linear-gradient(var(--frost) calc(100% - var(--overlap)), var(--paper) 0); border-top: 1px solid var(--rule); }
-.hero-inner { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 4rem; padding-block: clamp(3rem, 6vw, 5.5rem) clamp(2.5rem, 5vw, 4rem); }
+/* Header: the brand, the page's sections and the theme menu, on the cold ground. */
+.site-header-inner, .site-footer, .wrap { width: min(1160px, calc(100% - 5rem)); margin-inline: auto; }
+.site-header-inner { display: flex; align-items: center; gap: 1.5rem; padding-block: 1.25rem; }
+.brand { display: inline-flex; align-items: center; gap: .75rem; margin-right: auto; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.brand:hover { color: var(--ink); }
+.brand img { flex: none; }
+.wordmark { font-size: 1.1875rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.15; }
+.wordmark-parent { color: var(--muted); font-weight: 500; }
+.site-nav { display: flex; flex-wrap: wrap; gap: .25rem; }
+.site-nav a { padding: .4375rem .875rem; border-radius: var(--radius-pill); color: var(--ink); font-size: .9375rem; font-weight: 500; text-decoration: none; }
+.site-nav a:hover { background: var(--surface-hover); color: var(--ink); }
+
+/* Theme menu (assets/site.js). Hidden without JavaScript: the page then follows the system. */
+:root:not([data-theme]) .theme-menu { display: none; }
+.theme-menu { position: relative; flex: none; }
+.theme-button { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.5rem; padding: .5rem .875rem; border: 0; border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--shadow-soft); color: var(--ink); font: inherit; font-size: .9375rem; font-weight: 500; cursor: pointer; }
+.theme-button:hover, .theme-button[aria-expanded="true"] { background: var(--surface-hover); }
+.theme-options { position: absolute; z-index: 30; top: calc(100% + .5rem); right: 0; display: grid; gap: .125rem; min-width: 11rem; padding: .375rem; border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow); }
+.theme-options[hidden] { display: none; }
+.theme-options button { display: flex; align-items: center; gap: .625rem; width: 100%; padding: .5rem .75rem; border: 0; border-radius: var(--radius); background: transparent; color: var(--ink); font: inherit; font-size: .9375rem; font-weight: 500; text-align: left; cursor: pointer; }
+.theme-options button:hover { background: var(--surface-hover); }
+.theme-options button[aria-pressed="true"] { background: var(--cold-bg); color: var(--cold-text); }
+.theme-check { margin-left: auto; visibility: hidden; }
+.theme-options button[aria-pressed="true"] .theme-check { visibility: visible; }
+
+/* Hero: the cold ground under a faint frost, with the picture as a raised panel. */
+.hero-inner { display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 4rem; padding-block: clamp(2.5rem, 6vw, 5rem) clamp(2.5rem, 5vw, 3.5rem); }
 .hero-description > p:first-child { font-size: 1.25rem; line-height: 1.5; }
 .hero-description > p + p { color: var(--muted); }
+.hero-description > .project-status { margin-top: 1rem; color: var(--muted); font-family: var(--data); font-stretch: 80%; font-size: .75rem; }
 .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
-.button { display: inline-flex; justify-content: center; align-items: center; min-height: 48px; padding: .75rem 1.25rem; background: var(--action); color: var(--paper); border: 1px solid var(--action); border-radius: 6px; font-size: .9375rem; font-weight: 600; text-align: center; text-decoration: none; }
-.button:hover { background: var(--action-hover); text-decoration: underline; }
-.button-quiet { background: transparent; color: var(--action); }
-.button-quiet:hover { background: rgb(30 53 81 / .08); }
-.hero-description > .project-status { margin-top: .875rem; color: var(--muted); font-size: .8125rem; }
+.button { display: inline-flex; justify-content: center; align-items: center; gap: .5rem; min-height: 48px; padding: .75rem 1.375rem; border: 0; border-radius: var(--radius-pill); background: var(--action); color: var(--on-action); font-size: .9375rem; font-weight: 600; text-align: center; text-decoration: none; }
+.button:hover { background: var(--action-hover); color: var(--on-action); }
+.button-quiet { background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--rule-strong); }
+.button-quiet:hover { background: var(--surface-hover); color: var(--ink); }
 
-.shot img { display: block; width: 100%; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); box-shadow: 0 1px 2px rgb(24 36 52 / .06), 0 28px 56px -28px rgb(24 36 52 / .3); }
-.shot figcaption { margin-top: .875rem; color: var(--muted); font-size: .8125rem; }
-.shot-paper { justify-self: center; max-width: 460px; }
-.shot-paper img { border-radius: 3px; background: var(--paper); }
+.shot img { display: block; width: 100%; border-radius: var(--radius-xl); background: var(--surface); box-shadow: 0 0 0 1px var(--rule), var(--shadow-shot); }
+.shot figcaption { margin-top: 1rem; color: var(--muted); font-size: .8125rem; }
+.hero-shot { padding-bottom: clamp(3rem, 6vw, 4.5rem); }
 
 .section > .wrap { padding-block: 4.5rem; }
-.section + .section > .wrap { border-top: 1px solid var(--rule); }
 .section-intro { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 4rem; margin-bottom: 2.5rem; }
 .section-intro > p { color: var(--muted); }
-.eyebrow { margin-bottom: .75rem; font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.eyebrow { margin-bottom: .75rem; color: var(--cold-text); font-size: .875rem; font-weight: 600; }
 
-.workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin: 0; padding: 0; list-style: none; counter-reset: workflow; }
-.workflow li { counter-increment: workflow; border-top: 1px solid var(--rule); padding-top: 1rem; }
-.workflow li::before { content: counter(workflow, decimal-leading-zero); display: block; margin-bottom: 1.25rem; font-family: var(--mono); font-size: .8125rem; color: var(--muted); }
+/* The journey, as four stations on a cold rail. */
+.workflow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: workflow; }
+.workflow li { counter-increment: workflow; padding: 1.5rem; border-radius: var(--radius-xl); background: var(--surface); box-shadow: inset 0 1px 0 var(--frost-edge), var(--shadow-soft); }
+.workflow li::before { content: counter(workflow); display: grid; place-items: center; width: 2.25rem; height: 2.25rem; margin-bottom: 1.25rem; border-radius: 50%; background: var(--action); box-shadow: 0 0 0 5px var(--cold-bg-strong); color: var(--on-action); font-family: var(--data); font-stretch: 80%; font-size: .875rem; font-weight: 600; }
 .workflow p { margin-top: .625rem; color: var(--muted); font-size: .9375rem; }
 
-/* Full-width bands carry their own edges, so the rule between sections is dropped beside them. */
-.tinted { background: var(--surface); border-block: 1px solid var(--rule); }
-.section.tinted > .wrap, .section.start > .wrap, .tinted + .section > .wrap, .start + .section > .wrap { border-top: 0; }
+/* A band carries its own surface. */
+.tinted { background: var(--surface); }
 .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 0 4rem; }
 .principles > div { display: grid; grid-template-columns: 11rem 1fr; gap: 1.5rem; padding-block: 1.25rem; border-top: 1px solid var(--rule); }
-.principles dt { font-weight: 650; }
+.principles dt { font-weight: 600; }
 .principles dd { color: var(--muted); font-size: .9375rem; }
 
 .feature { display: grid; grid-template-columns: 5fr 7fr; align-items: center; gap: 4rem; }
-.feature + .feature { margin-top: 4.5rem; }
+.feature + .feature { margin-top: 5rem; }
 .feature:nth-child(even) { grid-template-columns: 7fr 5fr; }
 .feature:nth-child(even) .feature-text { order: 2; }
 .feature-text h3 { font-size: 1.5rem; line-height: 1.2; letter-spacing: -.015em; }
 .feature-text h3 + p { margin-top: .875rem; color: var(--muted); }
 
-table { width: 100%; border-collapse: collapse; text-align: left; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-soft); overflow: hidden; }
+.tinted table { background: var(--paper); box-shadow: none; }
 caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-th, td { padding: 1.125rem 1.25rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
-thead { background: var(--frost); }
-thead th { font-size: .875rem; }
+th, td { padding: 1.125rem 1.5rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tbody tr:last-child > * { border-bottom: 0; }
+thead th { background: var(--surface-2); color: var(--muted); font-size: .875rem; font-weight: 500; }
+.tinted thead th { background: var(--surface-hover); }
 tbody th { width: 28%; font-weight: 600; }
 td { color: var(--muted); }
 
-.start { background: var(--action); color: var(--on-navy); }
+/* Try it: the one deep band, the colour of the cold inside a tank. */
+.start { background: var(--band); color: var(--band-text); }
 .start-inner { display: grid; grid-template-columns: 5fr 7fr; align-items: start; gap: 4rem; }
 .start h2 { margin-bottom: 1.5rem; }
-.start p { color: var(--on-navy-muted); }
-.start a { color: var(--on-navy); }
-.start a:focus-visible, .commands:focus-visible { outline-color: var(--highlight); }
-.next-steps { display: grid; gap: .25rem; margin: 1.75rem 0 0; padding: 0; list-style: none; }
-.next-steps a { display: inline-block; padding-block: .375rem; font-weight: 600; }
-.next-steps a::after { content: " \2192"; }
+.start p { color: var(--band-muted); }
+.start a { color: var(--band-text); }
+.start :focus-visible { outline-color: var(--band-text); }
 .terminal { min-width: 0; }
-.commands { padding: 1.25rem 1.5rem; overflow-x: auto; background: var(--action-hover); border: 1px solid var(--navy-rule); border-radius: 10px; }
-.commands pre { margin: 0; color: var(--on-navy); font-size: .875rem; line-height: 1.75; }
-.terminal .comment { color: var(--on-navy-muted); }
+.commands { padding: 1.25rem 1.5rem; overflow-x: auto; border-radius: var(--radius-lg); background: var(--band-code); box-shadow: inset 0 0 0 1px var(--band-rule); }
+.commands pre { margin: 0; color: var(--band-text); font-size: .875rem; line-height: 1.75; }
+.terminal .comment { color: var(--band-muted); }
 .terminal p { margin-top: 1rem; font-size: .9375rem; }
-.terminal p code { color: var(--on-navy); font-size: .875em; overflow-wrap: anywhere; }
+.terminal p code { color: var(--band-text); font-size: .875em; overflow-wrap: anywhere; }
 
 .project { display: grid; grid-template-columns: 1.5fr 1fr; gap: 5rem; align-items: start; }
 .project h2 { margin-bottom: 1.5rem; }
 .project > div > p { color: var(--muted); }
-.project .links { display: flex; flex-wrap: wrap; gap: .25rem 2rem; margin-top: 1.5rem; }
+.links { display: flex; flex-wrap: wrap; gap: .25rem 2rem; margin-top: 1.5rem; }
 .text-link { display: inline-block; padding-block: .5rem; font-weight: 600; }
-.support { padding: 1.5rem 1.75rem; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
+.support { padding: 1.5rem 1.75rem; border-radius: var(--radius-xl); background: var(--surface); box-shadow: inset 0 1px 0 var(--frost-edge), var(--shadow-soft); }
 .support a { display: inline-block; padding-block: .25rem; font-weight: 600; }
-.site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .875rem; }
+.site-footer { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; padding-block: 1.5rem 2rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .875rem; }
+.site-footer > span:first-child { margin-right: auto; }
 
-/* Roadmap page. A status is always named in text; its marker only repeats it. */
-.status { display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem; font-family: var(--mono); font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); }
-.status::before { content: ""; flex: none; width: .625rem; height: .625rem; border: 1px solid var(--action); border-radius: 2px; }
-.status-built::before { background: var(--action); }
-.status-next::before { background: var(--highlight); }
-.status-later::before { background: var(--frost); }
-.status-exploring::before { border-style: dashed; }
+/* Roadmap. A status is always named in words; its icon only repeats it. */
+.status { display: inline-flex; align-items: center; gap: .4375rem; width: fit-content; margin-bottom: .875rem; padding: .25rem .75rem; border-radius: var(--radius-pill); box-shadow: inset 0 0 0 1.5px var(--tone-border); color: var(--tone-text); font-size: .875rem; font-weight: 600; line-height: 1.4; text-decoration: none; }
+.status-built { --tone-text: var(--on-action); --tone-border: var(--action); background: var(--action); }
+.status-next { --tone-text: var(--cold-text); --tone-border: var(--action); background: var(--cold-bg); }
+.status-later { --tone-text: var(--ink); --tone-border: var(--rule-strong); background: var(--surface); }
+.status-exploring { --tone-text: var(--muted); --tone-border: var(--rule-strong); background: transparent; box-shadow: none; outline: 1.5px dashed var(--rule-strong); outline-offset: -1.5px; }
+a.status:hover { color: var(--tone-text); filter: brightness(.96); }
 
-/* The board sits across the edge of the frost band. */
-.hero-board { --overlap: clamp(4rem, 9vw, 7rem); }
-.board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 1px 2px rgb(24 36 52 / .06), 0 28px 56px -28px rgb(24 36 52 / .3); }
-.board > div { padding: 1.5rem 1.5rem 1.75rem; }
-.board > div + div { border-left: 1px solid var(--rule); }
-.board .status { display: inline-flex; margin-bottom: 0; padding-block: .25rem; font-size: .8125rem; font-weight: 650; }
-.board p { color: var(--muted); font-size: .8125rem; }
-.board ul { display: grid; gap: .5rem; margin: 1rem 0 0; padding: 1rem 0 0; border-top: 1px solid var(--rule); list-style: none; font-size: .9375rem; line-height: 1.35; }
+/* The roadmap at a glance, drawn as a storage box seen from above: each area is a well. Built
+   areas are stored, filled ice with a frost ring, in the cold tray; the next priority is a
+   reserved ring; later work an open ring; open questions a dashed one. Each well links to its
+   card, with a one-line description as its tooltip (one layer above everything, site.js). */
+.route { position: relative; display: grid; gap: .5rem; margin-top: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: clamp(3rem, 6vw, 4.5rem); padding: .75rem; border-radius: var(--radius-xl); background: var(--surface); box-shadow: inset 0 1px 0 var(--frost-edge), var(--shadow); }
+.route ul { display: flex; flex-wrap: wrap; gap: .75rem .5rem; margin: 0; padding: 0; list-style: none; }
+.route-group { display: grid; grid-template-columns: 11.5rem 1fr; align-items: center; gap: 1rem; padding: 1.125rem 1.25rem; border-radius: var(--radius-lg); background: var(--surface-2); }
+.group-built { background: linear-gradient(180deg, var(--cold-bg) 0, color-mix(in srgb, var(--cold-bg) 55%, var(--surface-2)) 100%); box-shadow: inset 0 2px 6px var(--rule); }
+.route .zone { margin: 0; }
+.zone-count { font-family: var(--data); font-stretch: 80%; font-size: .8125rem; }
+.zone-note { display: block; margin-top: .375rem; color: var(--muted); font-size: .8125rem; line-height: 1.35; }
+.node { position: relative; display: flex; flex-direction: column; align-items: center; gap: .5rem; width: 8rem; padding: .25rem .25rem .375rem; border-radius: var(--radius-lg); color: var(--ink); font-size: .8125rem; font-weight: 500; line-height: 1.25; text-align: center; text-decoration: none; }
+.node:hover { color: var(--ink); }
+.node:focus-visible { outline: none; }
+.node-icon { display: grid; place-items: center; width: 3.25rem; height: 3.25rem; border-radius: 50%; background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--rule-strong); color: var(--muted); font-size: 1.25rem; }
+.node-num { display: block; color: var(--cold-text); font-family: var(--data); font-stretch: 80%; font-size: .6875rem; font-weight: 600; }
+.group-built .node-icon { background: var(--action); box-shadow: inset 0 0 0 5px var(--cold-bg-strong), 0 0 0 1px var(--cold-border); color: var(--on-action); }
+.group-next .node-icon { background: var(--surface); box-shadow: inset 0 0 0 2px var(--action), 0 0 0 4px var(--cold-bg); color: var(--cold-text); }
+.group-exploring .node-icon { background: transparent; box-shadow: none; border: 1.5px dashed var(--rule-strong); }
+.group-exploring .node-label { color: var(--muted); }
+.node:hover .node-icon { box-shadow: inset 0 0 0 2px var(--action); color: var(--cold-text); }
+.group-built .node:hover .node-icon { background: var(--action-hover); box-shadow: inset 0 0 0 5px var(--cold-bg-strong), 0 0 0 1px var(--cold-border); color: var(--on-action); }
+.node:focus-visible .node-icon { outline: 3px solid var(--action); outline-offset: 3px; }
+.node:target .node-icon { outline: 3px solid var(--ink); outline-offset: 3px; }
+.route .node { scroll-margin-top: 40vh; }
 
-.buckets { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem 4rem; margin: 0; padding: 0; list-style: none; counter-reset: bucket; }
-.buckets > li { padding-top: 1rem; border-top: 1px solid var(--rule); scroll-margin-top: 2rem; }
-ol.buckets > li { counter-increment: bucket; }
-ol.buckets > li::before { content: counter(bucket, decimal-leading-zero); display: block; margin-bottom: .75rem; font-family: var(--mono); font-size: .8125rem; color: var(--muted); }
-.buckets h3 { font-size: 1.25rem; letter-spacing: -.01em; }
-.buckets h3 + p { margin-top: .5rem; font-size: .9375rem; }
+/* Without site.js each link shows its own description above it; with it, one tooltip layer
+   (last in the graphic, so above every well and label) replaces them, and the inline text stays
+   the link's description for assistive technology. */
+.tip { position: absolute; z-index: 5; bottom: calc(100% + .5rem); left: 50%; width: max-content; max-width: 17rem; padding: .5rem .75rem; border-radius: var(--radius); background: var(--ink); color: var(--surface); font-size: .8125rem; font-weight: 400; line-height: 1.4; text-align: left; visibility: hidden; opacity: 0; transform: translateX(-50%); pointer-events: none; }
+.node:hover .tip, .node:focus-visible .tip { visibility: visible; opacity: 1; }
+.node:hover, .node:focus-visible { z-index: 4; }
+.has-tip-layer .tip { display: none; }
+.route-tip { position: absolute; z-index: 30; top: 0; left: 0; width: max-content; max-width: 18rem; padding: .5rem .75rem; border-radius: var(--radius); background: var(--ink); color: var(--surface); font-size: .8125rem; line-height: 1.4; box-shadow: var(--shadow); }
+.route-tip[hidden] { display: none; }
+.route-tip-arrow { position: absolute; width: .75rem; height: .75rem; margin-left: -.375rem; background: inherit; transform: rotate(45deg); }
+.route-tip[data-side="top"] .route-tip-arrow { bottom: -.3125rem; }
+.route-tip[data-side="bottom"] .route-tip-arrow { top: -.3125rem; }
+
+/* Arriving from the graphic: the card the well points to is ringed in ice while it is the page's
+   target, with a short pulse, and offers a way back to the same well. */
+.buckets > li:target, #exploring .principles > div:target { border-radius: var(--radius-lg); background: var(--cold-bg); box-shadow: 0 0 0 3px var(--action); }
+#exploring .principles > div:target { padding-inline: 1rem; border-top-color: transparent; }
+#built tbody tr:target > * { background: var(--cold-bg); box-shadow: inset 0 3px 0 var(--action), inset 0 -3px 0 var(--action); }
+#built tbody tr:target > th { box-shadow: inset 3px 0 0 var(--action), inset 0 3px 0 var(--action), inset 0 -3px 0 var(--action); }
+#built tbody tr:target > td { box-shadow: inset -3px 0 0 var(--action), inset 0 3px 0 var(--action), inset 0 -3px 0 var(--action); }
+#built tbody tr:target > td { color: var(--ink); }
+.back-to-map { display: none; }
+:target .back-to-map { display: flex; align-items: center; gap: .375rem; width: fit-content; margin-top: .875rem; font-size: .875rem; font-weight: 600; }
+
+.buckets { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.buckets > li { padding: 1.5rem; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-soft); }
+.tinted .buckets > li { background: var(--paper); box-shadow: none; }
+/* A card reached from the graphic stops clear of the window edge. */
+.buckets > li, .principles > div, tbody tr { scroll-margin-top: 6rem; }
+.buckets h3 { font-size: 1.25rem; }
 .buckets ul { margin: .875rem 0 0; padding-left: 1.125rem; list-style: disc; color: var(--muted); font-size: .9375rem; }
 .buckets ul li + li { margin-top: .375rem; }
+.next-card { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1.25rem; padding: 1.5rem; border-radius: var(--radius-xl); background: var(--surface); box-shadow: var(--shadow-soft); }
+.next-card .node-icon { background: var(--surface); box-shadow: inset 0 0 0 2px var(--action), 0 0 0 4px var(--cold-bg); color: var(--cold-text); }
+.next-card p { color: var(--muted); }
 .closing { margin-bottom: 0; }
 .closing p { color: var(--muted); }
-.closing .links { display: flex; flex-wrap: wrap; gap: .25rem 2rem; margin-top: 1.5rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  a, .button, .theme-button, .theme-options button { transition: background-color .14s var(--ease), color .14s var(--ease); }
+  .node-icon { transition: background-color .16s var(--ease), box-shadow .16s var(--ease), transform .16s var(--ease); }
+  .node:hover .node-icon { transform: scale(1.06); }
+  .tip { transition: opacity .12s ease-out .08s, visibility 0s linear .08s; }
+  .buckets > li:target, #exploring .principles > div:target, #built tbody tr:target > * { animation: target-pulse 1.4s var(--ease); }
+  @keyframes target-pulse { from { background: var(--cold-bg-strong); } }
+}
+
+@media (max-width: 960px) {
+  .site-header-inner { flex-wrap: wrap; }
+  .site-nav { order: 3; width: 100%; margin-inline: -.875rem; }
+}
 
 @media (max-width: 850px) {
   .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
@@ -166,41 +350,46 @@ ol.buckets > li::before { content: counter(bucket, decimal-leading-zero); displa
   .feature:nth-child(even) .feature-text { order: 0; }
   .feature + .feature { margin-top: 3.5rem; }
   .project { grid-template-columns: 1fr; gap: 2rem; }
-  .board { grid-template-columns: 1fr 1fr; }
-  .board > div:nth-child(odd) { border-left: 0; }
-  .board > div:nth-child(n + 3) { border-top: 1px solid var(--rule); }
-  .buckets { grid-template-columns: 1fr; gap: 2.5rem; }
+  .route-group { grid-template-columns: 1fr; gap: .875rem; }
+  .route ul { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr)); }
+  .node { width: auto; }
+  .buckets { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
-  .site-header, .site-footer, .wrap { width: calc(100% - 2.5rem); }
-  .site-header { align-items: flex-start; flex-direction: column; gap: .75rem; padding-block: 1rem; }
-  nav { gap: .25rem 1rem; }
-  nav a { font-size: .8125rem; }
+  .site-header-inner, .site-footer, .wrap { width: calc(100% - 2.5rem); }
+  .site-header-inner { gap: .75rem; padding-block: 1rem; }
+  .theme-button-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .theme-button { padding: .5rem .75rem; }
+  .site-nav a { padding: .375rem .625rem; font-size: .8125rem; }
   .section > .wrap { padding-block: 3rem; }
   .section-intro { grid-template-columns: 1fr; gap: 1.25rem; margin-bottom: 2rem; }
-  .workflow { grid-template-columns: 1fr; gap: 1.5rem; }
-  .workflow li::before { float: left; width: 2.5rem; margin-top: .2rem; }
-  .workflow h3, .workflow p { margin-left: 2.5rem; }
+  .workflow { grid-template-columns: 1fr; }
   .principles > div { grid-template-columns: 1fr; gap: .375rem; }
-  .shot img { border-radius: 6px; }
+  .shot img { border-radius: var(--radius-lg); }
   .commands { padding: 1rem; }
   .commands pre { font-size: .8125rem; }
-  th, td { padding: .875rem .625rem; font-size: .875rem; }
+  th, td { padding: .875rem .75rem; font-size: .875rem; }
   tbody th { width: 34%; }
   .support { padding: 1.25rem; }
-  .board { grid-template-columns: 1fr; }
-  .board > div { padding: 1.25rem; }
-  .board > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+  /* Narrow: each well becomes a row with its label beside it; the cards carry the descriptions. */
+  .route { padding: .5rem; }
+  .route-group { padding: 1rem; }
+  .route ul { display: grid; gap: .5rem; }
+  .node { flex-direction: row; width: auto; gap: .75rem; padding: .125rem; text-align: left; }
+  .node-icon { width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+  .tip, .route-tip { display: none !important; }
+  .next-card { grid-template-columns: 1fr; }
 }
 
 @media print {
-  .skip-link, nav, .actions { display: none; }
-  .hero, .tinted, .start { background: none; color: var(--ink); }
-  .start p, .start a, .commands pre, .terminal .comment, .terminal p code { color: var(--ink); }
-  .commands { background: none; border-color: var(--rule); }
+  :root, :root[data-theme] { color-scheme: light; }
+  .skip-link, .site-nav, .theme-menu, .actions, .back-to-map { display: none; }
+  .hero, .tinted, .start, .group-built, .route-group { background: none; color: #000; }
+  .start p, .start a, .commands pre, .terminal .comment, .terminal p code { color: #000; }
+  .commands { background: none; box-shadow: inset 0 0 0 1px #777; }
   .commands pre { white-space: pre-wrap; }
   .hero-inner, .section > .wrap { padding-block: 1.5rem; }
-  .feature, .principles > div, .workflow li, .buckets > li, tr { break-inside: avoid; }
-  .shot img, .board { box-shadow: none; }
+  .feature, .principles > div, .workflow li, .buckets > li, tr, .route-group { break-inside: avoid; }
+  .shot img, .route, table, .workflow li, .support, .next-card { box-shadow: none; }
 }

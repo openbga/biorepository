@@ -1,2 +1,2 @@
-{% for field in attrs.form.visible_fields %}{% include "includes/field.html" with field=field %}{% endfor %}
+{% load ui %}{% for field in attrs.form.visible_fields %}{% if field.name == "remember" %}{% field field=field label="Remember me" %}{% else %}{% field field=field %}{% endif %}{% endfor %}
 {% for field in attrs.form.hidden_fields %}{{ field }}{% endfor %}

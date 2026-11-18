@@ -9,11 +9,12 @@ tab, create_noun, create_url, edit_route, can_manage.
 {% block page_actions %}{% with create_label="New "|add:create_noun %}{% include "distribution/governance/_list_actions.html" with may_create=can_manage %}{% endwith %}{% endblock %}
 {% block content %}
 {% section_tabs "distribution-catalogues" %}
-<section class="card vr-table-card" aria-labelledby="catalogue-heading">
-  <h2 class="visually-hidden" id="catalogue-heading">{{ tab }}</h2>
+{% panel title=tab heading_id="catalogue-heading" table=True hidden_title=True %}
   {% with grid_key="distribution.catalogue-"|add:kind %}
   {% grid_toolbar label="Filter "|add:noun q=q placeholder=placeholder inline=inline grid=grid_key %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% firstof "Consent records, requests and agreements are recorded with entries from these catalogues." as empty_body %}{% else %}{% firstof "A repository manager adds the entries consent records, requests and agreements use." as empty_body %}{% endif %}
+  {% if can_manage %}{% firstof create_url as manage_url %}{% firstof "New "|add:create_noun as create_label %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="Nothing in this catalogue yet" empty_body=empty_body action_url=manage_url action_label=create_label no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="{{ grid_key }}" data-vr-grid-version="1" aria-labelledby="catalogue-heading">
       <thead><tr>
@@ -54,10 +55,7 @@ tab, create_noun, create_url, edit_route, can_manage.
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% if can_manage %}{% with create_label="New "|add:create_noun %}{% include "storage/_list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="Consent records, requests and agreements are recorded with entries from these catalogues." create_url=create_url create_label=create_label %}{% endwith %}{% else %}{% include "storage/_list_states.html" with title_empty="Nothing in this catalogue yet" body_empty="A repository manager adds the entries consent records, requests and agreements use." %}{% endif %}
-  {% endif %}
+  {% endlist_results %}
   {% endwith %}
-</section>
+{% endpanel %}
 {% endblock %}

@@ -4,11 +4,11 @@
   {% if can_manage %}<a class="btn btn-primary" href="{% url 'quality:training-create' %}">New training record</a>{% endif %}{% endblock %}
 {% block page_intro %}<p class="vr-page-intro">Due dates reflect repository follow-up dates. They do not determine an expired qualification or change access.</p>{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="training-heading">
-  <h2 class="visually-hidden" id="training-heading">Training records</h2>
+{% panel title="Training records" heading_id="training-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter training records" q=q inline=inline grid="quality.training" %}
   {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% url 'quality:training-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun="training records" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No training records yet" empty_body="Record staff training assignments, completion evidence and human assessments." action_url=create_url action_label="New training record" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.training" data-vr-grid-version="1" aria-labelledby="training-heading"><thead><tr>
     {% sort_header label="Training record" asc="number" desc="-number" col="number" locked=True %}
     {% sort_header label="Status" asc="status" desc="-status" col="status" %}
@@ -30,10 +30,6 @@
     <td class="vr-nowrap">{% if training.renewal_due %}<time datetime="{{ training.renewal_due|date:'Y-m-d' }}">{{ training.renewal_due|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}</td>
     <td class="vr-nowrap"><time datetime="{{ training.updated_at|date:'c' }}">{{ training.updated_at|date:"Y-m-d H:i" }}</time></td>
   </tr>{% endfor %}</tbody></table></div>
-  {% pagination noun="training records" filtered=filtered %}
-  {% else %}
-    {% if can_manage %}{% url 'quality:training-create' as create_url %}{% endif %}
-    {% include "storage/_list_states.html" with title_empty="No training records yet" body_empty="Record staff training assignments, completion evidence and human assessments." create_label="New training record" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

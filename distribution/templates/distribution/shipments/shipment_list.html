@@ -4,10 +4,9 @@
 {% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
 {% block content %}
 {% section_tabs "distribution-shipments" %}
-<section class="card vr-table-card" aria-labelledby="shipments-heading">
-  <h2 class="visually-hidden" id="shipments-heading">Shipments</h2>
+{% panel title="Shipments" heading_id="shipments-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter shipments" q=q placeholder="Shipment or request number, tracking, institution" inline=inline more=more more_open=more_open grid="distribution.shipments" %}
-  {% if page_obj.paginator.count %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No shipments recorded" empty_body="A shipment is started from an approved request with picked specimens (New shipment on the request)." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.shipments" data-vr-grid-version="1" aria-labelledby="shipments-heading">
       <thead><tr>
@@ -38,9 +37,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% include "storage/_list_states.html" with title_empty="No shipments recorded" body_empty="A shipment is started from an approved request with picked specimens (New shipment on the request)." %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

@@ -109,6 +109,7 @@ CASES = {
     "list_results": '{% load ui %}{% list_results items=no_events noun="specimens" %}'
     "<table></table>{% endlist_results %}",
     "panel_section": "{% load ui %}{% panel_section %}Body{% endpanel_section %}",
+    "meta_item": '{% load ui %}{% meta_item label="Type" value="Plasma" %}',
     "more_actions": '{% load ui %}{% more_actions %}<li><a class="dropdown-item" href="/x/">'
     "Correct</a></li>{% endmore_actions %}",
     "record_layout": '{% load ui %}{% record_layout aside_label="Check out" %}'

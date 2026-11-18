@@ -143,6 +143,9 @@
       if (isBusy()) {
         return;
       }
+      if (window.vrControls) {
+        window.vrControls.init(content); // After setBusy: controls must not initialise disabled.
+      }
       // Selection totals must use restored eligibility, not temporary loading disables.
       if (window.vrInitSelections) {
         window.vrInitSelections(content);

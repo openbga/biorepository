@@ -85,8 +85,8 @@ def decimal_field(label, spec, *, suffix="", required=False, help_text="", min_v
         decimal_places=spec["decimal_places"],
         min_value=min_value,
         help_text=help_text,
+        widget=forms.NumberInput(attrs={"unit": suffix} if suffix else None),
     )
-    field.suffix = suffix
     return field
 
 

@@ -3,10 +3,11 @@
 {% comment %}Specimen requests, newest first (List page). Context: request_views.grid_response for request_lists.SPECS["request"]; rows carry line_count, open_count (allocated or picked) and shipped_count. Awaiting my decision is offered to people with the request decision permission only. ?specimen=VP-000123 lists the requests that allocated that specimen (linked from the specimen record).{% endcomment %}
 {% block page_actions %}{% url 'distribution:request-create' as create_url %}{% include "distribution/requests/_list_actions.html" with create_label="New request" may_create=can_operate %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="requests-heading">
-  <h2 class="visually-hidden" id="requests-heading">Requests</h2>
+{% panel title="Requests" heading_id="requests-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter requests" q=q placeholder="Request number or title" inline=inline more=more more_open=more_open grid="distribution.requests" %}
-  {% if page_obj.paginator.count %}
+  {% if can_operate %}{% url 'distribution:request-create' as create_url %}{% endif %}
+  {% if can_operate %}{% firstof "Record a request as it was received from an investigator, then add its lines and submit it for a decision." as empty_body %}{% else %}{% firstof "Requests recorded by technicians and managers appear here." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No specimen requests recorded" empty_body=empty_body action_url=create_url action_label="New request" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.requests" data-vr-grid-version="2" aria-labelledby="requests-heading">
       <thead><tr>
@@ -39,10 +40,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% url 'distribution:request-create' as create_url %}
-  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No specimen requests recorded" body_empty="Record a request as it was received from an investigator, then add its lines and submit it for a decision." create_url=create_url create_label="New request" %}{% else %}{% include "storage/_list_states.html" with title_empty="No specimen requests recorded" body_empty="Requests recorded by technicians and managers appear here." %}{% endif %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

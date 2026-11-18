@@ -260,6 +260,10 @@ COMPONENTS = {
         derive=history_panel_values,
     ),
     "page_meta": Component(I + "page_meta.html", body="block"),
+    "meta_item": Component(
+        I + "meta_item.html", ("label", "value", "warm", "class"), body="unless:value",
+        derive=fact_values,
+    ),
     "more_actions": Component(I + "more_actions.html", ("label",), body="block"),
     "record_layout": Component(I + "record_layout.html", ("aside_label",), body="block"),
     "fact": Component(
@@ -272,7 +276,7 @@ COMPONENTS = {
         I + "due_pill.html", ("due", "soon_days", "today", "plain"), derive=due_pill_values
     ),
     "status": Component(I + "status.html", ("label", "tone", "plain", "title")),
-    "brand": Component(I + "brand.html", ("href", "name", "variant")),
+    "brand": Component(I + "brand.html", ("href", "name", "variant", "repository")),
     "breadcrumbs": Component(
         I + "breadcrumbs.html",
         ("crumbs", "section", "section_url", "tab", "tab_url", "record", "record_url", "child",

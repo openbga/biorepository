@@ -8,7 +8,7 @@ from urllib.parse import parse_qs, urlsplit
 
 import pytest
 from django.utils import timezone
-from helpers import field, save_download, sign_in, sign_out
+from helpers import field, nav, pick, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
 from specimens.tests import conftest as specimen_fixtures
@@ -29,11 +29,11 @@ def test_training_record_completion_correction_cancellation_and_read_only(page, 
     from quality.models import TrainingEvent, TrainingRecord
 
     sign_in(page, people["manager"].username, PASSWORD)
-    page.get_by_role("link", name="Training records", exact=True).click()
+    nav(page, "Training records")
     expect(page.locator("main")).to_contain_text("No training records yet")
     page.get_by_role("link", name="New training record", exact=True).first.click()
     form = ready_dialog(page)
-    field(form, "Trainee").select_option(str(people["technician"].pk))
+    pick(field(form, "Trainee"), str(people["technician"].pk))
     field(form, "Topic").fill("Synthetic LN2 observation training")
     field(form, "Procedure / version reference").fill("SYN-LN2 v1")
     field(form, "Assignment due").fill("2026-01-02")
@@ -108,7 +108,7 @@ def test_training_record_completion_correction_cancellation_and_read_only(page, 
     page.goto(detail_url)
     expect(page.locator("main")).to_contain_text("Read-only access")
     expect(page.get_by_role("link", name="Cancel training record", exact=True)).to_have_count(0)
-    page.get_by_role("link", name="Training records", exact=True).first.click()
+    nav(page, "Training records")
     page.locator('main input[name="q"]').fill("SYN-LN2 v2")
     page.get_by_role("button", name="Apply", exact=True).click()
     expect(page.get_by_role("link", name=record.number, exact=True)).to_be_visible()
@@ -134,12 +134,12 @@ def test_viewer_downloads_the_applied_training_selection(page, people, tmp_path)
     upcoming = create("Synthetic CSV refresher C", overdue + timedelta(days=10))
     unrelated = create("Synthetic other course", overdue)
     sign_in(page, people["viewer"].username, PASSWORD)
-    page.get_by_role("link", name="Training records", exact=True).click()
+    nav(page, "Training records")
     toolbar = page.get_by_role("search", name="Filter training records")
     search = toolbar.get_by_role("searchbox")
     search.fill("CSV refresher")
-    toolbar.locator('[name="status"]').select_option("assigned")
-    toolbar.locator('[name="due"]').select_option("assignment_overdue")
+    pick(toolbar.locator('[name="status"]'), "assigned")
+    pick(toolbar.locator('[name="due"]'), "assignment_overdue")
     toolbar.get_by_role("button", name="Apply", exact=True).click()
     sort = page.get_by_role("link", name="Training record", exact=True)
     sort.click()
@@ -163,6 +163,11 @@ def test_viewer_downloads_the_applied_training_selection(page, people, tmp_path)
     assert [row["Training record"] for row in records] == [second.number, first.number]
     page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
     help_panel = page.locator("#vr-documentation")
-    expect(help_panel.get_by_text("Export CSV", exact=True)).to_be_visible()
+    # The reference is collapsed; "Find a field or action" opens the section that explains it.
+    help_panel.get_by_label("Find a field or action").fill("Export CSV")
+    export_help = help_panel.locator("details[data-vr-help-section][open]").filter(
+        has=page.locator("summary", has_text="Export CSV")
+    )
+    expect(export_help).to_be_visible()
     expect(help_panel).to_contain_text("10,000 records")
     assert page.console_errors == []

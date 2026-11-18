@@ -13,7 +13,7 @@ from decimal import Decimal
 
 import pytest
 from django.contrib.auth.models import Permission
-from helpers import field, local_input, make_user, pdf_text, sign_in, sign_out
+from helpers import field, local_input, make_user, nav, pdf_text, pick, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 from specimens import services as specimen_services
@@ -143,7 +143,7 @@ def choose_position(scope, box, label, index=None):
         if index is None
         else scope.locator(f"select[name='children-{index}-box']")
     )
-    boxes.select_option(value=str(box.pk))
+    pick(boxes, value=str(box.pk))
     labels = (
         scope.get_by_label(re.compile(r"^Position\s*\*?$"))
         if index is None
@@ -174,16 +174,16 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
 
     # Register.
     sign_in(page, tech.username, PASSWORD)
-    page.get_by_role("link", name="Specimens", exact=True).first.click()
+    nav(page, "Specimens")
     expect(page.get_by_role("heading", level=1, name="Specimens")).to_be_visible()
     page.locator(".vr-page-actions").get_by_role("link", name="Register specimen").click()
     form = dialog(page)
-    field(form, "Specimen type").select_option(label="PLASMA · Plasma")
-    field(form, "Specimen container").select_option(label="CRYOVIAL-2ML · Cryovial 2 mL")
+    pick(field(form, "Specimen type"), label="PLASMA · Plasma")
+    pick(field(form, "Specimen container"), label="CRYOVIAL-2ML · Cryovial 2 mL")
     field(form, "Amount").fill("2.000000")
-    field(form, "Unit").select_option(label="mL")
-    field(form, "Participant").select_option(label="P-000123")
-    field(form, "Collection").select_option(label="DEMO")
+    pick(field(form, "Unit"), label="mL")
+    pick(field(form, "Participant"), label="P-000123")
+    pick(field(form, "Collection"), label="DEMO")
     field(form, "Collected").fill(local_input(-timedelta(hours=3)))
     submit(form, "Register specimen")
     heading = page.get_by_role("heading", level=1)

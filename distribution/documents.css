@@ -1,26 +1,35 @@
 /* Pick list and manifest stylesheet, passed to WeasyPrint by distribution/documents.py.
-   Black on white for any printer; nothing is loaded from outside the document. */
-@page { size: A4; margin: 15mm 12mm 18mm; @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 7pt sans-serif; } }
-html, body { margin: 0; padding: 0; color: #000; background: #fff; }
-body { font: 9pt / 1.35 "DejaVu Sans", "Helvetica", sans-serif; }
-h1 { font-size: 15pt; margin: 0 0 1mm; }
-h2 { font-size: 10.5pt; margin: 5mm 0 1.5mm; border-bottom: 0.4pt solid #000; padding-bottom: 0.5mm; }
+   Cryo on paper: black on white for any printer, sentence-case headings (no capitals), soft
+   corners on the notice and the tick boxes, light row rules; nothing is loaded from outside the
+   document. Identifiers and figures use the mono face, so 0/O and 1/l stay distinct. */
+@page {
+  size: A4;
+  margin: 15mm 12mm 18mm;
+  @bottom-right { content: "Page " counter(page) " of " counter(pages); font: 7pt "DejaVu Sans", sans-serif; color: #333; }
+}
+html, body { margin: 0; padding: 0; color: #000; }
+/* White on the page root only: a body background would hide the "Not dispatched" watermark
+   (z-index -1) behind it. */
+html { background: #fff; }
+body { font: 9pt / 1.4 "DejaVu Sans", "Helvetica", sans-serif; }
+h1 { font-size: 16pt; letter-spacing: -0.01em; margin: 0 0 1mm; }
+h2 { font-size: 10.5pt; margin: 6mm 0 2mm; padding-bottom: 1mm; border-bottom: 0.5pt solid #000; }
 .id, td.num, .mono { font-family: "DejaVu Sans Mono", "Menlo", monospace; }
-.sub { margin: 0 0 3mm; }
-dl.facts { display: grid; grid-template-columns: 42mm 1fr; gap: 0.8mm 3mm; margin: 0; }
-dl.facts dt { font-weight: bold; }
+.sub { margin: 0 0 4mm; padding-bottom: 2.5mm; border-bottom: 1.2pt solid #000; color: #222; }
+dl.facts { display: grid; grid-template-columns: 44mm 1fr; gap: 1mm 3mm; margin: 0; }
+dl.facts dt { font-weight: bold; color: #222; }
 dl.facts dd { margin: 0; white-space: pre-line; }
 table { width: 100%; border-collapse: collapse; margin-top: 1mm; }
-th, td { text-align: left; vertical-align: top; padding: 1mm 1.2mm; border-bottom: 0.3pt solid #555; }
-th { border-bottom: 0.8pt solid #000; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.03em; }
+th, td { text-align: left; vertical-align: top; padding: 1.2mm 1.4mm; border-bottom: 0.3pt solid #777; }
+th { border-bottom: 0.9pt solid #000; font-size: 8pt; font-weight: bold; }
 td.num, th.num { text-align: right; }
 tr { break-inside: avoid; }
-.notice { border: 1pt solid #000; padding: 2mm 3mm; margin: 2mm 0 3mm; font-weight: bold; }
+.notice { border: 1pt solid #000; border-radius: 2mm; padding: 2.5mm 3.5mm; margin: 2mm 0 4mm; font-weight: bold; }
 .watermark { position: fixed; top: 110mm; left: 0; right: 0; text-align: center; font-size: 48pt; font-weight: bold; color: #ccc; transform: rotate(-30deg); z-index: -1; }
 .small { font-size: 7.5pt; }
-.foot { margin-top: 6mm; font-size: 7.5pt; }
+.foot { margin-top: 6mm; font-size: 7.5pt; color: #222; }
 .check { width: 7mm; }
-.box { display: inline-block; width: 3.5mm; height: 3.5mm; border: 0.6pt solid #000; }
+.box { display: inline-block; width: 3.6mm; height: 3.6mm; border: 0.7pt solid #000; border-radius: 0.8mm; }
 /* Sign-off and receipt blocks are filled in by hand: rows tall enough to write in. */
-table.handwrite th { width: 42mm; vertical-align: bottom; }
-table.handwrite td { height: 10mm; vertical-align: bottom; border-bottom: 0.6pt solid #000; }
+table.handwrite th { width: 44mm; vertical-align: bottom; font-size: 8.5pt; border-bottom: 0.6pt solid #000; }
+table.handwrite td { height: 11mm; vertical-align: bottom; border-bottom: 0.6pt solid #000; }

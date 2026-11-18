@@ -10,23 +10,76 @@ from . import changelog
 from .models import AuditEvent, Repository
 from .templatetags.navigation import ITEMS, ROUTE_ITEMS
 
+# The specimen journey on the dashboard: (key, label, icon, unit, queue keys). Each stage lists the
+# dashboard's own queue objects, so its numbers are the queues' and open the same rows.
+JOURNEY = (
+    ("receive", "Receive", "box-arrow-in-down", "not stored", ("unstored",)),
+    ("store", "Store", "snow", "in storage", ("held",)),
+    ("out", "Check out / in", "stopwatch", "out of storage", ("checked_out", "returns_review")),
+    (
+        "distribute",
+        "Distribute",
+        "send",
+        "in progress",
+        ("request_decide", "request_pick", "shipment_packed"),
+    ),
+    ("dispose", "Dispose", "trash3", "in progress", ("disposal_awaiting", "disposal_approved")),
+)
+
+
+def journey(queues, stored):
+    """[{key, label, icon, count, unit, url, queues}] built from the dashboard queues.
+
+    Receive and Check out / in count their first queue (registered, not stored; checked out) and
+    link to it. Store counts the specimens in storage (`stored`, from the specimen list's In
+    storage filter it links to). Distribute and Dispose count the sum of their queues and link to
+    the first one. A stage whose role sees none of its queues has no link.
+    """
+    by_key = {queue["key"]: queue for queue in queues if queue.get("key")}
+    stages = []
+    for key, label, icon, unit, queue_keys in JOURNEY:
+        shown = [by_key[k] for k in queue_keys if k in by_key]
+        if key == "store":
+            count, url = (stored["count"], stored["url"]) if stored else (0, None)
+        elif key in ("receive", "out"):
+            first = by_key.get(queue_keys[0])
+            count, url = (first["count"], first["url"]) if first else (0, None)
+        else:
+            count = sum(queue["count"] for queue in shown)
+            url = shown[0]["url"] if shown else None
+        stages.append(
+            {
+                "key": key,
+                "label": label,
+                "icon": icon,
+                "count": count,
+                "unit": unit,
+                "url": url,
+                "queues": shown,
+            }
+        )
+    return stages
+
 
 @login_required
 def dashboard(request):
-    """Staff start page: the user's work queues and the most recently stored specimens."""
+    """Staff start page: the specimen journey, the user's work queues and the most recently
+    stored specimens."""
     require_staff(request.user)
     from distribution.dashboard import queues as distribution_queues
     from equipment.dashboard import queues as equipment_queues
-    from specimens.dashboard import queues, recently_stored
+    from specimens.dashboard import in_storage, queues, recently_stored
 
+    all_queues = (
+        queues(request.user) + equipment_queues(request.user) + distribution_queues(request.user)
+    )
     return render(
         request,
         "core/dashboard.html",
         {
             "page_title": "Dashboard",
-            "queues": queues(request.user)
-            + equipment_queues(request.user)
-            + distribution_queues(request.user),
+            "queues": all_queues,
+            "journey": journey(all_queues, in_storage(request.user)),
             "recently_stored": recently_stored(request.user),
         },
     )

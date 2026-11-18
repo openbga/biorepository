@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load ui %}
 {% comment %}
 Centred single-panel layout without navigation: sign-in, password reset, and error pages for
 visitors who are not signed in (layouts/error.html).
@@ -14,7 +15,7 @@ entrance_foot (note under the panel).
   {% block entrance_scene %}{% endblock %}
   <div class="vr-entrance-body">
     <div class="vr-entrance-theme d-flex align-items-center gap-1">{% include "documentation/button.html" %}{% include "includes/theme_menu.html" %}</div>
-    {% include "includes/brand.html" with href="/" variant="entrance" %}
+    {% brand href="/" variant="entrance" %}
     <div class="vr-entrance-sheets">
       <div class="vr-entrance-panel">
         {% block entrance_heading %}{% endblock %}
@@ -24,7 +25,7 @@ entrance_foot (note under the panel).
       {% block entrance_aside %}{% endblock %}
     </div>
     <p class="vr-entrance-foot">{% block entrance_foot %}{% if repository.name %}{{ repository.name }} · {% endif %}Accounts are issued by the repository.{% endblock %}</p>
-    {% include "includes/source_footer.html" with css="vr-app-foot-centered" %}
+    {% source_footer css="vr-app-foot-centered" %}
   </div>
 </main>
 {% endblock body %}

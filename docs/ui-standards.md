@@ -261,82 +261,73 @@ it use the same words. Every page uses the same term for the same thing.
 
 ## 12. Visual language
 
-The Environmental LIMS "field notebook" structure (approved there 2026-11-09), re-coloured for cold
-storage on 2026-11-12 through the colour tokens only: navy ink, steel-blue pen, frost panel band,
-a frost-blue margin rule, and a navy top bar (the tank controller's colour) that carries the brand.
-Reviewed in the UI and brand pass of 2026-11-12; the structure, type, shape and devices below are
-unchanged from Environmental LIMS apart from the top bar's colour and the box position map. `static/css/app.css` holds the one
-definition of each token and component for light, dark and print; this section states the intent
-and the rules.
+Cryo, chosen on 2026-11-18 from three design directions. It replaces the "cold-store log" field-notebook look. The
+platform layer (shell structure, components, controls, help drawer, panel spacing) stays shared
+with Environmental LIMS; only the visual language below differs. `static/css/app.css` holds the
+one definition of each token and component for light, dark and print; this section states the
+intent and the rules. `tests/test_css_tokens.py` is their executable form.
 
-**Palette roles.** Each colour is a writing tool with one job; no colour is used outside its role.
+**Colour has two meanings.** On clear cold neutrals, ice means in the cold, the primary action,
+links and where you are; warm means time out of storage and nothing else (warnings keep their
+amber tone). No other colour is decoration.
 
 | Role | Tokens | Used for |
 | --- | --- | --- |
-| Paper | `--vr-paper`, `--vr-paper-rule`, `--vr-paper-haze*`, `--vr-surface`, `--vr-surface-2`, `--vr-band`, `--vr-border`, `--vr-border-strong` | The sheet and its hazed ruling; opaque panels laid on it; the frost heading band of a panel; hairlines; control boundaries |
-| Bar (navy) | `--vr-topbar-*` | The top bar in both modes: the brand band, with light text, a navy lookup field and a frost focus ring |
-| Ink (navy) | `--vr-text`, `--vr-text-muted`, `--vr-ink`, `--vr-on-ink` | Text; the primary button |
-| Pen (steel blue) | `--vr-pen`, `--vr-pen-hover`, `--vr-focus` | Links, section numbers and the focus ring, nothing else |
-| Highlighter (yellow, amber at night) | `--vr-highlight`, `--vr-highlight-edge`, `--vr-highlight-wash`, `--vr-on-highlight` | Where you are and what is selected: current sidebar item, current section tab, active filter chips, current page in a pager, selected rows and chosen items |
-| Margin and red pencil | `--vr-margin` (frost blue), `--vr-pencil` (red) | The margin rule; the required-field mark and prior values struck through |
-| Stamp tones | `--vr-{neutral,info,progress,success,warning,danger,hold}-{text,bg,border}` | Statuses and notices only |
+| Ground and surfaces | `--vr-paper`, `--vr-surface`, `--vr-surface-2`, `--vr-surface-hover`, `--vr-raised`, `--vr-pathbar-bg` | The cold ground; panels, the top bar and the record header; tonal insets (table heads, stations, dialog action row); hover; menus and dialogs; the storage path bar |
+| Lines | `--vr-border`, `--vr-border-strong` | Row separators and bar edges; control boundaries (3:1 on every surface). Panels have no outline |
+| Text | `--vr-text`, `--vr-text-muted`, `--vr-text-faint` | Text; labels and help; codes after their words |
+| Ice | `--vr-ink` = `--vr-pen`, `--vr-cold-*`, `--vr-ln2`, `--vr-focus`, `--vr-selection` | Primary button, links, focus; current menu section and item, selected rows, chips, the bulk bar; storage temperatures and the cold band of the journey |
+| Warm | `--vr-warm`, `--vr-warm-text`, `--vr-warm-bg`, `--vr-warm-border` | Time out of storage only: the running clock, "Checked out · 7 min", the Check out station |
+| Status tones | `--vr-{neutral,info,progress,success,warning,danger,hold}-{text,border,bg}` | Statuses and notices only |
 
-**Type.** Two voices. The system sans for reading. A system monospace (no web font) in small
-capitals with wide tracking for labels: table headers, fact labels, sidebar groups, breadcrumbs,
-toolbar labels. The same monospace, in normal case, for data: identifiers, dates and times,
-counts and right-aligned figures, so 0/O and 1/l stay distinct and digits line up.
+**Type.** Two voices, both self-hosted (OFL). Geologica for everything read: body, labels,
+headings, buttons, menus; sentence case, no uppercase labels. Martian Mono, narrowed, for the
+datum voice only: identifiers, figures, dates and times, storage paths and units (its zero is
+slashed, so 0/O stay distinct). A sentence ("Checked out", "2 hours ago") is never in the datum
+voice.
 
-**Shape.** Square corners (controls 2px, panels and dialogs 0). Hierarchy comes from type, rules
-and space, not shadows; menus and dialogs carry a hard paper offset instead of a soft shadow.
-Table headings sit on a full-weight ink rule, rows on hairlines.
+**Shape.** Rounded, separated by tone and soft shadow, never by outlines: panels and dialogs 22px,
+menus and notices 14px, fields 10px; buttons, path segments, statuses, counts, chips and the pager
+are capsules. Panel content sits `--vr-panel-inset` from the edge and stacked blocks are
+`--vr-stack` apart (the shared panel spacing system).
 
 **Devices, and when each is used.**
 
-- Paper: the signed-in workspace is one sheet with a faint quad ruling under a navy top bar. The
-  ruling is hazed (slightly blurred and faded) so headings and the rail read cleanly on it. Data is
-  never written on the ruling: tables, forms and facts sit on opaque panels.
-- Margin: the staff sidebar is the notebook margin; a frost-blue margin rule divides it from the content
-  (on phones it runs down the page's left edge).
-- Highlighter: a chisel-cut marker stroke for the one current location (sidebar item, section
-  tab), a wash for selection. Its heavier lower edge is the state indicator; `aria-current` or the
-  checkbox carries the state for assistive technology.
-- Stamp: a status is rendered by `includes/status.html` as a rectangular stamp (mono capitals,
-  tone, glyph and text, never colour alone). The record's own status, first in the header's key
-  facts, is a full-size stamp pressed slightly askew; table cells use the frameless form.
-- Numbered sections: on a record page each panel heading carries 1.0, 2.0 ... in pen. A page is
-  a record page when it renders `includes/record_foot.html` in `{% block record_foot %}`.
-- Record foot line: the record's identifier, and when and by whom the view was produced, under the
-  last panel and on its printout. It is a viewing note, not a statement about the record.
-- Application footer (`includes/source_footer.html`): product name, the "Source code" link
-  (`SOURCE_CODE_URL`, required by AGPL-3.0 section 13) and the licence, on every staff,
-  entrance, error and admin page. Keep it; it is hidden only in form dialogs and on printouts.
-- Dateline: today's date and ISO week above an overview's title (`includes/dateline.html`).
-- Struck prior values: in history (`includes/history_item.html`) the value before a change is
-  struck through in red pencil, the new value follows.
-- Box position map: a box record shows its grid as wells seen from above, labelled with row and
-  column headers. Occupied is a filled ink well, free an open ring, blocked a dashed hatched ring
-  in the hold tone; a key above counts each state and hidden text names it per cell, so fill and
-  shape are never the only cue. Managers select a free or blocked well to block or unblock it.
-- Mark: a dewar holding a two-by-three rack of vials in the vapor above a band of liquid nitrogen,
-  two wisps rising, on a navy tile (`static/img/mark.svg`; PNG favicon and touch icon beside it).
-- Sign-in: a punched notebook sheet beside the illustration of a vapor-phase storage room (a rack
-  tower lifted from an open tank, vapor spilling over the rim, a supply dewar, an oxygen monitor). Announcements for the
-  sign-in page sit in a box beside the sheet from 1280px, the sheet's height, scrolling inside when
-  longer; on narrower screens the box follows the sheet.
+- Top bar: brand, the section menus (the destinations, section 3), the specimen lookup ("Scan or
+  type ID") and the tools, on a light surface. Below 992px the menus open as an offcanvas list.
+- Storage path bar: under the top bar, only on pages with a storage context (section 3, rule 8).
+  The storage unit's segment is ice with its temperature; the current level is filled ice; a
+  position freed by a check-out is dashed; an open clock shows as a warm capsule at the end. On
+  the dashboard and storage overview the bar is the cold census of every unit.
+- Status: an outlined capsule, tone outline plus icon plus words (`includes/status.html`). The
+  record's own status, first in the header's key facts, is the large capsule with its tone wash;
+  inside a notice the status is plain.
+- Clock: time out of storage as a warm capsule with a stopwatch (`{% clock %}`).
+- Specimen journey: the dashboard draws the work queues as a temperature profile (room →
+  storage → room when checked out → dry ice or disposal) with five stations; the Check out station
+  is the region's one emphasis.
+- Custody timeline and history: round nodes on a rail; cold events in ice, out-of-storage events
+  in warm, others neutral; oldest first.
+- Box position map: a recessed tray; wells seen from above. Occupied is an ice cap with a frost
+  ring, held (an active hold) the same in the hold tone, free an open ring whose label shows on
+  hover and focus, blocked a hatched danger ring; a key counts each state and hidden text names it
+  per cell.
+- Mark: an ice tile with a six-point crystal and a vial cap (`static/img/mark.svg`).
+- Record foot line, application footer and the dateline (under an overview's title) keep their
+  roles from earlier versions of this section.
 
 Dates and times in these devices are rendered by the server in the repository's time zone
 (`TIME_ZONE`), never the browser's.
 
-**Dark mode** is a night shift, composed rather than inverted: deep navy paper and panels, a faint
-ruling, a muted blue margin rule, pale ink for text and the primary button, amber highlighter, and a
-top bar a step darker than the paper with light text.
+**Dark mode** is the same cold world at night: deep blue-black ground, slightly lighter panels,
+bright ice for actions and current, a soft warm for time out of storage.
 
-**Print** always uses the light paper palette whatever the screen mode, with no ruling, no margin
-rule, no navigation, toolbars or buttons, and stamp edges strong enough for a monochrome printer.
+**Print** always uses the light palette whatever the screen mode, with no top bar, path bar,
+navigation, toolbars or buttons; statuses keep their outlines and wells keep fill and ring.
 
-**Rules.** Text and its background meet WCAG 2.2 AA (4.5:1; labels and stamps count as small
-text) and control boundaries, focus rings and state indicators 3:1, in both modes and in print.
-Focus is a 2px pen outline outside the control, clearly
-visible on the ruling. Motion is limited to short colour transitions and the sign-in scene, and
-stops under `prefers-reduced-motion`. Templates never carry colours: a new need is a token or a
-component rule in `app.css`. Any chart library added later reads the tokens, so charts follow the mode.
+**Rules.** Text and its background meet WCAG 2.2 AA (4.5:1; small labels and statuses count as
+small text) and control boundaries, focus rings and state indicators 3:1, in both modes and in
+print. Focus is a 3px ice outline outside the control (fields: the field outline turns ice with a
+soft ring). Motion is limited to short colour and transform transitions and stops under
+`prefers-reduced-motion`. Templates never carry colours: a new need is a token or a component rule
+in `app.css`. Any chart library added later reads the tokens, so charts follow the mode.

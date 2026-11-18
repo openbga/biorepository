@@ -2,8 +2,13 @@
 {% load announcements ui %}
 {% comment %}
 Staff start page: the repository's current announcements for staff (the announcements tag), what
-needs doing now, then the newest stored specimens. No vanity counts.
-Context: queues = [{label, count, url, oldest_at, note, tone}] built in core.views for the
+needs doing now (the specimen journey, then the work queues), then the newest stored specimens.
+No vanity counts.
+Context: journey = [{key, label, icon, count, unit, url, queues}] from core.views.journey: five
+stages built from the same queue objects as the table below, so every number opens its rows
+(url None when the role sees none of a stage's queues). The line art is CSS masks
+(static/img/journey/*.svg), never inline SVG.
+queues = [{label, count, url, oldest_at, note, tone}] built in core.views for the
 signed-in user's roles (each count is the count of the linked list), grouped by area as row
 groups; a queue with nothing waiting is one compact line. A role with no queues sees an empty state that says so rather than zeros.
 {% endcomment %}
@@ -11,6 +16,37 @@ groups; a queue with nothing waiting is one compact line. A role with no queues 
 {% block page_intro %}<p class="vr-page-intro">What needs doing now in {{ repository.name|default:"this repository" }}.</p>{% endblock %}
 {% block content %}
 {% announcements %}
+{% if journey %}
+{% panel title="Specimen journey" class="vr-journey mb-3" %}
+  <p class="vr-muted">Counts of work you can act on, by where the specimen is and how cold it is.</p>
+  <div class="vr-journey-chart" role="img" aria-label="Temperature profile of the specimen journey: received at room temperature, stored at minus 80 to minus 196 degrees, checked out back to room temperature, then distributed on dry ice or disposed.">
+    <span class="vr-journey-axis" data-axis="room">Room, +20 °C</span>
+    <span class="vr-journey-axis" data-axis="ult">Ultra-low, −80 °C</span>
+    <span class="vr-journey-axis" data-axis="ln2">LN2 vapour, −160 °C</span>
+    <span class="vr-journey-axis" data-axis="ship">Dry ice, −78 °C</span>
+    <span class="vr-journey-tag">{% icon name="arrow-return-left" %} Check in</span>
+    <span class="vr-journey-stroke" data-stroke="return" aria-hidden="true"></span>
+    <span class="vr-journey-stroke" data-stroke="branch" aria-hidden="true"></span>
+    <span class="vr-journey-stroke" data-stroke="exit" aria-hidden="true"></span>
+    {% for stage in journey %}{% if stage.url %}<a class="vr-journey-node" data-stage="{{ stage.key }}" href="{{ stage.url }}" aria-label="{{ stage.label }}: {{ stage.count }} {{ stage.unit }}">{% icon name=stage.icon %}</a>{% else %}<span class="vr-journey-node" data-stage="{{ stage.key }}" role="img" aria-label="{{ stage.label }}: {{ stage.count }} {{ stage.unit }}">{% icon name=stage.icon %}</span>{% endif %}{% endfor %}
+  </div>
+  <div class="vr-journey-stations">
+    {% for stage in journey %}
+    <section class="vr-journey-station" data-stage="{{ stage.key }}" aria-labelledby="journey-{{ stage.key }}">
+      <h3 id="journey-{{ stage.key }}">{{ stage.label }}</h3>
+      <p class="vr-journey-count"><b class="vr-id">{{ stage.count }}</b> {{ stage.unit }}</p>
+      {% if stage.queues %}
+      <ul class="vr-journey-queue">
+        {% for queue in stage.queues %}
+        <li data-tone="{% if queue.count %}{{ queue.tone|default:'info' }}{% else %}neutral{% endif %}"><a href="{{ queue.url }}">{{ queue.label }}</a><span class="vr-journey-n">{{ queue.count }}</span>{% if queue.oldest_at %}<span class="vr-journey-age">Oldest {% with ago=queue.oldest_at|timesince %}<time datetime="{{ queue.oldest_at|date:'c' }}" title="{{ queue.oldest_at|date:'Y-m-d H:i T' }}">{% if ago|first == "0" %}just now{% else %}{{ ago }}{% endif %}</time>{% endwith %}</span>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+    {% endfor %}
+  </div>
+{% endpanel %}
+{% endif %}
 <section class="card vr-table-card mb-3" aria-labelledby="queues-heading">
   <div class="card-header"><h2 class="card-title" id="queues-heading">Your work queues</h2></div>
   <div class="card-body">

@@ -1,0 +1,18 @@
+{% comment %}
+One key fact under a record page's title, inside {% page_meta %} (docs/ui-standards.md section 4).
+Rendered by the {% meta_item %} tag ({% load ui %}): with value= it is a single tag; without, the
+tag's body up to {% endmeta_item %} is the value (a status, a time, a link).
+Parameters:
+  label   the fact's name, shown before the value (span.vr-meta-label); leave it out for the
+          status, which comes first and names itself
+  value   the value; blank (None or only whitespace) shows "—"
+  warm    truthy while time out of storage is running (li.is-warm): warm marks that clock only
+  class   extra classes on the li (vr-id for identifiers and amounts)
+Usage:
+  {% page_meta %}
+    {% meta_item %}{% specimen_status specimen %}{% endmeta_item %}
+    {% meta_item label="Type" value=specimen.specimen_type.name %}
+    {% meta_item label="Amount" value=amount class="vr-id" %}
+  {% endpage_meta %}
+{% endcomment %}
+<li{% if class or warm %} class="{{ class }}{% if class and warm %} {% endif %}{% if warm %}is-warm{% endif %}"{% endif %}>{% if label %}<span class="vr-meta-label">{{ label }}</span> {% endif %}{% if value is None %}—{% else %}{{ value }}{% endif %}</li>

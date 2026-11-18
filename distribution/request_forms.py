@@ -638,6 +638,7 @@ class PackForm(GroupedForm):
         max_digits=6,
         decimal_places=2,
         required=False,
+        widget=forms.NumberInput(attrs={"unit": "kg"}),
         help_text="Net mass of dry ice, only when the refrigerant is dry ice.",
     )
     classification = forms.ChoiceField(
@@ -711,7 +712,6 @@ class PackForm(GroupedForm):
 
     def __init__(self, *args, actor, shipment, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["dry_ice_kg"].suffix = "kg"
         self.fields["checked_by"].queryset = operating_staff(exclude=actor)
         self.initial.setdefault("occurred_at", now_to_the_second())
         self.initial.setdefault("expected_revision", shipment.revision)
