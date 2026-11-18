@@ -42,6 +42,7 @@ NON_PAGE_ROUTES = {
     "specimens:import-commit": "POST action on the import page",
     "specimens:import-template": "CSV template download from the import upload form",
     "equipment:attachment": "File download from the equipment and excursion pages",
+    "quality:training-export": "CSV download from the training register",
     "equipment:export": "CSV download from the equipment lists",
     "distribution:pick-list-pdf": "PDF download from the pick list preview",
     "distribution:manifest-pdf": "PDF download from the manifest preview",

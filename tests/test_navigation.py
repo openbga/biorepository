@@ -64,6 +64,7 @@ NON_PAGE_ROUTES = {
     "ready",
     "mfa_download_recovery_codes",
     "equipment:attachment",
+    "quality:training-export",
     "equipment:export",
     "distribution:pick-list-pdf",
     "distribution:manifest-pdf",

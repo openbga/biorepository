@@ -60,6 +60,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Added:** Export the training register to CSV (2026-11-17, Training records)
+
+  On Training records, use Export CSV to download assignments and renewal dates across all matching pages. The file follows the filters and sort order you applied.
+
 - **Fixed:** Identify temperature readings that had no recorded limits (2026-11-17, Temperature readings)
 
   Temperature readings now show “No limits recorded” when both bounds were blank. Use the Limits filter to find those readings or readings within the recorded bounds. The same assessment appears on equipment and excursion records and in the new Limit assessment CSV column.

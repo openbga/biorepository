@@ -101,6 +101,8 @@ Intentional divergences from Environmental LIMS (keep this list current):
   `laboratory` records.
 - `static/js/form-dialog.js` refreshes shared row-selection counts after restoring controls from
   their temporary loading state; `static/js/app.js` exposes the existing initializer for that call.
+- `core/grids.py` exposes the sorted queryset before pagination so the training register
+  and its CSV share the same ordering, including ties.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
   for the bounded excursion hold picker; the default pagination behavior is unchanged.
 - The `checks` workflow's `application` job allows 60 minutes (Environmental LIMS: 30): the OpenBGA Biorepository

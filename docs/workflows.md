@@ -514,7 +514,7 @@ assign training, send notifications or impose deadlines. In-app help covers its 
 Managers and administrators assign a training topic to an active staff account, with an optional
 procedure/version reference and deadline. They record the completion date, trainer or provider
 and evidence, and may add a competency assessment and renewal date. All staff can read the
-register and filter dates that need attention. The repository decides what training and evidence
+register, filter dates that need attention and export the matching register rows to CSV. The repository decides what training and evidence
 are adequate; no interval or curriculum is supplied.
 
 Working default: this is manager-maintained recordkeeping, including a manager's own training,

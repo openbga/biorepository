@@ -1,9 +1,14 @@
-"""Training assignment, evidence correction and cancellation retain readable history."""
+"""Training history and filtered register downloads through the staff workspace."""
 
+import csv
+import io
+from datetime import timedelta
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from helpers import field, sign_in, sign_out
+from django.utils import timezone
+from helpers import field, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
 from specimens.tests import conftest as specimen_fixtures
@@ -108,4 +113,56 @@ def test_training_record_completion_correction_cancellation_and_read_only(page, 
     page.get_by_role("button", name="Apply", exact=True).click()
     expect(page.get_by_role("link", name=record.number, exact=True)).to_be_visible()
     expect(page.get_by_role("link", name="New training record", exact=True)).to_have_count(0)
+    assert page.console_errors == []
+
+
+def test_viewer_downloads_the_applied_training_selection(page, people, tmp_path):
+    from quality.training_services import create_training
+
+    overdue = timezone.localdate() - timedelta(days=2)
+
+    def create(topic, due_on):
+        return create_training(
+            actor=people["manager"],
+            trainee_id=people["technician"].pk,
+            values={"topic": topic, "due_on": due_on},
+            reason="Synthetic assignment",
+        )
+
+    first = create("Synthetic CSV refresher A", overdue)
+    second = create("Synthetic CSV refresher B", overdue)
+    upcoming = create("Synthetic CSV refresher C", overdue + timedelta(days=10))
+    unrelated = create("Synthetic other course", overdue)
+    sign_in(page, people["viewer"].username, PASSWORD)
+    page.get_by_role("link", name="Training records", exact=True).click()
+    toolbar = page.get_by_role("search", name="Filter training records")
+    search = toolbar.get_by_role("searchbox")
+    search.fill("CSV refresher")
+    toolbar.locator('[name="status"]').select_option("assigned")
+    toolbar.locator('[name="due"]').select_option("assignment_overdue")
+    toolbar.get_by_role("button", name="Apply", exact=True).click()
+    sort = page.get_by_role("link", name="Training record", exact=True)
+    sort.click()
+    sort.click()
+    expect(page.get_by_role("link", name=first.number, exact=True)).to_be_visible()
+    expect(page.get_by_role("link", name=second.number, exact=True)).to_be_visible()
+    expect(page.get_by_role("link", name=upcoming.number, exact=True)).to_have_count(0)
+    expect(page.get_by_role("link", name=unrelated.number, exact=True)).to_have_count(0)
+
+    search.fill("Unsaved synthetic search")
+    export = page.get_by_role("link", name="Export CSV", exact=True)
+    assert parse_qs(urlsplit(export.get_attribute("href")).query) == {
+        "q": ["CSV refresher"],
+        "status": ["assigned"],
+        "due": ["assignment_overdue"],
+        "sort": ["-number"],
+    }
+    download = save_download(page, export.click, tmp_path / "training-records.csv")
+
+    records = list(csv.DictReader(io.StringIO(download.decode(), newline="")))
+    assert [row["Training record"] for row in records] == [second.number, first.number]
+    page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
+    help_panel = page.locator("#vr-documentation")
+    expect(help_panel.get_by_text("Export CSV", exact=True)).to_be_visible()
+    expect(help_panel).to_contain_text("10,000 records")
     assert page.console_errors == []

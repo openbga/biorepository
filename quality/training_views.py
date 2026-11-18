@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -12,29 +12,38 @@ from django.views.decorators.http import require_GET, require_http_methods
 
 from accounts.models import User
 from accounts.roles import has_role, staff_role_required
-from core.grids import GridRequest, active_filters
+from core.grids import active_filters
 
+from . import training_exports
 from . import training_services as services
 from .models import TrainingRecord
 from .training_forms import FilterForm, TrainingForm, apply_errors
-from .training_lists import COLUMNS, filter_training
+from .training_lists import COLUMNS, applied_filters, filter_training, training_grid
 
 
 @staff_role_required(*services.READ_ROLES)
 @require_GET
 def training_list(request):
     try:
-        grid = GridRequest.parse(request.GET, COLUMNS, "-updated")
+        grid = training_grid(request.GET)
     except ValueError as exc:
         return HttpResponseBadRequest(str(exc))
     form = FilterForm(request.GET)
     rows = filter_training(services.training_records(actor=request.user), form, grid.query)
+    page = grid.page(rows, COLUMNS)
+    over_limit = page.paginator.count > training_exports.EXPORT_CAP
+    export_url = None
+    if form.is_valid() and not over_limit:
+        selection = {**applied_filters(form, grid.query), "sort": grid.sort}
+        export_url = reverse("quality:training-export", query=selection)
     return render(
         request,
         "quality/training/list.html",
         {
             "page_title": "Training records",
-            "page_obj": grid.page(rows, COLUMNS),
+            "page_obj": page,
+            "export_url": export_url,
+            "exceeded_export_limit": f"{training_exports.EXPORT_CAP:,}" if over_limit else "",
             "filter_form": form,
             "inline": [form["status"], form["due"]],
             "q": grid.query,
@@ -45,6 +54,21 @@ def training_list(request):
             "noun": "training records",
         },
     )
+
+
+@staff_role_required(*services.READ_ROLES)
+@require_GET
+def training_export(request):
+    try:
+        content = training_exports.export_training(actor=request.user, params=request.GET)
+    except ValidationError as exc:
+        return HttpResponseBadRequest(
+            " ".join(exc.messages), content_type="text/plain; charset=utf-8"
+        )
+    response = HttpResponse(content, content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="training-records.csv"'
+    response["Cache-Control"] = "no-store"
+    return response
 
 
 def _training(request, pk):

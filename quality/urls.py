@@ -5,6 +5,7 @@ from . import deviation_views, training_views, views
 app_name = "quality"
 urlpatterns = [
     path("training/", training_views.training_list, name="training-list"),
+    path("training/export/", training_views.training_export, name="training-export"),
     path("training/new/", training_views.training_create, name="training-create"),
     path("training/<int:pk>/", training_views.training_detail, name="training-detail"),
     path("training/<int:pk>/edit/", training_views.training_edit, name="training-edit"),
