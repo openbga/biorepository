@@ -143,6 +143,10 @@ The same list is shown in the application under What's new.
 
 ### Low impact
 
+- **Changed:** Account pages use sentence case and the standard controls (2026-11-18)
+
+  Account pages use sentence case throughout (Email addresses, Make primary, Two-factor authentication, Change password). On the email page, Remove is an outlined destructive button at the start of the row, and address choices use the standard radio control.
+
 - **Changed:** Ongoing excursions show a running clock and their extreme (2026-11-18)
 
   Ongoing temperature excursions show a running clock, and their extreme temperature beside the unit's nominal temperature.
@@ -150,6 +154,10 @@ The same list is shown in the application under What's new.
 - **Fixed:** Pick lists and manifests take the new look; draft manifests show their watermark (2026-11-18)
 
   Printed pick lists and shipment manifests take the new look in black and white. A manifest printed before dispatch now shows its "Not dispatched" watermark, which was hidden before.
+
+- **Changed:** Sign-in shows Remember me and the password-reset link on one row (2026-11-18)
+
+  On the sign-in page, Remember me and Forgot your password? share one row under the password.
 
 - **Added:** Specimen records list their requests and consents; box maps mark holds (2026-11-18)
 

@@ -12,7 +12,7 @@
       "title": "Get a code",
       "steps": [
         "Choose the address in [[Recipient]]. Only verified addresses are offered.",
-        "Select [[Request Code]]."
+        "Select [[Request code]]."
       ]
     },
     {
@@ -44,7 +44,7 @@
           "description": "Choose which of your verified email addresses receives the code. Only verified addresses are offered; verify an address on the Email addresses page first if none appears."
         },
         {
-          "label": "Request Code",
+          "label": "Request code",
           "description": "Sends a one-time code to the chosen address and opens the code entry page. Requests are rate limited; a field error appears when the limit is reached."
         }
       ]

@@ -12,7 +12,7 @@
       "title": "Finish signing in",
       "steps": [
         "Type the six-digit code from your app, or an unused eight-digit recovery code, in [[Code]].",
-        "Select [[Sign In]]. To give up, select [[Cancel]]; you return to sign in."
+        "Select [[Sign in]]. To give up, select [[Cancel]]; you return to sign in."
       ]
     },
     {
@@ -43,7 +43,7 @@
           "description": "Required current six-digit authenticator code or unused eight-digit recovery code. Recovery codes are consumed on successful validation. TOTP uses the default 30-second step and refuses reuse of an already accepted current code. Invalid attempts are rate limited."
         },
         {
-          "label": "Sign In",
+          "label": "Sign in",
           "description": "Sign-in variant: validates the factor, records usage and completes the pending stage."
         },
         {

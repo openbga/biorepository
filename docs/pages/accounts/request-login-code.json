@@ -37,7 +37,7 @@
         },
         {
           "label": "Send code",
-          "description": "Requests a code and opens Enter Sign-In Code in this browser session. For an active account, the email contains a one-time code that expires five minutes after this request. Keep this browser window open and type the code here when it arrives. Requests are rate limited; if a limit is reached, wait before trying again."
+          "description": "Requests a code and opens Enter sign-in code in this browser session. For an active account, the email contains a one-time code that expires five minutes after this request. Keep this browser window open and type the code here when it arrives. Requests are rate limited; if a limit is reached, wait before trying again."
         },
         {
           "label": "Sign in with a password instead",

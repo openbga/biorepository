@@ -1,0 +1,12 @@
+{% load ui %}{% comment %}
+The top bar's specimen lookup: a GET search that opens a specimen by its scanned or typed ID. The
+lookup view authorizes and resolves; nothing here decides access. No parameters.
+{% endcomment %}
+{% url 'specimens:lookup' as specimen_lookup_url %}
+{% if specimen_lookup_url %}
+<form class="vr-lookup d-none d-sm-block" action="{{ specimen_lookup_url }}" method="get" role="search">
+  <label class="visually-hidden" for="vr-lookup-q">Find a specimen by its ID</label>
+  {% icon name="upc-scan" %}
+  <input class="form-control" type="search" id="vr-lookup-q" name="q" placeholder="Scan or type ID" autocomplete="off" spellcheck="false">
+</form>
+{% endif %}

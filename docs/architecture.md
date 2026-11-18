@@ -111,6 +111,12 @@ Intentional divergences from Environmental LIMS (keep this list current):
   covers every registered component, and `tests/test_ui_standards.py` also counts
   `{% post_button variant="primary" %}` as a primary action.
 - `_event_extra.html` history extras emit block lines inside the item's `.vr-timeline-meta`.
+- Account pages (2026-11-18): `locale/en/LC_MESSAGES/django.po` (compiled `.mo` committed, on
+  `LOCALE_PATHS`) sentence-cases allauth's English strings, guarded by `tests/test_locale.py`;
+  `templates/allauth/elements/{field,button,badge}.html` render Bootstrap fields, an outline-danger
+  destructive button first and the primary last, and badges through `{% status %}`. The top-bar
+  lookup is `includes/specimen_lookup.html` (Environmental LIMS `sample_lookup.html`). All portable
+  to Environmental LIMS unchanged.
 - Cross-app presentation seams (2026-11-18), one registry per seam, filled in `AppConfig.ready`;
   neither side imports the other's models, views or forms: `storage.pathbar.EXCURSION_SOURCES`
   (equipment registers the units with an open excursion for the path bar census) and

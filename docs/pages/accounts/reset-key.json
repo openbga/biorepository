@@ -10,8 +10,8 @@
     {
       "title": "Set the new password",
       "steps": [
-        "Type it in [[New Password]] and again in [[New Password (again)]].",
-        "Select [[Change Password]]. Then sign in with it; you are not signed in automatically."
+        "Type it in [[New password]] and again in [[New password (again)]].",
+        "Select [[Change password]]. Then sign in with it; you are not signed in automatically."
       ]
     },
     {
@@ -32,15 +32,15 @@
       "title": "Fields and actions",
       "items": [
         {
-          "label": "New Password",
+          "label": "New password",
           "description": "Required new password, at least eight characters. It must pass the configured checks for similarity to account details, common passwords and entirely numeric values. The confirmation must match exactly. Errors keep the form open; password fields may need entering again."
         },
         {
-          "label": "New Password (again)",
+          "label": "New password (again)",
           "description": "Required identical repeat of the replacement."
         },
         {
-          "label": "Change Password",
+          "label": "Change password",
           "description": "Saves only for a valid, unexpired recovery token. Success opens the password-changed acknowledgement. This deployment does not automatically sign in the account after reset."
         },
         {
@@ -49,7 +49,7 @@
         },
         {
           "label": "new password reset",
-          "description": "A Bad Token page has no password form and offers this link to request another reset. Already-used, invalid or expired tokens cannot change the account."
+          "description": "A Bad token page has no password form and offers this link to request another reset. Already-used, invalid or expired tokens cannot change the account."
         }
       ]
     },

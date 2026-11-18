@@ -10,7 +10,7 @@
     {
       "title": "Sign out",
       "steps": [
-        "Select [[Sign Out]]. The session ends and you return to sign in."
+        "Select [[Sign out]]. The session ends and you return to sign in."
       ]
     },
     {
@@ -30,7 +30,7 @@
       "title": "Action",
       "items": [
         {
-          "label": "Sign Out",
+          "label": "Sign out",
           "description": "POSTs the confirmation and ends this browser session, including any pending authentication stage, then returns to sign-in. Viewing this page with GET does not sign out. The account menu’s Sign out submits the same action directly without opening confirmation."
         }
       ]

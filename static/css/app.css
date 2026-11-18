@@ -3566,6 +3566,25 @@ time.vr-timeline-meta {
   justify-content: stretch;
 }
 
+/* Sign-in: Remember me and the password-reset link on one row under the password. */
+.vr-entrance-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vr-space-1) var(--vr-space-3);
+  margin: var(--vr-space-1) 0 var(--vr-space-6);
+  font-size: var(--vr-font-size-2);
+}
+
+.vr-form .vr-entrance-row > .vr-field {
+  margin-bottom: 0;
+}
+
+.vr-entrance-row a {
+  font-weight: var(--vr-font-weight-semibold);
+}
+
 /* "or" divider between password sign-in and the alternative methods */
 .vr-entrance-or {
   display: flex;
@@ -4181,7 +4200,8 @@ a.vr-boxmap-cell:focus-visible {
   font-weight: inherit;
 }
 
-.vr-path > .vr-muted {
+/* Words beside a storage path (the path keeps the datum voice; a words-only cell is reset above) */
+.vr-path:has(.vr-path-part) > .vr-muted {
   font-family: var(--vr-font-sans);
   font-stretch: normal;
   font-size: calc(1em / 0.86); /* undo the datum voice's size step on the cell */

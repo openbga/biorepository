@@ -17,7 +17,7 @@
     {
       "title": "Ask for another link",
       "steps": [
-        "On the Email addresses page, select the address and choose Re-send Verification."
+        "On the Email addresses page, select the address and choose Re-send verification."
       ]
     }
   ],
@@ -30,7 +30,7 @@
     {
       "title": "State and next step",
       "paragraphs": [
-        "Verify Your Email Address has no editable fields or resend action. Follow the verification link in the mailbox and check spam if needed. The stock text mentions signup, but public sign-up is closed here; this screen also serves existing-account verification. Delivery depends on the deployment’s outgoing-mail configuration. A message being requested does not make an address verified. Return to Email Addresses to request another link when needed."
+        "Verify your email address has no editable fields or resend action. Follow the verification link in the mailbox and check spam if needed. The stock text mentions signup, but public sign-up is closed here; this screen also serves existing-account verification. Delivery depends on the deployment’s outgoing-mail configuration. A message being requested does not make an address verified. Return to Email addresses to request another link when needed."
       ]
     }
   ],

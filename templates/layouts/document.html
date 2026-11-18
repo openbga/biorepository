@@ -82,14 +82,7 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
     </nav>
     {% endblock sidenav %}
     <div class="vr-topbar-end">
-      {% url 'specimens:lookup' as specimen_lookup_url %}
-      {% if specimen_lookup_url %}
-      <form class="vr-lookup d-none d-sm-block" action="{{ specimen_lookup_url }}" method="get" role="search">
-        <label class="visually-hidden" for="vr-lookup-q">Find a specimen by its ID</label>
-        {% icon name="upc-scan" %}
-        <input class="form-control" type="search" id="vr-lookup-q" name="q" placeholder="Scan or type ID" autocomplete="off" spellcheck="false">
-      </form>
-      {% endif %}
+      {% include "includes/specimen_lookup.html" %}
       {% whats_new_button %}
       {% include "documentation/button.html" %}
       {% include "includes/theme_menu.html" %}

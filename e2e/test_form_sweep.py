@@ -291,7 +291,7 @@ def enter(page: Page, account: str, live_server) -> None:
     sign_in(page, account, SESSION["password"])
     if account == WITH_APP:
         page.get_by_label("Code").fill(totp_code())
-        page.get_by_role("button", name="Sign In").click()
+        page.get_by_role("button", name="Sign in").click()
         page.wait_for_load_state()
 
 

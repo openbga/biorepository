@@ -10,25 +10,25 @@
     {
       "title": "Turn on two-factor authentication",
       "steps": [
-        "Under [[Authenticator App]], select [[Activate]] and follow the setup."
+        "Under [[Authenticator app]], select [[Activate]] and follow the setup."
       ]
     },
     {
       "title": "See or save your recovery codes",
       "steps": [
-        "Under [[Recovery Codes]], select [[View]] or [[Download]]."
+        "Under [[Recovery codes]], select [[View]] or [[Download]]."
       ]
     },
     {
       "title": "Replace your recovery codes",
       "steps": [
-        "Under [[Recovery Codes]], select [[Generate]] and confirm. The old codes stop working."
+        "Under [[Recovery codes]], select [[Generate]] and confirm. The old codes stop working."
       ]
     },
     {
       "title": "Turn off the authenticator app",
       "steps": [
-        "Under [[Authenticator App]], select [[Deactivate]] and confirm."
+        "Under [[Authenticator app]], select [[Deactivate]] and confirm."
       ]
     }
   ],
@@ -42,18 +42,18 @@
     {
       "title": "Enabled factors and account boundary",
       "paragraphs": [
-        "Requires sign-in and shows only your own authenticators. This deployment enables Authenticator App and Recovery Codes, with optional enrollment. Security keys, passkeys and trusted-browser shortcuts are not enabled. MFA does not grant roles."
+        "Requires sign-in and shows only your own authenticators. This deployment enables Authenticator app and Recovery codes, with optional enrollment. Security keys, passkeys and trusted-browser shortcuts are not enabled. MFA does not grant roles."
       ]
     },
     {
       "title": "Sections and actions",
       "items": [
         {
-          "label": "Authenticator App",
+          "label": "Authenticator app",
           "description": "Displays whether an app is active. Activate opens QR/secret enrollment and Deactivate opens removal confirmation, each in the shared form dialog over this page."
         },
         {
-          "label": "Recovery Codes",
+          "label": "Recovery codes",
           "description": "Displays unused count out of ten when a set exists, or No recovery codes set up. Each is an eight-digit, single-use alternative to an app code."
         },
         {

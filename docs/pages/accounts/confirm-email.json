@@ -41,7 +41,7 @@
         },
         {
           "label": "issue a new email confirmation request",
-          "description": "Shown for invalid or expired links and opens Email Addresses, requiring sign-in if necessary. A link normally expires after three days."
+          "description": "Shown for invalid or expired links and opens Email addresses, requiring sign-in if necessary. A link normally expires after three days."
         },
         {
           "label": "Unable to confirm",

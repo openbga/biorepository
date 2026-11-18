@@ -11,7 +11,7 @@
       "title": "Sign in with your password",
       "steps": [
         "Type your username or email in [[Login]] and your [[Password]].",
-        "Check [[Remember Me]] to stay signed in after closing the browser.",
+        "Check [[Remember me]] to stay signed in after closing the browser.",
         "Select [[Sign in]]. If you have an authenticator app, you are asked for its code next."
       ]
     },
@@ -56,7 +56,7 @@
           "description": "Required account password. Use Forgot your password? beneath this field for the email-based recovery form."
         },
         {
-          "label": "Remember Me",
+          "label": "Remember me",
           "description": "Optional, initially unchecked. Checked requests the normal persistent session lifetime; unchecked expires the session cookie when the browser session ends. The committed session lifetime is Django’s default two weeks."
         },
         {

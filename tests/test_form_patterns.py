@@ -40,9 +40,7 @@ def page_templates():
 
 # Templates whose forms predate the components, with how many unnamed <form>s each still has
 # (2026-11-18). The count only shrinks: delete an entry once its template is converted.
-PENDING = {
-    "templates/layouts/document.html": 1,
-}
+PENDING = {}
 
 
 def unnamed_forms():

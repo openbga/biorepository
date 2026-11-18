@@ -10,21 +10,21 @@
     {
       "title": "Add an email address",
       "steps": [
-        "Select [[Add Email]] under Add Email Address. A dialog opens.",
-        "Type the address in [[Email]] and select [[Add Email]]. A verification link is sent to that address."
+        "Select [[Add email]] under Add email address. A dialog opens.",
+        "Type the address in [[Email]] and select [[Add email]]. A verification link is sent to that address."
       ]
     },
     {
       "title": "Make an address primary",
       "steps": [
         "Select the address in the list.",
-        "Select [[Make Primary]]. If you have a verified address, the new primary must be verified too."
+        "Select [[Make primary]]. If you have a verified address, the new primary must be verified too."
       ]
     },
     {
       "title": "Verify or remove an address",
       "steps": [
-        "Select the address, then [[Re-send Verification]] to get a new link, or [[Remove]] to delete it."
+        "Select the address, then [[Re-send verification]] to get a new link, or [[Remove]] to delete it."
       ]
     }
   ],
@@ -45,11 +45,11 @@
       "title": "Actions",
       "items": [
         {
-          "label": "Make Primary",
+          "label": "Make primary",
           "description": "Updates the selected address and the account’s email field. An unverified address can be primary only while this account has no verified addresses. If any verified address exists, choose a verified address; the old primary is unset. Account email uniqueness can also constrain the change."
         },
         {
-          "label": "Re-send Verification",
+          "label": "Re-send verification",
           "description": "Requests another verification link for the selected unverified address, subject to rate limits and mail configuration. It does not verify the address by itself."
         },
         {
@@ -58,10 +58,10 @@
         },
         {
           "label": "Email",
-          "description": "Required valid new address in Add Email Address; stored lowercase. Duplicate addresses already on this account are refused."
+          "description": "Required valid new address in Add email address; stored lowercase. Duplicate addresses already on this account are refused."
         },
         {
-          "label": "Add Email",
+          "label": "Add email",
           "description": "Opens the add form in the shared form dialog over this page. Adds an unverified address and requests a verification link. MFA currently blocks adding email addresses through this form while enabled, because link verification permits an unverified state. No maximum address count is set in this deployment; the configured-limit conditional does not hide the add form by default."
         }
       ]

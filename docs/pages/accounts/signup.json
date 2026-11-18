@@ -29,7 +29,7 @@
     {
       "title": "Closed registration",
       "paragraphs": [
-        "The page displays Sign Up Closed without a registration form. Public signup is closed by the account adapter. Ask the repository to issue an account. The branding link returns to the application; this page has no sign-up action."
+        "The page displays Sign-up closed without a registration form. Public signup is closed by the account adapter. Ask the repository to issue an account. The branding link returns to the application; this page has no sign-up action."
       ]
     }
   ],

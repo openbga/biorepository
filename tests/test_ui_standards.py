@@ -144,7 +144,8 @@ RULES = {
     "raw-input": (
         "Inputs through form fields or the shared includes (row_select, grid_search, select_all)",
         re.compile(r"""<input\b(?![^>]*\btype=["']hidden["'])"""),
-        {"templates/includes/", "templates/django/forms/"},
+        # allauth's field element writes the controls of its hand-built pages (email list, TOTP)
+        {"templates/includes/", "templates/django/forms/", "templates/allauth/elements/field.html"},
     ),
     "required-note": (
         "The required-fields sentence only through includes/required_note.html",
@@ -192,33 +193,23 @@ BASELINE = {
     "inline-style": {},
     "pill-navigation": {},
     "hand-pagination": {},
-    "status-span": {
-        "templates/allauth/elements/badge.html",
-    },
+    "status-span": {},
     "breadcrumbs": {},
     "toolbar": {},
     "open-view-link": {},
     "variable-in-literal": {},
     # Component rules, pending until the template migration converts each page (2026-11-18).
     "card-markup": {
-        "templates/allauth/elements/panel.html",
         "templates/core/dashboard.html",
     },
-    "alert-markup": {
-        "templates/allauth/elements/alert.html",
-    },
+    "alert-markup": {},
     "list-state": {},
     "history-panel": {},
     "fact-row": {},
     "page-meta-list": {},
-    "raw-input": {
-        "templates/layouts/document.html",
-    },
+    "raw-input": {},
     "required-note": {},
-    "form-actions": {
-        "templates/allauth/elements/form.html",
-        "templates/allauth/elements/panel.html",
-    },
+    "form-actions": {},
     "component-include": set(),
     "colour-utility": {},
 }

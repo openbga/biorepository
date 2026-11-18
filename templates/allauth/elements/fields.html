@@ -1,2 +1,2 @@
-{% load ui %}{% for field in attrs.form.visible_fields %}{% if field.name == "remember" %}{% field field=field label="Remember me" %}{% else %}{% field field=field %}{% endif %}{% endfor %}
+{% load ui %}{% for field in attrs.form.visible_fields %}{% field field=field %}{% endfor %}
 {% for field in attrs.form.hidden_fields %}{{ field }}{% endfor %}
