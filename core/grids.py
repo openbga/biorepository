@@ -1,5 +1,6 @@
 """Server pagination/sort and filter links for progressively enhanced HTML tables."""
 
+from contextvars import ContextVar
 from dataclasses import dataclass
 
 from django import forms
@@ -14,6 +15,13 @@ class PageSizeForm(forms.Form):
     per_page = forms.TypedChoiceField(
         label="Rows per page", choices=[(size, str(size)) for size in PAGE_SIZES], coerce=int
     )
+
+
+# What this request's view did with the page size and sort in its query string, collected by
+# GridRequest.parse while core.preferences.GridPreferenceMiddleware handles the request: the
+# applied value, or None for a sort the view refused. The middleware remembers only applied
+# values, so a value a view refuses is never saved.
+ACCEPTED = ContextVar("vr_accepted_grid", default=None)
 
 
 @dataclass(frozen=True)
@@ -34,6 +42,11 @@ class GridRequest:
         sort = params.get("sort", default_sort)
         if sort.removeprefix("-") not in columns:
             sort = default_sort
+        if (accepted := ACCEPTED.get()) is not None:
+            if "per_page" in params:
+                accepted["per_page"] = per_page
+            if "sort" in params:
+                accepted["sort"] = sort if sort == params["sort"] else None
         return cls(params.get("page", "1"), per_page, sort, params.get("q", "").strip())
 
     def ordered(self, queryset, columns):

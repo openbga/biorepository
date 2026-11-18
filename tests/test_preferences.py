@@ -140,3 +140,43 @@ def test_a_full_preference_store_never_breaks_a_list(client, staff):
     response = client.get(reverse("specimens:specimen-list"), {"per_page": 50})
     assert response.status_code == 200
     assert response.context["page_obj"].paginator.per_page == 50
+
+
+@pytest.mark.django_db
+def test_parameters_the_view_refuses_are_never_remembered(client, staff):
+    user = staff("manager-i", "manager")
+    client.force_login(user)
+    url = reverse("specimens:import-export")  # refuses an unknown sort with 400
+    assert client.get(url, {"sort": "unknown", "per_page": 50}).status_code == 400
+    assert not UserPreference.objects.filter(user=user).exists()
+    assert client.get(url).status_code == 200  # nothing bad was saved: the plain request works
+    assert client.get(url, {"sort": "filename"}).status_code == 200  # accepted: remembered
+    assert UserPreference.objects.get(user=user).value == {"sort": "filename"}
+    assert client.get(url).status_code == 200
+
+
+@pytest.mark.django_db
+def test_a_sort_a_list_refuses_on_its_own_page_is_never_remembered(client, staff):
+    user = staff("manager-j", "manager")
+    client.force_login(user)
+    url = reverse("specimens:disposal-list")  # refuses an unknown sort with a form error (200)
+    response = client.get(url, {"sort": "unknown", "per_page": 50})
+    assert response.status_code == 200 and "Choose Request or Specimen to sort." in response.text
+    assert UserPreference.objects.get(user=user).value == {"per_page": 50}  # only what applied
+    assert "Choose Request or Specimen" not in client.get(url).text
+    # A saved sort the list no longer accepts (a removed column) is dropped, not kept failing.
+    UserPreference.objects.filter(user=user).update(value={"per_page": 50, "sort": "gone"})
+    client.logout()
+    client.force_login(user)
+    assert "Choose Request or Specimen" in client.get(url).text
+    assert UserPreference.objects.get(user=user).value == {"per_page": 50}
+    assert "Choose Request or Specimen" not in client.get(url).text
+
+
+@pytest.mark.django_db
+def test_views_that_do_not_take_grid_parameters_save_nothing(client, staff):
+    user = staff("tech-k", "technician")
+    client.force_login(user)
+    response = client.get(reverse("dashboard"), {"sort": "accession", "per_page": 50})
+    assert response.status_code == 200
+    assert not UserPreference.objects.filter(user=user).exists()

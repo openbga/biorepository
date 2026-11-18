@@ -16,7 +16,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_POST
 
-from core.grids import PAGE_SIZES
+from core.grids import ACCEPTED, PAGE_SIZES
 from core.models import UserPreference
 
 MAX_PREFERENCES = 300  # per user: grids and pages are a bounded set
@@ -131,7 +131,9 @@ class GridPreferenceMiddleware:
     """Remember each user's page size and sort per list, and apply them when the URL has none.
 
     Lists follow the shared grid contract (core.grids): `per_page` and `sort` in the query string.
-    A valid value in the URL is saved for this page; without one, the saved value is added to the
+    A value is saved for this page only when the view accepted it (core.grids.GridRequest.parse
+    reports what it applied) and responded 200, never straight from the query string; a list
+    without GridRequest saves nothing. Without a value in the URL, the saved one is added to the
     request, so the view, its pagination and its links all see it. The view still validates both.
     """
 
@@ -141,7 +143,31 @@ class GridPreferenceMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        return self.get_response(request)
+        accepted = {}
+        token = ACCEPTED.set(accepted)
+        try:
+            response = self.get_response(request)
+        finally:
+            ACCEPTED.reset(token)
+        key = getattr(request, "_vr_page_key", None)
+        if key is not None and response.status_code == 200 and accepted:
+            self._remember(request, key, accepted)
+        return response
+
+    @staticmethod
+    def _remember(request, key, accepted):
+        stored = for_request(request).get(key, {})
+        value = dict(stored)
+        for name, applied in accepted.items():
+            if applied is not None and clean(key, {name: applied}):
+                value[name] = applied
+            elif name in getattr(request, "vr_saved_params", ()):
+                value.pop(name)  # a saved value the view no longer accepts (a removed column)
+        if value != stored:
+            try:
+                save(request, key, value or None)
+            except ValueError:
+                pass  # over the per-user limit, or not storable: the request still applied it
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         user = getattr(request, "user", None)
@@ -151,17 +177,8 @@ class GridPreferenceMiddleware:
         key = f"page:{match.view_name}"
         if not PAGE_KEY.match(key):
             return None
+        request._vr_page_key = key
         stored = for_request(request).get(key, {})
-        given = {}
-        if request.GET.get("per_page", "").isdigit() and int(request.GET["per_page"]) in PAGE_SIZES:
-            given["per_page"] = int(request.GET["per_page"])
-        if SORT.match(request.GET.get("sort", "")):
-            given["sort"] = request.GET["sort"]
-        if given and {**stored, **given} != stored:
-            try:
-                save(request, key, {**stored, **given})
-            except ValueError:
-                pass  # over the per-user limit: this request still applies its own parameters
         missing = {
             name: stored[name] for name in self.PARAMS if name in stored and name not in request.GET
         }
