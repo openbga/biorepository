@@ -25,10 +25,12 @@ class GridRequest:
             sort = default_sort
         return cls(params.get("page", "1"), per_page, sort, params.get("q", "").strip())
 
-    def page(self, queryset, columns):
+    def ordered(self, queryset, columns):
         field = columns[self.sort.removeprefix("-")]
-        ordered = queryset.order_by(("-" if self.sort.startswith("-") else "") + field, "pk")
-        return Paginator(ordered, self.per_page).get_page(self.page_number)
+        return queryset.order_by(("-" if self.sort.startswith("-") else "") + field, "pk")
+
+    def page(self, queryset, columns):
+        return Paginator(self.ordered(queryset, columns), self.per_page).get_page(self.page_number)
 
 
 def active_filters(request, form):

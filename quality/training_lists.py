@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.utils import timezone
 
+DEFAULT_SORT = "-updated"
 COLUMNS = {
     "number": "pk",
     "trainee": "trainee__username",
@@ -15,6 +16,10 @@ COLUMNS = {
     "renewal": "renewal_due",
     "updated": "updated_at",
 }
+
+
+def applied_filters(form, query):
+    return {key: value for key, value in {**form.cleaned_data, "q": query}.items() if value}
 
 
 def filter_training(rows, form, query):

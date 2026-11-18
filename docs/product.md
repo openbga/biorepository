@@ -135,7 +135,9 @@ Acceptance outcomes:
     keep the earlier record and reason without changing inventory or holds.
 18. Managers assign staff training with an optional deadline, record completion and assessment
     evidence, and retain corrections and cancellation. Staff can find assignments and renewal
-    dates that need attention without changing operational permissions.
+    dates that need attention and export the filtered register in its displayed order. The CSV
+    includes register columns only. Completion evidence, assessment and history remain on the
+    individual record. Training does not change operational permissions.
 
 The demonstration uses clearly fake names such as "Example Biorepository" and participant codes
 like "P-000123".

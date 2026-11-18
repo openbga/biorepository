@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.http import Http404, HttpResponseBadRequest
+from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -16,25 +16,33 @@ from core.grids import GridRequest, active_filters
 
 from . import training_services as services
 from .models import TrainingRecord
+from .training_exports import EXPORT_CAP, export_training
 from .training_forms import FilterForm, TrainingForm, apply_errors
-from .training_lists import COLUMNS, filter_training
+from .training_lists import COLUMNS, DEFAULT_SORT, applied_filters, filter_training
 
 
 @staff_role_required(*services.READ_ROLES)
 @require_GET
 def training_list(request):
     try:
-        grid = GridRequest.parse(request.GET, COLUMNS, "-updated")
+        grid = GridRequest.parse(request.GET, COLUMNS, DEFAULT_SORT)
     except ValueError as exc:
         return HttpResponseBadRequest(str(exc))
     form = FilterForm(request.GET)
     rows = filter_training(services.training_records(actor=request.user), form, grid.query)
+    page = grid.page(rows, COLUMNS)
+    export_url = None
+    if form.is_valid() and page.paginator.count <= EXPORT_CAP:
+        selection = {**applied_filters(form, grid.query), "sort": grid.sort}
+        export_url = reverse("quality:training-export", query=selection)
     return render(
         request,
         "quality/training/list.html",
         {
             "page_title": "Training records",
-            "page_obj": grid.page(rows, COLUMNS),
+            "page_obj": page,
+            "export_url": export_url,
+            "export_over_limit": page.paginator.count > EXPORT_CAP,
             "filter_form": form,
             "inline": [form["status"], form["due"]],
             "q": grid.query,
@@ -45,6 +53,21 @@ def training_list(request):
             "noun": "training records",
         },
     )
+
+
+@staff_role_required(*services.READ_ROLES)
+@require_GET
+def training_export(request):
+    try:
+        content = export_training(actor=request.user, params=request.GET)
+    except ValidationError as exc:
+        return HttpResponseBadRequest(
+            " ".join(exc.messages), content_type="text/plain; charset=utf-8"
+        )
+    response = HttpResponse(content, content_type="text/csv; charset=utf-8")
+    response["Content-Disposition"] = 'attachment; filename="training-records.csv"'
+    response["Cache-Control"] = "no-store"
+    return response
 
 
 def _training(request, pk):

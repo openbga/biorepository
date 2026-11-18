@@ -53,8 +53,8 @@ compliance or accreditation.
   reasons. Review changes no specimen status or hold.
 - **Training:** staff assignments with explicit due dates, completion evidence, trainer/provider,
   optional competency assessments and renewal dates. Managers record corrections and cancellation
-  with retained history; staff can filter and read the register. Records do not grant permissions
-  or certify qualification.
+  with retained history. Staff can filter the register and export matching rows to CSV. Records do
+  not grant permissions or certify qualification.
 - **Distribution:** studies that govern collections, consent records by scope category with
   withdrawal (which holds the participant's specimens and lists material already sent), escalation
   to destruction while retaining those holds, specimen

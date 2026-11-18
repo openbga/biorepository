@@ -1,3 +1,5 @@
+import csv
+import io
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from threading import Barrier
@@ -16,6 +18,18 @@ from quality.models import TrainingEvent, TrainingRecord
 from quality.training_forms import TrainingForm
 
 pytestmark = pytest.mark.django_db
+
+EXPORT_HEADERS = [
+    "Training record",
+    "Status",
+    "Trainee",
+    "Topic",
+    "Procedure / version reference",
+    "Assignment due",
+    "Completed on",
+    "Renewal due",
+    "Updated",
+]
 
 
 def create(people, **values):
@@ -362,6 +376,150 @@ def test_list_search_filters_sort_pagination_and_readable_history(client, people
     assert people["manager"].username in response.content.decode()
     assert "Read-only access" in response.content.decode()
     assert "Completed" in response.content.decode()
+
+
+def test_export_uses_training_register_filters_and_order_across_pages(client, people):
+    today = timezone.localdate()
+    older_due = today + timedelta(days=1)
+    tied = [create(people, due_on=older_due) for _ in range(25)]
+    latest_due = create(people, due_on=today + timedelta(days=2))
+    create(people, topic="Synthetic different course", due_on=older_due)
+    create(people, due_on=today + timedelta(days=31))
+    change(people, create(people), "complete", values=completion(renewal_due=older_due))
+    client.force_login(people["viewer"])
+    params = {
+        "q": "Synthetic LN2",
+        "status": "assigned",
+        "due": "next_30_days",
+        "sort": "-due",
+        "page": "2",
+        "per_page": "25",
+    }
+
+    page = client.get(reverse("quality:training-list"), params)
+    assert [record.number for record in page.context["page_obj"]] == [tied[-1].number]
+    response = client.get(reverse("quality:training-export"), params)
+
+    assert response.status_code == 200
+    assert response["Content-Type"].startswith("text/csv")
+    assert response["Content-Disposition"] == 'attachment; filename="training-records.csv"'
+    header, *rows = csv.reader(io.StringIO(response.content.decode(), newline=""))
+    assert header == EXPORT_HEADERS
+    assert [row[0] for row in rows] == [latest_due.number, *(row.number for row in tied)]
+    event = AuditEvent.objects.get(action="quality.training_exported")
+    assert event.actor == people["viewer"]
+    assert event.object_type == "quality.training_export"
+    assert event.after == {
+        "rows": 26,
+        "filters": {"q": "Synthetic LN2", "status": "assigned", "due": "next_30_days"},
+        "sort": "-due",
+    }
+
+
+def test_export_formats_register_columns_and_excludes_detail_narratives(client, people):
+    trainee = people["technician"]
+    trainee.first_name, trainee.last_name = "@Synthetic", "Example"
+    trainee.save(update_fields=["first_name", "last_name"])
+    topic = '=Synthetic résumé, "review"\ncontinued'
+    due_on = timezone.localdate() - timedelta(days=1)
+    completed = create(people, topic=topic, procedure_reference="+SYN-CSV v1", due_on=due_on)
+    completed = change(people, completed, "complete", values=completion(renewal_due=due_on))
+    assigned = services.create_training(
+        actor=people["manager"],
+        trainee_id=people["technician2"].pk,
+        values={"topic": "Synthetic other training"},
+        reason="Synthetic assignment",
+    )
+    client.force_login(people["technician"])
+
+    response = client.get(reverse("quality:training-export"), {"sort": "number"})
+
+    assert response.status_code == 200
+    header, completed_row, assigned_row = csv.reader(
+        io.StringIO(response.content.decode(), newline="")
+    )
+    assert header == EXPORT_HEADERS
+    assert completed_row[:-1] == [
+        completed.number,
+        "Completed",
+        "'@Synthetic Example",
+        "'" + topic,
+        "'+SYN-CSV v1",
+        due_on.isoformat(),
+        completed.completed_on.isoformat(),
+        due_on.isoformat(),
+    ]
+    assert datetime.fromisoformat(completed_row[-1]) == completed.updated_at
+    assert assigned_row[:-1] == [
+        assigned.number,
+        "Assigned",
+        people["technician2"].username,
+        "Synthetic other training",
+        "",
+        "",
+        "",
+        "",
+    ]
+    assert datetime.fromisoformat(assigned_row[-1]) == assigned.updated_at
+    for omitted in (
+        completed.trainer_provider,
+        completed.completion_evidence,
+        completed.competency_assessment,
+        "Synthetic reason",
+    ):
+        assert omitted not in response.content.decode()
+
+
+@pytest.mark.parametrize("role", ["admin", "manager", "technician", "viewer"])
+def test_export_allows_staff_and_audits_an_empty_selection(client, people, role):
+    create(people)
+    client.force_login(people[role])
+    response = client.get(reverse("quality:training-export"), {"q": "no-such-topic"})
+
+    assert response.status_code == 200
+    assert list(csv.reader(io.StringIO(response.content.decode(), newline=""))) == [EXPORT_HEADERS]
+    event = AuditEvent.objects.get(action="quality.training_exported")
+    assert event.actor == people[role]
+    assert event.after == {"rows": 0, "filters": {"q": "no-such-topic"}, "sort": "-updated"}
+
+
+def test_export_rejects_anonymous_and_roleless_users_without_an_audit(client, people):
+    url = reverse("quality:training-export")
+    assert client.get(url).status_code == 302
+    client.force_login(people["nobody"])
+    assert client.get(url).status_code == 403
+    assert not AuditEvent.objects.filter(action="quality.training_exported").exists()
+
+
+@pytest.mark.parametrize(
+    "params",
+    [{"status": "unknown"}, {"due": "unknown"}, {"sort": "unknown"}, {"unknown": "1"}],
+)
+def test_export_rejects_invalid_selection_without_an_audit(client, people, params):
+    client.force_login(people["viewer"])
+    response = client.get(reverse("quality:training-export"), params)
+
+    assert response.status_code == 400
+    assert not AuditEvent.objects.filter(action="quality.training_exported").exists()
+
+
+def test_export_refuses_more_than_the_row_limit(client, people, monkeypatch):
+    monkeypatch.setattr("quality.training_exports.EXPORT_CAP", 1)
+    selected = create(people, topic="Synthetic selected course")
+    create(people)
+    client.force_login(people["viewer"])
+    url = reverse("quality:training-export")
+
+    response = client.get(url)
+
+    assert response.status_code == 400
+    assert "Content-Disposition" not in response
+    assert not AuditEvent.objects.filter(action="quality.training_exported").exists()
+    response = client.get(url, {"q": "selected course"})
+    assert response.status_code == 200
+    _, row = csv.reader(io.StringIO(response.content.decode(), newline=""))
+    assert row[0] == selected.number
+    assert AuditEvent.objects.get(action="quality.training_exported").after["rows"] == 1
 
 
 def test_record_database_delete_guard_without_orm_collection(people):
