@@ -44,6 +44,18 @@ def import_status(state, plain=False):
     return _status(*IMPORT_STATES[state], plain)
 
 
+@register.simple_tag
+def status_parts(kind, value):
+    """{% status_parts "excursion" excursion.status as st %}: the label and tone the matching status
+    tag shows, for a {% notice tone=st.tone label=st.label %} opening with the record's status."""
+    if kind == "equipment":
+        return {"label": Equipment.Status(value).label, "tone": EQUIPMENT_TONES[value]}
+    if kind == "excursion":
+        return {"label": Excursion.Status(value).label, "tone": EXCURSION_TONES[value]}
+    label, tone = IMPORT_STATES[value]
+    return {"label": label, "tone": tone}
+
+
 @register.inclusion_tag("includes/status.html")
 def due_status(event, plain=True):
     label, tone, _ = queries.due_state(event)

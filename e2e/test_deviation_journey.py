@@ -56,7 +56,7 @@ def test_deviation_report_investigation_review_and_reopening(page, people, tmp_p
     assert page.console_errors == []
     ready_dialog(page)
     page.keyboard.press("Escape")
-    discard = form.locator("[data-vr-form-discard]")
+    discard = page.locator("#vr-form-discard [data-vr-form-discard]")
     expect(discard).to_be_visible()
     discard.click()
     expect(form).to_be_hidden()

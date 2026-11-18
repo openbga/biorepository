@@ -26,11 +26,11 @@
         <tr>
           <th scope="row"><a class="vr-row-link vr-id" href="{% url 'distribution:consent-detail' row.pk %}">{{ row.participant.code }} · {{ row.study.code }}</a></th>
           <td>{% distribution_status "consent" row.status plain=True %}</td>
-          <td><a class="vr-id" href="{% url 'distribution:study-detail' row.study_id %}">{{ row.study.code }}</a></td>
+          <td><a href="{% url 'distribution:study-detail' row.study_id %}">{{ row.study.title }}</a> <span class="vr-muted vr-id">{{ row.study.code }}</span></td>
           <td class="vr-id">{{ row.current_record.form|default:"—" }}</td>
           <td class="vr-nowrap">{% if row.current_record %}<time datetime="{{ row.current_record.consented_on|date:'Y-m-d' }}">{{ row.current_record.consented_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td class="vr-nowrap">{% if row.current_record.expires_on %}<time datetime="{{ row.current_record.expires_on|date:'Y-m-d' }}">{{ row.current_record.expires_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">No end date</span>{% endif %}</td>
-          <td>{% if row.no_contact %}Yes{% else %}<span class="vr-muted">No</span>{% endif %}</td>
+          <td>{% if row.no_contact %}{% status label="Yes" tone="hold" plain=True %}{% else %}<span class="vr-muted">No</span>{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>

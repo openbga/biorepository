@@ -148,7 +148,7 @@ progress for up to a month, holds, disposal requests in every state, bulk import
 corrections, plus the equipment record of every unit with about three months of service events,
 LN2 level checks, temperature readings and excursions, and distribution (studies, consent
 records with a withdrawal, agreements, requests, a received shipment with a return and a packed
-one), all made through the application's own services. It takes from about 30 seconds to a minute and a half, depending on the machine, and adds
+one), inventory audits, deviations and training records in several states, all made through the application's own services. It takes from about 30 seconds to a minute and a half, depending on the machine, and adds
 nothing when run again.
 
 For a public demonstration, `seed_demo --announce-accounts` also posts an announcement on the

@@ -2111,40 +2111,90 @@ a.vr-path-seg:hover {
   font-size: 0.9em;
 }
 
-.vr-status[data-tone="info"] {
+:is(.vr-status, .vr-tone)[data-tone="info"] {
   --vr-tone-text: var(--vr-info-text);
   --vr-tone-bg: var(--vr-info-bg);
   --vr-tone-border: var(--vr-info-border);
 }
 
-.vr-status[data-tone="progress"] {
+:is(.vr-status, .vr-tone)[data-tone="progress"] {
   --vr-tone-text: var(--vr-progress-text);
   --vr-tone-bg: var(--vr-progress-bg);
   --vr-tone-border: var(--vr-progress-border);
 }
 
-.vr-status[data-tone="success"] {
+:is(.vr-status, .vr-tone)[data-tone="success"] {
   --vr-tone-text: var(--vr-success-text);
   --vr-tone-bg: var(--vr-success-bg);
   --vr-tone-border: var(--vr-success-border);
 }
 
-.vr-status[data-tone="warning"] {
+:is(.vr-status, .vr-tone)[data-tone="warning"] {
   --vr-tone-text: var(--vr-warning-text);
   --vr-tone-bg: var(--vr-warning-bg);
   --vr-tone-border: var(--vr-warning-border);
 }
 
-.vr-status[data-tone="danger"] {
+:is(.vr-status, .vr-tone)[data-tone="danger"] {
   --vr-tone-text: var(--vr-danger-text);
   --vr-tone-bg: var(--vr-danger-bg);
   --vr-tone-border: var(--vr-danger-border);
 }
 
-.vr-status[data-tone="hold"] {
+:is(.vr-status, .vr-tone)[data-tone="hold"] {
   --vr-tone-text: var(--vr-hold-text);
   --vr-tone-bg: var(--vr-hold-bg);
   --vr-tone-border: var(--vr-hold-border);
+}
+
+/* A figure or word in a status tone without the capsule (an excursion's extreme in danger):
+   <span class="vr-tone" data-tone="danger">. Tone is never the only cue: the column or a nearby
+   word names what it means. */
+.vr-tone {
+  color: var(--vr-tone-text);
+  font-weight: var(--vr-font-weight-semibold);
+}
+
+/* Clock (includes/clock.html): time out of storage as a warm capsule with a stopwatch, the one
+   warm element. Stopped, it is a plain duration. Inside the record pass's warm cell the cell is the
+   capsule. data-tone="neutral" (when the component passes it) is a running time that is not time
+   out of storage, e.g. an ongoing excursion. */
+.vr-clock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  min-height: 1.8571rem;
+  padding: 0 0.7rem 0 0.5rem;
+  border: 1px solid var(--vr-warm-border);
+  border-radius: var(--vr-radius-pill);
+  background: var(--vr-warm-bg);
+  color: var(--vr-warm-text);
+  font-weight: var(--vr-font-weight-semibold);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.vr-clock[data-state="stopped"] {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.vr-clock[data-tone="neutral"] {
+  border-color: var(--vr-border-strong);
+  background: var(--vr-surface-2);
+  color: var(--vr-text);
+}
+
+.vr-page-meta > li.is-warm .vr-clock {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
 }
 
 /* The record's own status, first in the page header's key facts (standard 4): large and filled. */
@@ -4023,6 +4073,7 @@ a.vr-boxmap-cell:focus-visible {
 
 /* The reason a header action is unavailable (standard 10): its own line under the buttons. */
 .vr-action-note {
+  order: 1; /* after every button, wherever the template puts it, so the buttons stay one row */
   flex-basis: 100%;
   color: var(--vr-text-muted);
   font-size: 0.8125rem;
@@ -4089,7 +4140,15 @@ a.vr-boxmap-cell:focus-visible {
   white-space: nowrap;
 }
 
-/* A location cell that is not a path (checked out, not in storage) reads as words. */
+/* A location cell that is not a path ("Picked, out of storage", "Not in storage") reads as
+   words: only a storage path (.vr-path-part) takes the datum voice. */
+.vr-path:not(:has(.vr-path-part)) {
+  font-family: var(--vr-font-sans);
+  font-stretch: normal;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
 .vr-path > .vr-muted {
   font-family: var(--vr-font-sans);
   font-stretch: normal;

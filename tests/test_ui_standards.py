@@ -194,15 +194,6 @@ BASELINE = {
     "open-view-link": {},
     # Component rules, pending until the template migration converts each page (2026-11-18).
     "card-markup": {
-        "equipment/templates/equipment/due_list.html",
-        "equipment/templates/equipment/equipment_detail.html",
-        "equipment/templates/equipment/equipment_list.html",
-        "equipment/templates/equipment/excursion_detail.html",
-        "equipment/templates/equipment/excursion_list.html",
-        "equipment/templates/equipment/import_detail.html",
-        "equipment/templates/equipment/import_list.html",
-        "equipment/templates/equipment/ln2_list.html",
-        "equipment/templates/equipment/reading_list.html",
         "specimens/templates/specimens/catalogue_list.html",
         "specimens/templates/specimens/disposal_detail.html",
         "specimens/templates/specimens/disposal_list.html",
@@ -241,11 +232,6 @@ BASELINE = {
         "templates/core/whats_new.html",
     },
     "alert-markup": {
-        "equipment/templates/equipment/equipment_detail.html",
-        "equipment/templates/equipment/excursion_detail.html",
-        "equipment/templates/equipment/excursion_holds.html",
-        "equipment/templates/equipment/form.html",
-        "equipment/templates/equipment/import_detail.html",
         "specimens/templates/specimens/actions/derive.html",
         "specimens/templates/specimens/actions/form.html",
         "specimens/templates/specimens/disposal_detail.html",
@@ -264,7 +250,6 @@ BASELINE = {
         "templates/core/announcement_list.html",
     },
     "history-panel": {
-        "equipment/templates/equipment/excursion_detail.html",
         "specimens/templates/specimens/disposal_detail.html",
         "specimens/templates/specimens/includes/audit_history.html",
         "specimens/templates/specimens/specimen_detail.html",
@@ -273,9 +258,6 @@ BASELINE = {
         "templates/core/record_retention.html",
     },
     "fact-row": {
-        "equipment/templates/equipment/equipment_detail.html",
-        "equipment/templates/equipment/excursion_detail.html",
-        "equipment/templates/equipment/form.html",
         "specimens/templates/specimens/actions/_context.html",
         "specimens/templates/specimens/disposal_detail.html",
         "specimens/templates/specimens/specimen_detail.html",
@@ -291,9 +273,6 @@ BASELINE = {
         "storage/templates/storage/unit_detail.html",
     },
     "page-meta-list": {
-        "equipment/templates/equipment/equipment_detail.html",
-        "equipment/templates/equipment/excursion_detail.html",
-        "equipment/templates/equipment/import_detail.html",
         "specimens/templates/specimens/disposal_detail.html",
         "specimens/templates/specimens/import_detail.html",
         "specimens/templates/specimens/label_preview.html",
@@ -308,13 +287,10 @@ BASELINE = {
         "storage/templates/storage/unit_detail.html",
     },
     "raw-input": {
-        "equipment/templates/equipment/excursion_holds.html",
         "specimens/templates/specimens/specimen_list.html",
         "templates/layouts/document.html",
     },
     "required-note": {
-        "equipment/templates/equipment/excursion_holds.html",
-        "equipment/templates/equipment/form.html",
         "specimens/templates/specimens/actions/derive.html",
         "specimens/templates/specimens/actions/form.html",
         "specimens/templates/specimens/catalogue_form.html",
@@ -323,8 +299,6 @@ BASELINE = {
         "templates/core/announcement_form.html",
     },
     "form-actions": {
-        "equipment/templates/equipment/excursion_holds.html",
-        "equipment/templates/equipment/form.html",
         "specimens/templates/specimens/actions/derive.html",
         "specimens/templates/specimens/actions/form.html",
         "specimens/templates/specimens/catalogue_form.html",
@@ -335,9 +309,7 @@ BASELINE = {
         "templates/core/announcement_form.html",
     },
     "component-include": set(),
-    "colour-utility": {
-        "equipment/templates/equipment/excursion_holds.html",
-    },
+    "colour-utility": {},
 }
 
 
@@ -503,3 +475,23 @@ def test_row_select_ignores_the_page_form():
     first, second = page.split("<input", 2)[1:]
     assert "form=" not in first and 'name="title"' not in page
     assert 'form="bulk"' in second
+
+
+def test_collapsible_history_starts_collapsed_when_long():
+    from datetime import UTC, datetime
+    from types import SimpleNamespace
+
+    from django.template import Context, Template
+
+    event = SimpleNamespace(
+        action="box.moved", occurred_at=datetime(2026, 1, 1, tzinfo=UTC), actor=None, reason="r"
+    )
+    page = Template(
+        "{% load ui %}{% history_panel events=e collapsible=True %}{% endhistory_panel %}"
+    )
+
+    def opening(count):
+        return page.render(Context({"e": [event] * count})).strip().split(">", 1)[0]
+
+    assert opening(5).startswith("<details") and opening(5).endswith(" open")
+    assert opening(6).startswith("<details") and not opening(6).endswith(" open")

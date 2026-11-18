@@ -10,8 +10,8 @@
     {
       "title": "Add an email address",
       "steps": [
-        "Type the address in [[Email]] under Add Email Address.",
-        "Select [[Add Email]]. A verification link is sent to that address."
+        "Select [[Add Email]] under Add Email Address. A dialog opens.",
+        "Type the address in [[Email]] and select [[Add Email]]. A verification link is sent to that address."
       ]
     },
     {
@@ -62,7 +62,7 @@
         },
         {
           "label": "Add Email",
-          "description": "Adds an unverified address and requests a verification link. MFA currently blocks adding email addresses through this form while enabled, because link verification permits an unverified state. No maximum address count is set in this deployment; the configured-limit conditional does not hide the add form by default."
+          "description": "Opens the add form in the shared form dialog over this page. Adds an unverified address and requests a verification link. MFA currently blocks adding email addresses through this form while enabled, because link verification permits an unverified state. No maximum address count is set in this deployment; the configured-limit conditional does not hide the add form by default."
         }
       ]
     },
@@ -78,6 +78,8 @@
     "templates/allauth/layouts/base.html",
     "templates/allauth/layouts/manage.html",
     "uv.lock",
-    "accounts/models.py"
+    "accounts/models.py",
+    "core/form_dialog.py",
+    "core/form_surfaces.py"
   ]
 }

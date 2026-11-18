@@ -189,6 +189,18 @@ def test_full_seed_builds_a_working_repository_once_and_reset_restores_it(passwo
     waiting = SpecimenRequest.objects.get(status="submitted")
     assert waiting.created_by.username == "demo_technician"
 
+    # Quality: audits, deviations and training records in several states, through the services.
+    from quality.models import Deviation, InventoryAudit, TrainingRecord
+
+    assert {"open", "completed", "cancelled"} <= {a.status for a in InventoryAudit.objects.all()}
+    assert {"open", "awaiting_review", "closed"} <= set(
+        Deviation.objects.values_list("status", flat=True)
+    )
+    assert {"assigned", "completed", "cancelled"} <= set(
+        TrainingRecord.objects.values_list("status", flat=True)
+    )
+    assert AuditEvent.objects.filter(action__startswith="quality.").exists()
+
     # The sign-in page lists the shared accounts by role and never the administrator's.
     page = client.get("/accounts/login/").content.decode()
     for name in ("demo_manager", "demo_technician", "demo_viewer"):

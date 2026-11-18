@@ -106,7 +106,7 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
   {% endif %}
   {% endpanel %}
 {% if receipts|length > 1 %}
-{% history_panel events=receipts title="Earlier receipt versions" heading_id="receipt-versions-heading" class="mb-3" %}{% fill count %}{{ receipts|length|add:"-1" }}{% endfill %}
+{% history_panel events=receipts title="Earlier receipt versions" heading_id="receipt-versions-heading" class="mb-3" collapsible=True %}{% fill count %}{{ receipts|length|add:"-1" }}{% endfill %}
   {% for r in receipts %}{% if not r.is_effective %}{% history_item title="Receipt as first recorded, since corrected" at=r.recorded_at actor=r.actor reason=r.reason detail=r.get_condition_display %}{% endif %}{% endfor %}
 {% endhistory_panel %}
 {% endif %}
@@ -128,10 +128,10 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
 {% endpanel %}
 {% endif %}
 
-{% history_panel events=events title="Timeline" heading_id="timeline-heading" class="mb-3" %}{% fill count %}{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first{% endfill %}
+{% history_panel events=events title="Timeline" heading_id="timeline-heading" class="mb-3" collapsible=True %}{% fill count %}{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first{% endfill %}
   {% for e in events %}{% history_item title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note detail=e.detail extra="distribution/shipments/_event_extra.html" %}{% endfor %}
 {% endhistory_panel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block record_foot %}{% record_foot identifier=shipment.number %}{% endblock %}

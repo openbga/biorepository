@@ -35,7 +35,7 @@ Context: training, toc, can_manage, history [(event, changes)].
   {% fact label="Updated" %}<time datetime="{{ training.updated_at|date:'c' }}">{{ training.updated_at|date:"Y-m-d H:i:s T" }}</time> by {{ training.updated_by.get_full_name|default:training.updated_by.get_username }}{% endfact %}
   {% fact label="Revision" %}{{ training.revision }}{% endfact %}
 </dl>{% endpanel %}
-{% history_panel events=history %}
+{% history_panel events=history collapsible=True %}
   {% for event, changes in history %}{% history_item title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
 {% endhistory_panel %}
 {% endblock %}

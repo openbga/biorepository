@@ -53,7 +53,7 @@ categories), consent_counts [(status, label, count)], consent_total, toc, histor
         <td class="vr-id">{{ f.version }}</td>
         <td>{{ f.title }}</td>
         <td>{{ f.get_kind_display }}</td>
-        <td class="vr-id vr-wrap">{% for c in f.categories.all %}{{ c.code }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+        <td class="vr-wrap">{% for c in f.categories.all %}{{ c.name }} <span class="vr-muted vr-id">{{ c.code }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
         <td>{% if f.is_active %}{% status label="Active" tone="success" plain=True %}{% else %}{% status label="Inactive" tone="neutral" plain=True %}{% endif %}</td>
       </tr>{% endfor %}
     </tbody>
@@ -73,6 +73,6 @@ categories), consent_counts [(status, label, count)], consent_total, toc, histor
   </table></div>
 {% endpanel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block record_foot %}{% record_foot identifier=study.code %}{% endblock %}

@@ -1,6 +1,7 @@
 {% comment %}
 A time-out-of-storage clock (docs/ui-standards.md section 8): the stopwatch icon and the duration,
-warm while it runs. The only warm element: warm means "out of the cold, time is counting".
+warm while it runs, unless tone="neutral" (a running time that is not time out of storage).
+Warm is reserved for time out of storage: "out of the cold, time is counting".
 Rendered by the {% clock %} tag ({% load ui %}).
 Parameters:
   value    the duration as text, already formatted (e.g. timeout.total|duration)
@@ -8,6 +9,8 @@ Parameters:
   long     truthy when the period is long enough to need attention (data-long); the threshold
            is the caller's
   label    optional visually hidden words before the value (default "Time out of storage")
+  tone     "neutral" for a running time that is not time out of storage (an ongoing excursion):
+           data-tone="neutral", never warm
 Usage: {% clock value=timeout.total|duration running=timeout.open %}
 {% endcomment %}
-{% load ui %}<span class="vr-clock" data-state="{% if running %}running{% else %}stopped{% endif %}"{% if long %} data-long{% endif %}>{% icon name="stopwatch" %}<span class="visually-hidden">{% firstof label "Time out of storage" %}{% if running %}, running{% endif %}: </span><span class="vr-clock-value">{{ value }}</span></span>
+{% load ui %}<span class="vr-clock" data-state="{% if running %}running{% else %}stopped{% endif %}"{% if long %} data-long{% endif %}{% if tone == "neutral" %} data-tone="neutral"{% endif %}>{% icon name="stopwatch" %}<span class="visually-hidden">{% firstof label "Time out of storage" %}{% if running %}, running{% endif %}: </span><span class="vr-clock-value">{{ value }}</span></span>

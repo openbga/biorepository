@@ -39,10 +39,10 @@ tab, create_noun, create_url, edit_route, can_manage.
           <th scope="row">{% if can_manage %}<a class="vr-row-link vr-id" href="{% url edit_route row.pk %}">{{ row.code }}</a>{% else %}<span class="vr-id">{{ row.code }}</span>{% endif %}</th>
           {% if kind == "consent_form" %}
           <td class="vr-id">{{ row.version }}</td>
-          <td><a class="vr-id" href="{% url 'distribution:study-detail' row.study_id %}">{{ row.study.code }}</a></td>
+          <td><a href="{% url 'distribution:study-detail' row.study_id %}">{{ row.study.title }}</a> <span class="vr-muted vr-id">{{ row.study.code }}</span></td>
           <td class="vr-wrap">{{ row.title }}</td>
           <td>{{ row.get_kind_display }}</td>
-          <td class="vr-id vr-wrap">{% for category in row.categories.all %}{{ category.code }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+          <td class="vr-wrap">{% for category in row.categories.all %}{{ category.name }} <span class="vr-muted vr-id">{{ category.code }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
           {% else %}
           <td>{{ row.name }}</td>
           {% endif %}

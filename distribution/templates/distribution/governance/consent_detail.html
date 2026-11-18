@@ -113,7 +113,7 @@ can_manage.
   {% endlist_results %}
 {% endpanel %}
 
-{% history_panel events=records title="Records" heading_id="records-heading" class="mb-3" empty_title="No records" %}{% fill count %}{{ records|length }}, oldest first{% endfill %}
+{% history_panel events=records title="Records" heading_id="records-heading" class="mb-3" empty_title="No records" collapsible=True %}{% fill count %}{{ records|length }}, oldest first{% endfill %}
     {% for r in records %}{% with summary=r.get_decision_display|add:" on "|add:r.form.code|add:" v"|add:r.form.version %}{% history_item title=r.title at=r.recorded_at actor=r.recorded_by by="Recorded by" reason=r.reason changes=r.change_rows detail=r.answer_text|default:summary %}{% endwith %}{% endfor %}
 {% endhistory_panel %}
 
@@ -149,6 +149,6 @@ can_manage.
   {% endlist_results %}
 {% endpanel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

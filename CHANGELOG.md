@@ -130,6 +130,10 @@ The same list is shown in the application under What's new.
 
   Every status label now carries an icon for its tone, so colour is never the only cue. A box with no blocked positions now shows 0 blocked instead of a blank.
 
+- **Added:** The full demonstration includes quality records (2026-11-18)
+
+  The full demonstration (`seed_demo --full`) now includes inventory audits, deviations and training records in several states, so the quality pages show working examples.
+
 - **Fixed:** Demonstration data no longer fails to load after a daylight-saving change (2026-11-15, [#10](https://github.com/openbga/biorepository/pull/10))
 
   Loading the full demonstration data near midnight after an autumn clock change could stop with an import error, because two temperature readings fell on the same local morning. Each demonstration reading now falls on its own local date.

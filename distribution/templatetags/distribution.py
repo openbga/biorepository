@@ -44,8 +44,8 @@ TONES = {
     },
     "consent": {
         Consent.Status.CONSENTED: "success",
-        Consent.Status.REFUSED: "danger",
-        Consent.Status.WITHDRAWN: "hold",
+        Consent.Status.REFUSED: "neutral",
+        Consent.Status.WITHDRAWN: "danger",
     },
     "study": {
         Study.Status.ACTIVE: "success",

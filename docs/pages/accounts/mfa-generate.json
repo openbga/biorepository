@@ -17,7 +17,7 @@
     {
       "title": "Keep the current codes",
       "steps": [
-        "Leave the page with the account navigation without selecting Generate."
+        "Select [[Cancel]] without selecting Generate."
       ]
     }
   ],
@@ -38,12 +38,13 @@
           "label": "Generate",
           "description": "Requires sign-in, recent reauthentication and an existing non-recovery authenticator. Replaces the recovery-code record under a user lock with ten new eight-digit single-use codes, invalidating the previous set, then opens Recovery Codes."
         }
-      ]
+      ],
+      "paragraphs": []
     },
     {
       "title": "Navigation and limits",
       "paragraphs": [
-        "No Back or Cancel button appears on this confirmation. Leave via normal account navigation without submitting to retain the set. Generation does not disable the app. Repeated successful generation replaces the set again; keep the latest set."
+        "The confirmation opens in the shared form dialog over Two-factor authentication. Cancel closes it and keeps the set (opened by its address, Cancel goes to Two-factor authentication). Generation does not disable the app. Repeated successful generation replaces the set again; keep the latest set."
       ]
     }
   ],
@@ -51,6 +52,8 @@
     "config/settings.py",
     "templates/allauth/layouts/base.html",
     "templates/allauth/layouts/manage.html",
-    "uv.lock"
+    "uv.lock",
+    "core/form_surfaces.py",
+    "templates/allauth/elements/form__manage.html"
   ]
 }

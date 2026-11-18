@@ -54,6 +54,6 @@ observation), toc, stale, can_operate, history (AuditEvents, oldest first).
     </tbody>
   </table></div>
 {% endpanel %}
-{% history_panel events=history %}{% endhistory_panel %}
+{% history_panel events=history collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block record_foot %}{% record_foot identifier=audit.number %}{% endblock %}

@@ -1,4 +1,4 @@
-{% extends "distribution/governance/form.html" %}
+{% extends "distribution/governance/form.html" %}{% load ui %}
 {% comment %}
 Create or edit one distribution catalogue entry (scope category, consent form, institution,
 investigator; form dialog; managers). A catalogue entry has no record page, so this form shows its
@@ -7,5 +7,5 @@ AuditEvents, newest first).
 {% endcomment %}
 {% block content %}
 {{ block.super }}
-{% if obj %}{% include "storage/_history.html" %}{% endif %}
+{% if obj %}{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}{% endif %}
 {% endblock %}

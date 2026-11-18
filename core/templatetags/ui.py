@@ -49,6 +49,9 @@ NOTICE_TONES = {
     "hold": ("hold", "On hold"),
 }
 
+# A collapsible history ({% history_panel collapsible=True %}) starts open up to this many events.
+HISTORY_OPEN_UP_TO = 5
+
 # Page variables every component may read.
 PASS_THROUGH = ("request", "user", "csrf_token")
 
@@ -174,10 +177,15 @@ def history_panel_values(values, body, slots, has_body):
     events = values["events"] or []
     if values["newest_first"]:
         events = list(reversed(list(events)))
+    events = list(events)
+    is_open = values["open"]
+    if values["collapsible"] and is_open == "":
+        is_open = len(events) <= HISTORY_OPEN_UP_TO  # a long history starts collapsed
     return {
         "title": title,
         "events": events,
         "heading_id": values["heading_id"] or f"{slugify(title)}-heading",
+        "open": is_open,
     }
 
 
@@ -254,7 +262,7 @@ COMPONENTS = {
     "history_panel": Component(
         I + "history_panel.html",
         ("events", "newest_first", "title", "heading_id", "count", "class", "empty_title",
-         "empty_body"),
+         "empty_body", "collapsible", "open"),
         body="block",
         reads=("form_dialog",),
         derive=history_panel_values,
@@ -272,7 +280,7 @@ COMPONENTS = {
     ),
     # Single components
     "icon": Component(I + "icon.html", ("name", "class")),
-    "clock": Component(I + "clock.html", ("value", "running", "long", "label")),
+    "clock": Component(I + "clock.html", ("value", "running", "long", "label", "tone")),
     "due_pill": Component(
         I + "due_pill.html", ("due", "soon_days", "today", "plain"), derive=due_pill_values
     ),

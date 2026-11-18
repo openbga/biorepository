@@ -54,7 +54,7 @@ submit_label, back_url, crumbs, facts.
             <td>{% with n=forloop.counter|stringformat:"s" %}{% with label="Allocate "|add:c.specimen.accession id="choose-"|add:n why="why-"|add:n %}{% if c.blockers or blocked %}{% row_select name="specimen" value=c.value label=label id=id checked=c.chosen disabled=True describedby=why %}{% else %}{% row_select name="specimen" value=c.value label=label id=id checked=c.chosen %}{% endif %}{% endwith %}{% endwith %}</td>
             <th scope="row"><a class="vr-id" href="{% url 'specimens:specimen-detail' c.specimen.pk %}">{{ c.specimen.accession }}</a></th>
             <td class="vr-id">{{ c.specimen.participant.code|default:"—" }}</td>
-            <td class="vr-id">{{ c.study.code|default:"—" }}</td>
+            <td>{% if c.study %}{{ c.study.title }} <span class="vr-muted vr-id">{{ c.study.code }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
             <td class="text-end vr-id">{{ c.specimen.quantity_on_hand|amount:c.specimen.unit }}{% if c.below_minimum %}<span class="d-block small">{% status label="Below the minimum" tone="warning" plain=True %}</span>{% endif %}</td>
             <td class="vr-id">{{ c.path|default:"Not in storage" }}</td>
             <td class="text-end vr-id">{{ c.remaining }}{% if c.remaining <= 1 and c.specimen.participant %}<span class="d-block small">{% status label="Last one" tone="warning" plain=True %}</span>{% endif %}</td>

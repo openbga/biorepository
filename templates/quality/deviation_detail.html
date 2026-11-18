@@ -45,7 +45,7 @@ Context: deviation, toc, can_operate, can_manage, can_review, history [(event, c
     {% fact label="Closed" %}{% if deviation.closed_at %}<time datetime="{{ deviation.closed_at|date:'c' }}">{{ deviation.closed_at|date:"Y-m-d H:i:s T" }}</time> by {{ deviation.closed_by.get_full_name|default:deviation.closed_by.get_username }}{% else %}Not closed; prior decisions remain in history{% endif %}{% endfact %}
   </dl>
 {% endpanel %}
-{% history_panel events=history %}
+{% history_panel events=history collapsible=True %}
   {% for event, changes in history %}{% history_item title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
 {% endhistory_panel %}
 {% endblock %}

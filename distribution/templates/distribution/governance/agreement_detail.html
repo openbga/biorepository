@@ -12,7 +12,7 @@ edit_reason, terminate_reason, toc, history, can_manage.
 {% block page_kind %}record{% endblock %}
 {% block breadcrumbs %}{% url 'distribution:agreement-list' as list_url %}{% breadcrumbs section="Agreements" section_url=list_url current=agreement.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ agreement.number }}</span>{% endblock %}
-{% block page_meta %}{% page_meta %}{% meta_item %}{% distribution_status "agreement" agreement.status %}{% endmeta_item %}{% meta_item label="Today" %}{% agreement_validity agreement today %}{% endmeta_item %}{% meta_item label="Kind" value=agreement.get_kind_display %}{% meta_item label="Institution" value=agreement.institution.code class="vr-id" %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% distribution_status "agreement" agreement.status %}{% endmeta_item %}{% meta_item label="Today" %}{% agreement_validity agreement today %}{% endmeta_item %}{% meta_item label="Kind" value=agreement.get_kind_display %}{% meta_item label="Institution" value=agreement.institution.name %}{% endpage_meta %}{% endblock %}
 {% block page_intro %}<p class="vr-page-intro">The terms as recorded from the agreement; the software does not draft or interpret agreements.</p>{% endblock %}
 {% block page_actions %}
 {% if can_manage %}
@@ -53,7 +53,7 @@ edit_reason, terminate_reason, toc, history, can_manage.
     {% fact label="Data level" %}{{ agreement.get_data_level_display }}{% endfact %}
     {% fact label="At the end of use" %}{{ agreement.get_end_disposition_display }}{% endfact %}
     {% fact label="Onward transfer" %}{{ agreement.get_onward_transfer_display }}{% endfact %}
-    {% fact label="Permitted scope categories" %}{% if categories %}<span class="vr-id">{% for c in categories %}{{ c.code }}{% if not forloop.last %}, {% endif %}{% endfor %}</span>{% else %}None listed: requests are not limited by category under this agreement{% endif %}{% endfact %}
+    {% fact label="Permitted scope categories" %}{% if categories %}<span>{% for c in categories %}{{ c.name }} <span class="vr-muted vr-id">{{ c.code }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</span>{% else %}None listed: requests are not limited by category under this agreement{% endif %}{% endfact %}
     {% fact label="Permitted use" %}{% if agreement.permitted_use %}<details><summary>As recorded</summary><p class="mb-0">{{ agreement.permitted_use|linebreaksbr }}</p></details>{% else %}Not recorded{% endif %}{% endfact %}
   </dl>
   {% endpanel %}
@@ -86,10 +86,10 @@ edit_reason, terminate_reason, toc, history, can_manage.
   {% endlist_results %}
 {% endpanel %}
 
-{% history_panel events=events title="Timeline" heading_id="timeline-heading" class="mb-3" %}{% fill count %}{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first{% endfill %}
+{% history_panel events=events title="Timeline" heading_id="timeline-heading" class="mb-3" collapsible=True %}{% fill count %}{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first{% endfill %}
   {% for e in events %}{% history_item title=e.get_kind_display at=e.recorded_at actor=e.actor reason=e.reason changes=e.change_rows %}{% endfor %}
 {% endhistory_panel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block record_foot %}{% record_foot identifier=agreement.number %}{% endblock %}

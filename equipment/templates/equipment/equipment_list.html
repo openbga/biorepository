@@ -3,10 +3,10 @@
 {% comment %}Equipment register with the latest reading and level, next due date and active excursions. Context: equipment.views.grid_response for lists.SPECS["equipment"].{% endcomment %}
 {% block page_actions %}{% url 'equipment:equipment-create' as create_url %}{% include "equipment/_list_actions.html" with create_label="New equipment" may_create=can_manage %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="equipment-heading">
-  <h2 class="visually-hidden" id="equipment-heading">Equipment</h2>
+{% panel title="Equipment" heading_id="equipment-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter equipment" q=q placeholder="Asset ID, name, serial number or location" inline=inline more=more more_open=more_open grid="equipment.equipment" %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% url 'equipment:equipment-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No equipment registered yet" empty_body="Register each tank, freezer, supply dewar and temperature monitor, with the limits your repository sets." action_url=create_url action_label="New equipment" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.equipment" data-vr-grid-version="1" aria-labelledby="equipment-heading">
       <thead><tr>
@@ -39,10 +39,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% if can_manage %}{% url 'equipment:equipment-create' as create_url %}{% endif %}
-  {% include "storage/_list_states.html" with title_empty="No equipment registered yet" body_empty="Register each tank, freezer, supply dewar and temperature monitor, with the limits your repository sets." create_url=create_url create_label="New equipment" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

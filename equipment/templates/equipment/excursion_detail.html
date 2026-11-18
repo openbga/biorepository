@@ -12,7 +12,7 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
 {% endcomment %}
 {% block breadcrumbs %}{% url 'equipment:excursion-list' as list_url %}{% breadcrumbs section="Temperature excursions" section_url=list_url current=excursion.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ excursion.number }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% excursion_status excursion.status %}</li><li><a class="vr-id" href="{% url 'equipment:equipment-detail' excursion.equipment_id %}">{{ excursion.equipment.code }}</a></li>{% if excursion.storage_unit %}<li>Storage unit <a class="vr-id" href="{% url 'storage:unit-detail' excursion.storage_unit_id %}">{{ excursion.storage_unit.code }}</a></li>{% endif %}<li>Started <time datetime="{{ excursion.started_at|date:'c' }}">{{ excursion.started_at|date:"Y-m-d H:i" }}</time></li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% excursion_status excursion.status %}{% endmeta_item %}{% meta_item label="Equipment" %}<a href="{% url 'equipment:equipment-detail' excursion.equipment_id %}">{{ excursion.equipment.name }}</a> <span class="vr-muted vr-id">{{ excursion.equipment.code }}</span>{% endmeta_item %}{% if excursion.storage_unit %}{% meta_item label="Storage unit" class="vr-id" %}<a href="{% url 'storage:unit-detail' excursion.storage_unit_id %}">{{ excursion.storage_unit.code }}</a>{% endmeta_item %}{% endif %}{% meta_item label="Started" class="vr-id" %}<time datetime="{{ excursion.started_at|date:'c' }}">{{ excursion.started_at|date:"Y-m-d H:i" }}</time>{% endmeta_item %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if excursion.status == "open" and can_operate %}
 <a class="btn btn-outline-secondary" href="{% url 'equipment:excursion-edit' excursion.pk %}">Edit</a>
@@ -32,32 +32,28 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
 {% block content %}
 {% page_toc items=toc %}
 {% if excursion.status == "review" %}
-<div class="alert alert-info" role="status">{% excursion_status excursion.status plain=True %}<div>Submitted <time datetime="{{ excursion.submitted_at|date:'c' }}">{{ excursion.submitted_at|date:"Y-m-d H:i" }}</time> by {{ excursion.submitted_by|person }}. A manager or administrator who did not submit it reviews and closes it.</div></div>
+{% status_parts "excursion" excursion.status as st %}{% notice tone=st.tone label=st.label %}Submitted <time datetime="{{ excursion.submitted_at|date:'c' }}">{{ excursion.submitted_at|date:"Y-m-d H:i" }}</time> by {{ excursion.submitted_by|person }}. A manager or administrator who did not submit it reviews and closes it.{% endnotice %}
 {% elif excursion.status == "closed" %}
-<div class="alert alert-secondary" role="status">{% excursion_status excursion.status plain=True %}<div>Reviewed and closed <time datetime="{{ excursion.closed_at|date:'c' }}">{{ excursion.closed_at|date:"Y-m-d H:i" }}</time> by {{ excursion.closed_by|person }}: {{ excursion.closure_note }}</div></div>
+{% status_parts "excursion" excursion.status as st %}{% notice tone=st.tone label=st.label %}Reviewed and closed <time datetime="{{ excursion.closed_at|date:'c' }}">{{ excursion.closed_at|date:"Y-m-d H:i" }}</time> by {{ excursion.closed_by|person }}: {{ excursion.closure_note }}{% endnotice %}
 {% endif %}
 
-<section class="card mb-3" aria-labelledby="facts-heading">
-  <div class="card-header"><h2 class="card-title" id="facts-heading">Excursion</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Period</dt><dd><time datetime="{{ excursion.started_at|date:'c' }}">{{ excursion.started_at|date:"Y-m-d H:i" }}</time> to {% if excursion.ended_at %}<time datetime="{{ excursion.ended_at|date:'c' }}">{{ excursion.ended_at|date:"Y-m-d H:i" }}</time>{% else %}ongoing{% endif %}</dd></div>
-    <div><dt>Extreme reached</dt><dd>{% if excursion.extreme_value is not None %}<span class="vr-id">{{ excursion.extreme_value }} {{ excursion.unit }}</span>{% if excursion.extreme_at %} at <time class="vr-id" datetime="{{ excursion.extreme_at|date:'c' }}">{{ excursion.extreme_at|date:"Y-m-d H:i" }}</time>{% endif %}{% else %}Not recorded{% endif %}</dd></div>
-    <div><dt>Limits in force</dt><dd>{% if excursion.lower_limit is None and excursion.upper_limit is None %}No limits set{% else %}<span class="vr-id">{{ excursion.lower_limit|default_if_none:"—" }} to {{ excursion.upper_limit|default_if_none:"—" }} {{ excursion.unit }}</span>{% endif %}<span class="d-block vr-muted small">Set by the repository on the equipment; kept as they were when the excursion was opened.</span></dd></div>
-    <div><dt>Equipment</dt><dd><a class="vr-id" href="{% url 'equipment:equipment-detail' excursion.equipment_id %}">{{ excursion.equipment.code }}</a> <span class="vr-muted">{{ excursion.equipment.name }}</span></dd></div>
-    <div><dt>Storage unit</dt><dd>{% if excursion.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' excursion.storage_unit_id %}">{{ excursion.storage_unit.code }}</a>{% else %}None{% endif %}</dd></div>
-    <div><dt>Detected by</dt><dd>{{ excursion.get_detection_display }}</dd></div>
-    <div><dt>Cause category</dt><dd>{{ excursion.get_cause_category_display }}</dd></div>
-    <div><dt>Cause</dt><dd class="vr-wrap">{{ excursion.cause|linebreaksbr|default:"Not yet described" }}</dd></div>
-    <div><dt>Action taken</dt><dd class="vr-wrap">{{ excursion.action|linebreaksbr|default:"Not yet described" }}</dd></div>
-    <div><dt>Impact assessment</dt><dd class="vr-wrap">{{ excursion.impact|linebreaksbr|default:"Not yet described" }}</dd></div>
-    <div><dt>Opened</dt><dd><time datetime="{{ excursion.opened_at|date:'c' }}">{{ excursion.opened_at|date:"Y-m-d H:i" }}</time> by {{ excursion.opened_by|person }}</dd></div>
-  </dl></div>
-</section>
+{% panel title="Excursion" heading_id="facts-heading" class="mb-3" %}<dl class="vr-facts">
+    {% fact label="Period" %}<time datetime="{{ excursion.started_at|date:'c' }}">{{ excursion.started_at|date:"Y-m-d H:i" }}</time> to {% if excursion.ended_at %}<time datetime="{{ excursion.ended_at|date:'c' }}">{{ excursion.ended_at|date:"Y-m-d H:i" }}</time>{% else %}ongoing{% endif %}{% endfact %}
+    {% fact label="Extreme reached" %}{% if excursion.extreme_value is not None %}<span class="vr-id">{{ excursion.extreme_value }} {{ excursion.unit }}</span>{% if excursion.extreme_at %} at <time class="vr-id" datetime="{{ excursion.extreme_at|date:'c' }}">{{ excursion.extreme_at|date:"Y-m-d H:i" }}</time>{% endif %}{% else %}Not recorded{% endif %}{% endfact %}
+    {% fact label="Limits in force" %}{% if excursion.lower_limit is None and excursion.upper_limit is None %}No limits set{% else %}<span class="vr-id">{{ excursion.lower_limit|default_if_none:"—" }} to {{ excursion.upper_limit|default_if_none:"—" }} {{ excursion.unit }}</span>{% endif %}<span class="d-block vr-muted small">Set by the repository on the equipment; kept as they were when the excursion was opened.</span>{% endfact %}
+    {% fact label="Equipment" %}<a class="vr-id" href="{% url 'equipment:equipment-detail' excursion.equipment_id %}">{{ excursion.equipment.code }}</a> <span class="vr-muted">{{ excursion.equipment.name }}</span>{% endfact %}
+    {% fact label="Storage unit" %}{% if excursion.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' excursion.storage_unit_id %}">{{ excursion.storage_unit.code }}</a>{% else %}None{% endif %}{% endfact %}
+    {% fact label="Detected by" %}{{ excursion.get_detection_display }}{% endfact %}
+    {% fact label="Cause category" %}{{ excursion.get_cause_category_display }}{% endfact %}
+    {% fact label="Cause" class="vr-wrap" %}{{ excursion.cause|linebreaksbr|default:"Not yet described" }}{% endfact %}
+    {% fact label="Action taken" class="vr-wrap" %}{{ excursion.action|linebreaksbr|default:"Not yet described" }}{% endfact %}
+    {% fact label="Impact assessment" class="vr-wrap" %}{{ excursion.impact|linebreaksbr|default:"Not yet described" }}{% endfact %}
+    {% fact label="Opened" %}<time datetime="{{ excursion.opened_at|date:'c' }}">{{ excursion.opened_at|date:"Y-m-d H:i" }}</time> by {{ excursion.opened_by|person }}{% endfact %}
+  </dl>{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="specimens-heading">
-  <div class="card-header"><h2 class="card-title" id="specimens-heading">Specimens in the unit during the excursion</h2><span class="vr-count">{{ specimen_count }}</span></div>
-  <div class="card-body pb-0"><p class="vr-muted small">{% if capture %}Captured when it was closed on <time datetime="{{ capture.occurred_at|date:'c' }}">{{ capture.occurred_at|date:"Y-m-d H:i" }}</time> by {{ capture.actor|person }}.{% elif excursion.storage_unit %}Computed from the recorded movements up to <time datetime="{{ computed_until|date:'c' }}">{{ computed_until|date:"Y-m-d H:i" }}</time>{% if not excursion.ended_at %} (now; the excursion is ongoing){% endif %}. The list is kept when the excursion is closed.{% else %}The equipment had no storage unit when the excursion was opened, so no specimens are listed.{% endif %}</p></div>
-  {% if specimen_count %}
+{% panel title="Specimens in the unit during the excursion" heading_id="specimens-heading" table=True class="mb-3" %}{% fill count %}{{ specimen_count }}{% endfill %}
+  <p class="vr-muted small">{% if capture %}Captured when it was closed on <time datetime="{{ capture.occurred_at|date:'c' }}">{{ capture.occurred_at|date:"Y-m-d H:i" }}</time> by {{ capture.actor|person }}.{% elif excursion.storage_unit %}Computed from the recorded movements up to <time datetime="{{ computed_until|date:'c' }}">{{ computed_until|date:"Y-m-d H:i" }}</time>{% if not excursion.ended_at %} (now; the excursion is ongoing){% endif %}. The list is kept when the excursion is closed.{% else %}The equipment had no storage unit when the excursion was opened, so no specimens are listed.{% endif %}</p>
+  {% list_results items=specimens noun="specimens" empty_title="No specimens were in the unit" empty_body="No stored specimen was recorded in the storage unit during this period." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Specimen ID</th><th scope="col">Present from</th><th scope="col">Present until</th><th scope="col">Location</th></tr></thead>
     <tbody>{% for row in specimens %}
@@ -68,13 +64,11 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
         <td class="vr-id">{{ row.location|default:"—" }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% pagination page_obj=specimens noun="specimens" %}
-  {% else %}<div class="card-body">{% empty_state title="No specimens were in the unit" body="No stored specimen was recorded in the storage unit during this period." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="readings-heading">
-  <div class="card-header"><h2 class="card-title" id="readings-heading">Readings during the excursion</h2><span class="vr-count">{{ reading_count }}{% if reading_count > shown %}, first {{ shown }} shown{% endif %}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:reading-list' %}?equipment={{ excursion.equipment_id }}&amp;date_from={{ excursion.started_at|date:'Y-m-d' }}{% if excursion.ended_at %}&amp;date_to={{ excursion.ended_at|date:'Y-m-d' }}{% endif %}">Readings of these days</a></div>
-  {% if readings %}
+{% panel title="Readings during the excursion" heading_id="readings-heading" table=True class="mb-3" %}{% fill count %}{{ reading_count }}{% if reading_count > shown %}, first {{ shown }} shown{% endif %}{% endfill %}{% fill actions %}<a class="btn btn-sm btn-link" href="{% url 'equipment:reading-list' %}?equipment={{ excursion.equipment_id }}&amp;date_from={{ excursion.started_at|date:'Y-m-d' }}{% if excursion.ended_at %}&amp;date_to={{ excursion.ended_at|date:'Y-m-d' }}{% endif %}">Readings of these days</a>{% endfill %}
+  {% list_results items=readings empty_title="No readings in this period" empty_body="Readings of the equipment between the start and the end (or now) are listed here." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Read at</th><th scope="col" class="text-end">Temperature (°C)</th><th scope="col">Limits</th><th scope="col">Probe position</th><th scope="col">Monitor</th><th scope="col">Source</th><th scope="col">Recorded by</th></tr></thead>
     <tbody>{% for row in readings %}
@@ -88,17 +82,14 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
         <td>{{ row.recorded_by|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% empty_state title="No readings in this period" body="Readings of the equipment between the start and the end (or now) are listed here." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
-<section class="card mb-3" aria-labelledby="timeline-heading">
-  <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first</span></div>
-  <div class="card-body"><ol class="vr-timeline">
-    {% for e in events %}{% history_item title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note changes=e.change_rows detail=e.detail extra="equipment/_event_extra.html" %}{% endfor %}
-  </ol></div>
-</section>
+{% history_panel events=events title="Timeline" heading_id="timeline-heading" class="mb-3" %}{% fill count %}{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first{% endfill %}
+  {% for e in events %}{% history_item title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note changes=e.change_rows detail=e.detail extra="equipment/_event_extra.html" %}{% endfor %}
+{% endhistory_panel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=excursion.number %}{% endblock %}

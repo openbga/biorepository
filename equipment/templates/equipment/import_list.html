@@ -4,10 +4,11 @@
 {% block page_actions %}{% url 'equipment:import-upload' as create_url %}{% include "equipment/_list_actions.html" with create_label="Upload readings" may_create=can_operate %}{% endblock %}
 {% block content %}
 {% section_tabs "equipment-readings" %}
-<section class="card vr-table-card" aria-labelledby="imports-heading">
-  <h2 class="visually-hidden" id="imports-heading">Imports</h2>
+{% panel title="Imports" heading_id="imports-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter imports" q=q placeholder="File name" inline=inline grid="equipment.imports" %}
-  {% if page_obj.paginator.count %}
+  {% if can_operate %}{% url 'equipment:import-upload' as create_url %}{% endif %}
+  {% if can_operate %}{% firstof "Upload a logger's CSV of readings. Nothing is recorded until you commit a valid file." as empty_body %}{% else %}{% firstof "Readings CSV files uploaded by technicians and managers appear here." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No imports yet" empty_body=empty_body action_url=create_url action_label="Upload readings" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.imports" data-vr-grid-version="1" aria-labelledby="imports-heading">
       <thead><tr>
@@ -34,10 +35,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% url 'equipment:import-upload' as create_url %}
-  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No imports yet" body_empty="Upload a logger's CSV of readings. Nothing is recorded until you commit a valid file." create_url=create_url create_label="Upload readings" %}{% else %}{% include "storage/_list_states.html" with title_empty="No imports yet" body_empty="Readings CSV files uploaded by technicians and managers appear here." %}{% endif %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}
