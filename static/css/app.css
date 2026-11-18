@@ -225,7 +225,7 @@
   --vr-font-weight-bold: 680;
   --vr-motion-fast: 160ms;
   --vr-z-raised: 1;
-  --vr-z-menu: 1060; /* select menus and date popovers: over the top bar, and within a dialog */
+  --vr-z-menu: 1060; /* menus, select menus and date popovers: over the top bar, and within a dialog */
   --vr-z-confirm-backdrop: 1065; /* a confirmation stacked over the form dialog, and its scrim */
   --vr-z-confirm: 1070;
   --vr-z-sticky: 5; /* a form dialog's sticky action row, over enhanced fields scrolled beneath it */
@@ -908,6 +908,7 @@ s,
   --bs-dropdown-link-active-bg: var(--vr-cold-bg);
   --bs-dropdown-header-color: var(--vr-text-muted);
   --bs-dropdown-divider-bg: var(--vr-border);
+  --bs-dropdown-zindex: var(--vr-z-menu); /* a header menu flipped upward opens over the top bar */
   --bs-dropdown-font-size: var(--vr-font-size-2);
   --bs-dropdown-item-padding-y: 0.45rem;
   --bs-dropdown-box-shadow: var(--vr-shadow-raised);
@@ -920,6 +921,22 @@ s,
   align-items: center;
   gap: 0.5rem;
   border-radius: var(--vr-radius);
+}
+
+/* A disabled item's reason (more_actions) is a line under its label, not a column beside it; the
+   menu stays a readable width so the reason wraps. */
+.dropdown-menu {
+  width: max-content; /* its own width, not the toggle wrapper's (absolute shrink-to-fit) */
+  max-width: min(22rem, calc(100vw - 2rem));
+}
+
+.dropdown-item {
+  flex-wrap: wrap;
+}
+
+.dropdown-item > .d-block {
+  flex-basis: 100%;
+  margin-top: var(--vr-space-0-5);
 }
 
 .modal {
@@ -935,8 +952,30 @@ s,
 }
 
 .modal-content {
+  --vr-modal-corner: var(--bs-modal-inner-border-radius); /* a footer strip rounds itself to it */
   box-shadow: var(--vr-shadow-dialog);
-  overflow: hidden;
+}
+
+/* No clip on a dialog's frame: menus open from its header (page actions moved there). Bootstrap
+   clips a scrollable dialog's frame only for its corners; the body still scrolls (min-height 0). */
+.modal-dialog-scrollable .modal-content {
+  overflow: visible;
+}
+
+/* The scrolling body paints its own surface: as the frame's last part it rounds its own corners
+   (and, as the scroll container, clips its sticky action row to them). */
+.modal-body:last-child {
+  border-radius: 0 0 var(--vr-modal-corner) var(--vr-modal-corner);
+}
+
+.modal-fullscreen .modal-content {
+  --vr-modal-corner: 0;
+}
+
+@media (max-width: 575.98px) {
+  .modal-fullscreen-sm-down .modal-content {
+    --vr-modal-corner: 0;
+  }
 }
 
 .modal-backdrop {
@@ -1917,8 +1956,7 @@ a.vr-path-seg:hover {
 .vr-page-header[data-page-kind="record"] .vr-page-header-row {
   align-items: stretch;
   gap: 0;
-  overflow: hidden;
-  border-radius: var(--vr-radius-xl);
+  border-radius: var(--vr-radius-xl); /* no overflow clip here: the More menu opens from this row */
   background: var(--vr-surface);
   box-shadow: var(--vr-shadow-panel), inset 0 1px 0 var(--vr-frost-edge);
 }
@@ -1928,6 +1966,8 @@ a.vr-path-seg:hover {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
+  overflow: clip; /* the ice title cell and the cells' top rules, to the pass's corners; no menus in here */
+  border-radius: inherit;
 }
 
 [data-page-kind="record"] .vr-page-title {
@@ -1945,7 +1985,7 @@ a.vr-path-seg:hover {
   min-width: 12rem;
   align-items: stretch;
   gap: 0;
-  margin: -1px 0 0; /* the first row's top rule sits under the pass edge, which clips it */
+  margin: -1px 0 0; /* the first row's top rule sits under the cells block's edge, which clips it */
 }
 
 [data-page-kind="record"] .vr-page-meta > li {
@@ -2304,10 +2344,6 @@ a.vr-path-seg:hover {
 }
 
 /* ================================================================ Data tables */
-
-.vr-table-card {
-  overflow: hidden;
-}
 
 .vr-table-card > .card-body {
   padding: 0;
@@ -3108,10 +3144,6 @@ fieldset.vr-field > legend {
 .vr-form-dialog {
   --vr-dialog-pad: 24px;
   --bs-modal-margin: 24px;
-}
-
-.vr-form-dialog .modal-content {
-  overflow: hidden;
 }
 
 .vr-form-dialog-header {
@@ -5400,6 +5432,7 @@ details[open] > summary:not(.card-header) {
    look and only gains the marker; closed, it has no rule under it. */
 details.card:not([open]) > summary.card-header {
   border-bottom: 0;
+  padding-block: var(--vr-panel-inset); /* closed, the header is the whole panel: centred in it */
 }
 
 @media (prefers-reduced-motion: reduce) {

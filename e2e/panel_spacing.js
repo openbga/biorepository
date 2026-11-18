@@ -95,5 +95,28 @@
       }
     }
   }
-  return {inset, stack, problems: [...new Set(problems)]};
+  // A collapsed panel (details.card, closed): its summary sits centred, the same inset from the
+  // panel's top and bottom edges (within the tolerance), and at least --vr-panel-inset from each.
+  let collapsed = 0;
+  for (const card of document.querySelectorAll('details.card:not([open])')) {
+    const summary = card.querySelector(':scope > summary');
+    if (!summary || !visible(card)) continue;
+    const c = card.getBoundingClientRect();
+    // The summary's own items (heading, count, marker text), as laid out: their line boxes.
+    let top = Infinity, bottom = -Infinity;
+    for (const item of summary.children) {
+      if (!visible(item) || !item.textContent.trim()) continue;
+      const r = item.getBoundingClientRect();
+      top = Math.min(top, r.top);
+      bottom = Math.max(bottom, r.bottom);
+    }
+    if (!isFinite(top)) continue;
+    collapsed += 1;
+    const above = top - c.top, below = c.bottom - bottom;
+    if (Math.abs(above - below) > tolerance || Math.min(above, below) < inset - tolerance) {
+      problems.push(`collapsed panel inset top ${above.toFixed(1)}px / bottom ${below.toFixed(1)}px ` +
+        `(equal and ≥ ${inset}px): ${label(summary).slice(0, 60)}`);
+    }
+  }
+  return {inset, stack, collapsed, problems: [...new Set(problems)]};
 }

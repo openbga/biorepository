@@ -1,8 +1,9 @@
 """Panel spacing on the main record, list and overview pages (docs/ui-standards.md section 12).
 
 Visible text and controls inside a panel sit at least --vr-panel-inset from its edge, stacked
-blocks in a panel body are at least --vr-stack apart, and key facts start on their grid's track
-lines. The measurement is e2e/panel_spacing.js, which qa also runs on any page:
+blocks in a panel body are at least --vr-stack apart, key facts start on their grid's track
+lines, and a collapsed panel's summary sits with equal top and bottom insets of at least
+--vr-panel-inset. The measurement is e2e/panel_spacing.js, which qa also runs on any page:
 page.evaluate(Path("e2e/panel_spacing.js").read_text()).
 """
 
@@ -41,9 +42,13 @@ def test_panels_keep_their_inset_and_stack(page: Page, demo, width):
     page.set_viewport_size({"width": width, "height": 900})
     sign_in(page, "demo_admin", demo.password)
     pages = FIXED + LISTS + [href for path in LISTS if (href := first_record(page, path))]
-    problems = []
+    problems, collapsed = [], 0
     for path in pages:
         page.goto(path)
+        # Collapsed panels as the page opens them, then every panel open.
+        first = page.evaluate(CHECK)
+        collapsed += first.get("collapsed", 0)
+        problems += [f"{path} (collapsed): {p}" for p in first["problems"] if "collapsed" in p]
         page.evaluate("() => document.querySelectorAll('details').forEach(d => { d.open = true; })")
         result = page.evaluate(CHECK)
         if not all(
@@ -53,4 +58,5 @@ def test_panels_keep_their_inset_and_stack(page: Page, demo, width):
             # The Cryo panel spacing tokens arrive with the designer's components milestone.
             pytest.xfail("--vr-panel-inset / --vr-stack are not defined in static/css/app.css yet")
         problems += [f"{path}: {problem}" for problem in result["problems"]]
+    assert collapsed, "no collapsed panel was measured: add a page that has one"
     assert not problems, "\n".join(problems)
