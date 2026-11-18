@@ -139,6 +139,9 @@ def test_all_read_roles_can_export_and_record_an_empty_selection(client, people)
     for role in roles:
         actor = people[role]
         client.force_login(actor)
+        register = client.get(reverse("specimens:disposal-list"))
+        assert not register.context["active_filters"]
+        assert "No disposal requests yet" in register.content.decode()
         assert download(client, {"state": "pending"}) == []
         record = OutputRecord.objects.get(actor=actor, kind=OutputRecord.Kind.EXPORT)
         assert record.count == 0

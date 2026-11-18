@@ -144,6 +144,10 @@ class DisposalFilter(ListFilter):
                 label="Awaiting my approval", required=False
             )
 
+    def clean(self):
+        # An unchecked personal filter allows every requester. Omit it from the applied chips.
+        return {name: value for name, value in super().clean().items() if value is not False}
+
     def filters(self):
         data = self.cleaned_data
         filters = {}

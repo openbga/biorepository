@@ -90,7 +90,7 @@
     {
       "title": "Export CSV",
       "paragraphs": [
-        "All four staff roles can download disposal-requests.csv. Apply a search or filters, choose the sort order, then select Export CSV. Requested by me and Awaiting my approval use the signed-in account. The file includes all seven register columns across all matching pages, even when a column is hidden on screen.",
+        "All four staff roles can download disposal-requests.csv. Apply a search or filters, choose the sort order, then select Export CSV. Requested by me and Awaiting my approval use the signed-in account. Only checked personal filters appear in the active filter list. The file includes all seven register columns across all matching pages, even when a column is hidden on screen.",
         "Request gives the time in UTC with its offset. State is the state when the register is exported. Decided by is blank until someone records a decision. A selection with no matches downloads the column headings.",
         "Narrow the filters when more than 10,000 requests match. Correct invalid filters before downloading. Each successful export records your account, the applied filters, sort order and row count in the audit trail."
       ]
