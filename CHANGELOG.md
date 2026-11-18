@@ -191,6 +191,10 @@ The same list is shown in the application under What's new.
 
   The storage overview flags units with an open temperature excursion and names their sites and rooms. Box and import pages show catalogue names before codes.
 
+- **Changed:** What's new groups changes as tiles by impact (2026-11-18)
+
+  What's new uses the full width: changes are tiles grouped by impact, with high impact highlighted, the type as a coloured label, and the area and Go to link at the foot of each change. Labels such as statuses and counts never break across lines.
+
 - **Fixed:** Demonstration data no longer fails to load after a daylight-saving change (2026-11-15, [#10](https://github.com/openbga/biorepository/pull/10))
 
   Loading the full demonstration data near midnight after an autumn clock change could stop with an import error, because two temperature readings fell on the same local morning. Each demonstration reading now falls on its own local date.

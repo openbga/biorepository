@@ -49,8 +49,11 @@ def test_open_whats_new_see_entries_and_the_indicator_clears(page: Page):
     expect(page.get_by_role("heading", level=1, name="What's new")).to_be_visible()
     month = page.get_by_role("region", name=newest.date.strftime("%B %Y"))
     expect(month.get_by_text(newest.title, exact=True)).to_be_visible()
-    first_section = changelog.group_entries(entries)[0].sections[0][1]  # e.g. "High impact"
-    expect(month.get_by_role("heading", level=3).first).to_have_text(first_section)
+    # The first impact band's heading: its label (e.g. "High impact") and its change count.
+    _, first_section, first_entries = changelog.group_entries(entries)[0].sections[0]
+    expect(month.get_by_role("heading", level=3).first).to_have_text(
+        f"{first_section}{len(first_entries)}"
+    )
     expect(page.locator(".vr-change")).to_have_count(len(entries))  # the list shows every entry
     marked = page.locator("[data-vr-whats-new-mark]:visible")
     expect(marked).to_have_count(1)

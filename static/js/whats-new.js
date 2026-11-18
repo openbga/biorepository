@@ -53,7 +53,10 @@
     ids.forEach(function (id) {
       var item = document.querySelector('[data-vr-entry="' + id + '"]');
       var mark = item && item.querySelector("[data-vr-whats-new-mark]");
-      if (mark) { mark.hidden = false; }
+      if (mark) {
+        mark.hidden = false;
+        item.setAttribute("data-vr-new", ""); // the tile's ice edge (app.css, What's new)
+      }
     });
     var notice = document.querySelector("[data-vr-whats-new-notice]");
     var text = notice && notice.querySelector("[data-vr-whats-new-notice-text]");

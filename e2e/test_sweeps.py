@@ -5,8 +5,9 @@ and one record per route shape (query-string variants only when the navigation o
 links them). Every page must load (no 4xx or 5xx from a link the role was shown), log no browser
 errors or content-security-policy violations (the autouse fixture in conftest.py fails the test
 on those), and fit its viewport without horizontal page overflow at 1440 and 1280 pixels, light
-and dark, plus 768 for the pages the navigation links. scripts/ui_compare/capture.py crawls the
-same way for screenshots.
+and dark, plus 768 for the pages the navigation links. At 1440 and 1280 every capsule (status,
+count, chip, path segment, meta capsule) stays on one line. scripts/ui_compare/capture.py crawls
+the same way for screenshots.
 """
 
 import re
@@ -41,6 +42,47 @@ OVERFLOW = """() => {
     .filter(el => !el.closest('.vr-table-wrap, .dt-scroll, [data-vr-scroll]'))
     .slice(0, 3)
     .map(el => `${el.tagName.toLowerCase()}.${[...el.classList].join('.')}`);
+}"""
+
+# Capsules (statuses, counts, chips, path segments, meta and panel-count capsules) keep to one
+# line: their shared classes, plus anything else drawn as a pill (pill radius), except buttons and
+# form controls. A capsule spanning more than one line of text is reported with its text.
+CAPSULES = """() => {
+  // Plain statuses are text with a glyph, not capsules; journey counts stack a number on a label.
+  const shared = '.vr-status:not(.vr-status-plain), .vr-count, .vr-chip, .vr-path-seg, ' +
+    '.vr-navlink-count, .vr-topbar-count, .vr-help-count, .vr-journey-tag, .badge';
+  const controls = 'button, .btn, input, select, textarea, .form-control, .form-select, ' +
+    '.progress, .ts-control, .ts-wrapper, .nav-link, .page-link, [role=search]';
+  const pill = el => parseFloat(getComputedStyle(el).borderTopLeftRadius) >= 500;
+  const lines = el => {
+    const tops = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.textContent.trim() || n.parentElement.closest('.visually-hidden')) continue;
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      for (const r of range.getClientRects()) {
+        if (r.width && r.height && !tops.some(t => Math.abs(t - r.top) < r.height / 2)) {
+          tops.push(r.top);
+        }
+      }
+    }
+    return tops.length;
+  };
+  const found = [];
+  for (const el of document.querySelectorAll('body *')) {
+    if (!el.getClientRects().length || el.closest('[hidden], .visually-hidden, .d-none')) continue;
+    const plain = el.matches('.vr-status-plain, .vr-journey-count');
+    if (!(el.matches(shared) || (pill(el) && !plain && !el.matches(controls)))) continue;
+    if (el.parentElement && el.parentElement.closest(shared)) continue;  // its capsule counts
+    const n = lines(el);
+    if (n > 1) {
+      const text = el.innerText.trim().replace(/\\s+/g, ' ').slice(0, 50);
+      const name = `${el.tagName.toLowerCase()}.${[...el.classList].join('.')}`;
+      found.push(`${name} "${text}" (${n} lines)`);
+    }
+  }
+  return [...new Set(found)].slice(0, 5);
 }"""
 
 
@@ -99,6 +141,11 @@ def test_every_reachable_page_loads_clean_and_fits(page: Page, demo, live_server
                 if offenders := page.evaluate(OVERFLOW):
                     problems.append(
                         f"{path}: horizontal overflow at {width} {theme}: {', '.join(offenders)}"
+                    )
+                if width in WIDTHS and (wrapped := page.evaluate(CAPSULES)):
+                    problems.append(
+                        f"{path}: capsule on more than one line at {width} {theme}: "
+                        + "; ".join(wrapped)
                     )
         for href, in_nav in page.evaluate(LINKS):
             target = local(href, base, page.url)

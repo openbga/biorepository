@@ -5,31 +5,39 @@ What's new: every change recorded in changelog.d/, in the groups and order of CH
 Context: groups (key YYYY-MM, label, start, end, count, sections of impact, label and entries; each
 entry row has entry (core.changelog.Entry) and link (url and label of its menu destination, or
 None)), total. static/js/whats-new.js reveals the notice and the New stamps of the entries this
-browser had not seen yet, then stores everything as seen; a browser without a mark marks none.
+browser had not seen yet (and sets data-vr-new on them), then stores everything as seen; a browser
+without a mark marks none.
+Layout: one panel per month (title, change count, date range at the right); inside, one band per
+impact level, high first and emphasised (the month's one emphasis); each change is a tile: type
+capsule, New, date; title and summary; technical notes; then area, change number and Go to in one
+meta row at the tile's foot. Type tones: Added success, Changed progress, Fixed neutral, Removed and
+Deprecated warning, Security danger (New is info).
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Changes to this application, newest first, grouped by month and ranked by impact.</p>{% endblock %}
 {% block content %}
 {% notice tone="info" label="New" hidden=True hook="vr-whats-new-notice" %}<span data-vr-whats-new-notice-text></span>{% endnotice %}
 {% for group in groups %}
-{% with heading="whats-new-"|add:group.key|add:"-heading" %}{% panel heading_id=heading flush=True class="mb-3 vr-narrow" %}{% fill title %}{{ group.label }}{% endfill %}{% fill count %}<time datetime="{{ group.start|date:'Y-m-d' }}">{{ group.start|date:"Y-m-d" }}</time>{% if group.end != group.start %} to <time datetime="{{ group.end|date:'Y-m-d' }}">{{ group.end|date:"Y-m-d" }}</time>{% endif %} · {{ group.count }} change{{ group.count|pluralize }}{% endfill %}
+{% with heading="whats-new-"|add:group.key|add:"-heading" %}{% panel heading_id=heading flush=True class="mb-3 vr-changelog" %}{% fill title %}{{ group.label }}{% endfill %}{% fill count %}{{ group.count }} change{{ group.count|pluralize }}{% endfill %}{% fill actions %}<p class="vr-changelog-range"><time datetime="{{ group.start|date:'Y-m-d' }}">{{ group.start|date:"Y-m-d" }}</time>{% if group.end != group.start %} to <time datetime="{{ group.end|date:'Y-m-d' }}">{{ group.end|date:"Y-m-d" }}</time>{% endif %}</p>{% endfill %}
 {% for section in group.sections %}
-  {% panel_section rule=forloop.counter0 %}
-    <h3 class="vr-section-title">{{ section.label }}</h3>
+  {% panel_section rule=forloop.counter0 class="vr-impact vr-impact-"|add:section.impact %}
+    <h3 class="vr-impact-title">{{ section.label }}<span class="vr-impact-count">{{ section.entries|length }}</span></h3>
     <ol class="vr-changes">
       {% for row in section.entries %}{% with entry=row.entry %}
       <li class="vr-change" data-vr-entry="{{ entry.id }}">
         <div class="vr-change-head">
-          <span class="vr-change-type">{{ entry.type_label }}</span>
-          <span class="vr-change-title">{{ entry.title }}</span>
+          {% if entry.type == "added" %}{% status label=entry.type_label tone="success" %}{% elif entry.type == "changed" %}{% status label=entry.type_label tone="progress" %}{% elif entry.type == "removed" or entry.type == "deprecated" %}{% status label=entry.type_label tone="warning" %}{% elif entry.type == "security" %}{% status label=entry.type_label tone="danger" %}{% else %}{% status label=entry.type_label tone="neutral" %}{% endif %}
           <span data-vr-whats-new-mark hidden>{% status label="New" tone="info" %}</span>
+          <time class="vr-change-date" datetime="{{ entry.date|date:'Y-m-d' }}">{{ entry.date|date:"Y-m-d" }}</time>
         </div>
-        <p class="vr-change-meta"><time datetime="{{ entry.date|date:'Y-m-d' }}">{{ entry.date|date:"Y-m-d" }}</time>{% if entry.area %} · {{ entry.area }}{% endif %}{% if entry.pr %} · Change #{{ entry.pr }}{% endif %}</p>
+        <h4 class="vr-change-title">{{ entry.title }}</h4>
         <div class="vr-change-summary">{{ entry.summary|linebreaks }}</div>
-        {% if row.link or entry.notes %}
-        <div class="vr-change-more">
-          {% if row.link %}<a href="{{ row.link.url }}">Go to {{ row.link.label }}</a>{% endif %}
-          {% if entry.notes %}<details class="vr-change-notes"><summary>Technical notes</summary><div class="vr-change-notes-body">{{ entry.notes|linebreaks }}</div></details>{% endif %}
-        </div>
+        {% if entry.notes %}<details class="vr-change-notes"><summary>Technical notes</summary><div class="vr-change-notes-body">{{ entry.notes|linebreaks }}</div></details>{% endif %}
+        {% if entry.area or entry.pr or row.link %}
+        <p class="vr-change-meta">
+          {% if entry.area %}<span class="vr-change-area">{{ entry.area }}</span>{% endif %}
+          {% if entry.pr %}<span class="vr-change-pr">Change #{{ entry.pr }}</span>{% endif %}
+          {% if row.link %}<a class="vr-change-link" href="{{ row.link.url }}">Go to {{ row.link.label }}{% icon name="arrow-right" %}</a>{% endif %}
+        </p>
         {% endif %}
       </li>
       {% endwith %}{% endfor %}
@@ -38,7 +46,7 @@ browser had not seen yet, then stores everything as seen; a browser without a ma
   {% endfor %}
 {% endpanel %}{% endwith %}
 {% empty %}
-{% panel title="Changes" heading_id="whats-new-heading" class="vr-narrow" %}
+{% panel title="Changes" heading_id="whats-new-heading" %}
 {% empty_state title="No changes recorded yet" body="Changes to the application are listed here, newest first, once they are recorded." %}
 {% endpanel %}
 {% endfor %}

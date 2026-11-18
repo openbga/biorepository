@@ -34,15 +34,15 @@
       "items": [
         {
           "label": "Month",
-          "description": "One panel per calendar month in which changes were made, newest first. Its heading shows the month, the first and last date of the changes in it and how many there are."
+          "description": "One panel per calendar month in which changes were made, newest first. Its heading shows the month and how many changes it has, with the first and last date of those changes at the right."
         },
         {
           "label": "High impact / Medium impact / Low impact",
-          "description": "Inside a month, changes are ranked by impact. High: a new capability or workflow, something users or deployers must act on, a removal or a security fix. Medium: a noticeable improvement to something that exists. Low: small fixes and polish. A level without changes is left out. Within a level the newest change comes first, then by title."
+          "description": "Inside a month, changes are ranked by impact. High: a new capability or workflow, something users or deployers must act on, a removal or a security fix. Medium: a noticeable improvement to something that exists. Low: small fixes and polish. Each level shows how many changes it has; high impact is emphasised. A level without changes is left out. Within a level the newest change comes first, then by title."
         },
         {
           "label": "Type",
-          "description": "The capital word before the title: Added, Changed, Fixed, Removed, Deprecated or Security."
+          "description": "The coloured capsule at the top of each change, before its date: Added, Changed, Fixed, Removed, Deprecated or Security."
         },
         {
           "label": "Title and summary",
@@ -50,11 +50,11 @@
         },
         {
           "label": "Date, area and change number",
-          "description": "The date the change was made, the part of the application it belongs to when one is given, and the number of the published change request that delivered it."
+          "description": "The date the change was made (beside its type), and at the foot of the change the part of the application it belongs to when one is given, the number of the published change request that delivered it and, when there is one, a Go to link to the page it concerns."
         },
         {
           "label": "New",
-          "description": "Marks the changes this browser had not shown you when you opened the page, and a notice above the list counts them. Nothing is new in a browser you have not used the application in before: the list shows every change and marks none."
+          "description": "Marks the changes this browser had not shown you when you opened the page, with a New capsule and a coloured edge on the change, and a notice above the list counts them. Nothing is new in a browser you have not used the application in before: the list shows every change and marks none."
         },
         {
           "label": "Go to",

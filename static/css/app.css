@@ -1043,9 +1043,9 @@ s,
 }
 
 .card-header .vr-count {
-  display: inline-grid;
-  place-items: center;
+  display: inline-block; /* a block, so a long qualifier can end in an ellipsis (below) */
   min-width: 1.75rem;
+  text-align: center;
   padding: 0.1rem 0.5rem;
   border-radius: var(--vr-radius-pill);
   background: var(--vr-surface-2);
@@ -2179,6 +2179,22 @@ a.vr-path-seg:hover {
 .vr-status-glyph {
   flex: none;
   font-size: 0.9em;
+}
+
+/* Every capsule (pill-shaped label, count, clock, chip or segment) stays on one line: a capsule
+   that wraps becomes a blob. Keep what goes in one short; anything longer belongs beside it. */
+:is(.vr-status, .card-header .vr-count, .vr-topbar-count, .vr-clock, .vr-chip, .vr-path-seg,
+  .vr-out-cap, .vr-unit-cap, .vr-unit-temp, .vr-journey-tag, .vr-journey-n, .badge,
+  .ts-wrapper.multi .ts-control > div.item) {
+  white-space: nowrap;
+}
+
+/* A panel's count capsule can carry a qualifier ("9 × 9, seen from the labelled top-left corner");
+   on a phone it never pushes the page wider: it ends in an ellipsis at the header's width. */
+.card-header .vr-count {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 :is(.vr-status, .vr-tone)[data-tone="info"] {
@@ -3440,54 +3456,134 @@ time.vr-timeline-meta {
   margin-bottom: 0;
 }
 
-/* What's new (core/whats_new.html): one change per entry, ruled off from the next. The type is a
-   mono capital label before the title; summary and technical notes keep their paragraphs. */
+/* What's new (core/whats_new.html). A month is a panel: title, change count, date range at the
+   right. Inside, one band per impact level; the high-impact band is ice, the month's one
+   emphasis. Each change is a tile on a grid that fills the panel (two across on a desktop, one
+   on a phone): type capsule, New and date; title; summary; technical notes; then area, change
+   number and Go to in one meta row on the tile's foot, aligned along a row of tiles. A change new
+   to this browser (whats-new.js, data-vr-new) has an ice edge. Low impact is quieter. */
+.vr-changelog-range {
+  margin: 0;
+  color: var(--vr-text-muted);
+  font-family: var(--vr-font-data);
+  font-stretch: var(--vr-data-stretch);
+  font-size: var(--vr-font-size-2);
+  white-space: nowrap;
+}
+
+.vr-impact {
+  padding-top: var(--vr-space-5);
+}
+
+.vr-impact-high {
+  background: var(--vr-cold-bg);
+}
+
+.vr-changelog .vr-impact:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.vr-changelog > .card-header + .vr-impact-high {
+  margin-top: var(--vr-space-2);
+}
+
+.vr-impact-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--vr-space-2);
+  margin: 0 0 var(--vr-space-3);
+  font-size: var(--vr-font-size-3);
+  font-weight: var(--vr-font-weight-semibold);
+}
+
+.vr-impact-high .vr-impact-title {
+  color: var(--vr-cold-text);
+}
+
+.vr-impact-count {
+  color: var(--vr-text-muted);
+  font-family: var(--vr-font-data);
+  font-stretch: var(--vr-data-stretch);
+  font-size: var(--vr-font-size-1);
+  font-weight: var(--vr-font-weight-regular);
+}
+
 .vr-changes {
-  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
+  gap: var(--vr-space-3);
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .vr-change {
-  padding: 0.75rem 0;
-  border-top: 1px solid var(--vr-border);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--vr-space-4) var(--vr-space-5);
+  border: var(--vr-border-width) solid var(--vr-border);
+  border-radius: var(--vr-radius-lg);
+  background: var(--vr-surface);
 }
 
-.vr-change:first-child {
-  padding-top: 0;
-  border-top: 0;
+.vr-impact-high .vr-change {
+  border-color: transparent;
+  box-shadow: var(--vr-shadow-panel);
 }
 
-.vr-change:last-child {
-  padding-bottom: 0;
+.vr-change[data-vr-new] {
+  border-color: var(--vr-cold-border);
+  box-shadow: inset 3px 0 0 var(--vr-cold-text);
+}
+
+.vr-impact-high .vr-change[data-vr-new] {
+  box-shadow: inset 3px 0 0 var(--vr-cold-text), var(--vr-shadow-panel);
 }
 
 .vr-change-head {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 0.5rem;
-  align-items: baseline;
+  align-items: center;
+  gap: var(--vr-space-1-5) var(--vr-space-2);
+  margin-bottom: var(--vr-space-2);
 }
 
-.vr-change-type {
+.vr-change-date {
+  margin-left: auto;
   color: var(--vr-text-muted);
+  font-family: var(--vr-font-data);
+  font-stretch: var(--vr-data-stretch);
   font-size: var(--vr-font-size-1);
-  font-weight: var(--vr-font-weight-semibold);
 }
 
 .vr-change-title {
-  font-weight: 600;
+  margin: 0 0 var(--vr-space-1-5);
+  font-size: var(--vr-font-size-3);
+  font-weight: var(--vr-font-weight-semibold);
+  line-height: 1.35;
+  letter-spacing: var(--vr-tracking-title);
+  text-wrap: balance;
 }
 
-.vr-change-meta {
-  margin: 0.125rem 0 0.25rem;
+.vr-impact-high .vr-change-title {
+  font-size: var(--vr-font-size-5);
+}
+
+.vr-change-summary {
+  color: var(--vr-text);
+  max-width: 72ch;
+}
+
+.vr-impact-low .vr-change-summary {
   color: var(--vr-text-muted);
-  font-size: 0.875rem;
+  font-size: var(--vr-font-size-2);
 }
 
 .vr-change-summary > p,
 .vr-change-notes-body > p {
-  margin-bottom: 0.375rem;
+  margin-bottom: var(--vr-space-1-5);
 }
 
 .vr-change-summary > :last-child,
@@ -3495,22 +3591,75 @@ time.vr-timeline-meta {
   margin-bottom: 0;
 }
 
-.vr-change-more {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.25rem 1rem;
-  margin-top: 0.5rem;
+/* Technical notes: the shared disclosure (chevron that turns), quiet; open, an inset well. */
+.vr-change-notes {
+  margin-top: calc(-1 * var(--vr-space-1)); /* closer to the summary it explains */
 }
 
 .vr-change-notes > summary {
-  color: var(--vr-text-muted);
-  font-size: 0.875rem;
+  font-size: var(--vr-font-size-2);
 }
 
 .vr-change-notes-body {
-  margin-top: 0.375rem;
-  font-size: 0.875rem;
+  padding: var(--vr-space-3) var(--vr-space-4);
+  border-radius: var(--vr-radius);
+  background: var(--vr-surface-2);
+  font-size: var(--vr-font-size-2);
+}
+
+/* Area, change number and Go to: one row on the tile's foot, under a dashed rule (margin-top: auto
+   keeps the rows of tiles side by side level). */
+.vr-change-summary,
+.vr-change-notes {
+  margin-bottom: var(--vr-space-3);
+}
+
+.vr-change-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vr-space-1) var(--vr-space-3);
+  margin: auto 0 0;
+  padding-top: var(--vr-space-3);
+  border-top: 1px dashed var(--vr-border);
+  color: var(--vr-text-muted);
+  font-size: var(--vr-font-size-2);
+}
+
+.vr-change-pr {
+  font-family: var(--vr-font-data);
+  font-stretch: var(--vr-data-stretch);
+  font-size: var(--vr-font-size-1);
+}
+
+.vr-change-area + .vr-change-pr::before {
+  content: "·";
+  margin-right: var(--vr-space-3);
+  font-family: var(--vr-font-sans);
+}
+
+.vr-change-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vr-space-1);
+  margin-left: auto;
+  font-weight: var(--vr-font-weight-semibold);
+  white-space: nowrap;
+}
+
+/* Phones: the bands and tiles give their inset back to the text. */
+@media (max-width: 575.98px) {
+  .vr-impact {
+    padding-inline: var(--vr-space-3);
+  }
+
+  .vr-impact-title {
+    padding-inline: var(--vr-space-2);
+  }
+
+  .vr-change {
+    padding: var(--vr-space-3) var(--vr-space-4);
+  }
 }
 
 .vr-history-changes {
