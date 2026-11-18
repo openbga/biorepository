@@ -16,13 +16,13 @@
 {% panel title="Occupancy by storage unit" heading_id="by-unit-heading" table=True class="mb-3" %}{% fill count %}{{ units|length }} active{% endfill %}
 {% if units %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table vr-queue-table">
-    <thead><tr><th scope="col">Storage unit</th><th scope="col">Site and room</th><th scope="col">Storage class</th><th scope="col" class="text-end">Nominal (°C)</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
+    <thead><tr><th scope="col">Storage unit</th><th scope="col">Site and room</th><th scope="col">Storage class</th><th scope="col" class="text-end">Nominal</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for u in units %}
       <tr>
-        <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a> <span class="vr-muted fw-normal">{{ u.name }}</span></th>
-        <td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td>
+        <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a> <span class="vr-muted fw-normal">{{ u.name }}</span>{% if u.excursion %} {% status label="Excursion open" tone="danger" %}{% endif %}</th>
+        <td>{{ u.room.site.name }} / {{ u.room.name }}</td>
         <td>{{ u.storage_class.name }}</td>
-        <td class="text-end vr-id">{{ u.nominal_temperature }}</td>
+        <td class="text-end vr-id vr-cold vr-nowrap">{{ u.temperature }}</td>
         <td class="text-end vr-id">{{ u.installed|floatformat:"0g" }}</td>
         <td class="text-end vr-id">{{ u.occupied|floatformat:"0g" }}</td>
         <td class="text-end vr-id">{% if u.free %}<a href="{% url 'storage:free-position-list' %}?unit={{ u.pk }}">{{ u.free|floatformat:"0g" }}</a>{% elif u.installed %}{% status label="Full" tone="warning" plain=True %}{% else %}<span class="vr-muted">No positions</span>{% endif %}</td>

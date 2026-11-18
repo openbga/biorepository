@@ -34,6 +34,7 @@ class WellSpecimen:
     accession: str
     type_code: str
     url: str
+    type_name: str = ""
     held: bool = False
 
 
@@ -43,13 +44,14 @@ def attach_specimens(positions, user):
     if not claims or not has_role(user, *READ_ROLES):
         return ""
     rows = with_flags(Specimen.objects.filter(occupancy_id__in=list(claims))).values_list(
-        "pk", "occupancy_id", "accession", "specimen_type__code", "held"
+        "pk", "occupancy_id", "accession", "specimen_type__code", "specimen_type__name", "held"
     )
-    for pk, occupancy_id, accession, type_code, held in rows:
+    for pk, occupancy_id, accession, type_code, type_name, held in rows:
         claims[occupancy_id].specimen = WellSpecimen(
             pk=pk,
             accession=accession,
             type_code=type_code,
+            type_name=type_name,
             url=reverse("specimens:specimen-detail", args=[pk]),
             held=held,
         )

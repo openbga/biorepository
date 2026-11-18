@@ -158,7 +158,10 @@ class GridPreferenceMiddleware:
         if SORT.match(request.GET.get("sort", "")):
             given["sort"] = request.GET["sort"]
         if given and {**stored, **given} != stored:
-            save(request, key, {**stored, **given})
+            try:
+                save(request, key, {**stored, **given})
+            except ValueError:
+                pass  # over the per-user limit: this request still applies its own parameters
         missing = {
             name: stored[name] for name in self.PARAMS if name in stored and name not in request.GET
         }

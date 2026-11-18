@@ -4,7 +4,7 @@ import re
 from datetime import timedelta
 
 import pytest
-from helpers import field, local_input, make_user, pick, sign_in, sign_out
+from helpers import field, local_input, make_user, native_select, pick, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 from storage import services
@@ -163,7 +163,7 @@ def test_manager_defines_tank_views_occupancy_and_technician_moves_a_box(
     dialog = page.locator("#vr-form-dialog")
     expect(dialog).to_be_visible()
     target = field(dialog, "Move to")
-    option = target.locator("option", has_text="T-01-S2").first
+    option = native_select(target).locator("option", has_text="T-01-S2").first
     pick(target, value=option.get_attribute("value"))
     field(dialog, "Slot").fill("1")
     field(dialog, "Moved at").fill(local_input(timedelta(minutes=-5)))

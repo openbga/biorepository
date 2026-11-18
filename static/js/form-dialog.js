@@ -737,8 +737,14 @@
     var asked = /^#vr-form=(.+)$/.exec(window.location.hash);
     if (asked && !dedicated) {
       window.history.replaceState(window.history.state, "", window.location.pathname + window.location.search);
-      var asking = new URL(decodeURIComponent(asked[1]), window.location.href);
-      if (asking.origin === window.location.origin && routeFor(asking)) {
+      var asking = null;
+      try {
+        asking = new URL(decodeURIComponent(asked[1]), window.location.href);
+      } catch (error) {
+        asking = null; // A malformed address opens nothing; the page itself still works.
+      }
+      // Only a form route of this site opens: never another origin or an arbitrary page.
+      if (asking && asking.origin === window.location.origin && routeFor(asking)) {
         // After the page's own scripts have set it up (controls, columns), as a click would.
         window.setTimeout(function () { load(asking.href); }, 0);
       }

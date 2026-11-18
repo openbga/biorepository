@@ -40,12 +40,15 @@ from .list_forms import (
     label_ids,
 )
 from .models import (
+    Collection,
     CustodyEvent,
     DisposalRequest,
     Hold,
     ImportBatch,
     QuantityEntry,
     Specimen,
+    SpecimenContainerType,
+    SpecimenType,
     ThawEvent,
 )
 from .services import (
@@ -135,6 +138,24 @@ def _storage_path(user, specimen, location, checkout):
     return pathbar.levels(last.from_path, freed=True)
 
 
+def _with_names(rows):
+    """Add each catalogue entry's current name beside the code a validated row recorded: one
+    query per catalogue for the whole preview. The rows themselves are left as validated."""
+    for column, model in (
+        ("specimen_type", SpecimenType),
+        ("container_type", SpecimenContainerType),
+        ("collection_code", Collection),
+    ):
+        ids = {row[column]["id"] for row in rows if isinstance(row.get(column), dict)}
+        found = model.objects.filter(pk__in=ids).values_list("pk", "name") if ids else ()
+        names = {str(pk): name for pk, name in found}
+        for row in rows:
+            ref = row.get(column)
+            if isinstance(ref, dict):
+                row[column] = {**ref, "name": names.get(ref["id"], "")}
+    return rows
+
+
 @staff_role_required(*READ)
 def specimen_list(request):
     grid = _grid(request, queries.SPECIMEN_SORTS, "accession")
@@ -150,16 +171,18 @@ def specimen_list(request):
     rows = list(page_obj.object_list)
     paths = queries.locations_for(actor=request.user, specimens=rows) if rows else {}
     # How long each checked-out row has been out, for its clock: one query for the page.
-    out_since = dict(
-        CustodyEvent.objects.filter(
+    out_since = {
+        pk: (occurred_at, kind)
+        for pk, occurred_at, kind in CustodyEvent.objects.filter(
             pk__in=[row.open_checkout_id for row in rows if row.open_checkout_id]
-        ).values_list("pk", "occurred_at")
-    )
+        ).values_list("pk", "occurred_at", "kind")
+    }
     now = timezone.now()
     for row in rows:
         row.path = paths.get(row.pk)
-        since = out_since.get(row.open_checkout_id)
+        since, kind = out_since.get(row.open_checkout_id, (None, None))
         row.out_for = queries.format_duration(now - since) if since else ""
+        row.returned = kind == CustodyEvent.Kind.RETURN  # in hand after a return, as on the record
     page_obj.object_list = rows
     query = _without_page(request)
     return render(
@@ -732,10 +755,12 @@ def import_detail(request, pk):
             "state": state,
             "file_errors": [e for e in batch.errors if not e.get("line")],
             "row_errors": [e for e in batch.errors if e.get("line")],
-            "rows": [
-                dict(row, collected=_local(row.get("collected_at")))
-                for row in batch.normalized_rows
-            ],
+            "rows": _with_names(
+                [
+                    dict(row, collected=_local(row.get("collected_at")))
+                    for row in batch.normalized_rows
+                ]
+            ),
             "commit": commit,
             "created": created,
             "label_query": urlencode([("id", s.pk) for s in created[: labels.MAX_LABELS]]),

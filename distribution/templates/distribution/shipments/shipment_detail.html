@@ -63,7 +63,7 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
         <td>{{ item.specimen_type }}</td>
         <td>{{ item.container }}</td>
         <td class="text-end vr-id">{{ item.quantity|amount:item.unit }}</td>
-        <td class="vr-id">{{ item.study_code|default:"—" }}</td>
+        <td>{% if item.study_title %}{{ item.study_title }} <span class="vr-muted vr-id">{{ item.study_code }}</span>{% elif item.study_code %}<span class="vr-id">{{ item.study_code }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
         {% if shipment.include_participant_codes %}<td class="vr-id">{{ item.participant_code|default:"—" }}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>

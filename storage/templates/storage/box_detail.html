@@ -3,7 +3,7 @@
 {% comment %}A box: facts, the position grid with its occupancy counts (as seen from the labelled top-left corner), occupied positions with their specimen IDs (when the specimens app is installed) or storage keys, moves, history. Context: box (annotated), chain, grid_rows [(row, [Position with .claim])], columns, occupied, status_label, status_tone, retire_blocked, moves, history, can_manage, can_operate. Storage imports nothing from specimens: _attach_specimens.html (included only when specimens is installed) sets p.claim.specimen through the specimens tag library; without it the storage key shows.{% endcomment %}
 {% block breadcrumbs %}{% url 'storage:box-list' as list_url %}{% breadcrumbs section="Boxes" section_url=list_url current=box.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ box.code }}</span>{% endblock %}
-{% block page_meta %}{% page_meta %}{% meta_item %}{% status label=status_label tone=status_tone size="lg" %}{% endmeta_item %}{% meta_item label="Container type" value=box.container_type %}{% meta_item label="Unit" value=box.node.unit.code class="vr-id" %}{% meta_item label="Occupied" %}{{ box.occupied }} of {{ box.installed }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% status label=status_label tone=status_tone size="lg" %}{% endmeta_item %}{% meta_item label="Container type" %}{{ box.container_type.name }} <span class="vr-muted vr-id">{{ box.container_type }}</span>{% endmeta_item %}{% meta_item label="Unit" value=box.node.unit.code class="vr-id" %}{% meta_item label="Occupied" %}{{ box.occupied }} of {{ box.installed }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if box.is_active %}
 {% if can_manage %}
@@ -21,7 +21,7 @@
     {% fact label="Name" %}{{ box.name }}{% endfact %}
     {% fact label="Location" %}<a class="vr-id" href="{% url 'storage:unit-detail' box.node.unit_id %}">{{ box.node.unit.code }}</a>{% for n in chain %} / <a class="vr-id" href="{% url 'storage:node-detail' n.pk %}">{{ n.code }}</a>{% endfor %}{% endfact %}
     {% fact label="Box slot" class="vr-id" %}{{ box.slot }}{% endfact %}
-    {% fact label="Container type" %}<a class="vr-id" href="{% url 'storage:container-type-detail' box.container_type_id %}">{{ box.container_type }}</a>: {{ box.container_type.rows }} × {{ box.container_type.columns }}, {{ box.container_type.get_label_scheme_display }}{% endfact %}
+    {% fact label="Container type" %}<a href="{% url 'storage:container-type-detail' box.container_type_id %}">{{ box.container_type.name }}</a> <span class="vr-muted vr-id">{{ box.container_type }}</span>: {{ box.container_type.rows }} × {{ box.container_type.columns }}, {{ box.container_type.get_label_scheme_display }}{% endfact %}
     {% fact label="Unit conditions" %}{{ box.node.unit.get_technology_display }}, {{ box.node.unit.nominal_temperature }} {{ box.node.unit.temperature_unit }} nominal{% endfact %}
   </dl>
 {% endpanel %}
@@ -30,8 +30,8 @@
     <dl class="vr-facts vr-boxmap-legend">
       {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="occupied"></span>Occupied{% endfill %}{{ box.occupied }}{% endfact %}
       {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="free"></span>Free{% endfill %}{{ box.free }}{% endfact %}
-      {% if "specimens"|app_installed %}{% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="held"></span>On hold{% endfill %}{{ occupied|count_held }}{% endfact %}{% endif %}
-      {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked{% endfill %}{{ box.blocked_count|default:0 }}{% endfact %}
+      {% if "specimens"|app_installed %}{% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="held"></span>On hold{% endfill %}{% with held=occupied|count_held %}{% if held %}{{ held }}{% else %}<span class="vr-muted">0</span>{% endif %}{% endwith %}{% endfact %}{% endif %}
+      {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked{% endfill %}{% if box.blocked_count %}{{ box.blocked_count }}{% else %}<span class="vr-muted">0</span>{% endif %}{% endfact %}
       {% fact label="Positions" class="vr-id" %}{{ box.installed }}{% endfact %}
     </dl>
     <div class="vr-boxmap-wrap">
@@ -59,7 +59,7 @@
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Position</th><th scope="col">Specimen</th><th scope="col">Storage key</th><th scope="col" class="text-end">Revision</th></tr></thead>
     <tbody>{% for p in occupied %}
-      <tr><th scope="row" class="vr-id">{{ p.label }}</th><td>{% if p.claim.specimen %}<a class="vr-id" href="{{ p.claim.specimen.url }}">{{ p.claim.specimen.accession }}</a> <span class="vr-muted small">{{ p.claim.specimen.type_code }}</span>{% else %}—{% endif %}</td><td class="vr-id" title="{{ p.claim.pk }}">{{ p.claim.pk|stringformat:"s"|slice:":8" }}</td><td class="text-end vr-id">{{ p.claim.revision }}</td></tr>
+      <tr><th scope="row" class="vr-id">{{ p.label }}</th><td>{% if p.claim.specimen %}<a class="vr-id" href="{{ p.claim.specimen.url }}">{{ p.claim.specimen.accession }}</a> <span class="vr-muted small">{{ p.claim.specimen.type_name }}</span>{% else %}—{% endif %}</td><td class="vr-id" title="{{ p.claim.pk }}">{{ p.claim.pk|stringformat:"s"|slice:":8" }}</td><td class="text-end vr-id">{{ p.claim.revision }}</td></tr>
     {% endfor %}</tbody></table></div>
   <p class="vr-muted small mb-0">Storage records each item by an opaque storage key; the Specimen column and the wells name the specimen in it.</p>
   {% else %}{% empty_state title="The box is empty" body="Specimens are stored in its positions from the specimen pages." %}{% endif %}

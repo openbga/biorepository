@@ -104,5 +104,15 @@ def duration(value):
 
 
 @register.filter
+def thaw_short(summary):
+    """The thaw count alone, for the record header: "3", "At least 0" or "Unknown"."""
+    if summary.baseline is None:
+        return "Unknown"
+    if summary.unknown_away:
+        return f"At least {summary.baseline + summary.recorded}"
+    return str(summary.total)
+
+
+@register.filter
 def thaw_text(summary):
     return str(summary)

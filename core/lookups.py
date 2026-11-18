@@ -18,7 +18,7 @@ from django import forms
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import EmptyPage, Paginator
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.http import Http404, JsonResponse
 from django.urls import reverse
@@ -136,7 +136,7 @@ def lookup(request, name):
         page = paginator.page(request.GET.get("page") or 1)
     except EmptyPage:
         return JsonResponse({"results": [], "more": False})
-    except ValueError:
+    except PageNotAnInteger:  # not a number: the first page, as a list does
         page = paginator.page(1)
     results = [{"value": entry.value(obj), "text": entry.label(obj)} for obj in page]
     return JsonResponse({"results": results, "more": page.has_next()})

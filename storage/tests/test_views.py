@@ -135,7 +135,8 @@ def test_box_page_shows_grid_states(client, tree, people):
     content = client.get(reverse("storage:box-detail", args=[tree.box.pk])).content.decode()
     assert "Occupied" in content and str(item.pk)[:8] in content
     assert content.count('id="position-') == 81
-    blocked = 'data-state="blocked"></span>Blocked</dt><dd class="vr-id">0</dd>'
+    zero = '<dd class="vr-id"><span class="vr-muted">0</span></dd>'
+    blocked = 'data-state="blocked"></span>Blocked</dt>' + zero
     assert blocked in content  # zero is shown, not left blank
 
 
@@ -396,7 +397,8 @@ def test_box_wells_and_table_name_specimens_through_the_specimens_tag(client, pe
 
     from specimens import services as specimen_services
 
-    assert 'data-state="held"></span>On hold</dt><dd class="vr-id">0</dd>' in page
+    zero = '<dd class="vr-id"><span class="vr-muted">0</span></dd>'
+    assert 'data-state="held"></span>On hold</dt>' + zero in page
     held = sum(1 for _ in re.finditer(r'<td id="position-[^"]+" data-state="held"', page))
     assert held == 0
     specimen_services.place_hold(
@@ -475,3 +477,15 @@ def test_record_pages_carry_the_path_bar_and_the_overview_its_census(client, tre
     row = next(entry for entry in census if entry["code"] == tree.unit.code)
     assert row["ln2"] and not row["fridge"] and 0 <= row["fill_step"] <= 10
     assert row["positions"] >= 81 and row["occupied"] == 0
+
+
+def test_overview_names_sites_and_rooms_and_flags_open_excursions(
+    client, tree, people, monkeypatch
+):
+    from storage import pathbar
+
+    monkeypatch.setattr(pathbar, "EXCURSION_SOURCES", [lambda: [tree.unit.pk]])
+    client.force_login(people["viewer"])
+    page = client.get(reverse("storage:overview")).content.decode()
+    assert f"{tree.unit.room.site.name} / {tree.unit.room.name}" in page
+    assert "Excursion open" in page and "\N{MINUS SIGN}160 °C" in page

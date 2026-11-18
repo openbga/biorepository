@@ -248,6 +248,10 @@ def test_import_upload_validate_and_commit(client, people, world):
     assert response.url == reverse("specimens:import-detail", args=[batch.pk])
     page = html(client.get(response.url))
     assert "Register 1 specimen" in page and "BOX-001 C3" in page
+    # Catalogue entries show their names, with the code after.
+    assert '<span class="vr-muted vr-id">PLASMA</span>' in page
+    assert '<span class="vr-muted vr-id">CRYOVIAL-2ML</span>' in page
+    assert '<span class="vr-muted vr-id">DEMO</span>' in page
     response = client.post(
         reverse("specimens:import-commit", args=[batch.pk]),
         {"reason": "Shipment 7", "expected_sha256": batch.sha256},

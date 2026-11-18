@@ -117,3 +117,10 @@ def test_remote_select_validates_with_the_field_queryset(participants):
 def test_unknown_lookup_name_fails_at_import():
     with pytest.raises(ValueError):
         RemoteSelect("no-such-lookup")
+
+
+def test_a_page_that_is_not_a_number_shows_the_first_page(client, staff, participants):
+    client.force_login(staff("viewer3", "viewer"))
+    response = lookup(client, "active-participants", page="abc")
+    assert response.status_code == 200
+    assert texts(response) == ["P-000101", "P-000203"]

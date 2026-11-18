@@ -117,6 +117,11 @@ Intentional divergences from Environmental LIMS (keep this list current):
   destructive button first and the primary last, and badges through `{% status %}`. The top-bar
   lookup is `includes/specimen_lookup.html` (Environmental LIMS `sample_lookup.html`). All portable
   to Environmental LIMS unchanged.
+- Form dialog (2026-11-18): a form opened by its address opens over its Cancel page through the
+  `#vr-form=` handoff (from OpenBGA QM LIMS); Environmental LIMS keeps such a form as its own page.
+  `{% row_select %}` keeps the value of a disabled row; `{% history_panel collapsible=True %}` opens
+  up to five events and collapses longer histories. Preferences have no `nav.collapsed` or
+  `whats_new` keys (no sidebar; What's new keeps its browser mark).
 - Cross-app presentation seams (2026-11-18), one registry per seam, filled in `AppConfig.ready`;
   neither side imports the other's models, views or forms: `storage.pathbar.EXCURSION_SOURCES`
   (equipment registers the units with an open excursion for the path bar census) and

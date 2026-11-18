@@ -33,7 +33,7 @@ submit_label, back_url, crumbs, facts.
   {% if unlisted_blockers %}{% notice tone="danger" label="Refused" blocking=True %}<ul class="mb-0 ps-3">{% for accession, labels in unlisted_blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul>{% endnotice %}{% endif %}
   <fieldset class="vr-form-section">
     <legend>Candidates</legend>
-    <p class="vr-form-note">Available specimens of {{ line.specimen_type.name }} ({{ line.specimen_type.code }}){% if line.study %} in study {{ line.study.code }}{% endif %}. Tick up to {{ remaining }}. Same type left counts the participant's available specimens of this type, this one included: allocating the last ones depletes the participant's material.</p>
+    <p class="vr-form-note">Available specimens of {{ line.specimen_type.name }} ({{ line.specimen_type.code }}){% if line.study %} in study {{ line.study.title }} ({{ line.study.code }}){% endif %}. Tick up to {{ remaining }}. Same type left counts the participant's available specimens of this type, this one included: allocating the last ones depletes the participant's material.</p>
     {% list_results items=page_obj noun="candidates" filtered=filters clear_url=request.path empty_title="No available specimens of this type" empty_body="Only available specimens of the line's type, in the studies the line or request names, are offered." no_results_title="No candidates match" no_results_body="Change or clear the search." %}
     <div class="vr-table-wrap">
       <table class="table vr-table" id="candidates-grid">

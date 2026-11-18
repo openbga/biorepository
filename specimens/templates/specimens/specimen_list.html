@@ -44,7 +44,7 @@ Selecting rows prints their labels (label preview, at most max_labels).
             <td class="text-end vr-id vr-nowrap">{{ row.quantity_on_hand|amount:row.unit }}</td>
             <td class="vr-id">{{ row.participant.code|default:"—" }}</td>
             <td class="vr-id">{{ row.collection.code|default:"—" }}</td>
-            <td class="vr-id vr-path">{% if row.path %}{% include "storage/_path.html" with p=row.path %}{% elif row.open_checkout_id %}<span class="vr-nowrap"><span class="vr-muted">Checked out</span> · {% clock value=row.out_for running=True label="Out of storage for" %}</span>{% elif row.status == "distributed" %}<span class="vr-muted">Distributed: outside the repository</span>{% else %}<span class="vr-muted">Not in storage</span>{% endif %}</td>
+            <td class="vr-id vr-path">{% if row.path %}{% include "storage/_path.html" with p=row.path %}{% elif row.open_checkout_id %}<span class="vr-nowrap"><span class="vr-muted">{% if row.returned %}Returned, in hand{% else %}Checked out{% endif %}</span> · {% clock value=row.out_for running=True label="Out of storage for" %}</span>{% elif row.status == "distributed" %}<span class="vr-muted">Distributed: outside the repository</span>{% else %}<span class="vr-muted">Not in storage</span>{% endif %}</td>
             <td>{% if row.custodian %}{{ row.custodian.get_full_name|default:row.custodian.get_username }}{% else %}<span class="vr-muted">Outside the repository</span>{% endif %}</td>
             <td class="vr-nowrap"><time datetime="{{ row.collected_at|date:'c' }}">{{ row.collected_at|date:"Y-m-d H:i" }}</time></td>
             <td class="vr-nowrap"><time datetime="{{ row.registered_at|date:'c' }}">{{ row.registered_at|date:"Y-m-d H:i" }}</time></td>

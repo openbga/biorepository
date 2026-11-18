@@ -263,6 +263,10 @@ def overview(request):
     units = list(
         lists.units().filter(is_active=True).order_by("room__site__code", "room__code", "code")
     )
+    flagged = pathbar.units_with_open_excursions()
+    for unit in units:
+        unit.excursion = unit.pk in flagged
+        unit.temperature = pathbar.temperature(unit.nominal_temperature)
     totals = queries.capacity_of(Position.objects.filter(lists.ACTIVE_POSITIONS))
     recent = list(
         MoveEvent.objects.filter(kind__in=("container_move", "correction"))

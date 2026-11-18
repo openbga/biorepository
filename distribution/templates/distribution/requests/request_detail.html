@@ -53,7 +53,7 @@ can_manage, can_operate, can_decide.
       <tr>
         <th scope="row" class="vr-id">{{ item.line }}</th>
         <td>{{ item.specimen_type.name }} <span class="vr-muted vr-id">{{ item.specimen_type.code }}</span></td>
-        <td>{% if item.study %}<span class="vr-id">{{ item.study.code }}</span>{% else %}<span class="vr-muted">Any</span>{% endif %}</td>
+        <td>{% if item.study %}{{ item.study.title }} <span class="vr-muted vr-id">{{ item.study.code }}</span>{% else %}<span class="vr-muted">Any</span>{% endif %}</td>
         <td class="text-end vr-id">{{ item.count }}</td>
         <td class="text-end vr-id">{% if item.minimum_quantity is not None %}{{ item.minimum_quantity|amount:item.unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
         <td class="text-end vr-id">{{ item.allocated_count }}</td>

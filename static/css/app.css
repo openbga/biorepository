@@ -2185,6 +2185,12 @@ a.vr-path-seg:hover {
   font-weight: var(--vr-font-weight-semibold);
 }
 
+/* A storage temperature as cold text (a units list's Nominal): ice, not a status. */
+.vr-cold {
+  color: var(--vr-cold-text);
+  font-weight: var(--vr-font-weight-semibold);
+}
+
 /* Clock (includes/clock.html): time out of storage as a warm capsule with a stopwatch, the one
    warm element. Stopped, it is a plain duration. Inside the record pass's warm cell the cell is the
    capsule. data-tone="neutral" (when the component passes it) is a running time that is not time

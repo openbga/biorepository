@@ -100,5 +100,6 @@ def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(
         (audit.number, "Completed"),
     ]
     page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
-    expect(help_panel.get_by_role("heading", name="Export CSV", exact=True)).to_be_visible()
+    # Reference sections are closed groups under the friendly help: the group names the export.
+    expect(help_panel.locator("summary", has_text="Export CSV")).to_be_visible()
     assert page.console_errors == []

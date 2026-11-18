@@ -49,6 +49,17 @@ ID_SEGMENT = re.compile(rf"^({UUID}|\d+)$", re.I)
 # --------------------------------------------------------------------------------- helpers
 
 
+def open_menu_holding(page, href):
+    """Open the More menu that holds the opener, when the opener is not already visible."""
+    if page.locator(f'main a[href="{href}"]:visible').count():
+        return
+    toggle = page.locator(
+        f'main .dropdown:has(a[href="{href}"]) [data-bs-toggle="dropdown"]:visible'
+    ).first
+    if toggle.count():
+        toggle.click(timeout=5000)
+
+
 def pattern(path: str) -> str:
     """The route shape of a path: record identifiers become <id>."""
     return "/".join("<id>" if ID_SEGMENT.match(part) else part for part in path.split("/"))
@@ -231,6 +242,7 @@ def capture(job: tuple) -> dict:
                         page.reload()
                         settle(page)
                         failed.clear()
+                        open_menu_holding(page, item["href"])
                         link = page.locator(f'main a[href="{item["href"]}"]:visible').first
                         link.click(timeout=5000)
                         page.locator("#vr-form-dialog.show").wait_for(timeout=10000)

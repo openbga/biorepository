@@ -53,12 +53,12 @@ form (ImportCommitForm).
       <tr>
         <th scope="row" class="vr-id">{{ row.row_key|default:"—" }}</th>
         <td class="text-end vr-id">{{ row.line }}</td>
-        <td class="vr-id">{{ row.specimen_type.code|default:"—" }}</td>
-        <td class="vr-id">{{ row.container_type.code|default:"—" }}</td>
+        <td>{% if row.specimen_type %}{{ row.specimen_type.name|default:row.specimen_type.code }}{% if row.specimen_type.name %} <span class="vr-muted vr-id">{{ row.specimen_type.code }}</span>{% endif %}{% else %}—{% endif %}</td>
+        <td>{% if row.container_type %}{{ row.container_type.name|default:row.container_type.code }}{% if row.container_type.name %} <span class="vr-muted vr-id">{{ row.container_type.code }}</span>{% endif %}{% else %}—{% endif %}</td>
         <td class="text-end vr-id vr-nowrap">{% if row.quantity %}{{ row.quantity|amount:row.unit.code }}{% else %}—{% endif %}</td>
         <td class="vr-nowrap">{% if row.collected %}<time datetime="{{ row.collected|date:'c' }}">{{ row.collected|date:"Y-m-d H:i" }}</time>{% else %}—{% endif %}</td>
         <td class="vr-id">{{ row.participant_code.code|default:"—" }}</td>
-        <td class="vr-id">{{ row.collection_code.code|default:"—" }}</td>
+        <td>{% if row.collection_code %}{{ row.collection_code.name|default:row.collection_code.code }}{% if row.collection_code.name %} <span class="vr-muted vr-id">{{ row.collection_code.code }}</span>{% endif %}{% else %}—{% endif %}</td>
         <td class="vr-id">{% if row.position %}{{ row.position.box }} {{ row.position.label }}{% else %}<span class="vr-muted">Not placed</span>{% endif %}</td>
         <td class="text-end vr-id">{% if row.baseline_thaws is None %}Unknown{% else %}{{ row.baseline_thaws }}{% endif %}</td>
       </tr>

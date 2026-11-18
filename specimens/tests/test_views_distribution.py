@@ -167,6 +167,10 @@ def test_returned_specimen_offers_check_in(client, people, world):
     specimen = returned(people["technician"], world)
     page = detail(client, people["manager"], specimen)
     assert "Returned, in hand" in page
+    # The header's warm cell names the clock; the state stays in the Location fact.
+    assert 'class="is-warm"><span class="vr-meta-label">Out of storage</span>' in page
+    listed = client.get(reverse("specimens:specimen-list"), {"q": specimen.accession})
+    assert "Returned, in hand</span> · " in listed.content.decode()
     assert "from Example University (SH-000003)" in page
     assert "Checked out since" not in page
     assert reverse("specimens:check-in", args=[specimen.pk]) in page

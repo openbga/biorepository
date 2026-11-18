@@ -374,3 +374,22 @@ def test_page_header_actions_move_into_the_dialog_header(
     expect(dialog).to_be_hidden()
     expect(tools.locator("[data-vr-page-action]")).to_have_count(0)
     assert page.console_errors == []
+
+
+def test_a_crafted_form_address_opens_nothing_and_breaks_nothing(page: Page, sign_in_as):
+    """#vr-form= opens only a dialog form of this site: never another origin or any other page."""
+    sign_in_as("admin")
+    dialog = page.locator("#vr-form-dialog")
+    for crafted in (
+        "%E0%A4%A",  # not decodable
+        "https%3A%2F%2Fevil.example.invalid%2Frepository%2Fannouncements%2Fnew%2F",
+        "%2F%2Fevil.example.invalid%2Fx",
+        "%2Frepository%2Frecord-retention%2F",  # this site, but not a form
+    ):
+        page.goto("/")  # a full load each time: a hash-only change runs no script
+        page.goto(f"{LIST}#vr-form={crafted}")
+        expect(page.get_by_role("heading", level=1, name="Announcements")).to_be_visible()
+        page.wait_for_timeout(300)  # the dialog would open on the next task
+        expect(dialog).to_be_hidden()
+        assert page.url.endswith(LIST), page.url  # the address is cleaned, never followed
+    assert page.console_errors == []

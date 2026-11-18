@@ -44,6 +44,7 @@ from .models import (
     ShipmentReceipt,
     SpecimenRequest,
     SpecimenReturn,
+    Study,
 )
 from .request_forms import (
     ITEM_FIELDS,
@@ -1691,7 +1692,12 @@ def shipment_detail(request, pk):
             shipment.returns.select_related("actor", "unit", "attachment").defer("attachment__data")
         )
     }
+    # Items keep the study code as sent; the current title is looked up for the screen only.
+    titles = dict(
+        Study.objects.filter(code__in={i.study_code for i in items}).values_list("code", "title")
+    )
     for item in items:
+        item.study_title = titles.get(item.study_code, "")
         item.return_row = returns.get(item.pk)
         if item.return_row is not None:
             item.return_row.review_state = request_lists.review_state(item.return_row)

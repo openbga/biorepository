@@ -125,6 +125,11 @@ def for_record(*, actor, site=None, room=None, unit=None, node=None, box=None):
     return []
 
 
+def units_with_open_excursions():
+    """Ids of storage units an installed app reports an open excursion for."""
+    return set().union(*(set(source()) for source in EXCURSION_SOURCES))
+
+
 def census(*, actor):
     """Every active storage unit, coldest first, with how many of its positions hold an item.
 
@@ -132,7 +137,7 @@ def census(*, actor):
     from .lists import units  # lists imports forms; keep this module light for the views
 
     require_role(actor, *READ_ROLES)
-    flagged = set().union(*(set(source()) for source in EXCURSION_SOURCES))
+    flagged = units_with_open_excursions()
     result = []
     for unit in units().filter(is_active=True).order_by("nominal_temperature", "code"):
         result.append(
