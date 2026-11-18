@@ -40,7 +40,7 @@ def excursion_status(status, plain=False):
 
 
 @register.inclusion_tag("includes/status.html")
-def import_status(state, plain=False):
+def equipment_import_status(state, plain=False):
     return _status(*IMPORT_STATES[state], plain)
 
 
@@ -89,11 +89,6 @@ def due_days(event):
 @register.filter
 def level_change(entry):
     return queries.level_change(entry)
-
-
-@register.filter
-def person(user):
-    return (user.get_full_name() or user.get_username()) if user else ""
 
 
 @register.filter

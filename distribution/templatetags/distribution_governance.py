@@ -10,14 +10,6 @@ register = template.Library()
 ANSWER_TONES = {"Permitted": "success", "Refused": "danger"}
 
 
-@register.filter
-def person(user):
-    """A staff member's full name, else the username; empty for None."""
-    if not user:
-        return ""
-    return user.get_full_name() or user.get_username()
-
-
 @register.inclusion_tag("includes/status.html")
 def withdrawal_status(withdrawal, plain=True):
     """In effect (use stopped), Contact only, or Reinstated. Expects `is_reinstated` or

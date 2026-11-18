@@ -1,5 +1,5 @@
 {% load ui %}{% comment %}Recorded container moves of one box or node, newest first. Parameters: moves (MoveEvent list), heading_id, noun ("box", "rack"...), kind ("box" or "node"), obj (the container), correctable (its latest uncorrected move, or None; managers and admins may correct it), can_manage.{% endcomment %}
-{% panel title="Moves" heading_id="{{ heading_id|default:'moves-heading' }}" table=True class="mb-3" %}{% fill count %}{{ moves|length }}{% if moves|length >= 20 %}, newest 20 shown{% endif %}{% endfill %}
+{% firstof heading_id "moves-heading" as moves_heading %}{% panel title="Moves" heading_id=moves_heading table=True class="mb-3" %}{% fill count %}{{ moves|length }}{% if moves|length >= 20 %}, newest 20 shown{% endif %}{% endfill %}
 {% if moves %}
   <div class="vr-table-wrap">
     <table class="table vr-table">

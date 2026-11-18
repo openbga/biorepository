@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution_governance navigation ui %}
+{% load distribution_governance history navigation ui %}
 {% comment %}Withdrawals tab of the Consent section. Context: governance_views.grid_response for governance_lists.SPECS["withdrawal"] (rows annotated with follow_up_count and is_reinstated). Withdrawals are recorded from the consent page, so there is no New button.{% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Withdrawals of consent recorded on the consent pages, with what they held, released and found distributed.</p>{% endblock %}
 {% block page_actions %}{% include "distribution/governance/_list_actions.html" %}{% endblock %}

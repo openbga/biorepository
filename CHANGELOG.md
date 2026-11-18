@@ -154,6 +154,10 @@ The same list is shown in the application under What's new.
 
   Every status label now carries an icon for its tone, so colour is never the only cue. A box with no blocked positions now shows 0 blocked instead of a blank.
 
+- **Changed:** Storage, specimen and repository pages use the shared panels, lists and history (2026-11-18)
+
+  Storage, specimen, announcement, record-retention and What's new pages use the shared panels, lists, notices and history; long histories start collapsed.
+
 - **Added:** The dashboard shows the cold census of every storage unit (2026-11-18)
 
   The dashboard's path bar shows every storage unit with its nominal temperature, how full it is and any open excursion, as on the storage overview.

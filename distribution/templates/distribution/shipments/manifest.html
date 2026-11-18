@@ -15,7 +15,7 @@ lines (ManifestLine), studies, show_participants, sent, repository_name, generat
 {% if not sent %}
 {% notice tone="warning" label="Not dispatched" %}This manifest shows the shipment's contents as they are now and is marked Not dispatched. Once dispatched, the manifest is fixed from what was sent.{% endnotice %}
 {% endif %}
-{% panel title="Manifest {{ shipment.number }}" heading_id="manifest-heading" class="mb-3" %}<dl class="vr-facts">
+{% panel heading_id="manifest-heading" class="mb-3" %}{% fill title %}Manifest <span class="vr-id">{{ shipment.number }}</span>{% endfill %}<dl class="vr-facts">
     {% fact label="From" %}{{ repository_name|default:"Repository name not set" }}{% endfact %}
     {% fact label="Request" class="vr-id" %}{{ request_number }}{% endfact %}
     {% fact label="Studies" %}{{ studies|join:", "|default:"None recorded" }}{% endfact %}

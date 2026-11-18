@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution_requests navigation specimens ui %}
+{% load distribution_requests history navigation specimens ui %}
 {% comment %}Returned specimens, newest first (List page, tab Returns of the Shipments section). A return is recorded from the shipment record (Record return on a sent item); each returned specimen is on a use hold until a manager reviews it. Context: request_views.grid_response for request_lists.SPECS["return"]; rows carry is_reviewed and is_released.{% endcomment %}
 {% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
 {% block content %}

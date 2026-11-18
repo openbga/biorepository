@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment ui %}
+{% load equipment history ui %}
 {% comment %}
 One validated readings CSV (Document page): warnings, errors by row, the readings as read, then
 either the commit form (valid, unexpired, not committed; operators) or the commit that recorded
@@ -8,7 +8,7 @@ them. Context: batch, state (validated | rejected | committed | expired), commit
 form (ImportCommitForm), crumbs, can_operate.
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
-{% block page_meta %}{% page_meta %}{% meta_item %}{% import_status state %}{% endmeta_item %}{% meta_item label="Readings" value=batch.row_count class="vr-id" %}{% if batch.equipment %}{% meta_item label="Equipment" %}<a href="{% url 'equipment:equipment-detail' batch.equipment_id %}">{{ batch.equipment.name }}</a> <span class="vr-muted vr-id">{{ batch.equipment.code }}</span>{% endmeta_item %}{% endif %}{% meta_item label="Validated" %}<time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor|person }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% equipment_import_status state %}{% endmeta_item %}{% meta_item label="Readings" value=batch.row_count class="vr-id" %}{% if batch.equipment %}{% meta_item label="Equipment" %}<a href="{% url 'equipment:equipment-detail' batch.equipment_id %}">{{ batch.equipment.name }}</a> <span class="vr-muted vr-id">{{ batch.equipment.code }}</span>{% endmeta_item %}{% endif %}{% meta_item label="Validated" %}<time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor|person }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
 {% block content %}
 {% for warning in batch.warnings %}
 {% notice tone="warning" label="Check" %}{{ warning }}{% endnotice %}

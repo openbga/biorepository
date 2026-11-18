@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment navigation ui %}
+{% load equipment history navigation ui %}
 {% comment %}Readings CSV imports, newest first (Imports tab). Context: equipment.views.grid_response for lists.SPECS["import"] (rows annotated with state).{% endcomment %}
 {% block page_actions %}{% url 'equipment:import-upload' as create_url %}{% include "equipment/_list_actions.html" with create_label="Upload readings" may_create=can_operate %}{% endblock %}
 {% block content %}
@@ -24,7 +24,7 @@
         {% for batch in page_obj %}
         <tr>
           <th scope="row" class="vr-wrap"><a class="vr-row-link" href="{% url 'equipment:import-detail' batch.pk %}">{% if batch.filename %}{{ batch.filename }}{% else %}Import {{ batch.recorded_at|date:"Y-m-d H:i" }}{% endif %}</a></th>
-          <td>{% import_status batch.state plain=True %}</td>
+          <td>{% equipment_import_status batch.state plain=True %}</td>
           <td class="text-end vr-id">{{ batch.row_count }}</td>
           <td class="text-end vr-id">{{ batch.errors|length }}</td>
           <td>{% if batch.equipment %}<span class="vr-id">{{ batch.equipment.code }}</span>{% else %}<span class="vr-muted">Named in the file</span>{% endif %}</td>

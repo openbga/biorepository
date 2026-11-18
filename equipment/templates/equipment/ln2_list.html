@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment ui %}
+{% load equipment history ui %}
 {% comment %}Effective LN2 level checks and fills, with the change since the vessel's previous entry (derived, not stored). Entries have no page of their own: the time is plain text, and Correct is the row action for the person who recorded the entry and for managers. Context: equipment.views.grid_response for lists.SPECS["ln2"].{% endcomment %}
 {% block page_actions %}{% include "equipment/_list_actions.html" with create_label="Record LN2 entry" may_create=can_operate %}{% endblock %}
 {% block content %}

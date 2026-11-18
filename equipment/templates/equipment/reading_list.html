@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment navigation ui %}
+{% load equipment history navigation ui %}
 {% comment %}Effective temperature readings (Readings tab), each with the limits recorded with it. Readings have no page of their own: the time is plain text, and Correct is the row action for the person who recorded it and for managers. Context: equipment.views.grid_response for lists.SPECS["reading"], create_url.{% endcomment %}
 {% block page_actions %}{% include "equipment/_list_actions.html" with create_label="Record reading" may_create=can_operate %}{% endblock %}
 {% block content %}

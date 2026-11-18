@@ -52,7 +52,7 @@
         </tbody>
       </table>
     </div>
-    <p class="vr-muted small mt-2 mb-0">A checked-out item's position counts as free; free positions are not reserved.</p>
+    <p class="vr-muted small mb-0">A checked-out item's position counts as free; free positions are not reserved.</p>
 {% endpanel %}
 {% panel title="Occupied positions" heading_id="box-occupied" table=True class="mb-3" %}{% fill count %}{{ occupied|length }}{% endfill %}{% fill actions %}{% if occupied and "specimens"|app_installed %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:specimen-list' %}?box={{ box.code|urlencode }}">Specimens in this box</a>{% endif %}{% endfill %}
 {% if occupied %}

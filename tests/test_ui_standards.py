@@ -156,6 +156,12 @@ RULES = {
         re.compile(r"\bvr-form-actions\b"),
         {"templates/includes/form_actions.html"},
     ),
+    "variable-in-literal": (
+        "A tag argument is a variable or a filter, never {{ }} inside a quoted string (it renders"
+        " the braces literally): use heading_id=name, or {% firstof … as name %} first",
+        re.compile(r"""\{%[^%]*=["'][^"']*\{\{"""),
+        set(),
+    ),
     "component-include": (
         "Shared components render through their {% load ui %} tags, never a plain include: a tag "
         "gives the component a context of its own (tests/test_include_isolation.py)",
@@ -192,6 +198,7 @@ BASELINE = {
     "breadcrumbs": {},
     "toolbar": {},
     "open-view-link": {},
+    "variable-in-literal": {},
     # Component rules, pending until the template migration converts each page (2026-11-18).
     "card-markup": {
         "templates/allauth/elements/panel.html",

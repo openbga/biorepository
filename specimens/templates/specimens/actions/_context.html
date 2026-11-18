@@ -11,6 +11,6 @@ request). A distributed specimen has no position, no open period and no custodia
     {% fact label="Status" %}{% specimen_status specimen plain=True %}{% for hold in holds %} {% hold_status hold.scope plain=True %}{% endfor %}{% endfact %}
     {% fact label="Amount on hand" class="font-monospace" %}{{ specimen.quantity_on_hand|amount:specimen.unit }}{% endfact %}
     {% fact label="Location" %}{% if location %}<span class="vr-id vr-path">{% include "storage/_path.html" with p=location %}</span>{% elif checkout and returned %}Returned, in hand of {{ checkout.to_custodian.get_full_name|default:checkout.to_custodian.get_username }}{% if checkout.destination %} (from {{ checkout.destination }}){% endif %}{% elif checkout %}Checked out to {{ checkout.to_custodian.get_full_name|default:checkout.to_custodian.get_username }}{% if checkout.destination %} ({{ checkout.destination }}){% endif %}{% elif specimen.is_disposed %}Disposed{% elif specimen.is_distributed %}Distributed: outside the repository{% else %}Not in storage{% endif %}{% endfact %}
-    {% for label, value in facts %}{% fact label="{{ label }}" %}{{ value }}{% endfact %}{% endfor %}
+    {% for label, value in facts %}{% fact label=label %}{{ value }}{% endfact %}{% endfor %}
   </dl>
 </section>
