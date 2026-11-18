@@ -274,14 +274,16 @@ and the rules.
 | Margin and red pencil | `--vr-margin` (frost blue), `--vr-pencil` (red) | The margin rule; the required-field mark and prior values struck through |
 | Stamp tones | `--vr-{neutral,info,progress,success,warning,danger,hold}-{text,bg,border}` | Statuses and notices only |
 
-**Type.** Two voices. The system sans for reading. A system monospace (no web font) in small
-capitals with wide tracking for labels: table headers, fact labels, sidebar groups, breadcrumbs,
-toolbar labels. The same monospace, in normal case, for data: identifiers, dates and times,
-counts and right-aligned figures, so 0/O and 1/l stay distinct and digits line up.
+**Type.** Two voices. The system sans for reading, including form and toolbar labels and table
+headers (semibold, in the label's own case). A system monospace (no web font) in small capitals
+with wide tracking for log labels: fact labels, sidebar groups, breadcrumbs, the dateline. The
+same monospace, in normal case, for data: identifiers, dates and times, counts and right-aligned
+figures, so 0/O and 1/l stay distinct and digits line up.
 
-**Shape.** Square corners (controls 2px, panels and dialogs 0). Hierarchy comes from type, rules
-and space, not shadows; menus and dialogs carry a hard paper offset instead of a soft shadow.
-Table headings sit on a full-weight ink rule, rows on hairlines.
+**Shape.** Modest rounding (`--vr-radius` on controls, `--vr-radius-lg` on panels, menus and
+dialogs) and quiet soft shadows (`--vr-shadow-panel`, `--vr-shadow-raised`; none in print).
+Hierarchy comes mainly from type, rules and space. Table headings sit on a tinted heading band
+over a hairline, rows on hairlines.
 
 **Devices, and when each is used.**
 
