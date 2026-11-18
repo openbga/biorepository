@@ -138,6 +138,10 @@ The same list is shown in the application under What's new.
 
 ### Low impact
 
+- **Changed:** Ongoing excursions show a running clock and their extreme (2026-11-18)
+
+  Ongoing temperature excursions show a running clock, and their extreme temperature beside the unit's nominal temperature.
+
 - **Fixed:** Pick lists and manifests take the new look; draft manifests show their watermark (2026-11-18)
 
   Printed pick lists and shipment manifests take the new look in black and white. A manifest printed before dispatch now shows its "Not dispatched" watermark, which was hidden before.
@@ -145,6 +149,10 @@ The same list is shown in the application under What's new.
 - **Changed:** Status labels show an icon for their tone (2026-11-18)
 
   Every status label now carries an icon for its tone, so colour is never the only cue. A box with no blocked positions now shows 0 blocked instead of a blank.
+
+- **Added:** The dashboard shows the cold census of every storage unit (2026-11-18)
+
+  The dashboard's path bar shows every storage unit with its nominal temperature, how full it is and any open excursion, as on the storage overview.
 
 - **Added:** The full demonstration includes quality records (2026-11-18)
 

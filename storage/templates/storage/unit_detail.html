@@ -14,25 +14,23 @@
 {% endblock %}
 {% block content %}
 {% if not unit.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ unit.retired_at|date:'c' }}">{{ unit.retired_at|date:"Y-m-d H:i" }}</time> by {{ unit.retired_by.get_full_name|default:unit.retired_by.get_username }}: {{ unit.retirement_reason }}</div></div>{% endif %}
-<section class="card mb-3" aria-labelledby="unit-facts">
-  <div class="card-header"><h2 class="card-title" id="unit-facts">Storage unit</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Code</dt><dd class="vr-id">{{ unit.code }}</dd></div>
-    <div><dt>Name</dt><dd>{{ unit.name }}</dd></div>
-    <div><dt>Site and room</dt><dd><a class="vr-id" href="{% url 'storage:site-detail' unit.room.site_id %}">{{ unit.room.site.code }}</a> / <a class="vr-id" href="{% url 'storage:room-detail' unit.room_id %}">{{ unit.room.code }}</a> <span class="vr-muted">{{ unit.room.name }}</span></dd></div>
-    <div><dt>Storage class</dt><dd><a href="{% url 'storage:class-detail' unit.storage_class_id %}">{{ unit.storage_class.name }}</a></dd></div>
-    <div><dt>Technology</dt><dd>{{ unit.get_technology_display }}</dd></div>
-    <div><dt>Nominal temperature</dt><dd class="vr-id">{{ unit.nominal_temperature }} {{ unit.temperature_unit }}</dd></div>
-    <div><dt>Created from template</dt><dd>{% if unit.template %}<a class="vr-id" href="{% url 'storage:template-detail' unit.template_id %}">{{ unit.template }}</a>{% else %}—{% endif %}</dd></div>
-    {% if "equipment"|app_installed %}<div><dt>Equipment</dt><dd><a href="{% url 'equipment:equipment-list' %}?storage_unit={{ unit.pk }}">Equipment records for {{ unit.code }}</a> <span class="vr-muted">(readings, levels, due dates and excursions)</span></dd></div>{% endif %}
-    <div><dt>Set up</dt><dd><time datetime="{{ unit.created_at|date:'c' }}">{{ unit.created_at|date:"Y-m-d H:i" }}</time> by {{ unit.created_by.get_full_name|default:unit.created_by.get_username }}</dd></div>
+{% panel title="Storage unit" heading_id="unit-facts" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Code" class="vr-id" %}{{ unit.code }}{% endfact %}
+    {% fact label="Name" %}{{ unit.name }}{% endfact %}
+    {% fact label="Site and room" %}<a class="vr-id" href="{% url 'storage:site-detail' unit.room.site_id %}">{{ unit.room.site.code }}</a> / <a class="vr-id" href="{% url 'storage:room-detail' unit.room_id %}">{{ unit.room.code }}</a> <span class="vr-muted">{{ unit.room.name }}</span>{% endfact %}
+    {% fact label="Storage class" %}<a href="{% url 'storage:class-detail' unit.storage_class_id %}">{{ unit.storage_class.name }}</a>{% endfact %}
+    {% fact label="Technology" %}{{ unit.get_technology_display }}{% endfact %}
+    {% fact label="Nominal temperature" class="vr-id" %}{{ unit.nominal_temperature }} {{ unit.temperature_unit }}{% endfact %}
+    {% fact label="Created from template" %}{% if unit.template %}<a class="vr-id" href="{% url 'storage:template-detail' unit.template_id %}">{{ unit.template }}</a>{% else %}—{% endif %}{% endfact %}
+    {% if "equipment"|app_installed %}{% fact label="Equipment" %}<a href="{% url 'equipment:equipment-list' %}?storage_unit={{ unit.pk }}">Equipment records for {{ unit.code }}</a> <span class="vr-muted">(readings, levels, due dates and excursions)</span>{% endfact %}{% endif %}
+    {% fact label="Set up" %}<time datetime="{{ unit.created_at|date:'c' }}">{{ unit.created_at|date:"Y-m-d H:i" }}</time> by {{ unit.created_by.get_full_name|default:unit.created_by.get_username }}{% endfact %}
   </dl>
-  <p class="vr-muted small mt-3 mb-0">The nominal temperature is the unit's stated set point, not a measurement.</p></div>
-</section>
+  <p class="vr-muted small mt-3 mb-0">The nominal temperature is the unit's stated set point, not a measurement.</p>
+{% endpanel %}
 {% include "storage/_capacity.html" with c=unit %}
-<section class="card vr-table-card mb-3" aria-labelledby="unit-nodes">
-  <div class="card-header"><h2 class="card-title" id="unit-nodes">Racks and shelves</h2><span class="vr-count">{{ nodes|length }}</span>{% if can_manage and unit.is_active %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?unit={{ unit.pk }}">{% icon name="plus-lg" %}Add rack or shelf</a>{% endif %}</div>
-  {% if nodes %}
+{% panel title="Racks and shelves" heading_id="unit-nodes" table=True class="mb-3" %}{% fill count %}{{ nodes|length }}{% endfill %}{% fill actions %}{% if can_manage and unit.is_active %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?unit={{ unit.pk }}">{% icon name="plus-lg" %}Add rack or shelf</a>{% endif %}{% endfill %}
+{% if nodes %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Kind</th><th scope="col">Location</th><th scope="col" class="text-end">Slot</th><th scope="col">Holds</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for row in nodes %}
@@ -47,10 +45,9 @@
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}{% empty_state title="No racks or shelves yet" body="Add the racks, towers, shelves or canisters this unit holds. Boxes go on nodes with box slots." %}{% endif %}
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="unit-boxes">
-  <div class="card-header"><h2 class="card-title" id="unit-boxes">Boxes</h2><span class="vr-count">{{ boxes|length }} active</span></div>
-  {% if boxes %}
+{% endpanel %}
+{% panel title="Boxes" heading_id="unit-boxes" table=True class="mb-3" %}{% fill count %}{{ boxes|length }} active{% endfill %}
+{% if boxes %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Rack or shelf</th><th scope="col" class="text-end">Slot</th><th scope="col">Container type</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for row in boxes %}
@@ -63,7 +60,7 @@
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}{% empty_state title="No boxes in this unit" body="Add boxes from a rack or shelf with box slots." %}{% endif %}
-</section>
+{% endpanel %}
 {% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}

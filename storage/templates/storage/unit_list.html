@@ -2,10 +2,10 @@
 {% comment %}Storage units with position counts. Context: grid_response (storage.views) for lists.SPECS["unit"].{% endcomment %}
 {% block page_actions %}{% url 'storage:unit-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New storage unit" %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="units-heading">
-  <h2 class="visually-hidden" id="units-heading">Storage units</h2>
+{% panel title="Storage units" heading_id="units-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter storage units" q=q placeholder="Code or name" inline=inline more=more more_open=more_open grid="storage.units" %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% url 'storage:unit-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No storage units yet" empty_body="Add each freezer or tank with its storage class and nominal temperature, then its racks, shelves and boxes." action_url=create_url action_label="New storage unit" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.units" data-vr-grid-version="1" aria-labelledby="units-heading">
       <thead><tr>
@@ -34,10 +34,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% if can_manage %}{% url 'storage:unit-create' as create_url %}{% endif %}
-  {% include "storage/_list_states.html" with title_empty="No storage units yet" body_empty="Add each freezer or tank with its storage class and nominal temperature, then its racks, shelves and boxes." create_url=create_url create_label="New storage unit" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

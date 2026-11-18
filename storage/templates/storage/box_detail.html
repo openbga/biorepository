@@ -15,26 +15,23 @@
 {% endblock %}
 {% block content %}
 {% if not box.is_active %}<div class="alert alert-secondary" role="status">{% status label="Retired" tone="neutral" plain=True %}<div>Retired <time datetime="{{ box.retired_at|date:'c' }}">{{ box.retired_at|date:"Y-m-d H:i" }}</time> by {{ box.retired_by.get_full_name|default:box.retired_by.get_username }}: {{ box.retirement_reason }}</div></div>{% endif %}
-<section class="card mb-3" aria-labelledby="box-facts">
-  <div class="card-header"><h2 class="card-title" id="box-facts">Box</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Code</dt><dd class="vr-id">{{ box.code }}</dd></div>
-    <div><dt>Name</dt><dd>{{ box.name }}</dd></div>
-    <div><dt>Location</dt><dd><a class="vr-id" href="{% url 'storage:unit-detail' box.node.unit_id %}">{{ box.node.unit.code }}</a>{% for n in chain %} / <a class="vr-id" href="{% url 'storage:node-detail' n.pk %}">{{ n.code }}</a>{% endfor %}</dd></div>
-    <div><dt>Box slot</dt><dd class="vr-id">{{ box.slot }}</dd></div>
-    <div><dt>Container type</dt><dd><a class="vr-id" href="{% url 'storage:container-type-detail' box.container_type_id %}">{{ box.container_type }}</a>: {{ box.container_type.rows }} × {{ box.container_type.columns }}, {{ box.container_type.get_label_scheme_display }}</dd></div>
-    <div><dt>Unit conditions</dt><dd>{{ box.node.unit.get_technology_display }}, {{ box.node.unit.nominal_temperature }} {{ box.node.unit.temperature_unit }} nominal</dd></div>
-  </dl></div>
-</section>
-<section class="card mb-3" aria-labelledby="box-grid">
-  <div class="card-header"><h2 class="card-title" id="box-grid">Positions</h2><span class="vr-count">{{ box.container_type.rows }} × {{ box.container_type.columns }}, seen from the labelled top-left corner ({{ grid_rows.0.1.0.label }})</span></div>
-  <div class="card-body">
-    {% if "specimens"|app_installed %}{% include "storage/_attach_specimens.html" with positions=occupied %}{% endif %}
+{% panel title="Box" heading_id="box-facts" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Code" class="vr-id" %}{{ box.code }}{% endfact %}
+    {% fact label="Name" %}{{ box.name }}{% endfact %}
+    {% fact label="Location" %}<a class="vr-id" href="{% url 'storage:unit-detail' box.node.unit_id %}">{{ box.node.unit.code }}</a>{% for n in chain %} / <a class="vr-id" href="{% url 'storage:node-detail' n.pk %}">{{ n.code }}</a>{% endfor %}{% endfact %}
+    {% fact label="Box slot" class="vr-id" %}{{ box.slot }}{% endfact %}
+    {% fact label="Container type" %}<a class="vr-id" href="{% url 'storage:container-type-detail' box.container_type_id %}">{{ box.container_type }}</a>: {{ box.container_type.rows }} × {{ box.container_type.columns }}, {{ box.container_type.get_label_scheme_display }}{% endfact %}
+    {% fact label="Unit conditions" %}{{ box.node.unit.get_technology_display }}, {{ box.node.unit.nominal_temperature }} {{ box.node.unit.temperature_unit }} nominal{% endfact %}
+  </dl>
+{% endpanel %}
+{% panel title="Positions" heading_id="box-grid" class="mb-3" %}{% fill count %}{{ box.container_type.rows }} × {{ box.container_type.columns }}, seen from the labelled top-left corner ({{ grid_rows.0.1.0.label }}){% endfill %}
+{% if "specimens"|app_installed %}{% include "storage/_attach_specimens.html" with positions=occupied %}{% endif %}
     <dl class="vr-facts vr-boxmap-legend">
-      <div><dt><span class="vr-boxmap-swatch" data-state="occupied"></span>Occupied</dt><dd class="vr-id">{{ box.occupied }}</dd></div>
-      <div><dt><span class="vr-boxmap-swatch" data-state="free"></span>Free</dt><dd class="vr-id">{{ box.free }}</dd></div>
+      {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="occupied"></span>Occupied{% endfill %}{{ box.occupied }}{% endfact %}
+      {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="free"></span>Free{% endfill %}{{ box.free }}{% endfact %}
       <div><dt><span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked</dt><dd class="vr-id" data-vr-blocked-count>{{ box.blocked_count|default:0 }}</dd></div>
-      <div><dt>Positions</dt><dd class="vr-id">{{ box.installed }}</dd></div>
+      {% fact label="Positions" class="vr-id" %}{{ box.installed }}{% endfact %}
     </dl>
     <div class="vr-boxmap-wrap">
       <table class="vr-boxmap">
@@ -55,11 +52,9 @@
       </table>
     </div>
     <p class="vr-muted small mt-2 mb-0">A checked-out item's position counts as free; free positions are not reserved.</p>
-  </div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="box-occupied">
-  <div class="card-header"><h2 class="card-title" id="box-occupied">Occupied positions</h2><span class="vr-count">{{ occupied|length }}</span>{% if occupied and "specimens"|app_installed %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:specimen-list' %}?box={{ box.code|urlencode }}">Specimens in this box</a>{% endif %}</div>
-  {% if occupied %}
+{% endpanel %}
+{% panel title="Occupied positions" heading_id="box-occupied" table=True class="mb-3" %}{% fill count %}{{ occupied|length }}{% endfill %}{% fill actions %}{% if occupied and "specimens"|app_installed %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'specimens:specimen-list' %}?box={{ box.code|urlencode }}">Specimens in this box</a>{% endif %}{% endfill %}
+{% if occupied %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Position</th><th scope="col">Specimen</th><th scope="col">Storage key</th><th scope="col" class="text-end">Revision</th></tr></thead>
     <tbody>{% for p in occupied %}
@@ -67,7 +62,7 @@
     {% endfor %}</tbody></table></div>
   <p class="vr-muted small mb-0">Storage records each item by an opaque storage key; the Specimen column and the wells name the specimen in it.</p>
   {% else %}{% empty_state title="The box is empty" body="Specimens are stored in its positions from the specimen pages." %}{% endif %}
-</section>
+{% endpanel %}
 {% include "storage/_moves.html" with noun="box" kind="box" obj=box %}
 {% include "storage/_history.html" %}
 {% endblock %}

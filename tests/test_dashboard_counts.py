@@ -80,6 +80,14 @@ def test_every_dashboard_count_equals_the_rows_its_link_shows(client, demo):
         "Withdrawals needing follow-up",
     } <= labels, sorted(labels)
     assert checked > 40
+
+    # The dashboard's path bar census is the storage overview's: same units, same numbers.
+    client.force_login(User.objects.get(username="demo_manager"))
+    dashboard = client.get("/")
+    overview = client.get("/storage/")
+    assert dashboard.context["storage_census"], "the demo has active storage units"
+    assert list(dashboard.context["storage_census"]) == list(overview.context["storage_census"])
+    assert b"vr-census" in dashboard.content
     assert journey_checks >= len(people) * 3
 
 

@@ -3,20 +3,18 @@
 {% block page_dateline %}{% include "includes/dateline.html" %}{% endblock %}
 {% block page_intro %}<p class="vr-page-intro">Where there is room, by storage unit.</p>{% endblock %}
 {% block content %}
-<section class="card mb-3" aria-labelledby="totals-heading">
-  <div class="card-header"><h2 class="card-title" id="totals-heading">All active storage</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Storage units</dt><dd class="vr-id"><a href="{% url 'storage:unit-list' %}">{{ units|length }}</a></dd></div>
-    <div><dt>Boxes</dt><dd class="vr-id"><a href="{% url 'storage:box-list' %}">{{ box_count|floatformat:"0g" }}</a></dd></div>
-    <div><dt>Positions</dt><dd class="vr-id">{{ totals.installed|floatformat:"0g" }}</dd></div>
-    <div><dt>Occupied</dt><dd class="vr-id">{{ totals.occupied|floatformat:"0g" }}</dd></div>
-    <div><dt>Blocked</dt><dd class="vr-id">{{ totals.blocked|floatformat:"0g" }}</dd></div>
-    <div><dt>Free</dt><dd class="vr-id"><a href="{% url 'storage:free-position-list' %}">{{ totals.free|floatformat:"0g" }}</a></dd></div>
-  </dl></div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="by-unit-heading">
-  <div class="card-header"><h2 class="card-title" id="by-unit-heading">Occupancy by storage unit</h2><span class="vr-count">{{ units|length }} active</span></div>
-  {% if units %}
+{% panel title="All active storage" heading_id="totals-heading" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Storage units" class="vr-id" %}<a href="{% url 'storage:unit-list' %}">{{ units|length }}</a>{% endfact %}
+    {% fact label="Boxes" class="vr-id" %}<a href="{% url 'storage:box-list' %}">{{ box_count|floatformat:"0g" }}</a>{% endfact %}
+    {% fact label="Positions" class="vr-id" %}{{ totals.installed|floatformat:"0g" }}{% endfact %}
+    {% fact label="Occupied" class="vr-id" %}{{ totals.occupied|floatformat:"0g" }}{% endfact %}
+    {% fact label="Blocked" class="vr-id" %}{{ totals.blocked|floatformat:"0g" }}{% endfact %}
+    {% fact label="Free" class="vr-id" %}<a href="{% url 'storage:free-position-list' %}">{{ totals.free|floatformat:"0g" }}</a>{% endfact %}
+  </dl>
+{% endpanel %}
+{% panel title="Occupancy by storage unit" heading_id="by-unit-heading" table=True class="mb-3" %}{% fill count %}{{ units|length }} active{% endfill %}
+{% if units %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table vr-queue-table">
     <thead><tr><th scope="col">Storage unit</th><th scope="col">Site and room</th><th scope="col">Storage class</th><th scope="col" class="text-end">Nominal (°C)</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for u in units %}
@@ -34,10 +32,9 @@
   {% if can_manage %}{% url 'storage:unit-create' as create_url %}{% endif %}
   {% empty_state title="No storage defined yet" body="Define a site, a room and a storage unit, then its racks, shelves and boxes." action_url=create_url action_label="New storage unit" %}
   {% endif %}
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="moves-heading">
-  <div class="card-header"><h2 class="card-title" id="moves-heading">Recent box and rack moves</h2></div>
-  {% if recent_moves %}
+{% endpanel %}
+{% panel title="Recent box and rack moves" heading_id="moves-heading" table=True class="mb-3" %}
+{% if recent_moves %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Moved</th><th scope="col">Moved at</th><th scope="col">From</th><th scope="col">To</th><th scope="col">By</th></tr></thead>
     <tbody>{% for m in recent_moves %}
@@ -50,5 +47,5 @@
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}{% empty_state title="No box or rack moves yet" body="A move of a box or rack with its contents is listed here once recorded." %}{% endif %}
-</section>
+{% endpanel %}
 {% endblock %}

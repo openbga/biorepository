@@ -4,10 +4,10 @@
 {% block page_actions %}{% url 'storage:class-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New storage class" %}{% endblock %}
 {% block content %}
 {% section_tabs "storage-catalogues" %}
-<section class="card vr-table-card" aria-labelledby="classes-heading">
-  <h2 class="visually-hidden" id="classes-heading">Storage classes</h2>
+{% panel title="Storage classes" heading_id="classes-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter storage classes" q=q placeholder="Code or name" inline=inline grid="storage.classes" %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% url 'storage:class-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No storage classes yet" empty_body="Storage classes describe storage conditions, for example cryogenic, ultra-low, refrigerated or ambient." action_url=create_url action_label="New storage class" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.classes" data-vr-grid-version="1" aria-labelledby="classes-heading">
       <thead><tr>
@@ -30,10 +30,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% if can_manage %}{% url 'storage:class-create' as create_url %}{% endif %}
-  {% include "storage/_list_states.html" with title_empty="No storage classes yet" body_empty="Storage classes describe storage conditions, for example cryogenic, ultra-low, refrigerated or ambient." create_url=create_url create_label="New storage class" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

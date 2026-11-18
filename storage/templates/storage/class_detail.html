@@ -5,23 +5,21 @@
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li></ul>{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:class-edit' obj.pk %}">Edit</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card mb-3" aria-labelledby="class-facts">
-  <div class="card-header"><h2 class="card-title" id="class-facts">Storage class</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Code</dt><dd class="vr-id">{{ obj.code }}</dd></div>
-    <div><dt>Name</dt><dd>{{ obj.name }}</dd></div>
-    <div><dt>Description</dt><dd>{{ obj.description|default:"—" }}</dd></div>
-    <div><dt>Active storage units</dt><dd class="vr-id">{{ obj.unit_count }}</dd></div>
-  </dl></div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="class-units">
-  <div class="card-header"><h2 class="card-title" id="class-units">Storage units</h2><span class="vr-count">{{ units|length }}{% if units|length >= 100 %}, first 100 shown{% endif %}</span></div>
-  {% if units %}
+{% panel title="Storage class" heading_id="class-facts" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Code" class="vr-id" %}{{ obj.code }}{% endfact %}
+    {% fact label="Name" %}{{ obj.name }}{% endfact %}
+    {% fact label="Description" %}{{ obj.description|default:"—" }}{% endfact %}
+    {% fact label="Active storage units" class="vr-id" %}{{ obj.unit_count }}{% endfact %}
+  </dl>
+{% endpanel %}
+{% panel title="Storage units" heading_id="class-units" table=True class="mb-3" %}{% fill count %}{{ units|length }}{% if units|length >= 100 %}, first 100 shown{% endif %}{% endfill %}
+{% if units %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Room</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for u in units %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a></th><td>{{ u.name }}</td><td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td><td>{% include "storage/_status.html" with obj=u plain=True %}</td></tr>{% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No storage units use this class" %}{% endif %}
-</section>
+{% endpanel %}
 {% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}

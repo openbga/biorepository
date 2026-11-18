@@ -2,10 +2,10 @@
 {% comment %}Racks, towers, shelves and canisters with position counts. Context: grid_response for lists.SPECS["node"].{% endcomment %}
 {% block page_actions %}{% url 'storage:node-create' as create_url %}{% include "storage/_list_actions.html" with create_label="New rack or shelf" %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="nodes-heading">
-  <h2 class="visually-hidden" id="nodes-heading">Racks and shelves</h2>
+{% panel title="Racks and shelves" heading_id="nodes-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter racks and shelves" q=q placeholder="Code or name" inline=inline more=more more_open=more_open grid="storage.nodes" %}
-  {% if page_obj.paginator.count %}
+  {% if can_manage %}{% url 'storage:node-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No racks or shelves yet" empty_body="Add the racks, towers, shelves or canisters of a storage unit; boxes go on the ones with box slots." action_url=create_url action_label="New rack or shelf" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="storage.nodes" data-vr-grid-version="1" aria-labelledby="nodes-heading">
       <thead><tr>
@@ -36,10 +36,6 @@
       </tbody>
     </table>
   </div>
-  {% pagination noun=noun filtered=filtered %}
-  {% else %}
-  {% if can_manage %}{% url 'storage:node-create' as create_url %}{% endif %}
-  {% include "storage/_list_states.html" with title_empty="No racks or shelves yet" body_empty="Add the racks, towers, shelves or canisters of a storage unit; boxes go on the ones with box slots." create_url=create_url create_label="New rack or shelf" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

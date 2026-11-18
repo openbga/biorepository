@@ -5,25 +5,23 @@
 {% block page_meta %}<ul class="vr-page-meta"><li>{% status label=status_label tone=status_tone %}</li><li>{{ site.name }}</li><li>{{ site.timezone }}</li></ul>{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:site-edit' site.pk %}">Edit</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card mb-3" aria-labelledby="site-facts">
-  <div class="card-header"><h2 class="card-title" id="site-facts">Site</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Code</dt><dd class="vr-id">{{ site.code }}</dd></div>
-    <div><dt>Name</dt><dd>{{ site.name }}</dd></div>
-    <div><dt>Time zone</dt><dd>{{ site.timezone }}</dd></div>
-    <div><dt>Set up</dt><dd><time datetime="{{ site.created_at|date:'c' }}">{{ site.created_at|date:"Y-m-d H:i" }}</time> by {{ site.created_by.get_full_name|default:site.created_by.get_username }}</dd></div>
-  </dl></div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="site-rooms">
-  <div class="card-header"><h2 class="card-title" id="site-rooms">Rooms</h2><span class="vr-count">{{ rooms|length }}</span>{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:room-create' %}?site={{ site.pk }}">{% icon name="plus-lg" %}Add room</a>{% endif %}</div>
-  {% if rooms %}
+{% panel title="Site" heading_id="site-facts" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Code" class="vr-id" %}{{ site.code }}{% endfact %}
+    {% fact label="Name" %}{{ site.name }}{% endfact %}
+    {% fact label="Time zone" %}{{ site.timezone }}{% endfact %}
+    {% fact label="Set up" %}<time datetime="{{ site.created_at|date:'c' }}">{{ site.created_at|date:"Y-m-d H:i" }}</time> by {{ site.created_by.get_full_name|default:site.created_by.get_username }}{% endfact %}
+  </dl>
+{% endpanel %}
+{% panel title="Rooms" heading_id="site-rooms" table=True class="mb-3" %}{% fill count %}{{ rooms|length }}{% endfill %}{% fill actions %}{% if can_manage %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:room-create' %}?site={{ site.pk }}">{% icon name="plus-lg" %}Add room</a>{% endif %}{% endfill %}
+{% if rooms %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col" class="text-end">Storage units</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for row in rooms %}
       <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:room-detail' row.pk %}">{{ row.code }}</a></th><td>{{ row.name }}</td><td class="text-end vr-id">{{ row.unit_count }}</td><td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{{ row.free }}</td></tr>
     {% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No rooms yet" body="Add the rooms where this site's storage units stand." %}{% endif %}
-</section>
+{% endpanel %}
 {% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}

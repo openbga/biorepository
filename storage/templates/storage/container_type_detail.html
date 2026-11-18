@@ -5,33 +5,30 @@
 {% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li><li>{{ obj.rows }} × {{ obj.columns }}</li></ul>{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:container-type-create' %}?from={{ obj.pk }}">New version</a><a class="btn btn-outline-secondary" href="{% url 'storage:container-type-edit' obj.pk %}">Edit</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card mb-3" aria-labelledby="grid-facts">
-  <div class="card-header"><h2 class="card-title" id="grid-facts">Container type</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Code and version</dt><dd class="vr-id">{{ obj.code }} v{{ obj.version }}</dd></div>
-    <div><dt>Name</dt><dd>{{ obj.name }}</dd></div>
-    <div><dt>Grid</dt><dd class="vr-id">{{ obj.rows }} rows × {{ obj.columns }} columns = {{ obj.capacity }} positions</dd></div>
-    <div><dt>Position labels</dt><dd>{{ obj.get_label_scheme_display }}</dd></div>
-    <div><dt>Numbering order</dt><dd>{{ obj.get_fill_order_display }}, from the {{ obj.get_origin_display|lower }} corner</dd></div>
-    <div><dt>Active boxes</dt><dd class="vr-id">{{ obj.box_count }}</dd></div>
+{% panel title="Container type" heading_id="grid-facts" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Code and version" class="vr-id" %}{{ obj.code }} v{{ obj.version }}{% endfact %}
+    {% fact label="Name" %}{{ obj.name }}{% endfact %}
+    {% fact label="Grid" class="vr-id" %}{{ obj.rows }} rows × {{ obj.columns }} columns = {{ obj.capacity }} positions{% endfact %}
+    {% fact label="Position labels" %}{{ obj.get_label_scheme_display }}{% endfact %}
+    {% fact label="Numbering order" %}{{ obj.get_fill_order_display }}, from the {{ obj.get_origin_display|lower }} corner{% endfact %}
+    {% fact label="Active boxes" class="vr-id" %}{{ obj.box_count }}{% endfact %}
   </dl>
-  <p class="vr-muted small mt-3 mb-0">{% if used %}Boxes use this version, so its grid is fixed. A change is a new version; existing boxes keep their positions and labels.{% else %}No box uses this version yet, so its grid can still be corrected.{% endif %}</p></div>
-</section>
-<section class="card mb-3" aria-labelledby="grid-preview">
-  <div class="card-header"><h2 class="card-title" id="grid-preview">Label preview</h2>{% if preview_cut %}<span class="vr-count">Top-left 12 × 12 shown</span>{% endif %}</div>
-  <div class="card-body"><div class="vr-table-wrap"><table class="table table-sm table-bordered vr-table">
+  <p class="vr-muted small mt-3 mb-0">{% if used %}Boxes use this version, so its grid is fixed. A change is a new version; existing boxes keep their positions and labels.{% else %}No box uses this version yet, so its grid can still be corrected.{% endif %}</p>
+{% endpanel %}
+{% panel title="Label preview" heading_id="grid-preview" class="mb-3" %}{% fill actions %}{% if preview_cut %}<span class="vr-count">Top-left 12 × 12 shown</span>{% endif %}{% endfill %}
+<div class="vr-table-wrap"><table class="table table-sm table-bordered vr-table">
     <caption class="vr-muted small">Position labels as seen from the labelled top-left corner.</caption>
     <thead><tr><th scope="col"><span class="visually-hidden">Row</span></th>{% for c in preview_columns %}<th scope="col" class="text-center vr-id">{{ c }}</th>{% endfor %}</tr></thead>
     <tbody>{% for row, labels in preview_rows %}<tr><th scope="row" class="vr-id">{{ row }}</th>{% for label in labels %}<td class="text-center vr-id">{{ label }}</td>{% endfor %}</tr>{% endfor %}</tbody>
-  </table></div></div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="grid-versions">
-  <div class="card-header"><h2 class="card-title" id="grid-versions">Versions</h2><span class="vr-count">{{ versions|length }}</span></div>
-  <div class="vr-table-wrap"><table class="table vr-table">
+  </table></div>
+{% endpanel %}
+{% panel title="Versions" heading_id="grid-versions" table=True class="mb-3" %}{% fill count %}{{ versions|length }}{% endfill %}
+<div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Version</th><th scope="col">Name</th><th scope="col">Grid</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for v in versions %}<tr><th scope="row">{% if v.pk == obj.pk %}<span class="vr-id">v{{ v.version }}</span>{% else %}<a class="vr-row-link vr-id" href="{% url 'storage:container-type-detail' v.pk %}">v{{ v.version }}</a>{% endif %}</th><td>{{ v.name }}</td><td class="vr-id">{{ v.rows }} × {{ v.columns }}</td><td>{% include "storage/_status.html" with obj=v plain=True catalogue=True %}</td></tr>{% endfor %}</tbody>
   </table></div>
-</section>
+{% endpanel %}
 {% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}

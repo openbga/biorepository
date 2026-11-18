@@ -1,7 +1,6 @@
 {% load ui %}{% comment %}Recorded container moves of one box or node, newest first. Parameters: moves (MoveEvent list), heading_id, noun ("box", "rack"...), kind ("box" or "node"), obj (the container), correctable (its latest uncorrected move, or None; managers and admins may correct it), can_manage.{% endcomment %}
-<section class="card vr-table-card mb-3" aria-labelledby="{{ heading_id|default:'moves-heading' }}">
-  <div class="card-header"><h2 class="card-title" id="{{ heading_id|default:'moves-heading' }}">Moves</h2><span class="vr-count">{{ moves|length }}{% if moves|length >= 20 %}, newest 20 shown{% endif %}</span></div>
-  {% if moves %}
+{% panel title="Moves" heading_id="{{ heading_id|default:'moves-heading' }}" table=True class="mb-3" %}{% fill count %}{{ moves|length }}{% if moves|length >= 20 %}, newest 20 shown{% endif %}{% endfill %}
+{% if moves %}
   <div class="vr-table-wrap">
     <table class="table vr-table">
       <thead><tr><th scope="col">Moved at</th><th scope="col">From</th><th scope="col">To</th><th scope="col" class="text-end">Items</th><th scope="col">By</th><th scope="col">Reason</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
@@ -21,4 +20,4 @@
     </table>
   </div>
   {% else %}{% empty_state title="Not moved since it was set up" body="Moves of this "|add:noun|add:" are recorded here with the items carried." %}{% endif %}
-</section>
+{% endpanel %}
