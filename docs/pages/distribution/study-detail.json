@@ -110,6 +110,6 @@
     "distribution/models.py",
     "distribution/templates/distribution/governance/study_detail.html",
     "distribution/templates/distribution/governance/_link_row.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

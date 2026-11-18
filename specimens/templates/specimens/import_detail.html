@@ -8,16 +8,16 @@ state, file_errors, row_errors, rows, commit, created, label_query, may_commit,
 form (ImportCommitForm).
 {% endcomment %}
 {% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% breadcrumbs section="Imports" section_url=list_url current=page_title %}{% endblock %}
-{% block page_meta %}{% page_meta %}{% status_parts "import" state as st %}{% meta_item %}{% status label=st.label tone=st.tone size="lg" %}{% endmeta_item %}{% meta_item label="Rows" value=batch.row_count class="vr-id" %}{% meta_item label="Validated" %}<time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor.get_full_name|default:batch.actor.get_username }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% specimen_status_parts "import" state as st %}{% meta_item %}{% status label=st.label tone=st.tone size="lg" %}{% endmeta_item %}{% meta_item label="Rows" value=batch.row_count class="vr-id" %}{% meta_item label="Validated" %}<time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor.get_full_name|default:batch.actor.get_username }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% if created %}<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?{{ label_query }}">{% icon name="printer" %}Print labels</a>{% endif %}{% endblock %}
 {% block content %}
 {% for warning in batch.warnings %}
 {% notice tone="warning" label="Check" %}{{ warning }}{% endnotice %}
 {% endfor %}
 {% if state == "invalid" %}
-{% status_parts "import" state as st %}{% notice tone=st.tone label=st.label blocking=True %}Nothing can be registered from this file. Correct the errors below in your file and upload it again.{% endnotice %}
+{% specimen_status_parts "import" state as st %}{% notice tone=st.tone label=st.label blocking=True %}Nothing can be registered from this file. Correct the errors below in your file and upload it again.{% endnotice %}
 {% elif state == "expired" %}
-{% status_parts "import" state as st %}{% notice tone=st.tone label=st.label %}This validation expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to validate it against the current catalogues and positions.{% endnotice %}
+{% specimen_status_parts "import" state as st %}{% notice tone=st.tone label=st.label %}This validation expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to validate it against the current catalogues and positions.{% endnotice %}
 {% endif %}
 
 {% if file_errors or row_errors %}

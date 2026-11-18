@@ -10,19 +10,10 @@ button comes first so Enter in a field saves rather than removing the first row.
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
-<form class="vr-form vr-form-wide" method="post" novalidate>
-  {% csrf_token %}
+{% form_page form=form formset=formset formset_label="new specimens" class="vr-form-wide" cancel_url=back_url submit_label=submit_label no_submit=blocked no_required_note=blocked times=True note="Each new specimen gets its own identifier and keeps the parent's participant, collection, collection time, custodian and thaw history." %}
   {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}
-  {% form_errors form=form formset=formset formset_label="new specimens" %}
-  {% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{% status label="Error" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
-  {% if blocked %}
-  <div class="alert alert-warning" role="alert">
-    {% status label="Not available" tone="warning" plain=True %}
-    <div>{{ blocked }}</div>
-  </div>
-  {% else %}
-  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Times are repository local time. Each new specimen gets its own identifier and keeps the parent's participant, collection, collection time, custodian and thaw history.</p>
-  {% endif %}
+  {% if formset.non_form_errors %}{% notice tone="danger" label="Error" blocking=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endnotice %}{% endif %}
+  {% if blocked %}{% notice tone="warning" label="Not available" blocking=True %}{{ blocked }}{% endnotice %}{% endif %}
   {% include "specimens/actions/_context.html" %}
   {% with sections=form.grouped %}{% for legend, rows in sections %}
   {% if forloop.last %}
@@ -67,9 +58,5 @@ button comes first so Enter in a field saves rather than removing the first row.
   </fieldset>
   {% endfor %}{% endwith %}
   {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-  <div class="vr-form-actions">
-    <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
-    {% if not blocked %}<button class="btn btn-primary" type="submit">{{ submit_label }}</button>{% endif %}
-  </div>
-</form>
+{% endform_page %}
 {% endblock %}

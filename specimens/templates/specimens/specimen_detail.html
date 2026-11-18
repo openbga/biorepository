@@ -37,17 +37,17 @@ A distributed specimen has no custodian and no position: both read "Outside the 
 {% endblock %}
 {% block content %}
 {% if specimen.is_disposed %}
-{% status_parts "specimen" specimen as st %}{% notice tone=st.tone label=st.label %}{% if execution %}Disposed <time datetime="{{ execution.occurred_at|date:'c' }}">{{ execution.occurred_at|date:"Y-m-d H:i" }}</time> by {{ execution.actor.get_full_name|default:execution.actor.get_username }}: {{ execution.reason }}. {% endif %}The record is final; its history is kept.{% endnotice %}
+{% specimen_status_parts "specimen" specimen as st %}{% notice tone=st.tone label=st.label %}{% if execution %}Disposed <time datetime="{{ execution.occurred_at|date:'c' }}">{{ execution.occurred_at|date:"Y-m-d H:i" }}</time> by {{ execution.actor.get_full_name|default:execution.actor.get_username }}: {{ execution.reason }}. {% endif %}The record is final; its history is kept.{% endnotice %}
 {% endif %}
 {% if specimen.is_distributed %}
-{% status_parts "specimen" specimen as st %}{% notice tone=st.tone label=st.label %}{% if away_now %}Dispatched <time datetime="{{ away_now.started|date:'c' }}">{{ away_now.started|date:"Y-m-d H:i" }}</time>{% if away_now.destination %} to {{ away_now.destination }}{% endif %}. {% endif %}It left the repository in a shipment and is outside the repository until its return is recorded. Meanwhile only holds and record corrections can be recorded.{% endnotice %}
+{% specimen_status_parts "specimen" specimen as st %}{% notice tone=st.tone label=st.label %}{% if away_now %}Dispatched <time datetime="{{ away_now.started|date:'c' }}">{{ away_now.started|date:"Y-m-d H:i" }}</time>{% if away_now.destination %} to {{ away_now.destination }}{% endif %}. {% endif %}It left the repository in a shipment and is outside the repository until its return is recorded. Meanwhile only holds and record corrections can be recorded.{% endnotice %}
 {% endif %}
 {% for hold in active_holds %}
-{% status_parts "hold" hold.scope as st %}{% notice tone=st.tone label=st.label %}Placed <time datetime="{{ hold.occurred_at|date:'c' }}">{{ hold.occurred_at|date:"Y-m-d H:i" }}</time> by {{ hold.actor.get_full_name|default:hold.actor.get_username }}{% if hold.reference %} for {{ hold.reference }}{% endif %}: {{ hold.reason }}<span class="d-block">{% if hold.scope == "all_use" %}It blocks use, check-out, dispatch and disposal.{% elif hold.scope == "use" %}It blocks use, check-out, hand-over and dispatch; it does not block disposal.{% else %}It blocks disposal.{% endif %}</span>
+{% specimen_status_parts "hold" hold.scope as st %}{% notice tone=st.tone label=st.label %}Placed <time datetime="{{ hold.occurred_at|date:'c' }}">{{ hold.occurred_at|date:"Y-m-d H:i" }}</time> by {{ hold.actor.get_full_name|default:hold.actor.get_username }}{% if hold.reference %} for {{ hold.reference }}{% endif %}: {{ hold.reason }}<span class="d-block">{% if hold.scope == "all_use" %}It blocks use, check-out, dispatch and disposal.{% elif hold.scope == "use" %}It blocks use, check-out, hand-over and dispatch; it does not block disposal.{% else %}It blocks disposal.{% endif %}</span>
   {% if hold.reference %}<span class="d-block vr-muted small">Released through its workflow: {{ hold.reference }}</span>{% elif can_manage %}<a class="btn btn-sm btn-outline-secondary ms-2" href="{% url 'specimens:hold-release' hold.pk %}">Release hold</a>{% endif %}{% endnotice %}
 {% endfor %}
 {% if open_request %}
-{% status_parts "request" open_request.state as st %}{% notice tone=st.tone label=st.label %}Disposal requested <time datetime="{{ open_request.recorded_at|date:'c' }}">{{ open_request.recorded_at|date:"Y-m-d H:i" }}</time> by {{ open_request.requested_by.get_full_name|default:open_request.requested_by.get_username }}. <a href="{% url 'specimens:disposal-detail' open_request.pk %}">Request {{ open_request.recorded_at|date:"Y-m-d H:i" }}</a>{% endnotice %}
+{% specimen_status_parts "request" open_request.state as st %}{% notice tone=st.tone label=st.label %}Disposal requested <time datetime="{{ open_request.recorded_at|date:'c' }}">{{ open_request.recorded_at|date:"Y-m-d H:i" }}</time> by {{ open_request.requested_by.get_full_name|default:open_request.requested_by.get_username }}. <a href="{% url 'specimens:disposal-detail' open_request.pk %}">Request {{ open_request.recorded_at|date:"Y-m-d H:i" }}</a>{% endnotice %}
 {% endif %}
 
 {% panel title="Specimen" heading_id="facts-heading" class="mb-3" %}
@@ -177,13 +177,9 @@ A distributed specimen has no custodian and no position: both read "Outside the 
   {% else %}{% empty_state title="No thaw records" %}{% endif %}
 {% endpanel %}
 
-{% panel title="History" heading_id="history-heading" class="mt-3" %}
-{% if history %}
-    <ol class="vr-timeline">
-      {% for item in history %}{% history_item title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail changes=item.changes %}{% endfor %}
-    </ol>
-    {% else %}{% empty_state title="No recorded events yet" %}{% endif %}
-{% endpanel %}
+{% history_panel events=history class="mt-3" collapsible=True empty_title="No recorded events yet" %}
+  {% for item in history %}{% history_item title=item.title at=item.at actor=item.actor reason=item.reason detail=item.detail changes=item.changes %}{% endfor %}
+{% endhistory_panel %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=specimen.accession %}{% endblock %}

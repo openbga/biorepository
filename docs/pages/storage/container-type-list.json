@@ -116,7 +116,7 @@
     "storage/exports.py",
     "storage/templates/storage/container_type_list.html",
     "storage/templates/storage/_list_actions.html",
-    "storage/templates/storage/_list_states.html",
+    "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
 }

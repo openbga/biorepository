@@ -41,13 +41,6 @@ def page_templates():
 # Templates whose forms predate the components, with how many unnamed <form>s each still has
 # (2026-11-18). The count only shrinks: delete an entry once its template is converted.
 PENDING = {
-    "specimens/templates/specimens/actions/derive.html": 1,
-    "specimens/templates/specimens/actions/form.html": 1,
-    "specimens/templates/specimens/catalogue_form.html": 1,
-    "specimens/templates/specimens/import_upload.html": 1,
-    "specimens/templates/specimens/specimen_list.html": 1,
-    "storage/templates/storage/form.html": 1,
-    "templates/core/announcement_form.html": 1,
     "templates/layouts/document.html": 1,
 }
 

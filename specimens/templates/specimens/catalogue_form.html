@@ -6,11 +6,8 @@ None, tab, list_url, submit_label, in_use_note, history (AuditEvents, newest fir
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs section="Specimen catalogues" tab=tab tab_url=list_url %}{% endblock %}
 {% block content %}
-<form class="vr-form" method="post" novalidate>
-  {% csrf_token %}
-  {% form_errors form=form %}
-  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Changes are recorded in the history with the reason.</p>
-  {% if in_use_note %}<p class="vr-form-note">{{ in_use_note }}</p>{% endif %}
+{% form_page form=form cancel_url=list_url submit_label=submit_label %}
+  {% fill note %}Changes are recorded in the history with the reason.{% if in_use_note %} {{ in_use_note }}{% endif %}{% endfill %}
   {% for legend, fields in form.grouped %}
   <fieldset class="vr-form-section">
     <legend>{{ legend }}</legend>
@@ -18,10 +15,6 @@ None, tab, list_url, submit_label, in_use_note, history (AuditEvents, newest fir
   </fieldset>
   {% endfor %}
   {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-  <div class="vr-form-actions">
-    <a class="btn btn-link" href="{{ list_url }}">Cancel</a>
-    <button class="btn btn-primary" type="submit">{{ submit_label }}</button>
-  </div>
-</form>
+{% endform_page %}
 {% if obj %}{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}{% endif %}
 {% endblock %}

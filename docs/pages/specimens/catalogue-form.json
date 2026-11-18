@@ -98,7 +98,7 @@
     "accounts/roles.py",
     "specimens/list_forms.py",
     "specimens/templates/specimens/catalogue_form.html",
-    "specimens/templates/specimens/includes/audit_history.html",
+    "templates/includes/history_panel.html",
     "specimens/models.py",
     "specimens/tests/test_views_records.py"
   ]

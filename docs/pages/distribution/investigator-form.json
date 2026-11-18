@@ -82,6 +82,6 @@
     "distribution/services.py",
     "distribution/templates/distribution/governance/form.html",
     "distribution/templates/distribution/governance/catalogue_form.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

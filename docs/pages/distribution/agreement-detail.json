@@ -127,6 +127,6 @@
     "distribution/templates/distribution/governance/agreement_detail.html",
     "distribution/templates/distribution/governance/_attachment.html",
     "distribution/templatetags/distribution.py",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

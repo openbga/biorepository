@@ -157,6 +157,6 @@
     "equipment/models.py",
     "equipment/templates/equipment/equipment_detail.html",
     "equipment/templates/equipment/_attachment.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

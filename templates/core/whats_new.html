@@ -9,12 +9,11 @@ browser had not seen yet, then stores everything as seen; a browser without a ma
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Changes to this application, newest first, grouped by month and ranked by impact.</p>{% endblock %}
 {% block content %}
-<div class="alert alert-info" role="status" data-vr-whats-new-notice hidden>{% status label="New" tone="info" plain=True %}<div><span data-vr-whats-new-notice-text></span></div></div>
+{% notice tone="info" label="New" hidden=True hook="vr-whats-new-notice" %}<span data-vr-whats-new-notice-text></span>{% endnotice %}
 {% for group in groups %}
-<section class="card mb-3 vr-narrow" aria-labelledby="whats-new-{{ group.key }}-heading">
-  <div class="card-header"><h2 class="card-title" id="whats-new-{{ group.key }}-heading">{{ group.label }}</h2><span class="vr-count"><time datetime="{{ group.start|date:'Y-m-d' }}">{{ group.start|date:"Y-m-d" }}</time>{% if group.end != group.start %} to <time datetime="{{ group.end|date:'Y-m-d' }}">{{ group.end|date:"Y-m-d" }}</time>{% endif %} · {{ group.count }} change{{ group.count|pluralize }}</span></div>
-  {% for section in group.sections %}
-  <div class="card-body{% if not forloop.first %} border-top{% endif %}">
+{% with heading="whats-new-"|add:group.key|add:"-heading" %}{% panel heading_id=heading flush=True class="mb-3 vr-narrow" %}{% fill title %}{{ group.label }}{% endfill %}{% fill count %}<time datetime="{{ group.start|date:'Y-m-d' }}">{{ group.start|date:"Y-m-d" }}</time>{% if group.end != group.start %} to <time datetime="{{ group.end|date:'Y-m-d' }}">{{ group.end|date:"Y-m-d" }}</time>{% endif %} · {{ group.count }} change{{ group.count|pluralize }}{% endfill %}
+{% for section in group.sections %}
+  {% panel_section rule=forloop.counter0 %}
     <h3 class="vr-section-title">{{ section.label }}</h3>
     <ol class="vr-changes">
       {% for row in section.entries %}{% with entry=row.entry %}
@@ -35,15 +34,12 @@ browser had not seen yet, then stores everything as seen; a browser without a ma
       </li>
       {% endwith %}{% endfor %}
     </ol>
-  </div>
+  {% endpanel_section %}
   {% endfor %}
-</section>
+{% endpanel %}{% endwith %}
 {% empty %}
-<section class="card vr-narrow" aria-labelledby="whats-new-heading">
-  <div class="card-header"><h2 class="card-title" id="whats-new-heading">Changes</h2></div>
-  <div class="card-body">
-    {% empty_state title="No changes recorded yet" body="Changes to the application are listed here, newest first, once they are recorded." %}
-  </div>
-</section>
+{% panel title="Changes" heading_id="whats-new-heading" class="vr-narrow" %}
+{% empty_state title="No changes recorded yet" body="Changes to the application are listed here, newest first, once they are recorded." %}
+{% endpanel %}
 {% endfor %}
 {% endblock %}

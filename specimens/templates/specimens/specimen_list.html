@@ -12,6 +12,7 @@ Selecting rows prints their labels (label preview, at most max_labels).
   {% grid_toolbar label="Filter specimens" q=q placeholder="Specimen ID, participant or collection code" inline=inline more=more more_open=more_open grid="specimens.specimens" %}
   {% if can_operate %}{% url 'specimens:specimen-create' as create_url %}{% endif %}
   {% list_results items=page_obj noun="specimens" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No specimens registered yet" empty_body="Register a specimen, or import many at once from a CSV file." action_url=create_url action_label="Register specimen" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
+  {# form: bulk-selection #}
   <form method="get" action="{% url 'specimens:label-preview' %}" aria-label="Print labels for selected specimens">
     <div class="vr-bulkbar">
       <button class="btn btn-sm btn-outline-secondary" type="submit">{% icon name="printer" %}Print labels</button>
@@ -36,7 +37,7 @@ Selecting rows prints their labels (label preview, at most max_labels).
         <tbody>
           {% for row in page_obj %}
           <tr>
-            <td><input class="form-check-input" type="checkbox" name="id" value="{{ row.pk }}" aria-label="Select {{ row.accession }}"></td>
+            <td>{% row_select name="id" value=row.pk label="Select "|add:row.accession %}</td>
             <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' row.pk %}">{{ row.accession }}</a></th>
             <td class="vr-nowrap">{% specimen_status row plain=True held=True %}</td>
             <td>{{ row.specimen_type.name }}</td>

@@ -70,9 +70,9 @@ def hold_status(scope, plain=False):
 
 
 @register.simple_tag
-def status_parts(kind, value):
+def specimen_status_parts(kind, value):
     """{label, tone} of a status, for components that open with it ({% notice %}):
-    {% status_parts "request" state as st %}{% notice tone=st.tone label=st.label %}…"""
+    {% specimen_status_parts "request" state as st %}{% notice tone=st.tone label=st.label %}…"""
     if kind == "specimen":
         label, tone = SPECIMEN_STATES[value.status]
     elif kind == "request":

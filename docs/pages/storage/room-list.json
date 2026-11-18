@@ -104,7 +104,7 @@
     "storage/exports.py",
     "storage/templates/storage/room_list.html",
     "storage/templates/storage/_list_actions.html",
-    "storage/templates/storage/_list_states.html",
+    "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
 }

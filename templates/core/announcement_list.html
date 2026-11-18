@@ -8,10 +8,10 @@ Withdraw is the one row action; it asks for confirmation and posts to announceme
 {% block page_intro %}<p class="vr-page-intro">Notices for the sign-in page and the staff dashboard.</p>{% endblock %}
 {% block page_actions %}<a class="btn btn-primary" href="{% url 'announcement-create' %}">{% icon name="plus-lg" %}New announcement</a>{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="announcements-heading">
-  <h2 class="visually-hidden" id="announcements-heading">Announcements</h2>
+{% panel title="Announcements" heading_id="announcements-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter announcements" q=filter_form.q.value placeholder=filter_form.q.field.widget.attrs.placeholder inline=inline grid="core.announcements" %}
-  {% if page_obj.paginator.count %}
+  {% url 'announcement-create' as create_url %}
+  {% list_results items=page_obj noun="announcements" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No announcements yet" empty_body="Post a notice for the sign-in page or for staff, for example a holiday closure or planned maintenance." action_url=create_url action_label="New announcement" no_results_title="No announcements match these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="core.announcements" data-vr-grid-version="1" aria-labelledby="announcements-heading">
       <thead><tr>
@@ -38,16 +38,8 @@ Withdraw is the one row action; it asks for confirmation and posts to announceme
       </tbody>
     </table>
   </div>
-  {% pagination noun="announcements" filtered=filtered %}
-  {% elif filter_form.errors %}
-  {% empty_state kind="error" title="These filters cannot be applied" body="Correct the highlighted filter above." clear_url=request.path %}
-  {% elif filtered %}
-  {% empty_state kind="no-results" title="No announcements match these filters" body="Change or clear the filters." clear_url=request.path %}
-  {% else %}
-  {% url 'announcement-create' as create_url %}
-  {% empty_state title="No announcements yet" body="Post a notice for the sign-in page or for staff, for example a holiday closure or planned maintenance." action_url=create_url action_label="New announcement" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% for a in page_obj %}{% if a.state != "withdrawn" %}
 {% url 'announcement-withdraw' a.pk as withdraw_url %}
 {% with pk_text=a.pk|stringformat:"s" %}{% with dialog_id="withdraw-"|add:pk_text %}{% confirm_dialog id=dialog_id label="Withdraw announcement" object=a.title action=withdraw_url body="It stops showing everywhere straight away and cannot be shown again or changed. It stays in this list with its history." %}{% endwith %}{% endwith %}

@@ -140,7 +140,7 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
       ]
     }
   ],
@@ -152,6 +152,6 @@
     "storage/services.py",
     "storage/templates/storage/unit_detail.html",
     "storage/templates/storage/_capacity.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }
