@@ -1,9 +1,12 @@
 {% extends "base.html" %}
-{% block page_actions %}{% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:audit-create' %}">New inventory audit</a>{% endif %}{% endblock %}
+{% block page_actions %}
+  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}
+  {% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:audit-create' %}">New inventory audit</a>{% endif %}{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="audits-heading">
   <h2 class="visually-hidden" id="audits-heading">Inventory audits</h2>
   {% include "includes/grid_toolbar.html" with label="Filter inventory audits" q=q inline=inline grid="quality.audits" %}
+  {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.audits" data-vr-grid-version="1" aria-labelledby="audits-heading">
     <thead><tr>

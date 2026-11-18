@@ -129,7 +129,8 @@ Acceptance outcomes:
 16. Staff can audit a box against a frozen expected inventory, record observed contents and
     discrepancies, and retain completed or cancelled audits without changing custody or stock.
     Observations can be entered manually or loaded from the normalized scanner CSV format for
-    one box, then reviewed before completion.
+    one box, then reviewed before completion. Staff can export the six register columns for
+    all matching audits, including each frozen box code and full creation reason.
 17. Staff can report a deviation, record investigation, corrective action and effectiveness
     evidence, and submit it for a separate manager's review. Corrections, returns and reopening
     keep the earlier record and reason without changing inventory or holds. Staff can export the
