@@ -60,6 +60,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Added:** Export the disposal request register (2026-11-18, Disposal requests)
+
+  In Disposal requests, staff can download all matching requests in the selected order. The CSV includes each request’s current state, requester and decision maker.
+
 - **Added:** Export the filtered deviation register (2026-11-18, Deviations)
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.

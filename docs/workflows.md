@@ -239,6 +239,12 @@ Disposal is a request, a decision by a different person, and a recorded act, eac
 The specimen record, its history and its position history remain. A disposed specimen cannot be
 returned, moved or used again; only an annotation can be added.
 
+In **Disposal requests**, all four staff roles can use **Export CSV** to download up to 10,000
+matching requests across pages in the selected order. The file includes the request time in
+UTC, current state, specimen ID, method, destination, requester and decision maker. The
+personal filters use the signed-in account. The export records the account, filters, sort and
+number of rows in the audit trail.
+
 ## Corrections
 
 A correction adds a record with its reason and leaves the original in place. Admin and manager may:

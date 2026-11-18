@@ -56,6 +56,7 @@ NON_PAGE_ROUTES = {
     "storage:catalogue-export",
     "specimens:lookup",
     "specimens:export",
+    "specimens:disposal-export",
     "specimens:label-pdf",
     "specimens:catalogue-export",
     "specimens:import-commit",
