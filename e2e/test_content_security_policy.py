@@ -25,8 +25,10 @@ def assert_no_inline_code(page, html):
     """``html`` is the served markup: script may set style properties through the CSSOM at run
     time (allowed), but the server must not send style attributes or inline handlers."""
     assert not re.search(r"<[^>]+\s(style|on[a-z]+)\s*=", html), "inline style or handler"
-    # json_script data blocks are inert data, not executable script.
-    executable = page.locator('script:not([src]):not([type="application/json"])')
+    # json_script data blocks and the presentation's structured data are inert, not script.
+    executable = page.locator(
+        'script:not([src]):not([type="application/json"]):not([type="application/ld+json"])'
+    )
     assert executable.count() == 0, "inline script element"
     assert page.locator("style").count() == 0, "inline style element"
 

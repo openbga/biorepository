@@ -1,5 +1,6 @@
 """The public brochure is served without intercepting the protected workspace."""
 
+import json
 import re
 from pathlib import Path
 from urllib.parse import urljoin
@@ -63,6 +64,18 @@ def test_presentation_references_exactly_the_assets_it_ships():
         if path.is_file()
     }
     assert referenced == shipped
+
+
+def test_structured_data_parses_and_repeats_the_visible_description():
+    """Search engines read the JSON-LD block; it must parse and state what the page states."""
+    html = (PRESENTATION / "index.html").read_text()
+    (block,) = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)
+    data = json.loads(block)
+    (description,) = re.findall(r'<meta name="description" content="([^"]+)">', html)
+    assert data["@type"] == "SoftwareApplication"
+    assert data["description"] == description
+    assert data["url"] == PUBLISHED_URL
+    assert "aggregateRating" not in data and "review" not in data
 
 
 @pytest.mark.django_db

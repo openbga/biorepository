@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#eef3f6" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0b141a" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
-  <title>OpenBGA Biorepository · Specimen storage, custody and distribution records</title>
+  <title>OpenBGA Biorepository · Free, open-source biorepository management</title>
   <link rel="canonical" href="https://openbga.github.io/biorepository/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="OpenBGA Biorepository">
@@ -25,6 +25,21 @@
   <script src="assets/theme-init.js"></script>
   <link rel="stylesheet" href="assets/site.css">
   <script src="assets/site.js" defer></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "OpenBGA Biorepository",
+    "description": "OpenBGA Biorepository is a free, open-source biorepository management system: where every specimen is, what it is, who handled it and what happened to it. Storage, specimens, custody, equipment records, disposal with approval and distribution to other institutions work today.",
+    "url": "https://openbga.github.io/biorepository/",
+    "applicationCategory": "BusinessApplication",
+    "isAccessibleForFree": true,
+    "offers": {"@type": "Offer", "price": 0, "priceCurrency": "USD"},
+    "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+    "sameAs": ["https://github.com/openbga/biorepository"],
+    "publisher": {"@type": "Organization", "name": "BGASoft", "url": "https://bgasoft.com/"}
+  }
+  </script>
 </head>
 <body>
   <!-- Bootstrap Icons 1.13.2 (MIT), the symbols this page uses, copied verbatim from static/img/icons.svg -->
@@ -263,9 +278,11 @@ docker compose --profile app exec -e DEMO_PASSWORD web \
         <div>
           <h2 id="project-title">Meet the project.</h2>
           <p>OpenBGA Biorepository is maintained in <a href="https://github.com/openbga/biorepository">openbga/biorepository</a>. It uses Django and PostgreSQL, with a browser-based workspace for repository staff.</p>
+          <p>There is no license fee and no per-user or per-module pricing. The source is published under AGPL-3.0-only, so anyone may use, study, change and share it under that license. BGASoft offers optional paid hosting, support, implementation and validation.</p>
           <p>It is in development. Use synthetic data only. OpenBGA Biorepository supports a repository's own records and quality system; it does not certify compliance or accreditation.</p>
           <p class="links">
             <a class="text-link" href="roadmap/">See the roadmap</a>
+            <a class="text-link" href="https://bgasoft.com/openbga/">OpenBGA at BGASoft</a>
           </p>
         </div>
         <aside class="support" aria-label="Support">
