@@ -69,7 +69,7 @@ Names fixed before the first migration and deployment:
 | Disposal approval (Environmental LIMS `authorize_release`) | permission `accounts.approve_disposal`, granted per person |
 | Request logger (Environmental LIMS `roots.request`) | `vapor.request` |
 | CSS/JS prefix | `vr-` kept, so platform files stay comparable with Environmental LIMS |
-| Theme | Re-skinned through the color tokens only; new mark and sign-in scene |
+| Theme | Own visual direction (Cryo, 2026-11-18): own tokens, fonts (Geologica, Martian Mono), mark and shell; component markup and class names stay shared |
 | Specimen ID | `VP-` and six or more digits from a PostgreSQL sequence |
 
 Intentional divergences from Environmental LIMS (keep this list current):
@@ -89,8 +89,11 @@ Intentional divergences from Environmental LIMS (keep this list current):
 - The `action_label` history filter is `core/templatetags/history.py` (Environmental LIMS
   `laboratory_extras`).
 - Error pages choose the shell by `user.is_authenticated` (Environmental LIMS also chose the portal).
-- The top bar is navy in both themes, set through the color tokens.
-- Chart.js and Tom Select are not vendored, and `core/widgets.py` (the list-or-other and
+- Shell (2026-11-18): a light top bar with section menus (`includes/nav_staff.html` renders the
+  navigation groups as disclosure menus) and a storage path bar (`includes/storage_path.html`)
+  replace Environmental LIMS's sidebar. The `<nav>` keeps the `vr-sidenav` and `vr-navlink` classes,
+  which tests address. There is no collapsed-navigation preference and no `static/js/sidebar.js`.
+- Chart.js is not vendored, and `core/widgets.py` (the list-or-other and
   suggestion inputs) with its widget templates is not carried over: no OpenBGA Biorepository page uses them.
   `static/css/app.css` drops their styles and the Environmental LIMS domain styles (quote documents,
   requested-test pickers, container rows, the labels menu). The `.tomselect` branches in
@@ -101,6 +104,13 @@ Intentional divergences from Environmental LIMS (keep this list current):
   `laboratory` records.
 - `static/js/form-dialog.js` refreshes shared row-selection counts after restoring controls from
   their temporary loading state; `static/js/app.js` exposes the existing initializer for that call.
+- Component registry (`core/templatetags/ui.py`, 2026-11-18): no `matrix_tag` (domain);
+  `grid_toolbar` derives its errors and chips so it also runs on pages without a filter form;
+  `history_panel` loads `history` instead of `laboratory_extras`; component wording says
+  "repository" (required-fields note, date-field zone label). `tests/test_include_isolation.py`
+  covers every registered component, and `tests/test_ui_standards.py` also counts
+  `{% post_button variant="primary" %}` as a primary action.
+- `_event_extra.html` history extras emit block lines inside the item's `.vr-timeline-meta`.
 - `core/grids.py` exposes the sorted queryset before pagination so the training register
   and its CSV share the same ordering, including ties.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
