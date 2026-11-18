@@ -32,7 +32,8 @@ compliance or accreditation.
   different person who holds the approval permission, and a recorded act that frees the position
   and keeps the record. Staff can export the filtered disposal request register to CSV.
 - **Throughput:** Code 128 label PDFs, scan-to-lookup in the top bar, CSV import with a validation
-  pass before anything is committed, filters, sorting, pagination and CSV export.
+  pass before anything is committed, filters, sorting, pagination and CSV export. Operators can
+  download the specimen import register to review file states and validation counts.
 - **Equipment:** a register of the tanks, freezers, monitors and supply dewars that hold or watch
   the specimens, tied to their storage units; service events (maintenance, calibration, repair,
   mapping, qualification) with due dates the repository enters; an LN2 level and fill log;

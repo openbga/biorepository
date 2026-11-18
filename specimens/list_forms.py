@@ -8,6 +8,8 @@ import uuid
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Func, IntegerField
+from django.db.models.functions import Coalesce
 
 from accounts.roles import can_approve_disposal
 from core.grids import GridRequest
@@ -20,6 +22,7 @@ from .models import (
     NO_IDENTIFYING_TEXT,
     Collection,
     DisposalRequest,
+    ImportBatch,
     Participant,
     QuantityUnit,
     Specimen,
@@ -174,6 +177,45 @@ def disposal_selection(actor, params):
         else DisposalRequest.objects.none()
     )
     return grid, form, grid.ordered(rows, DISPOSAL_COLUMNS)
+
+
+IMPORT_COLUMNS = {"recorded_at": "recorded_at", "filename": "filename", "rows": "row_count"}
+
+
+def import_selection(params):
+    """One selection for the register and CSV, without loading the uploaded specimen rows."""
+    grid = GridRequest.parse(params, IMPORT_COLUMNS, "-recorded_at")
+    form = ListFilter(params)
+    form.fields["q"].widget.attrs["placeholder"] = "File name"
+    if set(params) - (form.fields.keys() | {"page"}):
+        form.add_error(None, "This filter is unavailable. Clear the filters and try again.")
+    if params.get("sort", grid.sort) != grid.sort:
+        form.add_error(None, "Choose Import, Rows or Validated to sort.")
+    rows = (
+        ImportBatch.objects.select_related("actor", "commit")
+        .only(
+            "filename",
+            "row_count",
+            "recorded_at",
+            "expires_at",
+            "actor__first_name",
+            "actor__last_name",
+            "actor__username",
+            "commit__id",
+        )
+        .annotate(
+            error_total=Coalesce(
+                "error_count",
+                Func("errors", function="jsonb_array_length"),
+                output_field=IntegerField(),
+            )
+        )
+    )
+    if not form.is_valid():
+        rows = rows.none()
+    elif grid.query:
+        rows = rows.filter(filename__icontains=grid.query)
+    return grid, form, grid.ordered(rows, IMPORT_COLUMNS)
 
 
 class CatalogueFilter(ListFilter):

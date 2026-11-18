@@ -73,6 +73,10 @@ The same list is shown in the application under What's new.
   Staff can download the audits matching a search or status filter in the selected sort order.
   The CSV includes the frozen box code and full creation reason for every matching audit.
 
+- **Added:** Export the specimen import register (2026-11-18, Imports)
+
+  Use Export CSV on the Imports page to download the state, row and error counts, and validation details for each file matching your search. The download follows your selected sort order across all pages.
+
 - **Added:** Export the training register to CSV (2026-11-17, Training records)
 
   On Training records, use Export CSV to download assignments and renewal dates across all matching pages. The file follows the filters and sort order you applied.

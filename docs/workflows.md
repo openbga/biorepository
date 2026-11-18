@@ -269,6 +269,10 @@ or none. A validated batch expires after 24 hours and commits at most once; comm
 the first result. Only existing coded participants, collections, types and units are accepted. The
 placement time is the commit time and the collection and processing times are as supplied.
 
+In **Imports**, administrators, managers and technicians can export the six summary columns for
+up to 10,000 matching validations across pages. The download uses the applied file-name search
+and sort order. Open an individual import to inspect its specimen rows and validation messages.
+
 ## Labels, lookup and exports
 
 **Labels** are a PDF with one label per page: the specimen ID in text and as a Code 128 barcode,
