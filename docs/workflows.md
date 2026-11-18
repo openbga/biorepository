@@ -477,6 +477,11 @@ and specimens; catalogue saves do not.
 
 ## Inventory audits
 
+To review audits across boxes, open Inventory audits, apply a search or status filter, choose
+the sort order and select **Export CSV**. The file gives the frozen box code, status, creation
+time, creator and full reason for each audit number. Open that number in the register to see the
+position snapshot and any observations or discrepancies.
+
 Inventory audits compare a box with a saved expected inventory. Operators record every position
 as empty or with the identifier they observe, including identifiers the system does not know.
 Discrepancies require an explanation. A completed audit is evidence of the check, not a change to

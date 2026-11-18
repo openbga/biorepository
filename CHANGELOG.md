@@ -84,6 +84,11 @@ The same list is shown in the application under What's new.
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
 
+- **Added:** Export the inventory audit register (2026-11-18, Inventory audits)
+
+  Staff can download the audits matching a search or status filter in the selected sort order.
+  The CSV includes the frozen box code and full creation reason for every matching audit.
+
 - **Changed:** Lists remember your columns, rows per page and sort on any workstation (2026-11-18)
 
   List column layouts, rows per page and sort are remembered for each user on the server, so they follow you to any workstation and the next person at a shared one starts from the defaults. On narrower screens, less important columns start hidden; Columns brings them back.

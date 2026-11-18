@@ -46,7 +46,8 @@ compliance or accreditation.
   manually or load a normalized scanner CSV for review, and retain discrepancies with an
   explanation. Completed and cancelled audits remain on record; an audit never changes specimen
   locations. CSV import uses the project format, one box at a time; device-specific formats
-  require conversion.
+  require conversion. Staff can export the filtered inventory audit register with the full
+  creation reason for each audit.
 - **Deviations:** report an issue, record investigation, corrective action and effectiveness
   evidence, then submit for a separate manager's review. Optional links connect a report to an
   excursion or inventory audit. Corrections, returns and reopening retain the earlier values and

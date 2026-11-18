@@ -46,6 +46,7 @@ NON_PAGE_ROUTES = {
     "specimens:import-commit": "POST action on the import page",
     "specimens:import-template": "CSV template download from the import upload form",
     "equipment:attachment": "File download from the equipment and excursion pages",
+    "quality:audit-export": "CSV download from the inventory audit register",
     "quality:deviation-export": "CSV download from the deviation register",
     "quality:training-export": "CSV download from the training register",
     "equipment:export": "CSV download from the equipment lists",

@@ -1,21 +1,20 @@
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.db.models import Q
-from django.http import Http404, HttpResponseBadRequest
+from django.http import FileResponse, Http404, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from accounts.roles import has_role, staff_role_required
-from core.grids import GridRequest, active_filters
+from core.grids import active_filters
 from core.models import AuditEvent
 
-from . import services
+from . import audit_exports, services
+from .audit_lists import COLUMNS, applied_filters, audit_selection
 from .forms import (
     AuditCreateForm,
     CancelForm,
     CompleteForm,
-    FilterForm,
     ScannerUploadForm,
     apply_errors,
 )
@@ -25,33 +24,24 @@ from .models import InventoryAudit
 @staff_role_required(*services.READ_ROLES)
 @require_GET
 def audit_list(request):
-    columns = {"number": "pk", "box": "box_code", "created": "created_at"}
     try:
-        grid = GridRequest.parse(request.GET, columns, "-created")
+        grid, form, rows = audit_selection(actor=request.user, params=request.GET)
     except ValueError as exc:
         return HttpResponseBadRequest(str(exc))
-    form = FilterForm(request.GET)
-    rows = services.audits(actor=request.user)
-    if form.is_valid():
-        status = form.cleaned_data["status"]
-        if status == "open":
-            rows = rows.filter(finalization__isnull=True)
-        elif status:
-            rows = rows.filter(finalization__outcome=status)
-    else:
-        rows = rows.none()
-    if grid.query:
-        query = Q(box_code__icontains=grid.query) | Q(reason__icontains=grid.query)
-        number = grid.query.upper().removeprefix("AUD-")
-        if number.isdecimal() and len(number) <= 15:
-            query |= Q(pk=int(number))
-        rows = rows.filter(query)
+    page = grid.page(rows, COLUMNS)
+    over_limit = page.paginator.count > audit_exports.EXPORT_CAP
+    export_url = None
+    if form.is_valid() and not over_limit:
+        selection = {**applied_filters(grid, form), "sort": grid.sort}
+        export_url = reverse("quality:audit-export", query=selection)
     return render(
         request,
         "quality/audit_list.html",
         {
             "page_title": "Inventory audits",
-            "page_obj": grid.page(rows, columns),
+            "page_obj": page,
+            "export_url": export_url,
+            "exceeded_export_limit": f"{audit_exports.EXPORT_CAP:,}" if over_limit else "",
             "filter_form": form,
             "inline": [form["status"]],
             "q": grid.query,
@@ -62,6 +52,25 @@ def audit_list(request):
             "noun": "audits",
         },
     )
+
+
+@staff_role_required(*services.READ_ROLES)
+@require_GET
+def audit_export(request):
+    try:
+        content = audit_exports.export_audits(actor=request.user, params=request.GET)
+    except ValidationError as exc:
+        return HttpResponseBadRequest(
+            " ".join(exc.messages), content_type="text/plain; charset=utf-8"
+        )
+    response = FileResponse(
+        content,
+        as_attachment=True,
+        filename="inventory-audits.csv",
+        content_type="text/csv; charset=utf-8",
+    )
+    response["Cache-Control"] = "no-store"
+    return response
 
 
 def _audit(request, pk):

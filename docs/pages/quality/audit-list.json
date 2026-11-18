@@ -86,6 +86,14 @@
       ]
     },
     {
+      "title": "Export CSV",
+      "paragraphs": [
+        "All four staff roles can download the register. Apply a search or status filter, choose the sort order, then select Export CSV. The download includes all six columns across every matching page, even if some columns are hidden on screen.",
+        "The UTF-8 file includes the frozen box code, the full creation reason and the creation time with its local UTC offset. Text starting with a spreadsheet formula character is prefixed with an apostrophe. Open an audit number in the register for its position snapshot, observations and discrepancy details.",
+        "If more than 10,000 audits match, narrow the selection. Correct invalid filters before exporting. An empty selection downloads just the headings. Each download records your account, the applied search and status, the sort order and the number of exported rows in the audit trail."
+      ]
+    },
+    {
       "title": "Empty and error states",
       "paragraphs": [
         "An empty list offers New inventory audit to operators. No results invites you to change or clear filters. Invalid filters explain what to correct."
@@ -99,6 +107,9 @@
     "quality/models.py",
     "quality/services.py",
     "quality/tests/test_audits.py",
-    "templates/quality/audit_list.html"
+    "templates/quality/audit_list.html",
+    "quality/audit_lists.py",
+    "quality/audit_exports.py",
+    "quality/tests/test_audit_export.py"
   ]
 }

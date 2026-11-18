@@ -1,8 +1,11 @@
 {% extends "base.html" %}{% load ui %}
-{% block page_actions %}{% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:audit-create' %}">New inventory audit</a>{% endif %}{% endblock %}
+{% block page_actions %}
+  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}
+  {% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:audit-create' %}">New inventory audit</a>{% endif %}{% endblock %}
 {% block content %}
 {% panel title="Inventory audits" heading_id="audits-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter inventory audits" q=q inline=inline grid="quality.audits" %}
+  {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% if can_operate %}{% url 'quality:audit-create' as create_url %}{% endif %}
   {% list_results items=page_obj noun="audits" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No inventory audits yet" empty_body="Compare a box's physical contents with a frozen inventory snapshot. Discrepancies remain evidence for review." action_url=create_url action_label="New inventory audit" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.audits" data-vr-grid-version="1" aria-labelledby="audits-heading">

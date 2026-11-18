@@ -1,9 +1,12 @@
 """Manual observations retain discrepancies without changing the specimen's recorded position."""
 
+import csv
+import io
 import re
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from helpers import field, native_select, nav, pick, sign_in, sign_out
+from helpers import field, native_select, nav, pick, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
 from specimens.tests import conftest as specimen_fixtures
@@ -20,7 +23,9 @@ def dialog(page):
     return form
 
 
-def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(page, people, world):
+def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(
+    page, people, world, tmp_path
+):
     from quality.models import InventoryAudit
 
     specimen = register(people["technician"], world, position=world.position("A1"))
@@ -73,4 +78,27 @@ def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(pag
     expect(page.locator("main")).to_contain_text("EXAMPLE-UNKNOWN-001")
     expect(page.get_by_role("link", name="Complete audit", exact=True)).to_have_count(0)
     expect(page.get_by_role("link", name="Cancel audit", exact=True)).to_have_count(0)
+    page.get_by_role("link", name="Inventory audits", exact=True).first.click()
+    toolbar = page.get_by_role("search", name="Filter inventory audits")
+    search = toolbar.get_by_role("searchbox")
+    search.fill("Synthetic scheduled")
+    toolbar.locator('[name="status"]').select_option("completed")
+    toolbar.get_by_role("button", name="Apply", exact=True).click()
+    page.get_by_role("link", name="Audit", exact=True).click()
+    expect(page.get_by_role("link", name=audit.number, exact=True)).to_be_visible()
+
+    search.fill("Unsaved synthetic search")
+    export = page.get_by_role("link", name="Export CSV", exact=True)
+    assert parse_qs(urlsplit(export.get_attribute("href")).query) == {
+        "q": ["Synthetic scheduled"],
+        "status": ["completed"],
+        "sort": ["number"],
+    }
+    download = save_download(page, export.click, tmp_path / "inventory-audits.csv")
+    records = csv.DictReader(io.StringIO(download.decode(), newline=""))
+    assert [(record["Audit"], record["Status"]) for record in records] == [
+        (audit.number, "Completed"),
+    ]
+    page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
+    expect(help_panel.get_by_role("heading", name="Export CSV", exact=True)).to_be_visible()
     assert page.console_errors == []
