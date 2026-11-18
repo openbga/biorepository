@@ -5,7 +5,7 @@ Context: deviation, toc, can_operate, can_manage, can_review, history [(event, c
 {% endcomment %}
 {% block page_kind %}record{% endblock %}
 {% block breadcrumbs %}{% url 'quality:deviation-list' as list_url %}{% breadcrumbs section="Deviations" section_url=list_url current=deviation.number %}{% endblock %}
-{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/_deviation_status.html" with status=deviation.status %}{% endmeta_item %}{% meta_item label="Revision" value=deviation.revision %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/_deviation_status.html" with status=deviation.status %}{% endmeta_item %}{% meta_item label="Occurred" class="vr-id" %}<time datetime="{{ deviation.occurred_at|date:'c' }}">{{ deviation.occurred_at|date:"Y-m-d H:i" }}</time>{% endmeta_item %}{% if deviation.excursion %}{% meta_item label="Excursion" class="vr-id" %}<a href="{% url 'equipment:excursion-detail' deviation.excursion_id %}">{{ deviation.excursion.number }}</a>{% endmeta_item %}{% endif %}{% if deviation.inventory_audit %}{% meta_item label="Inventory audit" class="vr-id" %}<a href="{% url 'quality:audit-detail' deviation.inventory_audit_id %}">{{ deviation.inventory_audit.number }}</a>{% endmeta_item %}{% endif %}{% meta_item label="Revision" value=deviation.revision %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if can_operate and deviation.status == 'open' %}
 <a class="btn btn-outline-secondary" href="{% url 'quality:deviation-edit' deviation.pk %}">Edit</a>

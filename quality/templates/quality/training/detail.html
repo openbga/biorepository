@@ -5,7 +5,7 @@ Context: training, toc, can_manage, history [(event, changes)].
 {% endcomment %}
 {% block page_kind %}record{% endblock %}
 {% block breadcrumbs %}{% url 'quality:training-list' as list_url %}{% breadcrumbs section="Training records" section_url=list_url current=training.number %}{% endblock %}
-{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/training/_status.html" with status=training.status %}{% endmeta_item %}{% meta_item label="Topic" value=training.topic %}{% meta_item label="Revision" value=training.revision %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/training/_status.html" with status=training.status %}{% endmeta_item %}{% meta_item label="Topic" value=training.topic %}{% meta_item label="Trainee" value=training.trainee.get_full_name|default:training.trainee.username %}{% meta_item label="Due" class="vr-id" %}{% if training.due_on %}<time datetime="{{ training.due_on|date:'Y-m-d' }}">{{ training.due_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}{% endmeta_item %}{% meta_item label="Revision" value=training.revision %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if can_manage %}
   {% if training.status != "cancelled" %}<a class="btn btn-outline-danger" href="{% url 'quality:training-cancel' training.pk %}">Cancel training record</a>{% endif %}

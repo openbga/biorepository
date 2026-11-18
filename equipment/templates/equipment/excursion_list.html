@@ -28,7 +28,7 @@
           <td><a class="vr-id" href="{% url 'equipment:equipment-detail' row.equipment_id %}">{{ row.equipment.code }}</a></td>
           <td>{% if row.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' row.storage_unit_id %}">{{ row.storage_unit.code }}</a>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td class="vr-nowrap"><time datetime="{{ row.started_at|date:'c' }}">{{ row.started_at|date:"Y-m-d H:i" }}</time></td>
-          <td class="vr-nowrap">{% if row.ended_at %}<time datetime="{{ row.ended_at|date:'c' }}">{{ row.ended_at|date:"Y-m-d H:i" }}</time>{% else %}Ongoing{% endif %}</td>
+          <td class="vr-nowrap">{% if row.ended_at %}<time datetime="{{ row.ended_at|date:'c' }}">{{ row.ended_at|date:"Y-m-d H:i" }}</time>{% else %}{% clock value=row.started_at|timesince running=True tone="neutral" label="Ongoing for" %}{% endif %}</td>
           <td class="text-end vr-id">{% if row.extreme_value is not None %}<span class="vr-tone" data-tone="danger">{{ row.extreme_value }}</span>{% if row.storage_unit %} <span class="vr-muted">nominal {{ row.storage_unit.nominal_temperature }}</span>{% endif %}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td>{{ row.get_cause_category_display }}</td>
         </tr>

@@ -29,7 +29,7 @@ def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(pag
     nav(page, "Inventory audits")
     page.get_by_role("link", name="New inventory audit", exact=True).first.click()
     form = dialog(page)
-    pick(field(form, "Box"), str(world.box.pk))
+    pick(field(form, "Box"), label=world.box.code)  # a remote select: search, then choose
     field(form, "Reason for the audit").fill("Synthetic scheduled box check")
     form.get_by_role("button", name="Create audit", exact=True).click()
     expect(page.get_by_role("heading", level=1)).to_have_text(re.compile(r"AUD-\d+"))

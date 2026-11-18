@@ -1676,6 +1676,7 @@ a.vr-path-seg:hover {
 }
 
 .vr-census {
+  position: relative; /* contains its visually hidden labels, so they scroll with it */
   display: flex;
   flex: 1;
   gap: 0.5rem;
@@ -1795,6 +1796,35 @@ a.vr-path-seg:hover {
 
   .vr-trail > li + li::before {
     margin: 0 0.25rem 0 0.125rem;
+  }
+}
+
+/* Phones: the trail keeps the storage unit (with its temperature) and the current or freed level;
+   the levels between stay one tap away on the record and in its Location fact. */
+@media (max-width: 575.98px) {
+  .vr-path-seg {
+    white-space: nowrap;
+  }
+
+  .vr-trail > li:not(:has(.is-cold, .is-here, .is-freed)) {
+    display: none;
+  }
+
+  .vr-trail > li:has(.is-cold) + li::before,
+  .vr-trail > li:has(.is-cold)::before {
+    content: none;
+  }
+
+  .vr-trail > li:has(.is-cold) ~ li:is(:has(.is-here), :has(.is-freed))::before {
+    content: "";
+  }
+
+  /* It may wrap to two lines here, so it scrolls away with the page instead of staying under the
+     top bar. */
+  .vr-pathbar {
+    position: static;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 }
 
@@ -2277,6 +2307,7 @@ a.vr-path-seg:hover {
 }
 
 .vr-table-wrap {
+  position: relative; /* contains visually hidden text in cells, so it scrolls with the table */
   overflow-x: auto;
   scroll-padding-inline-start: 8rem; /* Clear the sticky row identifier on keyboard focus. */
 }
@@ -3724,6 +3755,7 @@ time.vr-timeline-meta {
    free an open ring whose label shows on hover and focus, blocked a hatched danger ring; the hidden
    text and the key name the state, so the shape and fill are never the only cue. */
 .vr-boxmap-wrap {
+  position: relative; /* contains the cells' visually hidden state text */
   overflow-x: auto;
   padding: 0.75rem 1rem;
   border-radius: var(--vr-radius-xl);

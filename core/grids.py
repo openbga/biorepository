@@ -63,6 +63,8 @@ def active_filters(request, form):
         params = request.GET.copy()
         params.pop(name, None)
         params.pop("page", None)
+        for saved in getattr(request, "vr_saved_params", ()):
+            params.pop(saved, None)  # added from the user's saved settings; re-added on arrival
         chips.append(
             {"label": label, "value": str(display), "remove_url": "?" + params.urlencode()}
         )

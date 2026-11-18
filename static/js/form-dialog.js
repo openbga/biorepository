@@ -592,10 +592,24 @@
       content.replaceChildren();
       clearPageActions();
       setBackgroundInert(false);
-      if (opener && opener.isConnected) {
-        opener.focus();
-      }
+      returnFocus(opener);
     });
+
+    // Focus goes back to what opened the form. An item of a menu that has closed meanwhile (the
+    // header's More) is hidden, so its menu's toggle takes the focus instead.
+    function returnFocus(target) {
+      if (!target || !target.isConnected) {
+        return;
+      }
+      var menu = target.closest(".dropdown-menu");
+      if (menu && !menu.classList.contains("show")) {
+        var toggle = menu.parentElement && menu.parentElement.querySelector('[data-bs-toggle="dropdown"]');
+        if (toggle) {
+          target = toggle;
+        }
+      }
+      target.focus();
+    }
     element.addEventListener("shown.bs.modal", function () {
       shown = true;
       finishReady();

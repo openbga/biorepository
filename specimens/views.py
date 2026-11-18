@@ -23,6 +23,8 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from accounts.roles import can_approve_disposal, has_role, staff_role_required
 from core.grids import GridRequest, active_filters
 from core.models import AuditEvent
+from storage import pathbar
+from storage import queries as storage_queries
 from storage.forms import apply_errors
 
 from . import exports, importing, labels, queries, services
@@ -117,6 +119,20 @@ def _list_url(request):
 
 
 # --- specimens ------------------------------------------------------------------------------
+
+
+def _storage_path(user, specimen, location, checkout):
+    """The path bar: down to the position it is in, or, while it is checked out, the position it
+    left (shown freed). Nothing for a specimen never stored, distributed or disposed."""
+    if location:
+        return pathbar.levels(location)
+    if checkout is None:
+        return []
+    moves = storage_queries.movement_history(actor=user, occupancy_id=specimen.occupancy_id)
+    last = moves[len(moves) - 1] if moves else None
+    if last is None or last.event.kind != "check_out" or not last.from_path:
+        return []
+    return pathbar.levels(last.from_path, freed=True)
 
 
 @staff_role_required(*READ)
@@ -408,6 +424,10 @@ def specimen_detail(request, pk):
             "page_title": specimen.accession,
             "specimen": specimen,
             "location": location,
+            "storage_path": _storage_path(user, specimen, location, checkout),
+            "out_of_storage": {"duration": queries.format_duration(timeout.total)}
+            if timeout.open
+            else None,
             "state": state,
             # Equipment is optional: its excursion list filters by the specimens it captured.
             "excursions_url": reverse("equipment:excursion-list")

@@ -70,8 +70,15 @@ def test_every_lookup_refuses_users_without_an_active_role(client, staff, db, na
     former.save()
     client.force_login(former)
     assert lookup(client, name).status_code in (302, 403)
-    client.force_login(staff("reader", "viewer"))
+    client.force_login(staff("operator", "technician"))
     assert lookup(client, name).status_code == 200
+
+
+def test_audit_boxes_follow_the_audit_permission(client, staff, db):
+    """The box picker of a new inventory audit offers boxes only to those who may audit."""
+    client.force_login(staff("reader", "viewer"))
+    assert lookup(client, "audit-boxes").status_code == 403
+    assert lookup(client, "active-participants").status_code == 200
 
 
 def test_unknown_lookup_and_method(client, staff, db):

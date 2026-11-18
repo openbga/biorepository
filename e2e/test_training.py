@@ -11,6 +11,7 @@ from django.utils import timezone
 from helpers import field, nav, pick, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
+from core.lookups import staff_label
 from specimens.tests import conftest as specimen_fixtures
 from specimens.tests.conftest import PASSWORD
 
@@ -33,7 +34,7 @@ def test_training_record_completion_correction_cancellation_and_read_only(page, 
     expect(page.locator("main")).to_contain_text("No training records yet")
     page.get_by_role("link", name="New training record", exact=True).first.click()
     form = ready_dialog(page)
-    pick(field(form, "Trainee"), str(people["technician"].pk))
+    pick(field(form, "Trainee"), label=staff_label(people["technician"]))  # a remote select
     field(form, "Topic").fill("Synthetic LN2 observation training")
     field(form, "Procedure / version reference").fill("SYN-LN2 v1")
     field(form, "Assignment due").fill("2026-01-02")

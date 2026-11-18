@@ -93,11 +93,11 @@
         },
         {
           "label": "Started, Ended",
-          "description": "Times; Ongoing while there is no end time."
+          "description": "Times. While there is no end time, Ended shows a running grey clock with how long the excursion has been going on."
         },
         {
           "label": "Extreme (°C)",
-          "description": "The extreme temperature recorded, if any."
+          "description": "The extreme temperature recorded, if any, in red, with the storage unit's nominal temperature muted beside it."
         },
         {
           "label": "Cause",

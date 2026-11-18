@@ -14,6 +14,10 @@ The same list is shown in the application under What's new.
 
   The sidebar is replaced by a light top bar: each section (Specimens, Distribution, Storage, Equipment, Quality, Setup) opens a menu of its pages, and the repository name shows beside the product name. New type and colours run through the application in light and dark themes, with a new sign-in illustration and icon.
 
+- **Changed:** Every form opens in a dialog over the page it belongs to (2026-11-18)
+
+  Every form now opens in a dialog over the page you opened it from, including password and two-factor changes; a form opened by its address opens over its record or list. A new Password page shows whether a password is set. Leaving a form with unsaved changes asks in a pop-up.
+
 - **Added:** Escalate a withdrawal to destruction while keeping its holds (2026-11-17, Consent records)
 
   Managers can escalate an active no-further-use withdrawal to destruction from its consent record. Consent stays withdrawn and its existing holds remain in place; the original instruction and escalation remain visible in history. Disposal still requires an ordinary request and a different person's approval.

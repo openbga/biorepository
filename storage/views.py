@@ -18,7 +18,7 @@ from accounts.roles import has_role, require_role, staff_role_required
 from core.grids import GridRequest, active_filters
 from core.models import AuditEvent
 
-from . import exports, lists, queries, recipes, services
+from . import exports, lists, pathbar, queries, recipes, services
 from .forms import (
     BlockForm,
     BoxForm,
@@ -274,6 +274,7 @@ def overview(request):
         request,
         "storage/overview.html",
         {
+            "storage_census": pathbar.census(actor=request.user),
             "page_title": "Storage overview",
             "units": units,
             "totals": totals,
@@ -368,6 +369,7 @@ def site_detail(request, pk):
         request,
         "storage/site_detail.html",
         {
+            "storage_path": pathbar.for_record(actor=request.user, site=site),
             "page_title": site.code,
             "site": site,
             "rooms": rooms,
@@ -440,6 +442,7 @@ def room_detail(request, pk):
         request,
         "storage/room_detail.html",
         {
+            "storage_path": pathbar.for_record(actor=request.user, room=room),
             "page_title": f"{room.site.code} / {room.code}",
             "room": room,
             "units": units,
@@ -516,6 +519,7 @@ def unit_detail(request, pk):
         request,
         "storage/unit_detail.html",
         {
+            "storage_path": pathbar.for_record(actor=request.user, unit=unit),
             "page_title": unit.code,
             "unit": unit,
             "nodes": nodes,
@@ -612,6 +616,7 @@ def node_detail(request, pk):
         request,
         "storage/node_detail.html",
         {
+            "storage_path": pathbar.for_record(actor=request.user, node=node),
             "page_title": node.code,
             "node": node,
             "chain": chain,
@@ -732,6 +737,7 @@ def box_detail(request, pk):
         request,
         "storage/box_detail.html",
         {
+            "storage_path": pathbar.for_record(actor=request.user, box=box),
             "page_title": box.code,
             "box": box,
             "chain": chain,

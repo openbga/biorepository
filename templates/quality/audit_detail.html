@@ -7,7 +7,7 @@ observation), toc, stale, can_operate, history (AuditEvents, oldest first).
 {% endcomment %}
 {% block page_kind %}record{% endblock %}
 {% block breadcrumbs %}{% url 'quality:audit-list' as list_url %}{% breadcrumbs section="Inventory audits" section_url=list_url current=audit.number %}{% endblock %}
-{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/_status.html" with status=audit.status %}{% endmeta_item %}{% meta_item label="Box" class="vr-id" %}<a href="{% url 'storage:box-detail' audit.box_id %}">{{ audit.box_code }}</a>{% endmeta_item %}{% endpage_meta %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/_status.html" with status=audit.status %}{% endmeta_item %}{% meta_item label="Box" class="vr-id" %}<a href="{% url 'storage:box-detail' audit.box_id %}">{{ audit.box_code }}</a>{% endmeta_item %}{% meta_item label="Positions" value=rows|length class="vr-id" %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if can_operate %}
   {% if audit.status == 'open' %}
@@ -50,7 +50,7 @@ observation), toc, stale, can_operate, history (AuditEvents, oldest first).
   <div class="vr-table-wrap"><table class="table vr-table" data-vr-grid="quality.positions" data-vr-grid-version="1" aria-labelledby="positions-heading">
     <thead><tr><th scope="col" data-vr-col="position" data-vr-col-locked="true">Position</th><th scope="col" data-vr-col="expected">Expected accession</th><th scope="col" data-vr-col="blocked">Blocked at snapshot</th><th scope="col" data-vr-col="observed">Observed accession</th><th scope="col" data-vr-col="result">Result</th></tr></thead>
     <tbody>
-      {% for row in rows %}<tr><th scope="row" class="vr-id">{{ row.label }}</th><td class="vr-id">{{ row.expected|default:"Empty" }}</td><td>{% if row.blocked %}Yes: {{ row.block_reason }}{% else %}No{% endif %}</td><td class="vr-id">{% if final.outcome == 'completed' %}{{ row.observed|default:"Empty" }}{% else %}Not observed{% endif %}</td><td>{{ row.result|default:"Not recorded"|capfirst }}</td></tr>{% endfor %}
+      {% for row in rows %}<tr><th scope="row" class="vr-id">{{ row.label }}</th><td>{% if row.expected %}<span class="vr-id">{{ row.expected }}</span>{% else %}Empty{% endif %}</td><td>{% if row.blocked %}Yes: {{ row.block_reason }}{% else %}No{% endif %}</td><td>{% if final.outcome == 'completed' %}{% if row.observed %}<span class="vr-id">{{ row.observed }}</span>{% else %}Empty{% endif %}{% else %}Not observed{% endif %}</td><td>{{ row.result|default:"Not recorded"|capfirst }}</td></tr>{% endfor %}
     </tbody>
   </table></div>
 {% endpanel %}

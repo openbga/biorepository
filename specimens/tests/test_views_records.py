@@ -330,3 +330,22 @@ def test_label_pdf_download(client, people, specimens):
     assert response["Content-Disposition"].startswith('inline; filename="labels-')
     response = client.get(reverse("specimens:label-pdf"))
     assert response.url == reverse("specimens:label-preview")
+
+
+def test_record_path_bar_names_the_position_or_the_one_it_left(client, people, specimens):
+    login(client, people["viewer"])
+    url = lambda s: reverse("specimens:specimen-detail", args=[s.pk])  # noqa: E731
+    stored = client.get(url(specimens["stored"])).context
+    levels = stored["storage_path"]
+    assert [level["kind"] for level in levels][:2] == ["Site", "Room"]
+    assert levels[-1]["kind"] == "Position" and levels[-1]["code"] == "A1"
+    assert levels[-1]["here"] and not levels[-1]["url"]
+    assert any(level.get("cold") and level["temp"].endswith("°C") for level in levels)
+    assert stored["out_of_storage"] is None
+    out = client.get(url(specimens["out"])).context
+    assert out["storage_path"][-1]["code"] == "A2" and out["storage_path"][-1]["freed"]
+    assert not out["storage_path"][-1]["here"]
+    assert out["out_of_storage"]["duration"]
+    assert client.get(url(specimens["loose"])).context["storage_path"] == []
+    page = client.get(url(specimens["out"])).content.decode()
+    assert 'class="vr-pathbar"' in page and "free while out" in page

@@ -3,41 +3,38 @@
 // Django renders rows, sort links, filters, counts and pagination. This file only lets a user hide,
 // show and reorder columns of <table data-vr-grid="app.list" data-vr-grid-version="1"> whose header
 // cells carry data-vr-col="id" (plus data-vr-col-locked / data-vr-col-hidden). The layout is saved
-// as column IDs in localStorage "vr-grid:<user>:<grid>:v<version>"; no row, filter or sort data.
+// per user on the server as column IDs, preference "grid:<grid>:v<version>" (static/js/
+// preferences.js, core/preferences.py); no row, filter or sort data. Page size and sort are kept
+// by the server itself (core.preferences.GridPreferenceMiddleware).
 // The shared Columns dialog (#vr-columns-dialog) lives in base.html.
+//
+// Column priority: a header with data-vr-col-priority="low" is hidden by default on screens
+// narrower than 1366px, so names keep their room on a laptop. It is a default only: the user can
+// show it in Columns, and a saved layout always wins. Until a layout is saved, the defaults follow
+// the screen width.
 (function () {
   "use strict";
 
   var grids = {};
+  var narrow = window.matchMedia ? window.matchMedia("(max-width: 1365.98px)") : null;
   var dialogGrid = null;
   var dialogOpener = null;
 
   function storageKey(table) {
-    var user = document.body.getAttribute("data-vr-user") || "anonymous";
-    return "vr-grid:" + user + ":" + table.getAttribute("data-vr-grid") + ":v" + (table.getAttribute("data-vr-grid-version") || "1");
+    return "grid:" + table.getAttribute("data-vr-grid") + ":v" + (table.getAttribute("data-vr-grid-version") || "1");
   }
 
   function readLayout(key) {
-    try {
-      var value = JSON.parse(localStorage.getItem(key) || "null");
-      if (value && Array.isArray(value.order) && Array.isArray(value.hidden)) {
-        return value;
-      }
-    } catch (error) {
-      // Unavailable or corrupt storage: fall back to the declared defaults.
+    var value = window.vrPreferences ? window.vrPreferences.get(key) : null;
+    if (value && Array.isArray(value.order) && Array.isArray(value.hidden)) {
+      return value;
     }
-    return null;
+    return null; // Nothing saved, or no longer valid: the declared defaults apply.
   }
 
   function writeLayout(key, layout) {
-    try {
-      if (layout) {
-        localStorage.setItem(key, JSON.stringify(layout));
-      } else {
-        localStorage.removeItem(key);
-      }
-    } catch (error) {
-      // Storage blocked: the layout applies to this page only.
+    if (window.vrPreferences) {
+      window.vrPreferences.set(key, layout || null);
     }
   }
 
@@ -71,6 +68,7 @@
         label: (th.getAttribute("data-vr-col-label") || th.textContent).replace(/\s+/g, " ").trim() || id,
         locked: th.hasAttribute("data-vr-col-locked"),
         hiddenByDefault: th.hasAttribute("data-vr-col-hidden"),
+        lowPriority: th.getAttribute("data-vr-col-priority") === "low",
       });
     }
     // Locked columns keep their place: leading ones before every movable column, the rest trailing.
@@ -139,10 +137,26 @@
   function applyLayout(grid, layout) {
     grid.dt.colReorder.order(resolveOrder(grid, layout && layout.order), true);
     grid.columns.forEach(function (col) {
-      var hidden = layout ? layout.hidden.indexOf(col.id) !== -1 : col.hiddenByDefault;
+      var hidden = layout ? layout.hidden.indexOf(col.id) !== -1 : hiddenByDefault(col);
       grid.dt.column(col.id + ":name").visible(col.locked ? true : !hidden, false);
     });
     grid.dt.columns.adjust();
+  }
+
+  function hiddenByDefault(col) {
+    return col.hiddenByDefault || (col.lowPriority && Boolean(narrow && narrow.matches));
+  }
+
+  // The screen width changed: grids without a saved layout take the defaults for the new width.
+  if (narrow) {
+    narrow.addEventListener("change", function () {
+      Object.keys(grids).forEach(function (name) {
+        var grid = grids[name];
+        if (!readLayout(grid.key)) {
+          applyLayout(grid, null);
+        }
+      });
+    });
   }
 
   function save(grid) {

@@ -434,3 +434,23 @@ def test_storage_python_does_not_import_specimens_or_equipment():
         text = path.read_text()
         for app in ("specimens", "equipment"):
             assert f"from {app}" not in text and f"import {app}" not in text, path
+
+
+def test_record_pages_carry_the_path_bar_and_the_overview_its_census(client, tree, people):
+    client.force_login(people["viewer"])
+    box = client.get(reverse("storage:box-detail", args=[tree.box.pk])).context["storage_path"]
+    assert [level["kind"] for level in box][:3] == ["Site", "Room", "Tank"]
+    assert box[-1] == {
+        "kind": "Box",
+        "code": tree.box.code,
+        "url": "",
+        "here": True,
+        "freed": False,
+    }
+    assert box[2]["temp"] == "\N{MINUS SIGN}160 °C" and box[2]["cold"]
+    unit = client.get(reverse("storage:unit-detail", args=[tree.unit.pk])).context
+    assert unit["storage_path"][-1]["code"] == tree.unit.code and unit["storage_path"][-1]["here"]
+    census = client.get(reverse("storage:overview")).context["storage_census"]
+    row = next(entry for entry in census if entry["code"] == tree.unit.code)
+    assert row["ln2"] and not row["fridge"] and 0 <= row["fill_step"] <= 10
+    assert row["positions"] >= 81 and row["occupied"] == 0

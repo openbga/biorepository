@@ -334,3 +334,43 @@ def test_withdraw_confirm_dialog_cancels_and_confirms(page: Page, sign_in_as):
     expect(field(dialog, "Title")).to_be_disabled()
     expect(dialog.get_by_role("button", name="Save changes")).to_have_count(0)
     assert page.console_errors == []
+
+
+@pytest.fixture
+def header_action_route(settings, monkeypatch):
+    """The fixture route (e2e/fixture_urls.py) registered as a dialog form for this test only."""
+    from core import form_surfaces
+
+    settings.ROOT_URLCONF = "fixture_urls"
+    monkeypatch.setitem(form_surfaces.FORM_SURFACES, "e2e-header-action", "lg")
+    form_surfaces.form_route_patterns.cache_clear()
+    yield "/e2e/form-with-header-action/"
+    form_surfaces.form_route_patterns.cache_clear()
+
+
+def test_page_header_actions_move_into_the_dialog_header(
+    page: Page, sign_in_as, header_action_route
+):
+    sign_in_as("admin")
+    page.goto(header_action_route)  # by its address: it opens over its Cancel page, the list
+    dialog = page.locator("#vr-form-dialog")
+    expect(dialog).to_be_visible()
+    expect(page).to_have_url(re.compile(re.escape(LIST) + r"$"))
+    tools = dialog.locator("[data-vr-form-tools]")
+    action = tools.get_by_role("link", name="Open the list", exact=True)
+    expect(action).to_be_visible()
+    expect(action).to_have_attribute("data-vr-page-action", "")
+    # The action sits before the dialog's own tools, and nowhere else in the dialog.
+    assert action.evaluate("el => el.parentElement.firstElementChild === el")
+    expect(
+        dialog.locator("#vr-form-content").get_by_role("link", name="Open the list")
+    ).to_have_count(0)
+    # The form's action row stays the dialog body's last element.
+    assert dialog.locator(".vr-form-actions").evaluate(
+        "el => { const body = el.closest('.modal-body');"
+        " return el.getBoundingClientRect().bottom <= body.getBoundingClientRect().bottom + 1; }"
+    )
+    dialog.get_by_role("link", name="Cancel", exact=True).click()
+    expect(dialog).to_be_hidden()
+    expect(tools.locator("[data-vr-page-action]")).to_have_count(0)
+    assert page.console_errors == []

@@ -98,14 +98,18 @@ register(
         ("code",),
     )
 )
+
+
+def audit_boxes(request):
+    from quality.services import available_boxes  # app services load after this module
+
+    return available_boxes(actor=request.user).select_related("node__unit")
+
+
 register(
     Lookup(
-        "active-boxes",
-        staff(
-            lambda request: (
-                model("storage.Box").objects.filter(is_active=True).select_related("node__unit")
-            )
-        ),
+        "audit-boxes",
+        staff(audit_boxes),
         ("code", "node__code", "node__unit__code"),
         ("code",),
     )
