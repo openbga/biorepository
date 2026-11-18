@@ -39,6 +39,10 @@
           "description": "Select a menu destination or a section tab to change pages. The current destination is marked and keyboard focus has a visible outline. Availability depends on the signed-in account and role; opening a direct link still checks permission."
         },
         {
+          "label": "Storage path bar",
+          "description": "A band under the top bar on pages about something in storage. It shows where it is, from the repository down: site, room, storage unit (with its nominal temperature), rack or shelf, box and position. Each level above the current one opens its page. While a specimen is out of storage, its freed position reads free while out and the band shows how long it has been out. On the dashboard and the storage overview the band lists every active storage unit instead, coldest first, with its nominal temperature, how full it is and a warning mark while an excursion is open; each unit opens its page. Nominal temperatures are set points, not measurements."
+        },
+        {
           "label": "What's new",
           "description": "What's new in the top bar opens the list of changes to this application, newest first. A number beside it counts the changes made since you last looked in this browser; opening the list clears it. The first visit in a browser starts with no number."
         },
@@ -48,11 +52,11 @@
         },
         {
           "label": "Account menu",
-          "description": "Shows the signed-in name and repository roles. Change password and Two-factor authentication open account settings. A shared demonstration account, one whose password the deployment publishes on the sign-in page, shows a note instead of those two links: its password, email addresses and two-factor settings cannot be changed, opening those pages returns to the home page with a notice, and no password-reset link is mailed for it. Sign out ends the session."
+          "description": "Shows the signed-in name and repository roles. Password and Two-factor authentication open account settings pages that show their state; the change itself opens in a dialog. A shared demonstration account, one whose password the deployment publishes on the sign-in page, shows a note instead of those two links: its password, email addresses and two-factor settings cannot be changed, opening those pages returns to the home page with a notice, and no password-reset link is mailed for it. Sign out ends the session."
         },
         {
           "label": "Forms",
-          "description": "Required fields are marked. Validation errors identify fields or the reason an action is blocked. After a failed page submission, focus moves to the first invalid field or the error summary when no field is invalid. Some forms open in a dialog; close/cancel leaves the underlying page. A direct form link opens the same dialog with its title as the page heading; Cancel returns to the related page or list. Sticky action buttons stay at the bottom while long forms scroll. Save applies the form only when server checks pass. A stale-edit message requires refreshing and checking current values before retrying."
+          "description": "Required fields are marked. Validation errors identify fields or the reason an action is blocked. After a failed page submission, focus moves to the first invalid field or the error summary when no field is invalid. Every form opens in a dialog over the page it was opened from; close or Cancel leaves that page as it was. Sign-in steps and record pages stay pages. A form opened by its address opens in the same dialog over the page it belongs to (where Cancel returns), and the address becomes that page's. Leaving a form with unsaved changes asks first in a small Discard unsaved changes? pop-up: Keep editing returns to the form, Discard changes closes it. Sticky action buttons stay at the bottom while long forms scroll. Save applies the form only when server checks pass. A stale-edit message requires refreshing and checking current values before retrying."
         },
         {
           "label": "Footer / Source code",
@@ -105,6 +109,8 @@
     "tests/test_core_request_limits.py",
     "accounts/middleware.py",
     "accounts/adapter.py",
-    "accounts/tests/test_locked_credentials.py"
+    "accounts/tests/test_locked_credentials.py",
+    "templates/includes/storage_path.html",
+    "storage/pathbar.py"
   ]
 }

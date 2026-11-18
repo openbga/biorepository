@@ -5,6 +5,26 @@
   ],
   "title": "Submit for review",
   "purpose": "Freeze an open deviation for independent review.",
+  "summary": "Freeze an open deviation report for independent review.",
+  "tasks": [
+    {
+      "title": "Submit the report",
+      "steps": [
+        "Give the reason and select [[Submit for review]]."
+      ]
+    },
+    {
+      "title": "Fill in what is missing",
+      "steps": [
+        "If a section is missing, cancel and edit the report first."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Investigation, corrective action and effectiveness must each be filled in.",
+    "The report is frozen until a reviewer closes it or returns it.",
+    "Another manager or administrator reviews it."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

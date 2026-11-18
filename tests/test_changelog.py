@@ -289,14 +289,17 @@ def test_list_shows_groups_impacts_entries_links_and_the_seen_mark(client, staff
     client.force_login(staff("wn-manager", "manager"))
     html = client.get(reverse("whats-new")).content.decode()
     text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
-    assert "November 2026 2026-11-16 to 2026-11-17 · 2 changes" in text
-    assert "October 2026 2026-10-30 · 1 change" in text
+    # Each month: its title, the change count, then the date range.
+    assert "November 2026 2 changes 2026-11-16 to 2026-11-17" in text
+    assert "October 2026 1 change 2026-10-30" in text
     assert text.index("November 2026") < text.index("October 2026")
     november = text[text.index("November 2026") : text.index("October 2026")]
     assert november.index("High impact") < november.index("Medium impact")
-    assert "Added Box audits" in november and "Change #15" in november
-    assert "Changed Record due dates" in november
-    assert "Fixed Tidy spacing" in text
+    # Each change tile: its type, the (hidden until new) New mark, its date, then its title.
+    tile = r"{} (New )?\d{{4}}-\d{{2}}-\d{{2}} {}"
+    assert re.search(tile.format("Added", "Box audits"), november) and "Change #15" in november
+    assert re.search(tile.format("Changed", "Record due dates"), november)
+    assert re.search(tile.format("Fixed", "Tidy spacing"), text)
     assert "Technical notes" in html and "Adds a migration in quality." in html
     assert f'href="{reverse("quality:audit-list")}">Go to Inventory audits' in html
     assert embedded(html, "vr-whats-new-data")["seen"] == changelog.seen_marker(entries)
@@ -323,3 +326,28 @@ def test_any_signed_in_account_may_open_it_and_visitors_may_not(client, entries)
     assert response.status_code == 302 and "/accounts/login/" in response["Location"]
     sign_in = client.get(reverse("account_login")).content.decode()
     assert "vr-whats-new" not in sign_in
+
+
+@pytest.mark.django_db
+def test_go_to_links_only_offer_pages_the_account_may_open(client, staff, monkeypatch):
+    items = [
+        entry("2026-11-18", "Import register", link="specimens:import-list"),
+        entry("2026-11-17", "Specimen filters", link="specimens:specimen-list"),
+        entry("2026-11-16", "Announcement audiences", link="announcement-list"),
+    ]
+    monkeypatch.setattr(changelog, "entries", lambda: tuple(items))
+    imports = f'href="{reverse("specimens:import-list")}">Go to Imports'
+    specimens = f'href="{reverse("specimens:specimen-list")}">Go to Specimens'
+    announcements = f'href="{reverse("announcement-list")}">Go to Announcements'
+
+    def page(user):
+        client.force_login(user)
+        return client.get(reverse("whats-new")).content.decode()
+
+    viewer = page(staff("wn-viewer", "viewer"))  # the menus' own visibility (navigation.visible)
+    assert imports not in viewer and announcements not in viewer and specimens in viewer
+    technician = page(staff("wn-tech-2", "technician"))
+    assert imports in technician and specimens in technician and announcements not in technician
+    assert announcements in page(staff("wn-admin", "admin"))
+    no_role = User.objects.create_user("wn-none-2", "wn-none-2@example.invalid", "test-pass-729!")
+    assert not re.search(r">Go to (Imports|Specimens|Announcements)", page(no_role))

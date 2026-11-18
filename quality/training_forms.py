@@ -3,6 +3,7 @@
 from django import forms
 
 from accounts.roles import require_role
+from core.lookups import RemoteSelect
 from equipment.forms import DATE, GroupedForm, apply_errors  # noqa: F401
 
 from . import training_services as services
@@ -28,7 +29,9 @@ def reason_field():
 class TrainingForm(GroupedForm):
     revision = forms.IntegerField(min_value=1, widget=forms.HiddenInput)
     trainee = forms.ModelChoiceField(
-        queryset=None, help_text="An active account with an application role."
+        queryset=None,
+        help_text="An active account with an application role.",
+        widget=RemoteSelect("staff"),
     )
     topic = forms.CharField(max_length=160, help_text=NOT_IDENTIFYING)
     procedure_reference = forms.CharField(

@@ -6,6 +6,27 @@
   ],
   "title": "New scope category or Edit scope category",
   "purpose": "Define a use that consent forms ask about.",
+  "summary": "Define a use that consent forms ask about. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Add a category",
+      "steps": [
+        "Type the [[Code]], [[Name]] and an optional [[Description]].",
+        "Tick [[Governs use]] when requests may require it, then select [[Create scope category]]."
+      ]
+    },
+    {
+      "title": "Stop offering it",
+      "steps": [
+        "Clear [[Active]], give the [[Reason]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Once a consent answers the category, its code and Governs use are fixed.",
+    "Cleared Governs use means the answer is recorded and shown only.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Fields",
@@ -61,6 +82,6 @@
     "distribution/services.py",
     "distribution/templates/distribution/governance/form.html",
     "distribution/templates/distribution/governance/catalogue_form.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

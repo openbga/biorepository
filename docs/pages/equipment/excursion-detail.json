@@ -5,6 +5,40 @@
   ],
   "title": "Temperature excursion",
   "purpose": "Review one excursion: its facts, the specimens that were in the unit, the readings, the timeline and its history, and take the next step in its review.",
+  "summary": "One temperature excursion: its facts, the specimens in the unit, the readings, the timeline and history, and the next step in its review.",
+  "tasks": [
+    {
+      "title": "Complete and submit it",
+      "steps": [
+        "Select [[Edit]] to add the end, cause, action taken and impact assessment.",
+        "Select [[Submit for review]]."
+      ]
+    },
+    {
+      "title": "Review it",
+      "steps": [
+        "Managers and administrators: select [[Review excursion]] to return or close it."
+      ]
+    },
+    {
+      "title": "Hold affected specimens",
+      "steps": [
+        "Select [[Place holds]] and choose the specimens."
+      ]
+    },
+    {
+      "title": "Add information at any stage",
+      "steps": [
+        "Select [[Add note]] to add a note or file to the timeline."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Until closing, the specimen list is worked out from recorded storage movements each time the page opens. Closing captures it.",
+    "Limits in force are those set when the excursion was opened.",
+    "Closing or reopening never releases holds. Each is released on its specimen record.",
+    "The person who submitted it cannot close it."
+  ],
   "sections": [
     {
       "title": "Life of an excursion",
@@ -21,7 +55,7 @@
         },
         {
           "label": "Extreme reached",
-          "description": "The extreme in \u00b0C and when, or Not recorded."
+          "description": "The extreme in °C and when, or Not recorded."
         },
         {
           "label": "Limits in force",
@@ -109,7 +143,7 @@
     "equipment/models.py",
     "equipment/templates/equipment/excursion_detail.html",
     "equipment/templates/equipment/_event_extra.html",
-    "storage/templates/storage/_history.html",
+    "templates/includes/history_panel.html",
     "equipment/forms.py",
     "equipment/services.py",
     "equipment/templates/equipment/excursion_holds.html",

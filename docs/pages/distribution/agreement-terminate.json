@@ -5,6 +5,26 @@
   ],
   "title": "Terminate agreement",
   "purpose": "Record that an executed agreement was terminated.",
+  "summary": "Record that an executed agreement was terminated. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Terminate the agreement",
+      "steps": [
+        "Enter [[Terminated on]] and the [[Reason]], then select [[Terminate agreement]]."
+      ]
+    },
+    {
+      "title": "Cover requests by another agreement",
+      "steps": [
+        "Link a valid agreement on each request that still needs to dispatch."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Nothing can be dispatched under it from the termination date.",
+    "A termination cannot be undone.",
+    "Linked requests keep the link."
+  ],
   "sections": [
     {
       "title": "Fields",

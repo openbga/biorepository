@@ -5,6 +5,26 @@
   ],
   "title": "Correct service event",
   "purpose": "Replace the values of a service event that was recorded wrongly, or withdraw it, keeping the original visible.",
+  "summary": "Replace the values of a service event recorded wrongly, or withdraw it. The original stays visible.",
+  "tasks": [
+    {
+      "title": "Correct the event",
+      "steps": [
+        "Change the values, give the [[Reason for the correction]] and select [[Correct service event]]."
+      ]
+    },
+    {
+      "title": "Withdraw an event recorded in error",
+      "steps": [
+        "Tick [[Withdraw this event]], give the reason and save."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The original entry stays, marked Corrected, linked to the new one.",
+    "Leave [[Replace the attachment]] empty to keep the current file.",
+    "Only the latest version of an entry can be corrected."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

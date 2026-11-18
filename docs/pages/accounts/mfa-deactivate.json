@@ -5,20 +5,41 @@
   ],
   "title": "Deactivate authenticator app",
   "purpose": "Remove the app-based second factor from your account.",
+  "summary": "Remove the authenticator app from your account, so sign-in no longer asks for its code.",
+  "tasks": [
+    {
+      "title": "Remove the authenticator app",
+      "steps": [
+        "Select [[Deactivate]]. You return to Two-factor authentication."
+      ]
+    },
+    {
+      "title": "Keep the app",
+      "steps": [
+        "Select [[Cancel]] without selecting Deactivate."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Your recovery codes are deleted too when no other authenticator remains.",
+    "Removing the app does not change your password or repository roles.",
+    "You may be asked to confirm your password or a code first."
+  ],
   "sections": [
     {
       "title": "Action and effect",
       "items": [
         {
           "label": "Deactivate",
-          "description": "POSTs removal of the signed-in account’s TOTP authenticator after recent reauthentication. If no other non-recovery authenticator remains, recovery codes are deleted as well. Returns to the MFA overview."
+          "description": "POSTs removal of the signed-in account’s TOTP authenticator after recent reauthentication. If no other non-recovery authenticator remains, recovery codes are deleted as well. Returns to the MFA overview. Success closes the dialog."
         }
-      ]
+      ],
+      "paragraphs": []
     },
     {
       "title": "Eligibility and navigation",
       "paragraphs": [
-        "Requires an existing TOTP record, sign-in and recent reauthentication, normally within five minutes. This form has no editable fields, Back button or Cancel button. Leave via normal account navigation without submitting to keep the app active. Removing TOTP here does not remove roles or change the password. The normal flow performs recovery-code cleanup; direct maintenance deletion has different behavior."
+        "Requires an existing TOTP record, sign-in and recent reauthentication, normally within five minutes. The confirmation opens in the shared form dialog over Two-factor authentication. It has no editable fields; Cancel closes it and keeps the app active (opened by its address, Cancel goes to Two-factor authentication). Removing TOTP here does not remove roles or change the password. The normal flow performs recovery-code cleanup; direct maintenance deletion has different behavior."
       ]
     }
   ],
@@ -26,6 +47,8 @@
     "config/settings.py",
     "templates/allauth/layouts/base.html",
     "templates/allauth/layouts/manage.html",
-    "uv.lock"
+    "uv.lock",
+    "core/form_surfaces.py",
+    "templates/allauth/elements/form__manage.html"
   ]
 }

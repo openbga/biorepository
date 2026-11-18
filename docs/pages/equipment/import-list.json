@@ -5,6 +5,27 @@
   ],
   "title": "Readings imports",
   "purpose": "See the CSV files of temperature readings that were uploaded, whether each is ready to record, and open one.",
+  "summary": "The CSV files of temperature readings that were uploaded, and whether each is ready to record.",
+  "tasks": [
+    {
+      "title": "Import readings",
+      "steps": [
+        "Select [[Upload readings]] and check your file.",
+        "Open the import and record its readings."
+      ]
+    },
+    {
+      "title": "Find imports ready to record",
+      "steps": [
+        "Set [[State]] to Ready to commit and select [[Apply]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Uploading only checks a file. Nothing is recorded until it is committed.",
+    "An import expires after 24 hours. Upload the file again.",
+    "A file with any error cannot be committed."
+  ],
   "sections": [
     {
       "title": "What the page shows",

@@ -7,7 +7,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 import pytest
-from helpers import field, local_input, make_user, save_download, sign_in, sign_out
+from helpers import field, local_input, make_user, pick, save_download, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -92,7 +92,7 @@ def test_reading_assessments_match_the_register_filter_and_download(page: Page, 
         ("within", "Within recorded limits"),
         ("none", "No limits recorded"),
     ):
-        toolbar.locator('[name="outside"]').select_option(choice)
+        pick(toolbar.locator('[name="outside"]'), choice)
         toolbar.get_by_role("button", name="Apply").click()
         rows = page.get_by_role("table", name="Readings", exact=True).locator("tbody tr")
         expect(rows).to_have_count(1)
@@ -135,11 +135,11 @@ def test_excursion_is_recorded_reviewed_by_a_second_person_and_lists_the_specime
     page.get_by_role("link", name="New equipment", exact=True).first.click()
     form = dialog(page)
     field(form, "Asset ID").fill("TANK-VP-01")
-    field(form, "Kind").select_option(label="LN2 storage tank")
+    pick(field(form, "Kind"), label="LN2 storage tank")
     field(form, "Name").fill("Tank VP-01")
-    field(form, "Storage unit").select_option(label="VP-01")
+    pick(field(form, "Storage unit"), label="VP-01")
     field(form, "Upper limit").fill("-150.00")
-    field(form, "Level unit").select_option(value="cm")
+    pick(field(form, "Level unit"), value="cm")
     form.get_by_role("button", name="Create equipment", exact=True).click()
     expect(page.get_by_role("heading", level=1)).to_have_text("TANK-VP-01")
     tank_url = page.url
@@ -176,8 +176,8 @@ def test_excursion_is_recorded_reviewed_by_a_second_person_and_lists_the_specime
     field(form, "Started").fill(local_input(-timedelta(minutes=55)))
     field(form, "Ended").fill(local_input(-timedelta(minutes=40)))
     field(form, "Extreme reached").fill("-141.30")
-    field(form, "Detected by").select_option(label="Temperature reading")
-    field(form, "Cause category").select_option(label="Door or lid left open")
+    pick(field(form, "Detected by"), label="Temperature reading")
+    pick(field(form, "Cause category"), label="Door or lid left open")
     field(form, "Cause").fill("Lid left open during a retrieval.")
     field(form, "Action taken").fill("Lid closed; readings watched until back under the limit.")
     field(form, "Impact assessment").fill("Top shelf exposed; specimens listed for QC review.")

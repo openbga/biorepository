@@ -12,6 +12,7 @@ from core.announcements import save_announcement
 from core.models import Announcement, Repository
 from distribution.seed import seed_distribution, seed_full_distribution
 from equipment.seed import seed_equipment, seed_full_equipment
+from quality.seed import seed_full_quality
 from specimens.seed import seed_specimens
 from storage.seed import seed_storage
 
@@ -48,7 +49,8 @@ class Command(BaseCommand):
             "(some for weeks), holds, disposal requests in every state, bulk imports and "
             "reasoned corrections, the equipment records for every storage unit (service "
             "events, LN2 level log, temperature readings, excursions) and distribution: "
-            "studies, consent records, a withdrawal, agreements and shipments.",
+            "studies, consent records, a withdrawal, agreements and shipments, plus inventory "
+            "audits, deviations and training records in several states.",
         )
         parser.add_argument(
             "--announce-accounts",
@@ -147,6 +149,12 @@ class Command(BaseCommand):
             # Last: governance over the larger cohorts, a withdrawal with its holds, a packed
             # shipment. It needs the specimens of the full story.
             seed_full_distribution(
+                manager=manager,
+                technician=technician,
+                admin=User.objects.get(username="demo_admin"),
+            )
+            # Inventory audits (on boxes holding specimens), deviations and training records.
+            seed_full_quality(
                 manager=manager,
                 technician=technician,
                 admin=User.objects.get(username="demo_admin"),

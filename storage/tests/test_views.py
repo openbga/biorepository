@@ -135,6 +135,9 @@ def test_box_page_shows_grid_states(client, tree, people):
     content = client.get(reverse("storage:box-detail", args=[tree.box.pk])).content.decode()
     assert "Occupied" in content and str(item.pk)[:8] in content
     assert content.count('id="position-') == 81
+    zero = '<dd class="vr-id"><span class="vr-muted">0</span></dd>'
+    blocked = 'data-state="blocked"></span>Blocked</dt>' + zero
+    assert blocked in content  # zero is shown, not left blank
 
 
 def test_manager_defines_storage_through_the_forms(client, tree, people):
@@ -389,6 +392,27 @@ def test_box_wells_and_table_name_specimens_through_the_specimens_tag(client, pe
     # A reader without a staff role cannot open the page at all.
     client.force_login(people["nobody"])
     assert client.get(detail).status_code == 403
+    # A specimen under an active hold shows as held, and the key counts it.
+    from django.utils import timezone
+
+    from specimens import services as specimen_services
+
+    zero = '<dd class="vr-id"><span class="vr-muted">0</span></dd>'
+    assert 'data-state="held"></span>On hold</dt>' + zero in page
+    held = sum(1 for _ in re.finditer(r'<td id="position-[^"]+" data-state="held"', page))
+    assert held == 0
+    specimen_services.place_hold(
+        actor=m,
+        specimen_id=specimen.pk,
+        expected_revision=specimen.revision,
+        scope="use",
+        occurred_at=timezone.now(),
+        reason="Synthetic quality check",
+    )
+    client.force_login(people["viewer"])
+    page = client.get(detail).content.decode()
+    assert re.search(rf'<td id="position-{position.pk}" data-state="held"', page)
+    assert 'data-state="held"></span>On hold</dt><dd class="vr-id">1</dd>' in page
 
 
 def test_box_and_unit_pages_render_without_the_specimens_and_equipment_apps(
@@ -433,3 +457,35 @@ def test_storage_python_does_not_import_specimens_or_equipment():
         text = path.read_text()
         for app in ("specimens", "equipment"):
             assert f"from {app}" not in text and f"import {app}" not in text, path
+
+
+def test_record_pages_carry_the_path_bar_and_the_overview_its_census(client, tree, people):
+    client.force_login(people["viewer"])
+    box = client.get(reverse("storage:box-detail", args=[tree.box.pk])).context["storage_path"]
+    assert [level["kind"] for level in box][:3] == ["Site", "Room", "Tank"]
+    assert box[-1] == {
+        "kind": "Box",
+        "code": tree.box.code,
+        "url": "",
+        "here": True,
+        "freed": False,
+    }
+    assert box[2]["temp"] == "\N{MINUS SIGN}160 °C" and box[2]["cold"]
+    unit = client.get(reverse("storage:unit-detail", args=[tree.unit.pk])).context
+    assert unit["storage_path"][-1]["code"] == tree.unit.code and unit["storage_path"][-1]["here"]
+    census = client.get(reverse("storage:overview")).context["storage_census"]
+    row = next(entry for entry in census if entry["code"] == tree.unit.code)
+    assert row["ln2"] and not row["fridge"] and 0 <= row["fill_step"] <= 10
+    assert row["positions"] >= 81 and row["occupied"] == 0
+
+
+def test_overview_names_sites_and_rooms_and_flags_open_excursions(
+    client, tree, people, monkeypatch
+):
+    from storage import pathbar
+
+    monkeypatch.setattr(pathbar, "EXCURSION_SOURCES", [lambda: [tree.unit.pk]])
+    client.force_login(people["viewer"])
+    page = client.get(reverse("storage:overview")).content.decode()
+    assert f"{tree.unit.room.site.name} / {tree.unit.room.name}" in page
+    assert "Excursion open" in page and "\N{MINUS SIGN}160 °C" in page

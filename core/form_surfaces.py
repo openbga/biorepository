@@ -1,4 +1,16 @@
-"""Editing surface metadata for progressive enhancement, never authorization policy."""
+"""Which pages open in the shared form dialog: presentation, never authorization.
+
+Every form opens in the dialog (docs/ui-standards.md section 7): static/js/form-dialog.js opens a
+link to one of these routes in #vr-form-dialog over the page it was clicked on, fetching the page
+with the X-VR-Form header; the view, its permission checks, CSRF and validation are the same as
+for the full page. Opened by its address, the form opens over the page it belongs to (its Cancel
+destination: the record or the list), as when opened from there; a form without a Cancel, or one
+already showing errors, stays its own page. Without JavaScript each stays an ordinary page.
+
+tests/test_form_dialog.py walks every route: one whose view takes a form is listed in
+FORM_SURFACES or in NOT_FORM_PAGES with the reason its page is not a form page. A route whose
+view accepts only POST is a button or panel form on another page and needs neither.
+"""
 
 import re
 from dataclasses import dataclass
@@ -6,8 +18,13 @@ from functools import cache
 
 from django.urls import URLResolver, get_resolver
 
-# Dedicated editing pages only. Record pages with inline actions remain record pages.
+# view name -> dialog size: lg for most forms; xl for wide forms, entry grids and review tables.
 FORM_SURFACES = {
+    "account_change_password": "lg",
+    "account_set_password": "lg",
+    "mfa_activate_totp": "lg",
+    "mfa_deactivate_totp": "lg",
+    "mfa_generate_recovery_codes": "lg",
     "quality:training-create": "lg",
     "quality:training-edit": "lg",
     "quality:training-complete": "lg",
@@ -143,6 +160,41 @@ FORM_SURFACES = {
     "distribution:put-back": "xl",
     "distribution:shipment-contents": "xl",
 }
+
+
+_SIGN_IN = "a sign-in step: there is no session or workspace page to open it over"
+_CONFIRM = (
+    "confirms the signed-in person before a two-factor change (sign-in layout); the change it "
+    "returns to opens in the dialog"
+)
+# Routes whose view takes a form but whose page is not a form page, with the reason.
+NOT_FORM_PAGES = {
+    "account_login": _SIGN_IN,
+    "account_signup": _SIGN_IN + "; sign-up is closed",
+    "account_request_login_code": _SIGN_IN,
+    "account_confirm_login_code": _SIGN_IN,
+    "account_reset_password": _SIGN_IN,
+    "account_reset_password_from_key": "opened from an emailed link, usually signed out; a "
+    "sign-in step",
+    "account_confirm_email": "opened from an emailed link, often signed out; a sign-in step",
+    "mfa_authenticate": _SIGN_IN,
+    "account_reauthenticate": _CONFIRM,
+    "account_request_reauthentication_code": _CONFIRM,
+    "account_confirm_reauthentication_code": _CONFIRM,
+    "mfa_reauthenticate": _CONFIRM,
+    "account_email": "the account's email addresses, a state list; Make Primary, Re-send "
+    "Verification and Remove act on the address chosen in the list itself, and Add Email opens "
+    "in the dialog from the page (form_page local=)",
+    "account_logout": "the sign-out confirmation; the user menu's Sign out posts directly",
+    "equipment:import-detail": "a record (a validated reading import); Commit import opens in the "
+    "dialog from the page (form_page local=)",
+}
+
+FORM_HEADER = "X-VR-Form"
+
+
+def is_dialog_request(request):
+    return request.headers.get(FORM_HEADER) == "1"
 
 
 @dataclass(frozen=True)

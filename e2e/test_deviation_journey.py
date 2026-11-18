@@ -6,7 +6,7 @@ import re
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from helpers import field, save_download, sign_in, sign_out
+from helpers import field, nav, pick, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
 from specimens.tests import conftest as specimen_fixtures
@@ -27,7 +27,7 @@ def test_deviation_report_investigation_review_and_reopening(page, people, tmp_p
     from quality.models import Deviation, DeviationEvent
 
     sign_in(page, people["technician"].username, PASSWORD)
-    page.get_by_role("link", name="Deviations", exact=True).click()
+    nav(page, "Deviations")
     expect(page.locator("main")).to_contain_text("No deviations")
     page.get_by_role("link", name="New deviation", exact=True).first.click()
     form = ready_dialog(page)
@@ -56,7 +56,7 @@ def test_deviation_report_investigation_review_and_reopening(page, people, tmp_p
     assert page.console_errors == []
     ready_dialog(page)
     page.keyboard.press("Escape")
-    discard = form.locator("[data-vr-form-discard]")
+    discard = page.locator("#vr-form-discard [data-vr-form-discard]")
     expect(discard).to_be_visible()
     discard.click()
     expect(form).to_be_hidden()
@@ -83,7 +83,7 @@ def test_deviation_report_investigation_review_and_reopening(page, people, tmp_p
     page.goto(deviation_url)
     page.get_by_role("link", name="Record review", exact=True).click()
     form = ready_dialog(page)
-    field(form, "Decision").select_option("close")
+    pick(field(form, "Decision"), "close")
     field(form, "Reason").fill("Synthetic evidence reviewed; close the exercise.")
     form.get_by_role("button", name="Record review", exact=True).click()
     expect(form).to_be_hidden()
@@ -116,11 +116,11 @@ def test_deviation_report_investigation_review_and_reopening(page, people, tmp_p
     expect(page.locator("main")).to_contain_text("Synthetic obsolete copies were replaced.")
     expect(page.get_by_role("link", name="Edit", exact=True)).to_have_count(0)
     expect(page.get_by_role("link", name="Submit for review", exact=True)).to_have_count(0)
-    page.get_by_role("link", name="Deviations", exact=True).first.click()
+    nav(page, "Deviations")
     toolbar = page.get_by_role("search", name="Filter deviations")
     search = toolbar.get_by_role("searchbox")
     search.fill("Synthetic work instruction")
-    toolbar.locator('[name="status"]').select_option("open")
+    pick(toolbar.locator('[name="status"]'), "open")
     toolbar.get_by_role("button", name="Apply", exact=True).click()
     page.get_by_role("link", name="Deviation", exact=True).click()
     expect(page.get_by_role("link", name=deviation.number, exact=True)).to_be_visible()
@@ -136,5 +136,10 @@ def test_deviation_report_investigation_review_and_reopening(page, people, tmp_p
     records = csv.DictReader(io.StringIO(download.decode(), newline=""))
     assert [record["Deviation"] for record in records] == [deviation.number]
     page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
-    expect(help_panel.get_by_role("heading", name="Export CSV", exact=True)).to_be_visible()
+    # The reference is collapsed; "Find a field or action" opens the section that explains it.
+    help_panel.get_by_label("Find a field or action").fill("Export CSV")
+    export_help = help_panel.locator("details[data-vr-help-section][open]").filter(
+        has=page.locator("summary", has_text="Export CSV")
+    )
+    expect(export_help).to_be_visible()
     assert page.console_errors == []

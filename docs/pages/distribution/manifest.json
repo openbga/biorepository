@@ -5,6 +5,26 @@
   ],
   "title": "Manifest",
   "purpose": "Preview and print a shipment's manifest: what is sent, where, and the shipper's declarations.",
+  "summary": "Preview and print a shipment's manifest: what is sent, where, and the shipper's declarations.",
+  "tasks": [
+    {
+      "title": "Print the manifest",
+      "steps": [
+        "Select [[Download PDF]]."
+      ]
+    },
+    {
+      "title": "Record the receipt later",
+      "steps": [
+        "Record what the recipient reports with Record receipt on the shipment."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Before dispatch it is marked Not dispatched.",
+    "After dispatch it is built only from what was recorded at dispatch.",
+    "Participant codes appear only when the shipment includes them and the agreement allows it. Never names or collection dates."
+  ],
   "sections": [
     {
       "title": "What the page shows",

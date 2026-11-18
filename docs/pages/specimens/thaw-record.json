@@ -5,6 +5,27 @@
   ],
   "title": "Record observed thaw",
   "purpose": "Add one observed thaw episode to a specimen's thaw records.",
+  "summary": "Add one observed thaw to a specimen's thaw records.",
+  "tasks": [
+    {
+      "title": "Record a thaw",
+      "steps": [
+        "Enter [[When it happened]] and describe what was observed in [[Reason]].",
+        "Select [[Record observed thaw]]."
+      ]
+    },
+    {
+      "title": "Correct a thaw record",
+      "steps": [
+        "Admin and manager: use the correction action on the thaw record in the specimen record."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Record only a thaw someone actually observed and that was not already recorded at check-in.",
+    "Leaving storage is not a thaw.",
+    "Each record counts one thaw."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

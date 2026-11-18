@@ -1,29 +1,30 @@
 {% extends "base.html" %}
-{% load equipment navigation %}
+{% load equipment history navigation ui %}
 {% comment %}Readings CSV imports, newest first (Imports tab). Context: equipment.views.grid_response for lists.SPECS["import"] (rows annotated with state).{% endcomment %}
 {% block page_actions %}{% url 'equipment:import-upload' as create_url %}{% include "equipment/_list_actions.html" with create_label="Upload readings" may_create=can_operate %}{% endblock %}
 {% block content %}
 {% section_tabs "equipment-readings" %}
-<section class="card vr-table-card" aria-labelledby="imports-heading">
-  <h2 class="visually-hidden" id="imports-heading">Imports</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter imports" q=q placeholder="File name" inline=inline grid="equipment.imports" %}
-  {% if page_obj.paginator.count %}
+{% panel title="Imports" heading_id="imports-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter imports" q=q placeholder="File name" inline=inline grid="equipment.imports" %}
+  {% if can_operate %}{% url 'equipment:import-upload' as create_url %}{% endif %}
+  {% if can_operate %}{% firstof "Upload a logger's CSV of readings. Nothing is recorded until you commit a valid file." as empty_body %}{% else %}{% firstof "Readings CSV files uploaded by technicians and managers appear here." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No imports yet" empty_body=empty_body action_url=create_url action_label="Upload readings" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.imports" data-vr-grid-version="1" aria-labelledby="imports-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="File" asc="file" desc="-file" col="file" locked=True %}
+        {% sort_header label="File" asc="file" desc="-file" col="file" locked=True %}
         <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
-        {% include "includes/sort_header.html" with label="Rows" asc="rows" desc="-rows" col="rows" class="text-end" %}
+        {% sort_header label="Rows" asc="rows" desc="-rows" col="rows" class="text-end" %}
         <th scope="col" class="text-end" data-vr-col="errors" data-vr-col-label="Errors">Errors</th>
         <th scope="col" data-vr-col="equipment" data-vr-col-label="Equipment">Equipment</th>
         <th scope="col" data-vr-col="by" data-vr-col-label="Validated by">Validated by</th>
-        {% include "includes/sort_header.html" with label="Validated" asc="validated" desc="-validated" first="desc" col="validated" %}
+        {% sort_header label="Validated" asc="validated" desc="-validated" first="desc" col="validated" %}
       </tr></thead>
       <tbody>
         {% for batch in page_obj %}
         <tr>
           <th scope="row" class="vr-wrap"><a class="vr-row-link" href="{% url 'equipment:import-detail' batch.pk %}">{% if batch.filename %}{{ batch.filename }}{% else %}Import {{ batch.recorded_at|date:"Y-m-d H:i" }}{% endif %}</a></th>
-          <td>{% import_status batch.state plain=True %}</td>
+          <td>{% equipment_import_status batch.state plain=True %}</td>
           <td class="text-end vr-id">{{ batch.row_count }}</td>
           <td class="text-end vr-id">{{ batch.errors|length }}</td>
           <td>{% if batch.equipment %}<span class="vr-id">{{ batch.equipment.code }}</span>{% else %}<span class="vr-muted">Named in the file</span>{% endif %}</td>
@@ -34,10 +35,6 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
-  {% else %}
-  {% url 'equipment:import-upload' as create_url %}
-  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No imports yet" body_empty="Upload a logger's CSV of readings. Nothing is recorded until you commit a valid file." create_url=create_url create_label="Upload readings" %}{% else %}{% include "storage/_list_states.html" with title_empty="No imports yet" body_empty="Readings CSV files uploaded by technicians and managers appear here." %}{% endif %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

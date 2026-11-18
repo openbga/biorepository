@@ -4,7 +4,7 @@ import re
 
 import pytest
 from conftest import Demo
-from helpers import make_announcement, sign_in, sign_out
+from helpers import make_announcement, nav_link, reveal_nav, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -33,9 +33,10 @@ def test_non_admin_roles_have_no_announcements_and_the_server_refuses_them(
 ):
     sign_in_as(role)
     expect(page.get_by_role("heading", level=1, name="Dashboard")).to_be_visible()
-    expect(page.get_by_role("link", name="Announcements", exact=True)).to_have_count(0)
-    expect(page.get_by_role("link", name="Record retention", exact=True)).to_be_visible()
-    expect(page.get_by_role("link", name="Accounts & roles", exact=True)).to_have_count(0)
+    expect(nav_link(page, "Record retention")).to_have_count(1)  # same helper, a granted item
+    expect(nav_link(page, "Announcements")).to_have_count(0)
+    expect(reveal_nav(page, "Record retention")).to_be_visible()
+    expect(nav_link(page, "Accounts & roles")).to_have_count(0)
     for path in ANNOUNCEMENT_PATHS:
         response = page.goto(path)
         assert response.status == 403, path
@@ -60,14 +61,15 @@ def test_non_admin_roles_have_no_announcements_and_the_server_refuses_them(
 def test_admin_sees_and_opens_announcements(page: Page, sign_in_as):
     sign_in_as("admin")
     expect(page.get_by_role("heading", level=1, name="Dashboard")).to_be_visible()
-    link = page.get_by_role("link", name="Announcements", exact=True)
+    link = reveal_nav(page, "Announcements")
     expect(link).to_be_visible()
     link.click()
     expect(page).to_have_url(re.compile(r"/repository/announcements/$"))
     expect(page.get_by_role("heading", level=1, name="Announcements")).to_be_visible()
-    expect(page.get_by_role("link", name="Record retention", exact=True)).to_be_visible()
-    # demo_admin is not a superuser: no Django admin entry in the sidebar.
-    expect(page.get_by_role("link", name="Accounts & roles", exact=True)).to_have_count(0)
+    expect(reveal_nav(page, "Record retention")).to_be_visible()
+    # demo_admin is not a superuser: no Django admin entry in the navigation.
+    expect(nav_link(page, "Record retention")).to_have_count(1)  # same helper, a granted item
+    expect(nav_link(page, "Accounts & roles")).to_have_count(0)
     assert page.console_errors == []
     sign_out(page)
 

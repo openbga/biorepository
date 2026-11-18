@@ -62,7 +62,9 @@ def test_staff_pages_dialogs_and_help_load_under_the_policy(page, demo):
         response = page.goto(route)
         assert_policy(response)
         expect(page.locator("body")).to_be_visible()
-        assert_no_inline_code(page, response.text())
+        # A form route opened by address replaces itself with the page it belongs to, so its
+        # served HTML is read through a request with the same session.
+        assert_no_inline_code(page, page.request.get(route).text())
         assert page.console_errors == [], f"{route}: {page.console_errors}"
     # Dialog, help panel and confirm dialog run entirely from external scripts.
     page.goto(reverse("announcement-list"))

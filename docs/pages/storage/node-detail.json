@@ -5,6 +5,32 @@
   ],
   "title": "Rack, tower, shelf or canister",
   "purpose": "Review one node of a unit: its facts, occupancy, its slots (child nodes or boxes), recorded moves and history, and reach the actions to change or move it.",
+  "summary": "One rack, tower, shelf or canister: its slots and what fills them, occupancy, recorded moves and history.",
+  "tasks": [
+    {
+      "title": "Add a box or shelf in a free slot",
+      "steps": [
+        "Admin and manager: select the Add button in the slots section, for example [[Add box]]."
+      ]
+    },
+    {
+      "title": "Move it with everything inside",
+      "steps": [
+        "Select the Move button, choose where it goes and give a reason."
+      ]
+    },
+    {
+      "title": "Fix a move recorded wrongly",
+      "steps": [
+        "Admin and manager: select [[Correct move]] on the latest move."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A node holds either racks and shelves or boxes, never both.",
+    "A move carries every box and item inside in one event. Positions and labels do not change.",
+    "Retiring is blocked while it still holds active racks, shelves or boxes."
+  ],
   "sections": [
     {
       "title": "Facts",
@@ -88,7 +114,7 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
       ]
     }
   ],
@@ -101,6 +127,6 @@
     "storage/templates/storage/node_detail.html",
     "storage/templates/storage/_capacity.html",
     "storage/templates/storage/_moves.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

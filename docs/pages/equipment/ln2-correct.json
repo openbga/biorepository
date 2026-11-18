@@ -5,6 +5,26 @@
   ],
   "title": "Correct LN2 entry",
   "purpose": "Replace the values of an LN2 entry recorded wrongly, or withdraw it, keeping the original visible.",
+  "summary": "Replace the values of an LN2 entry recorded wrongly, or withdraw it. The original stays visible.",
+  "tasks": [
+    {
+      "title": "Correct the entry",
+      "steps": [
+        "Change the values, give the [[Reason for the correction]] and select [[Correct LN2 entry]]."
+      ]
+    },
+    {
+      "title": "Withdraw an entry recorded in error",
+      "steps": [
+        "Tick [[Withdraw this entry]], give the reason and save."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The original entry stays, marked Corrected.",
+    "A withdrawn entry no longer counts in the change since previous.",
+    "Only the latest version of an entry can be corrected."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

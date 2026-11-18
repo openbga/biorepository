@@ -5,6 +5,27 @@
   ],
   "title": "Reinstate consent",
   "purpose": "End a withdrawal because the participant consented again or because it was recorded in error, and release its holds.",
+  "summary": "End a withdrawal because the participant consented again or it was recorded in error, and release its holds. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Reinstate the consent",
+      "steps": [
+        "Check the [[New consent record]], if any.",
+        "Enter [[Reinstated at]] and the [[Reason]], then select [[Reinstate consent]]."
+      ]
+    },
+    {
+      "title": "Record a re-consent first",
+      "steps": [
+        "If the participant consented again, record that consent before reinstating."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A different manager or administrator must reinstate: not whoever recorded the withdrawal, its escalation or the new consent.",
+    "The withdrawal, any escalation and the released holds stay in the history.",
+    "Its holds are released."
+  ],
   "sections": [
     {
       "title": "Withdrawal details",

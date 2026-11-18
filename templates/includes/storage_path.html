@@ -1,0 +1,37 @@
+{% load ui %}{% comment %}
+Storage path bar under the top bar (designer, Cryo; .local/mockups/cryo/HANDOFF.md section 3). It
+renders only on pages with a storage context; document.html includes it when one of these is set:
+  storage_path    list of levels from the site down, each a dict:
+                    kind   "Site", "Room", "Tank", "Freezer", "Rack", "Shelf", "Box", "Position"
+                    code   the level's code
+                    url    link to the level's record (omit on the current level)
+                    temp   nominal temperature text of a storage unit, e.g. "−160 °C"
+                    cold   truthy on the storage unit
+                    here   truthy on the current level (rendered aria-current="location")
+                    freed  truthy on a position freed by a check-out ("A5 free while out")
+  out_of_storage  optional {"duration": "7 min"} while the record's clock runs
+  storage_census  list of units: code, temp, ln2, fridge, occupied, positions, fill_step (0-10), url, excursion
+Usage: provided by the view context; templates do not include it themselves.
+{% endcomment %}
+<nav class="vr-pathbar" aria-label="{% if storage_census %}Cold census: every storage unit{% else %}Storage path{% endif %}">
+  {% if storage_census %}
+  <ul class="vr-census">
+    {% for unit in storage_census %}
+    <li><a class="vr-unit-cap{% if unit.excursion %} is-excursion{% endif %}{% if unit.ln2 %} is-ln2{% elif unit.fridge %} is-fridge{% endif %}" href="{{ unit.url }}">
+      <span class="vr-unit-temp">{{ unit.temp }}</span><span class="vr-unit-code">{{ unit.code }}</span>
+      <span class="vr-unit-fill" aria-hidden="true"><span class="vr-unit-fill-bar" data-fill="{{ unit.fill_step }}"></span></span>
+      <span class="visually-hidden">{{ unit.occupied }} of {{ unit.positions }} positions occupied</span>
+      {% if unit.excursion %}<span class="vr-unit-flag">{% icon name="exclamation-triangle-fill" %}<span class="visually-hidden">Excursion open</span></span>{% endif %}
+    </a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <ol class="vr-trail">
+    <li class="vr-path-root">{% icon name="buildings" %}<span>{{ repository.name|default:"Repository" }}</span></li>
+    {% for level in storage_path %}
+    <li>{% if level.here %}<span class="vr-path-seg is-here" aria-current="location">{% elif level.freed %}<span class="vr-path-seg is-freed">{% elif level.url %}<a class="vr-path-seg{% if level.cold %} is-cold{% endif %}" href="{{ level.url }}">{% else %}<span class="vr-path-seg{% if level.cold %} is-cold{% endif %}">{% endif %}<span class="vr-path-kind">{{ level.kind }}</span><span class="vr-path-code">{{ level.code }}</span>{% if level.temp %}<span class="vr-path-temp">{{ level.temp }}</span>{% endif %}{% if level.freed %}<span class="vr-path-temp">free while out</span>{% endif %}{% if level.url and not level.here and not level.freed %}</a>{% else %}</span>{% endif %}</li>
+    {% endfor %}
+  </ol>
+  {% if out_of_storage %}<p class="vr-out-cap">{% icon name="stopwatch" %}Out of storage <span class="vr-id">{{ out_of_storage.duration }}</span></p>{% endif %}
+  {% endif %}
+</nav>

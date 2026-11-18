@@ -15,7 +15,17 @@ from decimal import Decimal
 
 import pytest
 from django.contrib.auth.models import Permission
-from helpers import field, local_input, make_user, pdf_text, save_download, sign_in, sign_out
+from helpers import (
+    field,
+    local_input,
+    make_user,
+    nav,
+    pdf_text,
+    pick,
+    save_download,
+    sign_in,
+    sign_out,
+)
 from playwright.sync_api import Page, expect
 
 from specimens import importing
@@ -146,7 +156,7 @@ def choose_position(scope, box, label, index=None):
         if index is None
         else scope.locator(f"select[name='children-{index}-box']")
     )
-    boxes.select_option(value=str(box.pk))
+    pick(boxes, value=str(box.pk))
     labels = (
         scope.get_by_label(re.compile(r"^Position\s*\*?$"))
         if index is None
@@ -177,16 +187,16 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
 
     # Register.
     sign_in(page, tech.username, PASSWORD)
-    page.get_by_role("link", name="Specimens", exact=True).first.click()
+    nav(page, "Specimens")
     expect(page.get_by_role("heading", level=1, name="Specimens")).to_be_visible()
     page.locator(".vr-page-actions").get_by_role("link", name="Register specimen").click()
     form = dialog(page)
-    field(form, "Specimen type").select_option(label="PLASMA · Plasma")
-    field(form, "Specimen container").select_option(label="CRYOVIAL-2ML · Cryovial 2 mL")
+    pick(field(form, "Specimen type"), label="PLASMA · Plasma")
+    pick(field(form, "Specimen container"), label="CRYOVIAL-2ML · Cryovial 2 mL")
     field(form, "Amount").fill("2.000000")
-    field(form, "Unit").select_option(label="mL")
-    field(form, "Participant").select_option(label="P-000123")
-    field(form, "Collection").select_option(label="DEMO")
+    pick(field(form, "Unit"), label="mL")
+    pick(field(form, "Participant"), label="P-000123")
+    pick(field(form, "Collection"), label="DEMO")
     field(form, "Collected").fill(local_input(-timedelta(hours=3)))
     submit(form, "Register specimen")
     heading = page.get_by_role("heading", level=1)
@@ -196,7 +206,7 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     assert specimen.quantity_on_hand == Decimal("2") and specimen.participant.code == "P-000123"
 
     # Label: preview, then the PDF carries the ID.
-    page.locator(".vr-page-actions").get_by_role("link", name="Print label").click()
+    record_action(page, "Print label")
     expect(page.get_by_role("heading", level=1)).to_contain_text("label", ignore_case=True)
     href = page.get_by_role("link", name="Download PDF").get_attribute("href")
     response = page.request.get(href)
@@ -223,7 +233,8 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     field(form, "Destination").fill("Processing bench 2")
     field(form, "Reason").fill("Aliquoting")
     submit(form, "Record check-out")
-    expect(page.locator(".vr-page-meta")).to_contain_text("Checked out")
+    expect(page.locator(".vr-page-meta .is-warm")).to_contain_text("Out of storage")
+    expect(page.locator('.vr-page-meta .vr-clock[data-state="running"]')).to_be_visible()
 
     record_action(page, "Make aliquots or derivatives")
     form = dialog(page)
@@ -278,7 +289,8 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     sign_out(page, r"specimens_tech")
 
     sign_in(page, approver.username, PASSWORD)
-    page.get_by_role("link", name=re.compile("awaiting my approval", re.I)).click()
+    queues = page.get_by_role("region", name="Your work queues")
+    queues.get_by_role("link", name=re.compile("awaiting my approval", re.I)).click()
     export = page.get_by_role("link", name="Export CSV", exact=True)
     expect(page.get_by_label("Awaiting my approval", exact=True)).to_be_checked()
     data = save_download(page, export.click, tmp_path / "disposal-requests.csv")
@@ -352,7 +364,6 @@ def test_download_filtered_specimen_import_register(page: Page, tmp_path):
         (filename, "Has errors", tech.get_full_name()),
     ]
     page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
-    expect(
-        page.locator("#vr-documentation").get_by_role("heading", name="Export CSV")
-    ).to_be_visible()
+    # Reference sections are closed groups under the friendly help: the group names the export.
+    expect(page.locator("#vr-documentation summary", has_text="Export CSV").first).to_be_visible()
     assert page.console_errors == []

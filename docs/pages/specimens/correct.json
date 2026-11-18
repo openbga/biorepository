@@ -5,6 +5,28 @@
   ],
   "title": "Correct specimen",
   "purpose": "Correct the registration details of a specimen: type, container, participant, collection and times.",
+  "summary": "Correct the registration details of a specimen: type, container, participant, collection and times. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Correct the details",
+      "steps": [
+        "Change only the fields that are wrong.",
+        "Explain why in [[Reason]] and select [[Correct specimen]]."
+      ]
+    },
+    {
+      "title": "Fix the amount, location or custody",
+      "steps": [
+        "Use [[Adjust amount]], [[Relocate]] or the other actions on the record instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The earlier and new values are kept in the history.",
+    "A save that changes nothing is refused.",
+    "On a disposed specimen the record is not changed: the correction is kept as an annotation in the history.",
+    "Participant is a code only. Never enter names or other identifying text."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

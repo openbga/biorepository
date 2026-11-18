@@ -5,6 +5,32 @@
   ],
   "title": "Deviations",
   "purpose": "Find a deviation report and its review state.",
+  "summary": "Quality deviation reports and their review state.",
+  "tasks": [
+    {
+      "title": "Report a deviation",
+      "steps": [
+        "Select [[New deviation]]."
+      ]
+    },
+    {
+      "title": "Find a report",
+      "steps": [
+        "Type a DEV number, title or words from the description in [[Search]], or choose [[Status]], then select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Download the register",
+      "steps": [
+        "Apply your filters and sort, then select [[Export CSV]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Deviations record evidence. They do not change specimens, storage, linked records or holds.",
+    "There are no deadlines, notifications or risk thresholds.",
+    "Each export is recorded in the audit trail."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

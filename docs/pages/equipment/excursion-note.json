@@ -5,6 +5,27 @@
   ],
   "title": "Add note",
   "purpose": "Add a note, a file, or both to an excursion's timeline at any stage.",
+  "summary": "Add a note, a file, or both to an excursion's timeline at any stage.",
+  "tasks": [
+    {
+      "title": "Add a note or file",
+      "steps": [
+        "Type the [[Note]], choose an [[Attachment]], or both.",
+        "Select [[Add note]]."
+      ]
+    },
+    {
+      "title": "Change the excursion's details instead",
+      "steps": [
+        "Use Edit on an open excursion."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Notes cannot be edited or deleted.",
+    "Files are checked by content, up to 10 MiB.",
+    "Do not enter donor, patient or participant names."
+  ],
   "sections": [
     {
       "title": "Who can use it",

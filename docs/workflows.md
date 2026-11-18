@@ -612,7 +612,10 @@ reading left without an excursion. For distribution it adds studies governing th
 consent records, one by a study-level determination, one collection left ungoverned), consent
 records with a refusal and a withdrawal whose holds sit on that participant's specimens, a second
 institution whose agreement ends within 60 days, and a request approved, picked and packed awaiting
-dispatch. The limits and low levels in it are labelled demonstration values.
+dispatch. For quality it adds inventory audits (completed with and without a discrepancy,
+cancelled and open), deviations (open, awaiting review, closed and returned for revision) and
+training records (assigned, overdue, completed, renewal due, corrected and cancelled). The limits
+and low levels in it are labelled demonstration values.
 It uses only the services the application uses, and adds nothing when run again. Its events carry
 times relative to the moment of seeding, except approvals, disposals and other steps the services
 stamp with the current time.
@@ -639,4 +642,4 @@ right panel. It explains the page's purpose, actions, fields and workflow rules.
 navigation and remembers its width and open/closed state for each account in this browser.
 Drag its left edge or focus the separator and use the arrow keys to resize; use its close button
 or Escape from inside the panel to close it. Contributors use the
-[`document-page` skill](../skills/document-page/SKILL.md) to update help with each page change.
+[`document-page` skill](../.agents/skills/document-page/SKILL.md) to update help with each page change.

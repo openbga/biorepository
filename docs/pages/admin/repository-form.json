@@ -5,6 +5,29 @@
   ],
   "title": "Repository retention statement",
   "purpose": "Record or clear the repository’s own electronic record-retention statement with a reason.",
+  "summary": "Record, change or clear the repository's own record-retention statement, with a reason.",
+  "tasks": [
+    {
+      "title": "Change the retention statement",
+      "steps": [
+        "Edit [[Record retention statement]], or clear it to show Not recorded.",
+        "Explain the change in [[Reason]].",
+        "Select [[Save]]."
+      ]
+    },
+    {
+      "title": "Read earlier statements",
+      "steps": [
+        "The reason and the statement before and after each change are in the audit history, not in [[History]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The statement is a record of your repository's policy. It does not delete anything automatically.",
+    "If someone else saved first, you are asked to reload and review their statement.",
+    "The name and timezone are read only here.",
+    "A save that leaves the statement unchanged is refused."
+  ],
   "sections": [
     {
       "title": "Access and fields",

@@ -70,6 +70,8 @@ def test_theme_choice_persists_follows_system_and_stays_legible(page: Page, demo
     page.emulate_media(color_scheme="light")
     choose_theme(page, "Dark")
     assert root_theme(page) == "dark"
+    # Destinations live in the top bar's section menus: open Setup, then follow the link.
+    page.get_by_role("button", name="Setup", exact=True).click()
     page.get_by_role("link", name="Record retention", exact=True).click()
     expect(page.get_by_role("heading", level=1, name="Record retention")).to_be_visible()
     assert page.evaluate("window.__themeAtBody") == "dark"

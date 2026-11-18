@@ -5,6 +5,28 @@
   ],
   "title": "Disposal decision",
   "purpose": "Approve or reject a disposal request, or cancel it. The page opens with the decision already chosen by the button you used on the request.",
+  "summary": "Approve, reject or cancel a disposal request. The decision is already chosen by the button you used on the request.",
+  "tasks": [
+    {
+      "title": "Record the decision",
+      "steps": [
+        "Check the request, then give the [[Reason]].",
+        "Select the decision button, for example [[Approve disposal]]."
+      ]
+    },
+    {
+      "title": "Withdraw a request instead",
+      "steps": [
+        "Use [[Cancel disposal request]] on the request. The requester, or an admin or manager, can cancel before a decision."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Approving needs the disposal approval permission. It is not part of any role, and superuser status does not grant it.",
+    "Nobody approves their own request.",
+    "Approving does not dispose of anything. It allows [[Record disposal]] while the specimen is unchanged.",
+    "A request takes one decision only."
+  ],
   "sections": [
     {
       "title": "Who can decide",

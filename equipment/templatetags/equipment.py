@@ -40,8 +40,21 @@ def excursion_status(status, plain=False):
 
 
 @register.inclusion_tag("includes/status.html")
-def import_status(state, plain=False):
+def equipment_import_status(state, plain=False):
     return _status(*IMPORT_STATES[state], plain)
+
+
+@register.simple_tag
+def equipment_status_parts(kind, value):
+    """{% equipment_status_parts "excursion" excursion.status as st %}: the label and tone the
+    matching status tag shows, for a {% notice tone=st.tone label=st.label %} opening with the
+    record's status."""
+    if kind == "equipment":
+        return {"label": Equipment.Status(value).label, "tone": EQUIPMENT_TONES[value]}
+    if kind == "excursion":
+        return {"label": Excursion.Status(value).label, "tone": EXCURSION_TONES[value]}
+    label, tone = IMPORT_STATES[value]
+    return {"label": label, "tone": tone}
 
 
 @register.inclusion_tag("includes/status.html")
@@ -76,11 +89,6 @@ def due_days(event):
 @register.filter
 def level_change(entry):
     return queries.level_change(entry)
-
-
-@register.filter
-def person(user):
-    return (user.get_full_name() or user.get_username()) if user else ""
 
 
 @register.filter

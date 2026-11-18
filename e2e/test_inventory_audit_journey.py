@@ -6,7 +6,7 @@ import re
 from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from helpers import field, save_download, sign_in, sign_out
+from helpers import field, native_select, nav, pick, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
 from specimens.tests import conftest as specimen_fixtures
@@ -31,10 +31,10 @@ def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(
     specimen = register(people["technician"], world, position=world.position("A1"))
     original_position = specimen.occupancy.position_id
     sign_in(page, people["technician"].username, PASSWORD)
-    page.get_by_role("link", name="Inventory audits", exact=True).click()
+    nav(page, "Inventory audits")
     page.get_by_role("link", name="New inventory audit", exact=True).first.click()
     form = dialog(page)
-    field(form, "Box").select_option(str(world.box.pk))
+    pick(field(form, "Box"), label=world.box.code)  # a remote select: search, then choose
     field(form, "Reason for the audit").fill("Synthetic scheduled box check")
     form.get_by_role("button", name="Create audit", exact=True).click()
     expect(page.get_by_role("heading", level=1)).to_have_text(re.compile(r"AUD-\d+"))
@@ -44,10 +44,10 @@ def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(
     page.get_by_role("link", name="Complete audit", exact=True).click()
     form = dialog(page)
     # Expected contents never become purported observations without an operator entering them.
-    expect(field(form, "A1: observed contents")).to_have_value("")
+    expect(native_select(field(form, "A1: observed contents"))).to_have_value("")
     for position in audit.positions:
-        field(form, f"{position['label']}: observed contents").select_option("empty")
-    field(form, "A2: observed contents").select_option("accession")
+        pick(field(form, f"{position['label']}: observed contents"), "empty")
+    pick(field(form, "A2: observed contents"), "accession")
     field(form, "A2: observed accession").fill("EXAMPLE-UNKNOWN-001")
     field(form, "Completion reason").fill("Synthetic physical inspection completed")
     form.get_by_role("button", name="Complete audit", exact=True).click()
@@ -100,5 +100,6 @@ def test_inventory_audit_records_discrepancies_and_viewer_reads_the_evidence(
         (audit.number, "Completed"),
     ]
     page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
-    expect(help_panel.get_by_role("heading", name="Export CSV", exact=True)).to_be_visible()
+    # Reference sections are closed groups under the friendly help: the group names the export.
+    expect(help_panel.locator("summary", has_text="Export CSV")).to_be_visible()
     assert page.console_errors == []

@@ -15,14 +15,6 @@ RETURN_STATES = {
 }
 
 
-@register.filter
-def person(user):
-    """A staff member's full name, else the username; blank for nobody."""
-    if not user:
-        return ""
-    return user.get_full_name() or user.get_username()
-
-
 @register.inclusion_tag("includes/status.html")
 def return_status(state, plain=True):
     """{% return_status row.review_state %}: awaiting, kept or released."""

@@ -5,6 +5,32 @@
   ],
   "title": "Maintenance due",
   "purpose": "See the next due dates your repository recorded for maintenance, calibration, mapping and qualification, and which are overdue.",
+  "summary": "The next due dates your repository recorded for maintenance, calibration, mapping and qualification, and which are overdue.",
+  "tasks": [
+    {
+      "title": "See what is overdue",
+      "steps": [
+        "Set [[Due]] to Overdue and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Plan the coming weeks",
+      "steps": [
+        "Set [[Due]] to Due soon and choose [[Due soon within]], then select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Record the service",
+      "steps": [
+        "Select the Record button on the row. The service form opens with the kind chosen."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Due dates are the ones your repository entered on service events. The application never calculates them.",
+    "Recording a new event of the same kind replaces the due date.",
+    "Days is negative when the date has passed."
+  ],
   "sections": [
     {
       "title": "What the page shows",

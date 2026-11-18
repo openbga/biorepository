@@ -5,6 +5,26 @@
   ],
   "title": "Block or unblock a position",
   "purpose": "Take one position in a box out of use, or return it, with a recorded reason.",
+  "summary": "Take one position in a box out of use, or return it, with a recorded reason. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Block the position",
+      "steps": [
+        "Give the [[Reason for the change]] and select [[Block position]]."
+      ]
+    },
+    {
+      "title": "Return it to use",
+      "steps": [
+        "Give the reason and select [[Unblock position]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A blocked position is never offered as free.",
+    "An occupied position cannot be blocked. Move the item out first.",
+    "The block reason shows on hover over the Blocked tag."
+  ],
   "sections": [
     {
       "title": "Who and when",

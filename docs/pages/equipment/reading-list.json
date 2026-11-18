@@ -5,6 +5,32 @@
   ],
   "title": "Temperature readings",
   "purpose": "Review recorded temperature readings, with the limits recorded with each, and find those outside the limits.",
+  "summary": "Recorded temperature readings, with the limits recorded with each, and those outside the limits.",
+  "tasks": [
+    {
+      "title": "Find readings outside the limits",
+      "steps": [
+        "Set [[Limits]] to Outside the recorded limits and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Record a reading",
+      "steps": [
+        "Select [[Record reading]], or import a CSV from the [[Imports]] tab."
+      ]
+    },
+    {
+      "title": "Fix a reading",
+      "steps": [
+        "Select [[Correct]] on the row."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Each reading is judged against the limits saved with it, not today's limits.",
+    "No limits recorded is not the same as within limits.",
+    "A reading outside the limits does not open an excursion by itself."
+  ],
   "sections": [
     {
       "title": "What the page shows",

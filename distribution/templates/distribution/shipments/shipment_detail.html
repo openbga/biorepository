@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution distribution_requests specimens %}
+{% load distribution distribution_requests history specimens ui %}
 {% comment %}
 Shipment record: alerts, facts (request, ship-to, courier, declarations recorded at packing, who
 packed, checked and dispatched), contents (draft and packed: the picked allocations in it; sent:
@@ -11,50 +11,47 @@ request_obj, planned (allocations), items (ShipmentItem with return_row), return
 receipts (newest first, with is_effective), effective, dispatch_blockers ([(accession, blockers)]
 for a packed shipment), actions, events, toc, history, can_manage, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'distribution:shipment-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Shipments" section_url=list_url current=shipment.number %}{% endblock %}
+{% block page_kind %}record{% endblock %}
+{% block breadcrumbs %}{% url 'distribution:shipment-list' as list_url %}{% breadcrumbs section="Shipments" section_url=list_url current=shipment.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ shipment.number }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "shipment" shipment.state %}</li><li><a class="vr-id" href="{% url 'distribution:request-detail' request_obj.pk %}">{{ request_obj.number }}</a></li><li>{{ shipment.ship_to_institution }}</li>{% if shipment.dispatched_at %}<li>Dispatched <time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time></li>{% endif %}</ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% distribution_status "shipment" shipment.state %}{% endmeta_item %}{% meta_item label="Request" class="vr-id" %}<a href="{% url 'distribution:request-detail' request_obj.pk %}">{{ request_obj.number }}</a>{% endmeta_item %}{% meta_item label="Ship to" value=shipment.ship_to_institution %}{% if shipment.dispatched_at %}{% meta_item label="Dispatched" class="vr-id" %}<time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time>{% endmeta_item %}{% endif %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% include "distribution/requests/_header_actions.html" with actions=actions %}{% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if shipment.state == "packed" and dispatch_blockers %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Dispatch would be refused now" tone="warning" plain=True %}<div><ul class="mb-0 ps-3">{% for accession, blockers in dispatch_blockers %}<li><span class="vr-id">{{ accession }}</span>: {% for b in blockers %}{{ b.message }}{% if not forloop.last %} {% endif %}{% endfor %}</li>{% endfor %}</ul></div></div>
+{% notice tone="warning" label="Dispatch would be refused now" %}<ul class="mb-0 ps-3">{% for accession, blockers in dispatch_blockers %}<li><span class="vr-id">{{ accession }}</span>: {% for b in blockers %}{{ b.message }}{% if not forloop.last %} {% endif %}{% endfor %}</li>{% endfor %}</ul>{% endnotice %}
 {% elif shipment.state == "dispatched" %}
-<div class="alert alert-info" role="status">{% distribution_status "shipment" shipment.state plain=True %}<div>Its specimens are outside the repository. Record the receipt when the recipient reports it.</div></div>
+{% distribution_status_parts "shipment" shipment.state as st %}{% notice tone=st.tone label=st.label %}Its specimens are outside the repository. Record the receipt when the recipient reports it.{% endnotice %}
 {% elif shipment.state == "cancelled" %}
-<div class="alert alert-secondary" role="status">{% distribution_status "shipment" shipment.state plain=True %}<div>Cancelled. Its specimens stayed picked for the request; the record and its timeline are kept.</div></div>
+{% distribution_status_parts "shipment" shipment.state as st %}{% notice tone=st.tone label=st.label %}Cancelled. Its specimens stayed picked for the request; the record and its timeline are kept.{% endnotice %}
 {% endif %}
 {% include "distribution/shipments/_progress.html" %}
 
-<section class="card mb-3" aria-labelledby="facts-heading">
-  <div class="card-header"><h2 class="card-title" id="facts-heading">Shipment</h2><a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:manifest' shipment.pk %}">Manifest</a></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Request</dt><dd><a class="vr-id" href="{% url 'distribution:request-detail' request_obj.pk %}">{{ request_obj.number }}</a> {{ request_obj.title }}</dd></div>
-    <div><dt>Ship to</dt><dd class="vr-wrap">{{ shipment.ship_to_name }}<span class="d-block">{{ shipment.ship_to_institution }}</span><span class="d-block">{{ shipment.ship_to_address|linebreaksbr }}</span>{% if shipment.ship_to_contact %}<span class="d-block vr-muted small">{{ shipment.ship_to_contact }}</span>{% endif %}</dd></div>
-    <div><dt>Planned dispatch</dt><dd>{% if shipment.planned_on %}<time datetime="{{ shipment.planned_on|date:'Y-m-d' }}">{{ shipment.planned_on|date:"Y-m-d" }}</time>{% else %}Not set{% endif %}</dd></div>
-    <div><dt>Courier</dt><dd>{{ shipment.courier|default:"Not recorded" }}{% if shipment.service_level %}, {{ shipment.service_level }}{% endif %}</dd></div>
-    <div><dt>Tracking number</dt><dd class="vr-id">{{ shipment.tracking|default:"Not recorded" }}</dd></div>
-    {% if shipment.handed_to %}<div><dt>Handed to</dt><dd>{{ shipment.handed_to }}</dd></div>{% endif %}
-    {% if shipment.packed_at %}<div><dt>Packed</dt><dd><time datetime="{{ shipment.packed_at|date:'c' }}">{{ shipment.packed_at|date:"Y-m-d H:i" }}</time> by {{ shipment.packed_by|person }}{% if shipment.checked_by %}; checked by {{ shipment.checked_by|person }}{% else %}; no second check recorded{% endif %}</dd></div>{% endif %}
-    {% if shipment.dispatched_at %}<div><dt>Dispatched</dt><dd><time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time> by {{ shipment.dispatched_by|person }}</dd></div>{% endif %}
-    <div><dt>Created</dt><dd><time datetime="{{ shipment.created_at|date:'c' }}">{{ shipment.created_at|date:"Y-m-d H:i" }}</time> by {{ shipment.created_by|person }}</dd></div>
+{% panel title="Shipment" heading_id="facts-heading" class="mb-3" %}{% fill actions %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:manifest' shipment.pk %}">Manifest</a>{% endfill %}<dl class="vr-facts">
+    {% fact label="Request" %}<a class="vr-id" href="{% url 'distribution:request-detail' request_obj.pk %}">{{ request_obj.number }}</a> {{ request_obj.title }}{% endfact %}
+    {% fact label="Ship to" class="vr-wrap" %}{{ shipment.ship_to_name }}<span class="d-block">{{ shipment.ship_to_institution }}</span><span class="d-block">{{ shipment.ship_to_address|linebreaksbr }}</span>{% if shipment.ship_to_contact %}<span class="d-block vr-muted small">{{ shipment.ship_to_contact }}</span>{% endif %}{% endfact %}
+    {% fact label="Planned dispatch" %}{% if shipment.planned_on %}<time datetime="{{ shipment.planned_on|date:'Y-m-d' }}">{{ shipment.planned_on|date:"Y-m-d" }}</time>{% else %}Not set{% endif %}{% endfact %}
+    {% fact label="Courier" %}{{ shipment.courier|default:"Not recorded" }}{% if shipment.service_level %}, {{ shipment.service_level }}{% endif %}{% endfact %}
+    {% fact label="Tracking number" class="vr-id" %}{{ shipment.tracking|default:"Not recorded" }}{% endfact %}
+    {% if shipment.handed_to %}{% fact label="Handed to" %}{{ shipment.handed_to }}{% endfact %}{% endif %}
+    {% if shipment.packed_at %}{% fact label="Packed" %}<time datetime="{{ shipment.packed_at|date:'c' }}">{{ shipment.packed_at|date:"Y-m-d H:i" }}</time> by {{ shipment.packed_by|person }}{% if shipment.checked_by %}; checked by {{ shipment.checked_by|person }}{% else %}; no second check recorded{% endif %}{% endfact %}{% endif %}
+    {% if shipment.dispatched_at %}{% fact label="Dispatched" %}<time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time> by {{ shipment.dispatched_by|person }}{% endfact %}{% endif %}
+    {% fact label="Created" %}<time datetime="{{ shipment.created_at|date:'c' }}">{{ shipment.created_at|date:"Y-m-d H:i" }}</time> by {{ shipment.created_by|person }}{% endfact %}
   </dl>
   <h3 class="vr-facts-subhead">Declared at packing</h3>
   <dl class="vr-facts">
-    <div><dt>Temperature class</dt><dd>{{ shipment.get_temperature_class_display|default:"Not yet declared" }}</dd></div>
-    <div><dt>Refrigerant</dt><dd>{{ shipment.get_refrigerant_display|default:"Not yet declared" }}{% if shipment.dry_ice_kg %} <span class="vr-id">{{ shipment.dry_ice_kg }} kg</span>{% endif %}</dd></div>
-    <div><dt>Classification declared by the shipper</dt><dd>{{ shipment.get_classification_display|default:"Not yet declared" }}{% if shipment.classification_note %} ({{ shipment.classification_note }}){% endif %}<span class="d-block vr-muted small">Recorded as declared; the software does not classify shipments.</span></dd></div>
-    <div><dt>Packages</dt><dd class="vr-id">{{ shipment.package_count|default_if_none:"—" }}</dd></div>
-    <div><dt>Emergency contact</dt><dd>{{ shipment.emergency_contact|default:"Not yet declared" }}</dd></div>
-    {% if shipment.logger_ids %}<div><dt>Temperature loggers</dt><dd class="vr-id">{{ shipment.logger_ids }}</dd></div>{% endif %}
-    <div><dt>Storage instructions</dt><dd>{{ shipment.storage_instructions|default:"None" }}</dd></div>
-    <div><dt>Participant codes on the manifest</dt><dd>{% if shipment.include_participant_codes %}Included{% else %}Not included{% endif %}</dd></div>
-    {% if shipment.training_confirmed is not None %}<div><dt>Shipping training confirmed by the packer</dt><dd>{{ shipment.training_confirmed|yesno:"Yes,No" }}</dd></div>{% endif %}
-  </dl></div>
-</section>
+    {% fact label="Temperature class" %}{{ shipment.get_temperature_class_display|default:"Not yet declared" }}{% endfact %}
+    {% fact label="Refrigerant" %}{{ shipment.get_refrigerant_display|default:"Not yet declared" }}{% if shipment.dry_ice_kg %} <span class="vr-id">{{ shipment.dry_ice_kg }} kg</span>{% endif %}{% endfact %}
+    {% fact label="Classification declared by the shipper" %}{{ shipment.get_classification_display|default:"Not yet declared" }}{% if shipment.classification_note %} ({{ shipment.classification_note }}){% endif %}<span class="d-block vr-muted small">Recorded as declared; the software does not classify shipments.</span>{% endfact %}
+    {% fact label="Packages" class="vr-id" %}{{ shipment.package_count|default_if_none:"—" }}{% endfact %}
+    {% fact label="Emergency contact" %}{{ shipment.emergency_contact|default:"Not yet declared" }}{% endfact %}
+    {% if shipment.logger_ids %}{% fact label="Temperature loggers" class="vr-id" %}{{ shipment.logger_ids }}{% endfact %}{% endif %}
+    {% fact label="Storage instructions" %}{{ shipment.storage_instructions|default:"None" }}{% endfact %}
+    {% fact label="Participant codes on the manifest" %}{% if shipment.include_participant_codes %}Included{% else %}Not included{% endif %}{% endfact %}
+    {% if shipment.training_confirmed is not None %}{% fact label="Shipping training confirmed by the packer" %}{{ shipment.training_confirmed|yesno:"Yes,No" }}{% endfact %}{% endif %}
+  </dl>{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="contents-heading">
-  <div class="card-header"><h2 class="card-title" id="contents-heading">Contents</h2><span class="vr-count">{% if shipment.is_sent %}{{ items|length }} sent{% else %}{{ planned|length }}{% endif %}</span>{% if can_operate and shipment.state == "draft" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:shipment-contents' shipment.pk %}">Change contents</a>{% endif %}</div>
+{% panel title="Contents" heading_id="contents-heading" table=True class="mb-3" %}{% fill count %}{% if shipment.is_sent %}{{ items|length }} sent{% else %}{{ planned|length }}{% endif %}{% endfill %}{% fill actions %}{% if can_operate and shipment.state == "draft" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:shipment-contents' shipment.pk %}">Change contents</a>{% endif %}{% endfill %}
   {% if shipment.is_sent %}
   {% if items %}
   <div class="vr-table-wrap"><table class="table vr-table">
@@ -66,11 +63,11 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
         <td>{{ item.specimen_type }}</td>
         <td>{{ item.container }}</td>
         <td class="text-end vr-id">{{ item.quantity|amount:item.unit }}</td>
-        <td class="vr-id">{{ item.study_code|default:"—" }}</td>
+        <td>{% if item.study_title %}{{ item.study_title }} <span class="vr-muted vr-id">{{ item.study_code }}</span>{% elif item.study_code %}<span class="vr-id">{{ item.study_code }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
         {% if shipment.include_participant_codes %}<td class="vr-id">{{ item.participant_code|default:"—" }}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  <div class="card-body pt-0"><p class="vr-muted small mb-0">As recorded at dispatch; later corrections to the specimens or catalogues do not change these rows.</p></div>
+  <p class="vr-muted small">As recorded at dispatch; later corrections to the specimens or catalogues do not change these rows.</p>
   {% endif %}
   {% elif planned %}
   <div class="vr-table-wrap"><table class="table vr-table">
@@ -80,45 +77,41 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
         <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' a.specimen_id %}">{{ a.specimen.accession }}</a></th>
         <td>{% distribution_status "allocation" a.state plain=True %}</td>
         <td class="vr-id">{{ a.item.line }}</td>
-        <td>{{ a.specimen.specimen_type.code }}</td>
+        <td>{{ a.specimen.specimen_type.name }} <span class="vr-muted vr-id">{{ a.specimen.specimen_type.code }}</span></td>
         <td class="text-end vr-id">{{ a.specimen.quantity_on_hand|amount:a.specimen.unit }}</td>
         {% if shipment.state == "packed" %}<td class="vr-id">{{ a.packed_revision|default_if_none:"—" }}{% if a.packed_revision is not None and a.packed_revision != a.specimen.revision %} <span class="small">changed since (now {{ a.specimen.revision }})</span>{% endif %}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}
-  <div class="card-body">{% if can_operate and shipment.state == "draft" %}{% url 'distribution:shipment-contents' shipment.pk as contents_url %}{% include "includes/empty_state.html" with title="No specimens in this shipment" body="Add picked specimens of the request with Change contents." action_url=contents_url action_label="Change contents" %}{% else %}{% include "includes/empty_state.html" with title="No specimens in this shipment" %}{% endif %}</div>
+  {% if can_operate and shipment.state == "draft" %}{% url 'distribution:shipment-contents' shipment.pk as contents_url %}{% empty_state title="No specimens in this shipment" body="Add picked specimens of the request with Change contents." action_url=contents_url action_label="Change contents" %}{% else %}{% empty_state title="No specimens in this shipment" %}{% endif %}
   {% endif %}
-</section>
+{% endpanel %}
 
 {% if shipment.is_sent %}
-<section class="card mb-3" aria-labelledby="receipt-heading">
-  <div class="card-header"><h2 class="card-title" id="receipt-heading">Receipt</h2>{% if effective %}{% distribution_status "receipt" effective.condition plain=True %}{% endif %}</div>
-  <div class="card-body">
+{% panel title="Receipt" heading_id="receipt-heading" class="mb-3" %}{% fill actions %}{% if effective %}{% distribution_status "receipt" effective.condition plain=True %}{% endif %}{% endfill %}
   {% if effective %}
     <dl class="vr-facts">
-      <div><dt>Received</dt><dd><time datetime="{{ effective.received_at|date:'c' }}">{{ effective.received_at|date:"Y-m-d H:i" }}</time> by {{ effective.received_by_name }}{% if effective.unpacked_by_name %}; unpacked by {{ effective.unpacked_by_name }}{% endif %}</dd></div>
-      <div><dt>Condition</dt><dd>{{ effective.get_condition_display }}</dd></div>
-      <div><dt>Refrigerant on arrival</dt><dd>{{ effective.get_refrigerant_on_arrival_display }}</dd></div>
-      {% if effective.temperature_note %}<div><dt>Temperature note</dt><dd>{{ effective.temperature_note }}</dd></div>{% endif %}
-      {% if effective.discrepancies %}<div><dt>Discrepancies</dt><dd class="vr-wrap">{{ effective.discrepancies|linebreaksbr }}</dd></div>{% endif %}
-      <div><dt>Reported by</dt><dd>{{ effective.get_received_via_display }}</dd></div>
-      <div><dt>Exceptions</dt><dd>{% for e in effective.exceptions.all %}<span class="d-block"><span class="vr-id">{{ e.item.accession }}</span>: {{ e.get_outcome_display }}{% if e.note %} ({{ e.note }}){% endif %}</span>{% empty %}None reported{% endfor %}</dd></div>
-      <div><dt>Attachment</dt><dd>{% include "distribution/shipments/_attachment.html" with item=effective kind="receipt" %}</dd></div>
-      <div><dt>Recorded</dt><dd><time datetime="{{ effective.recorded_at|date:'c' }}">{{ effective.recorded_at|date:"Y-m-d H:i" }}</time> by {{ effective.actor|person }}: {{ effective.reason }}</dd></div>
+      {% fact label="Received" %}<time datetime="{{ effective.received_at|date:'c' }}">{{ effective.received_at|date:"Y-m-d H:i" }}</time> by {{ effective.received_by_name }}{% if effective.unpacked_by_name %}; unpacked by {{ effective.unpacked_by_name }}{% endif %}{% endfact %}
+      {% fact label="Condition" %}{{ effective.get_condition_display }}{% endfact %}
+      {% fact label="Refrigerant on arrival" %}{{ effective.get_refrigerant_on_arrival_display }}{% endfact %}
+      {% if effective.temperature_note %}{% fact label="Temperature note" %}{{ effective.temperature_note }}{% endfact %}{% endif %}
+      {% if effective.discrepancies %}{% fact label="Discrepancies" class="vr-wrap" %}{{ effective.discrepancies|linebreaksbr }}{% endfact %}{% endif %}
+      {% fact label="Reported by" %}{{ effective.get_received_via_display }}{% endfact %}
+      {% fact label="Exceptions" %}{% for e in effective.exceptions.all %}<span class="d-block"><span class="vr-id">{{ e.item.accession }}</span>: {{ e.get_outcome_display }}{% if e.note %} ({{ e.note }}){% endif %}</span>{% empty %}None reported{% endfor %}{% endfact %}
+      {% fact label="Attachment" %}{% include "distribution/shipments/_attachment.html" with item=effective kind="receipt" %}{% endfact %}
+      {% fact label="Recorded" %}<time datetime="{{ effective.recorded_at|date:'c' }}">{{ effective.recorded_at|date:"Y-m-d H:i" }}</time> by {{ effective.actor|person }}: {{ effective.reason }}{% endfact %}
     </dl>
-    {% if receipts|length > 1 %}
-    <details class="mt-3"><summary>Earlier versions ({{ receipts|length|add:"-1" }})</summary>
-      <ol class="vr-timeline">{% for r in receipts %}{% if not r.is_effective %}{% include "includes/history_item.html" with title="Receipt as first recorded, since corrected" at=r.recorded_at actor=r.actor reason=r.reason detail=r.get_condition_display %}{% endif %}{% endfor %}</ol>
-    </details>
-    {% endif %}
   {% else %}
-    {% if can_operate and shipment.state == "dispatched" %}{% url 'distribution:shipment-receipt' shipment.pk as receipt_url %}{% include "includes/empty_state.html" with title="No receipt recorded yet" body="Record what the recipient reports: who received it, when, its condition and any exceptions." action_url=receipt_url action_label="Record receipt" %}{% else %}{% include "includes/empty_state.html" with title="No receipt recorded yet" %}{% endif %}
+    {% if can_operate and shipment.state == "dispatched" %}{% url 'distribution:shipment-receipt' shipment.pk as receipt_url %}{% empty_state title="No receipt recorded yet" body="Record what the recipient reports: who received it, when, its condition and any exceptions." action_url=receipt_url action_label="Record receipt" %}{% else %}{% empty_state title="No receipt recorded yet" %}{% endif %}
   {% endif %}
-  </div>
-</section>
+  {% endpanel %}
+{% if receipts|length > 1 %}
+{% history_panel events=receipts title="Earlier receipt versions" heading_id="receipt-versions-heading" class="mb-3" collapsible=True %}{% fill count %}{{ receipts|length|add:"-1" }}{% endfill %}
+  {% for r in receipts %}{% if not r.is_effective %}{% history_item title="Receipt as first recorded, since corrected" at=r.recorded_at actor=r.actor reason=r.reason detail=r.get_condition_display %}{% endif %}{% endfor %}
+{% endhistory_panel %}
+{% endif %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="returns-heading">
-  <div class="card-header"><h2 class="card-title" id="returns-heading">Returns</h2><span class="vr-count">{{ returned_count }} of {{ items|length }}</span></div>
+{% panel title="Returns" heading_id="returns-heading" table=True class="mb-3" %}{% fill count %}{{ returned_count }} of {{ items|length }}{% endfill %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Specimen</th><th scope="col">Return</th><th scope="col">Returned</th><th scope="col" class="text-end">Amount returned</th><th scope="col" class="text-end">Thaws reported (count)</th><th scope="col">Attachment</th>{% if can_operate or can_manage %}<th scope="col"><span class="visually-hidden">Actions</span></th>{% endif %}</tr></thead>
     <tbody>{% for item in items %}{% with r=item.return_row %}
@@ -132,16 +125,13 @@ for a packed shipment), actions, events, toc, history, can_manage, can_operate.
         {% if can_operate or can_manage %}<td>{% if not r and can_operate %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:return-record' item.pk %}">Record return<span class="visually-hidden"> of {{ item.accession }}</span></a>{% elif r and can_manage and r.review_state != "released" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:return-review' r.pk %}">Review<span class="visually-hidden"> return of {{ item.accession }}</span></a>{% endif %}</td>{% endif %}
       </tr>{% endwith %}{% endfor %}
     </tbody></table></div>
-</section>
+{% endpanel %}
 {% endif %}
 
-<section class="card mb-3" aria-labelledby="timeline-heading">
-  <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first</span></div>
-  <div class="card-body"><ol class="vr-timeline">
-    {% for e in events %}{% include "includes/history_item.html" with title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note detail=e.detail extra="distribution/shipments/_event_extra.html" %}{% endfor %}
-  </ol></div>
-</section>
+{% history_panel events=events title="Timeline" heading_id="timeline-heading" class="mb-3" collapsible=True %}{% fill count %}{{ events|length }} entr{{ events|length|pluralize:"y,ies" }}, oldest first{% endfill %}
+  {% for e in events %}{% history_item title=e.get_kind_display at=e.occurred_at actor=e.actor reason=e.note detail=e.detail extra="distribution/shipments/_event_extra.html" %}{% endfor %}
+{% endhistory_panel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=shipment.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=shipment.number %}{% endblock %}

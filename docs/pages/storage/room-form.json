@@ -6,6 +6,26 @@
   ],
   "title": "Room form",
   "purpose": "Create a room within a site or change the name of an existing room.",
+  "summary": "Create a room within a site or change the name of an existing room.",
+  "tasks": [
+    {
+      "title": "Create a room",
+      "steps": [
+        "Choose the [[Site]], type the [[Code]] and [[Name]], and select [[Create room]]."
+      ]
+    },
+    {
+      "title": "Rename a room",
+      "steps": [
+        "Change the [[Name]], give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The site and code cannot be changed later.",
+    "Codes are unique within the site, stored in capitals and never reused.",
+    "Rooms cannot be retired or deleted."
+  ],
   "sections": [
     {
       "title": "Fields",

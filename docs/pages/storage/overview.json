@@ -5,6 +5,27 @@
   ],
   "title": "Storage overview",
   "purpose": "See at a glance where there is room: repository-wide position counts, occupancy of each active storage unit and the most recent box and rack moves. Every count links to the list it counts.",
+  "summary": "Where there is room at a glance: position counts across the repository, how full each active storage unit is, and the latest box and rack moves.",
+  "tasks": [
+    {
+      "title": "Find room to store something",
+      "steps": [
+        "Find the unit under Occupancy by storage unit and select its Free count. The free positions list opens, filtered to that unit."
+      ]
+    },
+    {
+      "title": "Check a recent box or rack move",
+      "steps": [
+        "Under Recent box and rack moves, select the box or rack to open its page and moves."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Counts cover active boxes in active racks, shelves and units. Retired structure never counts as capacity.",
+    "Free positions are not reserved. A position is taken only when an item is stored in it.",
+    "Nominal temperature is a stated set point, not a measurement.",
+    "Moves of single specimens are on the specimen records, not here."
+  ],
   "sections": [
     {
       "title": "All active storage",
@@ -47,19 +68,19 @@
       "items": [
         {
           "label": "Storage unit",
-          "description": "Unit code and name; opens the unit."
+          "description": "Unit code and name; opens the unit. Excursion open marks a unit with an open temperature excursion."
         },
         {
           "label": "Site and room",
-          "description": "Where the unit stands."
+          "description": "Where the unit stands: site name / room name."
         },
         {
           "label": "Storage class",
           "description": "The class named when the unit was set up."
         },
         {
-          "label": "Nominal (°C)",
-          "description": "The unit's stated set point in degrees Celsius. A definition, not a measurement; it never blocks storing an item."
+          "label": "Nominal",
+          "description": "The unit's stated set point, with its unit (for example −80 °C). A definition, not a measurement; it never blocks storing an item."
         },
         {
           "label": "Positions, Occupied",

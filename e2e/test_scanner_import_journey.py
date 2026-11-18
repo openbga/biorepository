@@ -4,7 +4,7 @@ import csv
 import io
 
 import pytest
-from helpers import field, sign_in
+from helpers import field, native_select, pick, sign_in
 from playwright.sync_api import expect
 
 from core.models import AuditEvent
@@ -51,7 +51,7 @@ def test_scanner_upload_preview_errors_and_reviewed_completion(page, people, wor
     form = page.locator("#vr-form-dialog")
     expect(form).to_be_visible()
     field(form, "Completion reason").fill("Synthetic scanner review")
-    field(form, "A1: observed contents").select_option("accession")
+    pick(field(form, "A1: observed contents"), "accession")
     field(form, "A1: observed accession").fill("SYNTHETIC-RETAINED")
     form.locator('input[name="scanner_file"]').set_input_files(
         {
@@ -70,8 +70,9 @@ def test_scanner_upload_preview_errors_and_reviewed_completion(page, people, wor
         {"name": "observations.csv", "mimeType": "text/csv", "buffer": scanner_csv(audit)}
     )
     form.get_by_role("button", name="Load observations", exact=True).click()
-    expect(field(form, "A1: observed contents")).to_have_value("empty")
+    # Wait for the re-rendered form (field() re-resolves) before reading a select's native value.
     expect(field(form, "A2: observed accession")).to_have_value("SYNTHETIC-SCANNER-001")
+    expect(native_select(field(form, "A1: observed contents"))).to_have_value("empty")
     expect(field(form, "Completion reason")).to_have_value("Synthetic scanner review")
     assert not AuditFinalization.objects.exists()
     assert events.count() == events_before

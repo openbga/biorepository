@@ -10,6 +10,7 @@ from django.utils import timezone
 
 from accounts.models import User
 from accounts.roles import ROLES, has_role
+from core.lookups import RemoteSelect
 from storage.models import Box, MoveEvent, Position
 from storage.queries import free_positions
 
@@ -285,6 +286,7 @@ class RegisterForm(ActionForm):
         queryset=Participant.objects,
         required=False,
         help_text=f"Coded participant identifier only. {NO_IDENTIFYING_TEXT}",
+        widget=RemoteSelect("active-participants"),
     )
     collection = forms.ModelChoiceField(
         label="Collection",
@@ -651,6 +653,7 @@ class CorrectForm(ActionForm):
         queryset=Participant.objects,
         required=False,
         help_text=f"Coded participant identifier only. {NO_IDENTIFYING_TEXT}",
+        widget=RemoteSelect("active-participants"),
     )
     collection = forms.ModelChoiceField(
         label="Collection", queryset=Collection.objects, required=False

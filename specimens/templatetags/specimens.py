@@ -42,9 +42,13 @@ IMPORT_TONES = {
 
 
 @register.inclusion_tag("includes/status.html")
-def specimen_status(specimen, plain=False):
+def specimen_status(specimen, plain=False, held=False, size=None):
+    """held=True folds an active hold into the label ("Available, on hold", hold tone): the
+    record header's one status. The view sets specimen.held; lists show it as a second label."""
     label, tone = SPECIMEN_STATES[specimen.status]
-    return {"label": label, "tone": tone, "plain": plain}
+    if held and getattr(specimen, "held", False):
+        label, tone = f"{label}, on hold", "hold"
+    return {"label": label, "tone": tone, "plain": plain, "size": size}
 
 
 @register.inclusion_tag("includes/status.html")
@@ -64,6 +68,24 @@ def hold_status(scope, plain=False):
     return {"label": label, "tone": "hold", "plain": plain}
 
 
+@register.simple_tag
+def specimen_status_parts(kind, value):
+    """{label, tone} of a status, for components that open with it ({% notice %}):
+    {% specimen_status_parts "request" state as st %}{% notice tone=st.tone label=st.label %}…"""
+    if kind == "specimen":
+        label, tone = SPECIMEN_STATES[value.status]
+    elif kind == "request":
+        label, tone = REQUEST_STATES[value]
+    elif kind == "import":
+        label, tone = ImportBatch.State(value).label, IMPORT_TONES[value]
+    elif kind == "hold":
+        label = Hold.Scope(value).label if value in Hold.Scope.values else str(value)
+        tone = "hold"
+    else:
+        raise ValueError(f"Unknown status kind {kind!r}.")
+    return {"label": label, "tone": tone}
+
+
 @register.filter
 def amount(value, unit=None):
     """Exact decimal without trailing zeros, with the unit code: 0.500000 -> '0.5 mL'."""
@@ -78,6 +100,16 @@ def amount(value, unit=None):
 @register.filter
 def duration(value):
     return format_duration(value)
+
+
+@register.filter
+def thaw_short(summary):
+    """The thaw count alone, for the record header: "3", "At least 0" or "Unknown"."""
+    if summary.baseline is None:
+        return "Unknown"
+    if summary.unknown_away:
+        return f"At least {summary.baseline + summary.recorded}"
+    return str(summary.total)
 
 
 @register.filter

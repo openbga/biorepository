@@ -5,6 +5,28 @@
   ],
   "title": "Correct thaw record",
   "purpose": "Correct the count of a thaw record by adding a new version, leaving the earlier record in the history.",
+  "summary": "Correct the count of a thaw record by adding a new version. The earlier record stays in the history. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Correct the count",
+      "steps": [
+        "Answer the question shown for this kind of record, or tick Unknown where offered.",
+        "Explain why in [[Reason]] and select [[Correct thaw record]]."
+      ]
+    },
+    {
+      "title": "Record a new observed thaw instead",
+      "steps": [
+        "If a thaw was missed rather than miscounted, use [[Record observed thaw]] on the specimen record."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The original is kept and marked Corrected.",
+    "Only the latest version of a record can be corrected.",
+    "A correction that leaves the count unchanged is refused.",
+    "Unknown stays unknown in the totals. It is never counted as zero."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

@@ -5,6 +5,29 @@
   ],
   "title": "Record consent",
   "purpose": "Record a participant's consent decision on a form version, as a first consent or a re-consent.",
+  "summary": "Record a participant's consent decision on a form version, as a first consent or a re-consent. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Record a consent",
+      "steps": [
+        "Choose the [[Participant]], [[Study]] and [[Consent form version]].",
+        "Choose the [[Decision]] and answer Permitted or Refused for each category under [[Answers per category]].",
+        "Fill in the date, who decided and how it was documented, then select [[Record consent]]."
+      ]
+    },
+    {
+      "title": "Record a refusal",
+      "steps": [
+        "Choose Refused and leave the categories unanswered."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The newest record governs all the participant's material in the study, including material collected earlier.",
+    "A category the form does not ask is not addressed and does not permit a use.",
+    "Restrictions are shown to reviewers, allocators and pickers, never interpreted.",
+    "The software stores what the filed consent says. It does not judge whether it is adequate."
+  ],
   "sections": [
     {
       "title": "How the form works",

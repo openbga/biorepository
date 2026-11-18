@@ -5,6 +5,33 @@
   ],
   "title": "Storage unit",
   "purpose": "Review one freezer or tank: its facts, occupancy, racks and shelves, boxes and history, and reach the actions to change it.",
+  "summary": "One freezer or tank: its facts, occupancy, racks and shelves, boxes and history.",
+  "tasks": [
+    {
+      "title": "Add racks or shelves",
+      "steps": [
+        "Admin and manager: select [[Add rack or shelf]]."
+      ]
+    },
+    {
+      "title": "Reuse this layout for another unit",
+      "steps": [
+        "Select [[Save layout as template]], check the recipe and save it."
+      ]
+    },
+    {
+      "title": "Take the unit out of service",
+      "steps": [
+        "Retire its racks and shelves first, then select [[Retire storage unit]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The code is fixed and never reused, even after retirement.",
+    "Retirement is permanent. The record and its history are kept.",
+    "Nominal temperature is a set point, not a measurement. It never blocks storing an item.",
+    "Retired boxes are not listed here. Find them in the Boxes list."
+  ],
   "sections": [
     {
       "title": "Storage unit",
@@ -113,7 +140,7 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
       ]
     }
   ],
@@ -125,6 +152,6 @@
     "storage/services.py",
     "storage/templates/storage/unit_detail.html",
     "storage/templates/storage/_capacity.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

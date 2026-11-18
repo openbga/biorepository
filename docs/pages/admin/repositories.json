@@ -5,6 +5,26 @@
   ],
   "title": "Repository setup record",
   "purpose": "Open the deployment’s repository retention statement.",
+  "summary": "The deployment's one repository setup record, where an administrator keeps the record-retention statement.",
+  "tasks": [
+    {
+      "title": "Change the retention statement",
+      "steps": [
+        "Select the repository's name to open its form."
+      ]
+    },
+    {
+      "title": "Go back to the application",
+      "steps": [
+        "Select [[View site]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only a superuser who also holds the admin role can open this list.",
+    "There is exactly one record. It cannot be added or deleted here.",
+    "A missing record is created with the setup_repository command, not in administration."
+  ],
   "sections": [
     {
       "title": "Access and columns",

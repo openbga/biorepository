@@ -5,6 +5,26 @@
   ],
   "title": "Distribution catalogues",
   "purpose": "Find and maintain the scope categories used by consent forms, consent records, requests and agreements.",
+  "summary": "The scope categories, the uses consent forms ask about, used by consents, requests and agreements.",
+  "tasks": [
+    {
+      "title": "Add a category",
+      "steps": [
+        "Admin and manager: select [[New scope category]]."
+      ]
+    },
+    {
+      "title": "Change or retire a category",
+      "steps": [
+        "Select its code, change it or clear Active, and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Governs use Yes means a request can require it and the consent must permit it.",
+    "Inactive entries stay on existing records but are not offered for new ones.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Tabs",

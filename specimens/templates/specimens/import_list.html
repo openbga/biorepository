@@ -1,30 +1,29 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 CSV import batches, newest first (technicians and managers). Context: page_obj (ImportBatch rows
 with .state, .name, .error_total), filter_form, q, sort, active_filters, filtered.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Register many specimens from a CSV file: validate first, then commit all rows or none.</p>{% endblock %}
 {% block page_actions %}
-{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}
-<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% include "includes/icon.html" with name="plus-lg" %}Upload CSV</a>{% endblock %}
+{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}
+<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% icon name="plus-lg" %}Upload CSV</a>{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="imports-heading">
-  <h2 class="visually-hidden" id="imports-heading">Imports</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter imports" q=q placeholder="File name" grid="specimens.imports" %}
-  {{ filter_form.q.errors }}
-  {{ filter_form.non_field_errors }}
+{% panel title="Imports" heading_id="imports-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter imports" q=q placeholder="File name" grid="specimens.imports" %}
+  {% if filter_form.q.errors or filter_form.non_field_errors %}{% notice tone="danger" %}{{ filter_form.q.errors|join:" " }} {{ filter_form.non_field_errors|join:" " }}{% endnotice %}{% endif %}
   {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
-  {% if page_obj.paginator.count %}
+  {% url 'specimens:import-upload' as create_url %}
+  {% list_results items=page_obj noun="imports" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No imports yet" empty_body="Download the CSV template, fill one row per specimen and upload it. Nothing is registered until you commit a valid file." action_url=create_url action_label="Upload CSV" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.imports" data-vr-grid-version="1" aria-labelledby="imports-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Import" asc="filename" desc="-filename" col="import" locked=True %}
+        {% sort_header label="Import" asc="filename" desc="-filename" col="import" locked=True %}
         <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
-        {% include "includes/sort_header.html" with label="Rows" asc="rows" desc="-rows" col="rows" class="text-end" %}
+        {% sort_header label="Rows" asc="rows" desc="-rows" col="rows" class="text-end" %}
         <th scope="col" class="text-end" data-vr-col="errors" data-vr-col-label="Errors">Errors</th>
         <th scope="col" data-vr-col="validated_by" data-vr-col-label="Validated by">Validated by</th>
-        {% include "includes/sort_header.html" with label="Validated" asc="recorded_at" desc="-recorded_at" first="desc" col="recorded_at" %}
+        {% sort_header label="Validated" asc="recorded_at" desc="-recorded_at" first="desc" col="recorded_at" %}
       </tr></thead>
       <tbody>
         {% for batch in page_obj %}
@@ -40,10 +39,6 @@ with .state, .name, .error_total), filter_form, q, sort, active_filters, filtere
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun="imports" filtered=filtered %}
-  {% else %}
-  {% url 'specimens:import-upload' as create_url %}
-  {% include "specimens/includes/list_states.html" with title_empty="No imports yet" body_empty="Download the CSV template, fill one row per specimen and upload it. Nothing is registered until you commit a valid file." create_url=create_url create_label="Upload CSV" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

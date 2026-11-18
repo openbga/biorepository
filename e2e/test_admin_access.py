@@ -4,7 +4,7 @@ import re
 import secrets
 
 import pytest
-from helpers import make_user, sign_in
+from helpers import make_user, nav, nav_link, sign_in
 from playwright.sync_api import Page, expect
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -34,13 +34,16 @@ def test_non_staff_roles_are_refused_by_the_admin(page: Page, sign_in_as, role):
     sign_in_as(role)
     assert page.goto("/admin/").status == 403
     assert page.goto("/admin/accounts/user/").status == 403
-    expect(page.get_by_role("link", name="Accounts & roles", exact=True)).to_have_count(0)
+    page.goto("/")
+    expect(nav_link(page, "Record retention")).to_have_count(1)  # same helper, a granted item
+    expect(nav_link(page, "Accounts & roles")).to_have_count(0)
 
 
 def test_admin_role_without_superuser_sees_no_models_and_cannot_open_them(page: Page, sign_in_as):
     sign_in_as("admin")
     page.goto("/")
-    expect(page.get_by_role("link", name="Accounts & roles", exact=True)).to_have_count(0)
+    expect(nav_link(page, "Record retention")).to_have_count(1)  # same helper, a granted item
+    expect(nav_link(page, "Accounts & roles")).to_have_count(0)
     for path in ("/admin/accounts/user/", "/admin/auth/group/", "/admin/core/repository/"):
         assert page.goto(path).status == 403, path
     page.goto("/admin/")
@@ -51,7 +54,7 @@ def test_superuser_opens_the_admin_from_the_sidebar(page: Page, demo):
     password = secrets.token_urlsafe(18)
     make_user("e2e_superuser", password, "admin", superuser=True)
     sign_in(page, "e2e_superuser", password)
-    page.get_by_role("link", name="Accounts & roles", exact=True).click()
+    nav(page, "Accounts & roles")
     expect(page).to_have_url(re.compile(r"/admin/$"))
     for name, path in (
         ("Users", "/admin/accounts/user/"),

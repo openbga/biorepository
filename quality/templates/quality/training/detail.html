@@ -1,6 +1,11 @@
-{% extends "base.html" %}
-{% block breadcrumbs %}{% url 'quality:training-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Training records" section_url=list_url current=training.number %}{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% include "quality/training/_status.html" with status=training.status %}</li><li>{{ training.topic }}</li><li>Revision {{ training.revision }}</li></ul>{% endblock %}
+{% extends "base.html" %}{% load ui %}
+{% comment %}
+One training record: the assignment, its completion evidence, record facts and history.
+Context: training, toc, can_manage, history [(event, changes)].
+{% endcomment %}
+{% block page_kind %}record{% endblock %}
+{% block breadcrumbs %}{% url 'quality:training-list' as list_url %}{% breadcrumbs section="Training records" section_url=list_url current=training.number %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% include "quality/training/_status.html" with status=training.status %}{% endmeta_item %}{% meta_item label="Topic" value=training.topic %}{% meta_item label="Trainee" value=training.trainee.get_full_name|default:training.trainee.username %}{% meta_item label="Due" class="vr-id" %}{% if training.due_on %}<time datetime="{{ training.due_on|date:'Y-m-d' }}">{{ training.due_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}{% endmeta_item %}{% meta_item label="Revision" value=training.revision %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if can_manage %}
   {% if training.status != "cancelled" %}<a class="btn btn-outline-danger" href="{% url 'quality:training-cancel' training.pk %}">Cancel training record</a>{% endif %}
@@ -11,27 +16,27 @@
 {% block content %}
 {% if not can_manage %}<p class="vr-muted">Read-only access. A repository manager or administrator records changes.</p>{% endif %}
 {% if training.status == "cancelled" %}<p class="vr-muted">Cancelled records are terminal. Earlier assignment and completion evidence remain in history.</p>{% endif %}
-{% include "includes/page_toc.html" with items=toc %}
-<section class="card mb-3" aria-labelledby="assignment-heading"><div class="card-header"><h2 class="card-title" id="assignment-heading">Assignment</h2></div><div class="card-body"><dl class="vr-facts">
-  <div><dt>Trainee</dt><dd>{% if training.trainee.get_full_name %}{{ training.trainee.get_full_name }} ({{ training.trainee.username }}){% else %}{{ training.trainee.username }}{% endif %}</dd></div>
-  <div><dt>Topic</dt><dd>{{ training.topic }}</dd></div>
-  <div><dt>Procedure / version reference</dt><dd>{{ training.procedure_reference|default:"Not recorded" }}</dd></div>
-  <div><dt>Assignment due</dt><dd>{% if training.due_on %}<time datetime="{{ training.due_on|date:'Y-m-d' }}">{{ training.due_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}</dd></div>
-</dl><p class="vr-muted">The trainee is fixed when created. Cancel an incorrect assignment and create a new record. Due dates do not change permissions or specimen work.</p></div></section>
-<section class="card mb-3" aria-labelledby="completion-heading"><div class="card-header"><h2 class="card-title" id="completion-heading">Completion</h2></div><div class="card-body"><dl class="vr-facts">
-  <div><dt>Completed on</dt><dd>{% if training.completed_on %}<time datetime="{{ training.completed_on|date:'Y-m-d' }}">{{ training.completed_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}</dd></div>
-  <div><dt>Trainer / provider</dt><dd>{{ training.trainer_provider|default:"Not recorded" }}</dd></div>
-  <div><dt>Completion evidence</dt><dd>{{ training.completion_evidence|default:"Not recorded"|linebreaksbr }}</dd></div>
-  <div><dt>Competency assessment</dt><dd>{{ training.competency_assessment|default:"Not recorded"|linebreaksbr }}</dd></div>
-  <div><dt>Renewal due</dt><dd>{% if training.renewal_due %}<time datetime="{{ training.renewal_due|date:'Y-m-d' }}">{{ training.renewal_due|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}</dd></div>
-</dl><p class="vr-muted">Assessment records a person's judgment. The software does not certify competence, infer an expired qualification or create renewal assignments.</p></div></section>
-<section class="card mb-3" aria-labelledby="record-heading"><div class="card-header"><h2 class="card-title" id="record-heading">Record facts</h2></div><div class="card-body"><dl class="vr-facts">
-  <div><dt>Created</dt><dd><time datetime="{{ training.created_at|date:'c' }}">{{ training.created_at|date:"Y-m-d H:i:s T" }}</time> by {{ training.created_by.get_full_name|default:training.created_by.get_username }}</dd></div>
-  <div><dt>Updated</dt><dd><time datetime="{{ training.updated_at|date:'c' }}">{{ training.updated_at|date:"Y-m-d H:i:s T" }}</time> by {{ training.updated_by.get_full_name|default:training.updated_by.get_username }}</dd></div>
-  <div><dt>Revision</dt><dd>{{ training.revision }}</dd></div>
-</dl></div></section>
-<section class="card mb-3" aria-labelledby="history-heading"><div class="card-header"><h2 class="card-title" id="history-heading">History</h2></div><div class="card-body"><ol class="vr-timeline">
-{% for event, changes in history %}{% include "includes/history_item.html" with title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
-</ol></div></section>
+{% page_toc items=toc %}
+{% panel title="Assignment" heading_id="assignment-heading" class="mb-3" %}<dl class="vr-facts">
+  {% fact label="Trainee" %}{% if training.trainee.get_full_name %}{{ training.trainee.get_full_name }} ({{ training.trainee.username }}){% else %}{{ training.trainee.username }}{% endif %}{% endfact %}
+  {% fact label="Topic" %}{{ training.topic }}{% endfact %}
+  {% fact label="Procedure / version reference" wide=True %}{{ training.procedure_reference|default:"Not recorded" }}{% endfact %}
+  {% fact label="Assignment due" %}{% if training.due_on %}<time datetime="{{ training.due_on|date:'Y-m-d' }}">{{ training.due_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}{% endfact %}
+</dl><p class="vr-muted">The trainee is fixed when created. Cancel an incorrect assignment and create a new record. Due dates do not change permissions or specimen work.</p>{% endpanel %}
+{% panel title="Completion" heading_id="completion-heading" class="mb-3" %}<dl class="vr-facts">
+  {% fact label="Completed on" %}{% if training.completed_on %}<time datetime="{{ training.completed_on|date:'Y-m-d' }}">{{ training.completed_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}{% endfact %}
+  {% fact label="Trainer / provider" %}{{ training.trainer_provider|default:"Not recorded" }}{% endfact %}
+  {% fact label="Completion evidence" wide=True %}{{ training.completion_evidence|default:"Not recorded"|linebreaksbr }}{% endfact %}
+  {% fact label="Competency assessment" wide=True %}{{ training.competency_assessment|default:"Not recorded"|linebreaksbr }}{% endfact %}
+  {% fact label="Renewal due" %}{% if training.renewal_due %}<time datetime="{{ training.renewal_due|date:'Y-m-d' }}">{{ training.renewal_due|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}{% endfact %}
+</dl><p class="vr-muted">Assessment records a person's judgment. The software does not certify competence, infer an expired qualification or create renewal assignments.</p>{% endpanel %}
+{% panel title="Record facts" heading_id="record-heading" class="mb-3" %}<dl class="vr-facts">
+  {% fact label="Created" %}<time datetime="{{ training.created_at|date:'c' }}">{{ training.created_at|date:"Y-m-d H:i:s T" }}</time> by {{ training.created_by.get_full_name|default:training.created_by.get_username }}{% endfact %}
+  {% fact label="Updated" %}<time datetime="{{ training.updated_at|date:'c' }}">{{ training.updated_at|date:"Y-m-d H:i:s T" }}</time> by {{ training.updated_by.get_full_name|default:training.updated_by.get_username }}{% endfact %}
+  {% fact label="Revision" %}{{ training.revision }}{% endfact %}
+</dl>{% endpanel %}
+{% history_panel events=history collapsible=True %}
+  {% for event, changes in history %}{% history_item title=event.get_kind_display at=event.recorded_at actor=event.actor reason=event.reason changes=changes %}{% endfor %}
+{% endhistory_panel %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=training.number %}{% endblock %}
+{% block record_foot %}{% record_foot identifier=training.number %}{% endblock %}

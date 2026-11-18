@@ -1,19 +1,19 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% block page_actions %}
-  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}
+  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}
   {% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:audit-create' %}">New inventory audit</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="audits-heading">
-  <h2 class="visually-hidden" id="audits-heading">Inventory audits</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter inventory audits" q=q inline=inline grid="quality.audits" %}
+{% panel title="Inventory audits" heading_id="audits-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter inventory audits" q=q inline=inline grid="quality.audits" %}
   {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
-  {% if page_obj.paginator.count %}
+  {% if can_operate %}{% url 'quality:audit-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun="audits" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No inventory audits yet" empty_body="Compare a box's physical contents with a frozen inventory snapshot. Discrepancies remain evidence for review." action_url=create_url action_label="New inventory audit" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.audits" data-vr-grid-version="1" aria-labelledby="audits-heading">
     <thead><tr>
-      {% include "includes/sort_header.html" with label="Audit" asc="number" desc="-number" col="number" locked=True %}
-      {% include "includes/sort_header.html" with label="Box" asc="box" desc="-box" col="box" %}
+      {% sort_header label="Audit" asc="number" desc="-number" col="number" locked=True %}
+      {% sort_header label="Box" asc="box" desc="-box" col="box" %}
       <th scope="col" data-vr-col="status">Status</th>
-      {% include "includes/sort_header.html" with label="Created" asc="created" desc="-created" col="created" %}
+      {% sort_header label="Created" asc="created" desc="-created" col="created" %}
       <th scope="col" data-vr-col="actor">Created by</th><th scope="col" data-vr-col="reason">Reason</th>
     </tr></thead>
     <tbody>{% for audit in page_obj %}<tr>
@@ -23,10 +23,6 @@
       <td>{{ audit.created_by.get_full_name|default:audit.created_by.get_username }}</td><td>{{ audit.reason|truncatechars:100 }}</td>
     </tr>{% endfor %}</tbody>
   </table></div>
-  {% include "includes/pagination.html" with noun="audits" filtered=filtered %}
-  {% else %}
-    {% if can_operate %}{% url 'quality:audit-create' as create_url %}{% endif %}
-    {% include "storage/_list_states.html" with title_empty="No inventory audits yet" body_empty="Compare a box's physical contents with a frozen inventory snapshot. Discrepancies remain evidence for review." create_label="New inventory audit" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

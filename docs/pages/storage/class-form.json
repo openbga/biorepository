@@ -6,6 +6,26 @@
   ],
   "title": "Storage class form",
   "purpose": "Create a storage class or change the name, description or active state of an existing one.",
+  "summary": "Create a storage class or change the name, description or active state of an existing one.",
+  "tasks": [
+    {
+      "title": "Create a class",
+      "steps": [
+        "Type the [[Code]], [[Name]] and an optional [[Description]], and select [[Create storage class]]."
+      ]
+    },
+    {
+      "title": "Stop offering a class",
+      "steps": [
+        "Clear [[Active]], give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Inactive classes stay on existing units.",
+    "The code cannot be changed or reused.",
+    "Changes are kept in the history with the values before and after."
+  ],
   "sections": [
     {
       "title": "Fields",

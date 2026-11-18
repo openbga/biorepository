@@ -6,6 +6,27 @@
   ],
   "title": "New consent form or Edit consent form",
   "purpose": "Record a version of a study's consent form and the categories it asks.",
+  "summary": "Record a version of a study's consent form and the categories it asks. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Add a version",
+      "steps": [
+        "Choose the [[Study]], type the [[Code]], [[Version]] and [[Title]], and choose the [[Kind]].",
+        "Tick the [[Categories asked]] and select [[Create consent form]]."
+      ]
+    },
+    {
+      "title": "Stop offering a version",
+      "steps": [
+        "Clear [[Active]], give the [[Reason]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Once a consent is recorded on the version, its study, code, version and categories are fixed.",
+    "Study, code and version together are unique.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Fields",
@@ -65,6 +86,6 @@
     "distribution/services.py",
     "distribution/templates/distribution/governance/form.html",
     "distribution/templates/distribution/governance/catalogue_form.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

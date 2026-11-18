@@ -5,6 +5,26 @@
   ],
   "title": "Reopen excursion",
   "purpose": "Reopen a closed excursion so it can be corrected and reviewed again.",
+  "summary": "Reopen a closed excursion so it can be corrected and reviewed again. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Reopen it",
+      "steps": [
+        "Give the [[Reason for reopening]] and select [[Reopen excursion]]."
+      ]
+    },
+    {
+      "title": "Add information without reopening",
+      "steps": [
+        "Use Add note on the excursion. It works in any state."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The reason is kept in the timeline.",
+    "Reopening never releases holds.",
+    "It must be submitted and reviewed again to close."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

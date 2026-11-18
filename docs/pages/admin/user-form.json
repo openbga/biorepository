@@ -6,6 +6,42 @@
   ],
   "title": "User account",
   "purpose": "Create or maintain a staff account while preserving attributed history.",
+  "summary": "Create or change one staff account: identity, role groups, permissions and active state.",
+  "tasks": [
+    {
+      "title": "Create an account",
+      "steps": [
+        "Enter [[Username]] and [[Email address]], then set a password or turn off password-based authentication.",
+        "Choose the role [[Groups]].",
+        "Select [[Save]]. The form reopens with the remaining options."
+      ]
+    },
+    {
+      "title": "Give or remove a role",
+      "steps": [
+        "Move groups between Available groups and Chosen groups under [[Groups]], then select [[Save]]."
+      ]
+    },
+    {
+      "title": "Let someone approve disposals",
+      "steps": [
+        "Under [[User permissions]], choose accounts approve_disposal, or add a group that grants it. Then save."
+      ]
+    },
+    {
+      "title": "Stop someone from signing in",
+      "steps": [
+        "Clear [[Active]] and save. Accounts are never deleted."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Staff status and Superuser status grant no repository role and no disposal approval.",
+    "The admin group does not include disposal approval. It needs the explicit permission.",
+    "You cannot demote or deactivate the last active superuser.",
+    "There is no protection against another administrator's save: a later save replaces earlier values.",
+    "Account and role changes are recorded in the audit history, without password values."
+  ],
   "sections": [
     {
       "title": "Access and page variants",

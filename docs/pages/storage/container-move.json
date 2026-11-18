@@ -5,6 +5,28 @@
   ],
   "title": "Move or correct a move of a box, rack or shelf",
   "purpose": "Record that a box, rack, tower, shelf or canister has moved to another place, carrying everything inside it in one event.",
+  "summary": "Record that a box, rack, shelf, tower or canister moved, carrying everything inside it in one event.",
+  "tasks": [
+    {
+      "title": "Record the move",
+      "steps": [
+        "Choose where it went in [[Move to]] and the [[Slot]].",
+        "Check [[Moved at]], give the [[Reason for the move]] and select the Move button."
+      ]
+    },
+    {
+      "title": "Correct a wrong move",
+      "steps": [
+        "Admin and manager: open [[Correct move]] on the latest move and give where it really is now."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Positions and their labels do not change. Only the location does.",
+    "A move is not time out of storage. Use check-out for material that leaves storage.",
+    "Moves are never edited or deleted. A correction adds a new linked move.",
+    "If storage changed after you opened the form, the move is refused. Check and submit again."
+  ],
   "sections": [
     {
       "title": "Who and what",

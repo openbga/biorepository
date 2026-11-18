@@ -3,7 +3,7 @@
 import re
 
 import pytest
-from helpers import field, make_announcement
+from helpers import field, make_announcement, pick
 from playwright.sync_api import Page, expect
 
 from core.models import Announcement
@@ -182,10 +182,10 @@ def test_selects_wait_for_explicit_submission(page: Page, sign_in_as):
     sign_in_as("admin")
     make_announcement("Synthetic notice")
     page.goto("/repository/announcements/")
-    control = page.get_by_label("Rows per page", exact=True)
+    control = page.get_by_role("combobox", name="Rows per page", exact=True)
     control.focus()
     before = page.url
-    control.select_option("50")
+    pick(control, "50")
     # A frame boundary allows change handlers and navigation to settle.
     page.evaluate(
         "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
@@ -201,7 +201,7 @@ def test_selects_wait_for_explicit_submission(page: Page, sign_in_as):
 
     # The status and audience filters wait for Apply too.
     status = page.get_by_label("Status", exact=True)
-    status.select_option("showing")
+    pick(status, "showing")
     page.evaluate(
         "() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))"
     )
@@ -227,7 +227,7 @@ def test_staff_shell_fits_enlarged_text(page: Page, sign_in_as, role):
 
 
 @pytest.mark.parametrize("width,height", [(1366, 860), (820, 1180), (390, 844)])
-def test_direct_form_dialog_has_page_semantics_and_clean_edges(
+def test_form_opened_by_address_is_a_dialog_over_its_list_with_clean_edges(
     page: Page, sign_in_as, width, height
 ):
     sign_in_as("admin")
@@ -235,13 +235,11 @@ def test_direct_form_dialog_has_page_semantics_and_clean_edges(
     page.goto("/repository/announcements/new/")
     dialog = page.locator("#vr-form-dialog")
     expect(dialog).to_be_visible()
-    expect(dialog.get_by_role("heading", level=1, name="New announcement")).to_be_visible()
-    expect(page.get_by_role("main")).to_have_count(1)
-    expect(dialog.get_by_role("main")).to_be_visible()
-    assert dialog.get_by_role("main").evaluate(
-        "el => { const s = getComputedStyle(el); "
-        "return s.backgroundImage === 'none' && s.paddingLeft === '0px'; }"
-    )
+    expect(dialog.locator("#vr-form-title")).to_have_text("New announcement")
+    expect(dialog).to_have_attribute("aria-modal", "true")
+    # The page behind is the list it belongs to: one main, the list's, outside the dialog.
+    expect(page.get_by_role("heading", level=1, name="Announcements")).to_be_attached()
+    expect(dialog.get_by_role("main")).to_have_count(0)
     body = dialog.locator("#vr-form-content")
     body.evaluate("el => el.scrollTop = el.scrollHeight / 2")
     actions = dialog.locator(".vr-form-actions")

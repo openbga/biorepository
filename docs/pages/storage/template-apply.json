@@ -5,6 +5,27 @@
   ],
   "title": "Apply template",
   "purpose": "Create a new storage unit with its racks, shelves and boxes (and every position) from an active template version.",
+  "summary": "Create a new storage unit with its racks, shelves, boxes and every position from an active template version.",
+  "tasks": [
+    {
+      "title": "Create the unit",
+      "steps": [
+        "Choose the [[Room]] and type the [[Unit code]] and [[Unit name]].",
+        "Select [[Apply template]]. The new unit opens."
+      ]
+    },
+    {
+      "title": "Check the layout first",
+      "steps": [
+        "Read the Layout outline on the template's page."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Everything is created in one step, or nothing is.",
+    "Class, technology and nominal temperature come from the recipe.",
+    "Codes inside the unit are its code plus each suffix in the recipe."
+  ],
   "sections": [
     {
       "title": "Fields",

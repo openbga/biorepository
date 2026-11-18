@@ -6,6 +6,28 @@
   ],
   "title": "New agreement or Edit agreement",
   "purpose": "Record an agreement's terms as a draft, or change what may still change.",
+  "summary": "Record an agreement's terms as a draft, or change what may still change. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Record a draft agreement",
+      "steps": [
+        "Choose the [[Kind]] and [[Institution]], and type the [[Title]].",
+        "Record the [[Data level]], [[Permitted use]] and [[Permitted scope categories]] as the agreement states them.",
+        "Select [[Create agreement]]."
+      ]
+    },
+    {
+      "title": "Change an agreement",
+      "steps": [
+        "Change the fields, give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Once executed, only the title, references, expiry, reporting date and filing reference can change.",
+    "Participant codes can go on a manifest only under Coded or Limited data set.",
+    "Reporting due is shown on the dashboard, never enforced."
+  ],
   "sections": [
     {
       "title": "Fields",

@@ -5,6 +5,28 @@
   ],
   "title": "Request disposal",
   "purpose": "Ask for a specimen to be disposed of. Another person with disposal approval must approve it before the disposal can be recorded.",
+  "summary": "Ask for a specimen to be disposed of. Another person with disposal approval must approve before the disposal can be recorded.",
+  "tasks": [
+    {
+      "title": "Request disposal",
+      "steps": [
+        "Type the [[Method]] and [[Destination]], and why in [[Reason]].",
+        "Select [[Request disposal]]. The request waits as Awaiting approval."
+      ]
+    },
+    {
+      "title": "Follow the request",
+      "steps": [
+        "Open Disposal requests, or the request from the specimen record."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Requesting does not change the specimen.",
+    "You can never approve your own request.",
+    "If the specimen changes before the disposal is recorded, the request becomes Out of date and a new one is needed.",
+    "A disposal hold or an all-use hold blocks the request until it is released."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

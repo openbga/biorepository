@@ -5,6 +5,28 @@
   ],
   "title": "Record reading",
   "purpose": "Record one temperature reading of a tank, freezer or other equipment, kept with the limits set on it now.",
+  "summary": "Record one temperature reading of a tank, freezer or other equipment, kept with the limits set on it now.",
+  "tasks": [
+    {
+      "title": "Record a reading",
+      "steps": [
+        "Choose the [[Equipment]] read, not the monitor.",
+        "Enter [[Read at]] and the [[Temperature]] in °C, and the [[Probe position]] if known.",
+        "Select [[Record reading]]."
+      ]
+    },
+    {
+      "title": "Record many readings",
+      "steps": [
+        "Upload a CSV from Readings imports instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The limits set on the equipment now are saved with the reading.",
+    "Vapor-phase temperature varies with height, so the probe position matters.",
+    "Temperatures keep up to two decimals, exactly as typed."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

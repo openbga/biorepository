@@ -6,6 +6,27 @@
   ],
   "title": "New institution or Edit institution",
   "purpose": "Record a recipient organization.",
+  "summary": "Record a recipient organization. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Add an institution",
+      "steps": [
+        "Type the [[Code]] and [[Name]], and the [[Country]] and [[Shipping address]] if known.",
+        "Select [[Create institution]]."
+      ]
+    },
+    {
+      "title": "Stop offering it",
+      "steps": [
+        "Clear [[Active]], give the [[Reason]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Once a request or agreement names the institution, its code is fixed.",
+    "The shipping address is copied into new shipments.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Fields",
@@ -61,6 +82,6 @@
     "distribution/services.py",
     "distribution/templates/distribution/governance/form.html",
     "distribution/templates/distribution/governance/catalogue_form.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

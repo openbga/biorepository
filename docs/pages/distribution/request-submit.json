@@ -5,6 +5,27 @@
   ],
   "title": "Submit for decision",
   "purpose": "Freeze a draft or returned request as a numbered submission awaiting a decision.",
+  "summary": "Freeze a draft or returned request as a numbered submission awaiting a decision.",
+  "tasks": [
+    {
+      "title": "Submit the request",
+      "steps": [
+        "Check the uses requested and the lines.",
+        "Give the reason and select [[Submit for decision]]."
+      ]
+    },
+    {
+      "title": "Change it first",
+      "steps": [
+        "Cancel and use Edit or Edit lines on the request."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The submission keeps the request exactly as it is now.",
+    "Someone with the decision permission who did not create or submit it decides it.",
+    "The request needs at least one line."
+  ],
   "sections": [
     {
       "title": "Who can use it",

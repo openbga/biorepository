@@ -5,6 +5,27 @@
   ],
   "title": "Release hold",
   "purpose": "End a hold on a specimen so that the work it blocked can proceed.",
+  "summary": "End a hold on a specimen so the work it blocked can go ahead. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Release the hold",
+      "steps": [
+        "Check the hold shown at the top: its kind, who placed it and why.",
+        "Enter [[When it happened]] and the [[Reason]], then select [[Release hold]]."
+      ]
+    },
+    {
+      "title": "Release a hold placed by another workflow",
+      "steps": [
+        "Use that workflow, for example the distribution request that allocated the specimen."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The hold is not deleted. It stays in the Holds list with who released it and why.",
+    "Closing or reopening a temperature excursion never releases its holds. Release each one here.",
+    "A released hold cannot be released again."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

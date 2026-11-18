@@ -5,6 +5,29 @@
   ],
   "title": "Activate authenticator app",
   "purpose": "Enroll a time-based authenticator for future sign-in verification.",
+  "summary": "Set up an authenticator app as a second step when you sign in to your own account.",
+  "tasks": [
+    {
+      "title": "Set up the authenticator app",
+      "steps": [
+        "Scan the QR code with your authenticator app, or enter the [[Authenticator secret]] by hand.",
+        "Type the current six-digit code from the app in [[Authenticator code]].",
+        "Select [[Activate]]. The first time, ten recovery codes are created and shown next."
+      ]
+    },
+    {
+      "title": "Give up the setup",
+      "steps": [
+        "Select [[Cancel]]. Nothing is activated until you select Activate."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Opening the setup again creates new setup details. Use the QR code shown now.",
+    "Setup is blocked while any email address on your account is unverified.",
+    "Keep the recovery codes somewhere private. They let you sign in if you lose the app.",
+    "An authenticator app does not change your repository roles."
+  ],
   "sections": [
     {
       "title": "Fields and actions",
@@ -30,7 +53,8 @@
     {
       "title": "Prerequisites and changing enrollment",
       "paragraphs": [
-        "Requires sign-in, recent reauthentication and no unverified associated email records. This check is not a blanket requirement that a verified email record must exist: an account with no address records passes that particular test. If an app is already active, this route opens deactivation instead. Reloading an unsubmitted activation form generates new enrollment information; use the QR/secret currently displayed. There is no Back or Cancel button in this form; leave through the normal account navigation to abandon enrollment."
+        "Requires sign-in, recent reauthentication and no unverified associated email records. This check is not a blanket requirement that a verified email record must exist: an account with no address records passes that particular test. If an app is already active, this route opens deactivation instead. Reloading an unsubmitted activation form generates new enrollment information; use the QR/secret currently displayed. There is no Back or Cancel button in this form; leave through the normal account navigation to abandon enrollment.",
+        "The setup opens in the shared form dialog over Two-factor authentication; Cancel closes it without activating anything."
       ]
     }
   ],
@@ -38,6 +62,8 @@
     "config/settings.py",
     "templates/allauth/layouts/base.html",
     "templates/allauth/layouts/manage.html",
-    "uv.lock"
+    "uv.lock",
+    "core/form_surfaces.py",
+    "templates/allauth/elements/form__manage.html"
   ]
 }

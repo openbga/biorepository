@@ -1,44 +1,41 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}A storage template version (catalogue): facts, the layout outline, units created from it, versions, history. Context: obj, crumbs, outline [(depth, node, boxes)], technology (label), storage_class (or None), units, versions, history, can_manage.{% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ obj }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% include "storage/_status.html" with obj=obj catalogue=True %}</li><li>{{ obj.name }}</li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% include "storage/_status.html" with obj=obj catalogue=True %}{% endmeta_item %}{% meta_item label="Name" value=obj.name %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% if can_manage %}<a class="btn btn-outline-secondary" href="{% url 'storage:template-create' %}?from={{ obj.pk }}">New version</a><a class="btn btn-outline-secondary" href="{% url 'storage:template-edit' obj.pk %}">Edit</a>{% if obj.is_active %}<a class="btn btn-primary" href="{% url 'storage:template-apply' obj.pk %}">Apply template</a>{% endif %}{% endif %}{% endblock %}
 {% block content %}
-<section class="card mb-3" aria-labelledby="tpl-facts">
-  <div class="card-header"><h2 class="card-title" id="tpl-facts">Storage template</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Code and version</dt><dd class="vr-id">{{ obj.code }} v{{ obj.version }}</dd></div>
-    <div><dt>Name</dt><dd>{{ obj.name }}</dd></div>
-    <div><dt>Storage class</dt><dd>{% if storage_class %}<a href="{% url 'storage:class-detail' storage_class.pk %}">{{ storage_class.name }}</a> <span class="vr-id vr-muted">{{ storage_class.code }}</span>{% else %}<span class="vr-id">{{ obj.definition.storage_class }}</span>{% endif %}</dd></div>
-    <div><dt>Technology</dt><dd>{{ technology }}</dd></div>
-    <div><dt>Nominal temperature</dt><dd class="vr-id">{{ obj.definition.nominal_temperature }} °C</dd></div>
-    <div><dt>Units created</dt><dd class="vr-id">{{ obj.unit_count }}</dd></div>
-  </dl></div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="tpl-layout">
-  <div class="card-header"><h2 class="card-title" id="tpl-layout">Layout</h2><span class="vr-count">Codes are suffixes after the new unit's code</span></div>
-  <div class="vr-table-wrap"><table class="table vr-table">
+{% panel title="Storage template" heading_id="tpl-facts" class="mb-3" %}
+<dl class="vr-facts">
+    {% fact label="Code and version" class="vr-id" %}{{ obj.code }} v{{ obj.version }}{% endfact %}
+    {% fact label="Name" %}{{ obj.name }}{% endfact %}
+    {% fact label="Storage class" %}{% if storage_class %}<a href="{% url 'storage:class-detail' storage_class.pk %}">{{ storage_class.name }}</a> <span class="vr-id vr-muted">{{ storage_class.code }}</span>{% else %}<span class="vr-id">{{ obj.definition.storage_class }}</span>{% endif %}{% endfact %}
+    {% fact label="Technology" %}{{ technology }}{% endfact %}
+    {% fact label="Nominal temperature" class="vr-id" %}{{ obj.definition.nominal_temperature }} °C{% endfact %}
+    {% fact label="Units created" class="vr-id" %}{{ obj.unit_count }}{% endfact %}
+  </dl>
+{% endpanel %}
+{% panel title="Layout" heading_id="tpl-layout" table=True class="mb-3" %}{% fill count %}Codes are suffixes after the new unit's code{% endfill %}
+<div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Suffix</th><th scope="col">Kind</th><th scope="col" class="text-end">Level</th><th scope="col" class="text-end">Slot</th><th scope="col">Holds</th><th scope="col">Boxes</th></tr></thead>
     <tbody>{% for depth, node, boxes in outline %}
       <tr><th scope="row" class="vr-id">{{ node.suffix }}</th><td>{{ node.kind|capfirst }}</td><td class="text-end vr-id">{{ depth|add:1 }}</td><td class="text-end vr-id">{{ node.slot }}</td><td>{% if node.box_slots %}{{ node.box_slots }} box slots{% else %}{{ node.child_slots }} node slots{% endif %}</td><td class="vr-id">{% for b in boxes %}{{ b.suffix }} (slot {{ b.slot }}, {{ b.container_type.code }} v{{ b.container_type.version }}){% if not forloop.last %}; {% endif %}{% empty %}—{% endfor %}</td></tr>
     {% endfor %}</tbody></table></div>
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="tpl-units">
-  <div class="card-header"><h2 class="card-title" id="tpl-units">Units created from this version</h2><span class="vr-count">{{ units|length }}</span></div>
-  {% if units %}
+{% endpanel %}
+{% panel title="Units created from this version" heading_id="tpl-units" table=True class="mb-3" %}{% fill count %}{{ units|length }}{% endfill %}
+{% if units %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Room</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for u in units %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a></th><td>{{ u.name }}</td><td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td><td>{% include "storage/_status.html" with obj=u plain=True %}</td></tr>{% endfor %}</tbody></table></div>
-  {% else %}{% include "includes/empty_state.html" with title="Not applied yet" body="While no unit uses this version, its layout can still be edited." %}{% endif %}
-</section>
-<section class="card vr-table-card mb-3" aria-labelledby="tpl-versions">
-  <div class="card-header"><h2 class="card-title" id="tpl-versions">Versions</h2><span class="vr-count">{{ versions|length }}</span></div>
-  <div class="vr-table-wrap"><table class="table vr-table">
+  {% else %}{% empty_state title="Not applied yet" body="While no unit uses this version, its layout can still be edited." %}{% endif %}
+{% endpanel %}
+{% panel title="Versions" heading_id="tpl-versions" table=True class="mb-3" %}{% fill count %}{{ versions|length }}{% endfill %}
+<div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Version</th><th scope="col">Name</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for v in versions %}<tr><th scope="row">{% if v.pk == obj.pk %}<span class="vr-id">v{{ v.version }}</span>{% else %}<a class="vr-row-link vr-id" href="{% url 'storage:template-detail' v.pk %}">v{{ v.version }}</a>{% endif %}</th><td>{{ v.name }}</td><td>{% include "storage/_status.html" with obj=v plain=True catalogue=True %}</td></tr>{% endfor %}</tbody>
   </table></div>
-</section>
-{% include "storage/_history.html" %}
+{% endpanel %}
+{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block page_kind %}record{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

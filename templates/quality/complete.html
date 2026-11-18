@@ -1,18 +1,21 @@
-{% extends "base.html" %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% extends "base.html" %}{% load ui %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
-<form class="vr-form" method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}{% include "includes/form_errors.html" with form=form %}{% include "includes/form_errors.html" with form=upload_form %}
-  {% if blocked %}<div class="alert alert-warning" role="alert">{% include "includes/status.html" with label="Not available" tone="warning" plain=True %}<div>{{ blocked }}</div></div>{% endif %}
-  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span> are required. Check every position. Select Empty explicitly, or select Accession and enter what you observe. Unknown accessions are accepted. No values are filled from expectations.</p>
+{% form_page form=form multipart=True note="Check every position. Select Empty explicitly, or select Accession and enter what you observe. Unknown accessions are accepted. No values are filled from expectations." cancel_url=back_url submit_label="Complete audit" no_submit=blocked %}
+  {% form_errors form=upload_form %}
+  {% if blocked %}{% notice tone="warning" label="Not available" blocking=True %}{{ blocked }}{% endnotice %}{% endif %}
   <p class="vr-form-note">Observations are saved together only when you complete this audit. Leaving this form does not save a draft. Completion freezes the results and changes no inventory records.</p>
-  <fieldset class="vr-form-section"><legend>Snapshot</legend><dl class="vr-facts"><div><dt>Box</dt><dd>{{ audit.box_code }}</dd></div><div><dt>Snapshot location</dt><dd>{{ audit.location.display }}</dd></div><div><dt>Snapshot time</dt><dd><time datetime="{{ audit.created_at|date:'c' }}">{{ audit.created_at|date:"Y-m-d H:i T" }}</time></dd></div></dl></fieldset>
+  <fieldset class="vr-form-section"><legend>Snapshot</legend><dl class="vr-facts">
+    {% fact label="Box" value=audit.box_code class="vr-id" %}
+    {% fact label="Snapshot location" value=audit.location.display class="vr-id" %}
+    {% fact label="Snapshot time" %}<time datetime="{{ audit.created_at|date:'c' }}">{{ audit.created_at|date:"Y-m-d H:i T" }}</time>{% endfact %}
+  </dl></fieldset>
   <fieldset class="vr-form-section"><legend>Load observations from CSV</legend>
     <p class="vr-form-note">Optional: load one box using the project interchange format. Use the exact header <code>box,position,state,accession</code> and include every snapshotted position once. Box codes and position labels must match exactly. State must be <code>empty</code> with a blank accession, or <code>accession</code> with the observed identifier (1–80 characters, no surrounding spaces). Duplicate observed identifiers are rejected ignoring letter case.</p>
     <p class="vr-form-note">Load observations replaces every entry in the grid below and keeps your completion notes. Review and edit the loaded values before choosing Complete audit. Loading saves no draft or audit event. The file is not retained. This format does not imply compatibility with a scanner's native output.</p>
     {{ upload_form.scanner_file.as_field_group }}
     {% if not blocked %}<button class="btn btn-outline-secondary" type="submit" name="action" value="load_scanner">Load observations</button>{% endif %}
-    {% if loaded %}<div class="alert alert-info" role="status">{% include "includes/status.html" with label="Ready for review" tone="info" plain=True %}<div>CSV validated. All observed positions below were replaced. Review the editable grid and completion notes, then choose Complete audit. Nothing has been saved.</div></div>{% endif %}
+    {% if loaded %}{% notice tone="info" label="Ready for review" %}CSV validated. All observed positions below were replaced. Review the editable grid and completion notes, then choose Complete audit. Nothing has been saved.{% endnotice %}{% endif %}
   </fieldset>
   <fieldset class="vr-form-section"><legend>Observed positions</legend>
     <div class="vr-table-wrap"><table class="table vr-table">
@@ -24,6 +27,5 @@
     </table></div>
   </fieldset>
   <fieldset class="vr-form-section"><legend>Completion</legend>{{ form.reason.as_field_group }}{{ form.discrepancy_explanation.as_field_group }}</fieldset>
-  <div class="vr-form-actions"><a class="btn btn-link" href="{{ back_url }}">Cancel</a>{% if not blocked %}<button class="btn btn-primary" type="submit" name="action" value="complete">Complete audit</button>{% endif %}</div>
-</form>
+{% endform_page %}
 {% endblock %}

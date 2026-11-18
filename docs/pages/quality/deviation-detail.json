@@ -5,6 +5,32 @@
   ],
   "title": "Deviation report",
   "purpose": "Read the report, its related evidence, investigation and retained review history.",
+  "summary": "One deviation report: what happened, its linked evidence, investigation and review history.",
+  "tasks": [
+    {
+      "title": "Complete and submit the report",
+      "steps": [
+        "Select [[Edit]] to fill in the investigation, then [[Submit for review]]."
+      ]
+    },
+    {
+      "title": "Review it",
+      "steps": [
+        "Managers and administrators: select [[Record review]] to close it or return it for revision."
+      ]
+    },
+    {
+      "title": "Reopen a closed report",
+      "steps": [
+        "Managers and administrators: select [[Reopen deviation]] and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The reviewer must be someone other than the report's creator and its latest submitter.",
+    "A report awaiting review is frozen.",
+    "Reports are never deleted, and the history cannot be rewritten."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

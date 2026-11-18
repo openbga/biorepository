@@ -21,9 +21,11 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from accounts.roles import can_approve_disposal, has_role, staff_role_required
 from core.grids import GridRequest, active_filters
 from core.models import AuditEvent
+from storage import pathbar
+from storage import queries as storage_queries
 from storage.forms import apply_errors
 
-from . import exports, importing, labels, queries, services
+from . import exports, importing, labels, queries, record_links, services
 from .action_views import refusal
 from .list_forms import (
     CatalogueFilter,
@@ -36,12 +38,15 @@ from .list_forms import (
     label_ids,
 )
 from .models import (
+    Collection,
     CustodyEvent,
     DisposalRequest,
     Hold,
     ImportBatch,
     QuantityEntry,
     Specimen,
+    SpecimenContainerType,
+    SpecimenType,
     ThawEvent,
 )
 from .services import (
@@ -117,6 +122,38 @@ def _list_url(request):
 # --- specimens ------------------------------------------------------------------------------
 
 
+def _storage_path(user, specimen, location, checkout):
+    """The path bar: down to the position it is in, or, while it is checked out, the position it
+    left (shown freed). Nothing for a specimen never stored, distributed or disposed."""
+    if location:
+        return pathbar.levels(location)
+    if checkout is None:
+        return []
+    moves = storage_queries.movement_history(actor=user, occupancy_id=specimen.occupancy_id)
+    last = moves[len(moves) - 1] if moves else None
+    if last is None or last.event.kind != "check_out" or not last.from_path:
+        return []
+    return pathbar.levels(last.from_path, freed=True)
+
+
+def _with_names(rows):
+    """Add each catalogue entry's current name beside the code a validated row recorded: one
+    query per catalogue for the whole preview. The rows themselves are left as validated."""
+    for column, model in (
+        ("specimen_type", SpecimenType),
+        ("container_type", SpecimenContainerType),
+        ("collection_code", Collection),
+    ):
+        ids = {row[column]["id"] for row in rows if isinstance(row.get(column), dict)}
+        found = model.objects.filter(pk__in=ids).values_list("pk", "name") if ids else ()
+        names = {str(pk): name for pk, name in found}
+        for row in rows:
+            ref = row.get(column)
+            if isinstance(ref, dict):
+                row[column] = {**ref, "name": names.get(ref["id"], "")}
+    return rows
+
+
 @staff_role_required(*READ)
 def specimen_list(request):
     grid = _grid(request, queries.SPECIMEN_SORTS, "accession")
@@ -131,8 +168,19 @@ def specimen_list(request):
     page_obj = _page(queryset, grid)
     rows = list(page_obj.object_list)
     paths = queries.locations_for(actor=request.user, specimens=rows) if rows else {}
+    # How long each checked-out row has been out, for its clock: one query for the page.
+    out_since = {
+        pk: (occurred_at, kind)
+        for pk, occurred_at, kind in CustodyEvent.objects.filter(
+            pk__in=[row.open_checkout_id for row in rows if row.open_checkout_id]
+        ).values_list("pk", "occurred_at", "kind")
+    }
+    now = timezone.now()
     for row in rows:
         row.path = paths.get(row.pk)
+        since, kind = out_since.get(row.open_checkout_id, (None, None))
+        row.out_for = queries.format_duration(now - since) if since else ""
+        row.returned = kind == CustodyEvent.Kind.RETURN  # in hand after a return, as on the record
     page_obj.object_list = rows
     query = _without_page(request)
     return render(
@@ -406,6 +454,10 @@ def specimen_detail(request, pk):
             "page_title": specimen.accession,
             "specimen": specimen,
             "location": location,
+            "storage_path": _storage_path(user, specimen, location, checkout),
+            "out_of_storage": {"duration": queries.format_duration(timeout.total)}
+            if timeout.open
+            else None,
             "state": state,
             # Equipment is optional: its excursion list filters by the specimens it captured.
             "excursions_url": reverse("equipment:excursion-list")
@@ -429,6 +481,7 @@ def specimen_detail(request, pk):
             "returned": returned,
             "away_now": away_now,
             "distribution_links": distribution_links(specimen),
+            "distribution_rows": record_links.distribution_rows(user, specimen),
             "disposals": disposals,
             "open_request": open_request,
             "execution": execution,
@@ -694,10 +747,12 @@ def import_detail(request, pk):
             "state": state,
             "file_errors": [e for e in batch.errors if not e.get("line")],
             "row_errors": [e for e in batch.errors if e.get("line")],
-            "rows": [
-                dict(row, collected=_local(row.get("collected_at")))
-                for row in batch.normalized_rows
-            ],
+            "rows": _with_names(
+                [
+                    dict(row, collected=_local(row.get("collected_at")))
+                    for row in batch.normalized_rows
+                ]
+            ),
             "commit": commit,
             "created": created,
             "label_query": urlencode([("id", s.pk) for s in created[: labels.MAX_LABELS]]),

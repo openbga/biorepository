@@ -5,6 +5,26 @@
   ],
   "title": "Room",
   "purpose": "Review one room: its site, occupancy across its storage units, the units standing in it and its history.",
+  "summary": "One room: its site, occupancy across its storage units, the units standing in it and its history.",
+  "tasks": [
+    {
+      "title": "Add a storage unit here",
+      "steps": [
+        "Admin and manager: select [[Add storage unit]]."
+      ]
+    },
+    {
+      "title": "Rename the room",
+      "steps": [
+        "Select [[Edit]] and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Rooms cannot be retired or deleted.",
+    "Retired units are listed after active ones, marked Retired.",
+    "Counts cover active units only."
+  ],
   "sections": [
     {
       "title": "Room",
@@ -59,7 +79,7 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
       ]
     }
   ],
@@ -70,6 +90,6 @@
     "storage/queries.py",
     "storage/templates/storage/room_detail.html",
     "storage/templates/storage/_capacity.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

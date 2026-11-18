@@ -1,4 +1,4 @@
-{% comment %}
+{% load ui %}{% comment %}
 Where the shipment is in its flow (contents, pack, dispatch, receipt) and what the next step needs,
 with the .vr-steps component of requests/_progress.html. Presentation only: the current step is read
 from the shipment's state and contents; the Next line names the header's primary action (built by
@@ -11,11 +11,7 @@ items, effective, actions, dispatch_blockers.
 {% elif s == "received" %}{% firstof 5 as step %}
 {% elif shipment.packed_at %}{% firstof 3 as step %}
 {% else %}{% firstof 2 as step %}{% endif %}
-<section class="card mb-3 vr-progress-card" aria-labelledby="progress-heading">
-  <div class="card-header"><h2 class="card-title" id="progress-heading">Progress</h2>
-    {% if s == "cancelled" %}<span class="vr-count">Ended: cancelled</span>{% elif s == "received" %}<span class="vr-count">All steps done</span>{% endif %}
-  </div>
-  <div class="card-body">
+{% panel title="Progress" heading_id="progress-heading" class="mb-3" %}{% fill count %}{% if s == "cancelled" %}Ended: cancelled{% elif s == "received" %}All steps done{% endif %}{% endfill %}
     {% if s == "cancelled" %}{% firstof "1" as ended %}{% endif %}
     {% with st=step|add:0 %}
     <ol class="vr-steps">
@@ -32,10 +28,9 @@ items, effective, actions, dispatch_blockers.
       {% elif s == "draft" %}Pack: declare the packaging, refrigerant and classification; packing freezes the contents.
       {% elif s == "packed" %}Dispatch: record the courier and hand-over; every specimen is checked again.
       {% else %}Receipt: entered once the recipient reports how the shipment arrived.{% endif %}
-      {% if p.reason %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>
-      {% elif s == "packed" and dispatch_blockers %}<span class="vr-steps-blocker">{% include "includes/status.html" with label="Blocked" tone="warning" plain=True %} {{ dispatch_blockers|length }} specimen{{ dispatch_blockers|length|pluralize }} would be refused now (listed above).</span>{% endif %}
+      {% if p.reason %}<span class="vr-steps-blocker">{% status label="Blocked" tone="warning" plain=True %} {{ p.reason }}</span>
+      {% elif s == "packed" and dispatch_blockers %}<span class="vr-steps-blocker">{% status label="Blocked" tone="warning" plain=True %} {{ dispatch_blockers|length }} specimen{{ dispatch_blockers|length|pluralize }} would be refused now (listed above).</span>{% endif %}
     </p>
     {% endif %}
-  </div>
-</section>
+{% endpanel %}
 {% endwith %}

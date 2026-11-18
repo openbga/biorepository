@@ -1,33 +1,94 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import NoReverseMatch, reverse
 
-from accounts.roles import has_role, require_staff
+from accounts.roles import effective_roles, has_role, require_staff
 
 from . import changelog
 from .models import AuditEvent, Repository
-from .templatetags.navigation import ITEMS, ROUTE_ITEMS
+from .templatetags.navigation import ITEMS, ROUTE_ITEMS, visible
+
+# The specimen journey on the dashboard: (key, label, icon, unit, queue keys). Each stage lists the
+# dashboard's own queue objects, so its numbers are the queues' and open the same rows.
+JOURNEY = (
+    ("receive", "Receive", "box-arrow-in-down", "not stored", ("unstored",)),
+    ("store", "Store", "snow", "in storage", ("held",)),
+    ("out", "Check out / in", "stopwatch", "out of storage", ("checked_out", "returns_review")),
+    (
+        "distribute",
+        "Distribute",
+        "send",
+        "in progress",
+        ("request_decide", "request_pick", "shipment_packed"),
+    ),
+    ("dispose", "Dispose", "trash3", "in progress", ("disposal_awaiting", "disposal_approved")),
+)
+
+
+def journey(queues, stored):
+    """[{key, label, icon, count, unit, url, queues}] built from the dashboard queues.
+
+    Receive and Check out / in count their first queue (registered, not stored; checked out) and
+    link to it. Store counts the specimens in storage (`stored`, from the specimen list's In
+    storage filter it links to). Distribute and Dispose count the sum of their queues and link to
+    the first one. A stage whose role sees none of its queues has no link.
+    """
+    by_key = {queue["key"]: queue for queue in queues if queue.get("key")}
+    stages = []
+    for key, label, icon, unit, queue_keys in JOURNEY:
+        shown = [by_key[k] for k in queue_keys if k in by_key]
+        if key == "store":
+            count, url = (stored["count"], stored["url"]) if stored else (0, None)
+        elif key in ("receive", "out"):
+            first = by_key.get(queue_keys[0])
+            count, url = (first["count"], first["url"]) if first else (0, None)
+        else:
+            count = sum(queue["count"] for queue in shown)
+            url = shown[0]["url"] if shown else None
+        stages.append(
+            {
+                "key": key,
+                "label": label,
+                "icon": icon,
+                "count": count,
+                "unit": unit,
+                "url": url,
+                "queues": shown,
+            }
+        )
+    return stages
 
 
 @login_required
 def dashboard(request):
-    """Staff start page: the user's work queues and the most recently stored specimens."""
+    """Staff start page: the specimen journey, the user's work queues and the most recently
+    stored specimens."""
     require_staff(request.user)
     from distribution.dashboard import queues as distribution_queues
     from equipment.dashboard import queues as equipment_queues
-    from specimens.dashboard import queues, recently_stored
+    from specimens.dashboard import in_storage, queues, recently_stored
 
+    all_queues = (
+        queues(request.user) + equipment_queues(request.user) + distribution_queues(request.user)
+    )
+    from storage import pathbar
+
+    try:  # the path bar's census of every active unit; none for a role that cannot read storage
+        census = pathbar.census(actor=request.user)
+    except PermissionDenied:
+        census = None
     return render(
         request,
         "core/dashboard.html",
         {
             "page_title": "Dashboard",
-            "queues": queues(request.user)
-            + equipment_queues(request.user)
-            + distribution_queues(request.user),
+            "queues": all_queues,
+            "journey": journey(all_queues, in_storage(request.user)),
             "recently_stored": recently_stored(request.user),
+            "storage_census": census,
         },
     )
 
@@ -75,10 +136,10 @@ def csrf_failure(request, reason=""):
     return render(request, "403.html", {"csrf_failure": True}, status=403)
 
 
-def _entry_link(entry):
-    """The menu destination an entry points to; the page still checks the user's access."""
+def _entry_link(entry, user, roles):
+    """The menu destination an entry points to, if the user's menus offer it (visible())."""
     key = ROUTE_ITEMS.get(entry.link)
-    if not entry.link or key is None:
+    if not entry.link or key is None or not visible(key, user, roles):
         return None
     try:
         return {"url": reverse(entry.link), "label": ITEMS[key].label}
@@ -93,6 +154,7 @@ def whats_new(request):
     the account has seen, marks the ones that were new and clears the top bar's indicator; a
     browser without a mark for the account has nothing new."""
     entries = changelog.entries()
+    roles = effective_roles(request.user)
     groups = [
         {
             "key": group.start.strftime("%Y-%m"),
@@ -104,7 +166,10 @@ def whats_new(request):
                 {
                     "impact": impact,
                     "label": label,
-                    "entries": [{"entry": entry, "link": _entry_link(entry)} for entry in items],
+                    "entries": [
+                        {"entry": entry, "link": _entry_link(entry, request.user, roles)}
+                        for entry in items
+                    ],
                 }
                 for impact, label, items in group.sections
             ],

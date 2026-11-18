@@ -5,6 +5,28 @@
   ],
   "title": "Readings import",
   "purpose": "Review one checked CSV file of temperature readings and, if it is valid, record all of its readings in one step.",
+  "summary": "Review one checked CSV file of temperature readings and, if it is valid, record all its readings in one step.",
+  "tasks": [
+    {
+      "title": "Record the readings",
+      "steps": [
+        "Check Readings as read and any Check notices.",
+        "Give the reason and select the Record button, which shows the number of readings."
+      ]
+    },
+    {
+      "title": "Fix a rejected file",
+      "steps": [
+        "Read each error's row and column, correct the file and upload it again."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "All readings are recorded or none. If anything changed since the check, nothing is recorded.",
+    "Each reading keeps the limits set on its equipment when recorded.",
+    "Committing does not open excursions.",
+    "A checked import is never edited."
+  ],
   "sections": [
     {
       "title": "What the page shows",

@@ -1,0 +1,199 @@
+# Sentence case for django-allauth's English wording (docs/ui-standards.md: sentence case).
+# Only the strings allauth writes in Title Case; everything else falls through to allauth.
+# Edit this file, then: uv run python manage.py compilemessages -l en
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenBGA Biorepository\n"
+"PO-Revision-Date: 2026-11-18 00:00+0000\n"
+"Last-Translator: OpenBGA Biorepository\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Remember Me"
+msgstr "Remember me"
+
+msgid "Current Password"
+msgstr "Current password"
+
+msgid "New Password"
+msgstr "New password"
+
+msgid "New Password (again)"
+msgstr "New password (again)"
+
+msgid "TOTP Authenticator"
+msgstr "TOTP authenticator"
+
+msgid "Account Inactive"
+msgstr "Account inactive"
+
+msgid "Confirm Access"
+msgstr "Confirm access"
+
+msgid "Email Verification"
+msgstr "Email verification"
+
+msgid "Enter Email Verification Code"
+msgstr "Enter email verification code"
+
+msgid "Sign In"
+msgstr "Sign in"
+
+msgid "Enter Sign-In Code"
+msgstr "Enter sign-in code"
+
+msgid "Password Reset"
+msgstr "Password reset"
+
+msgid "Enter Password Reset Code"
+msgstr "Enter password reset code"
+
+msgid "Email Addresses"
+msgstr "Email addresses"
+
+msgid "Make Primary"
+msgstr "Make primary"
+
+msgid "Re-send Verification"
+msgstr "Re-send verification"
+
+msgid "Add Email Address"
+msgstr "Add email address"
+
+msgid "Add Email"
+msgstr "Add email"
+
+msgid "Email Changed"
+msgstr "Email changed"
+
+msgid "Email Confirmation"
+msgstr "Email confirmation"
+
+msgid "Please Confirm Your Email Address"
+msgstr "Please confirm your email address"
+
+msgid "Email Removed"
+msgstr "Email removed"
+
+msgid "Sign-In Code"
+msgstr "Sign-in code"
+
+msgid "Password Changed"
+msgstr "Password changed"
+
+msgid "Password Reset Code"
+msgstr "Password reset code"
+
+msgid "Password Reset Email"
+msgstr "Password reset email"
+
+msgid "Password Set"
+msgstr "Password set"
+
+msgid "Unknown Account"
+msgstr "Unknown account"
+
+msgid "Email Address"
+msgstr "Email address"
+
+msgid "Cancel Change"
+msgstr "Cancel change"
+
+msgid "Change Email"
+msgstr "Change email"
+
+msgid "Confirm Email Address"
+msgstr "Confirm email address"
+
+msgid "Sign Out"
+msgstr "Sign out"
+
+msgid "Change Password"
+msgstr "Change password"
+
+msgid "Reset My Password"
+msgstr "Reset my password"
+
+msgid "Bad Token"
+msgstr "Bad token"
+
+msgid "Set Password"
+msgstr "Set password"
+
+msgid "Request Code"
+msgstr "Request code"
+
+msgid "Sign Up"
+msgstr "Sign up"
+
+msgid "Sign Up Closed"
+msgstr "Sign-up closed"
+
+msgid "Verify Your Email Address"
+msgstr "Verify your email address"
+
+msgid "Two-Factor Authentication"
+msgstr "Two-factor authentication"
+
+msgid "Stay Signed In"
+msgstr "Stay signed in"
+
+msgid "New Recovery Codes Generated"
+msgstr "New recovery codes generated"
+
+msgid "Authenticator App Activated"
+msgstr "Authenticator app activated"
+
+msgid "Authenticator App Deactivated"
+msgstr "Authenticator app deactivated"
+
+msgid "Security Key Added"
+msgstr "Security key added"
+
+msgid "Security Key Removed"
+msgstr "Security key removed"
+
+msgid "Authenticator App"
+msgstr "Authenticator app"
+
+msgid "Security Keys"
+msgstr "Security keys"
+
+msgid "Recovery Codes"
+msgstr "Recovery codes"
+
+msgid "Activate Authenticator App"
+msgstr "Activate authenticator app"
+
+msgid "Deactivate Authenticator App"
+msgstr "Deactivate authenticator app"
+
+msgid "Don't Trust"
+msgstr "Don't trust"
+
+msgid "Add Security Key"
+msgstr "Add security key"
+
+msgid "Remove Security Key"
+msgstr "Remove security key"
+
+msgid "Edit Security Key"
+msgstr "Edit security key"
+
+msgid "Create Passkey"
+msgstr "Create passkey"
+
+msgid "Started At"
+msgstr "Started at"
+
+msgid "IP Address"
+msgstr "IP address"
+
+msgid "Sign Out Other Sessions"
+msgstr "Sign out other sessions"
+
+msgid "User Sessions"
+msgstr "User sessions"

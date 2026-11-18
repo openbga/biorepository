@@ -5,6 +5,28 @@
   ],
   "title": "Record receipt",
   "purpose": "Transcribe the recipient's report that a dispatched shipment arrived, or was lost.",
+  "summary": "Transcribe the recipient's report that a dispatched shipment arrived, or was lost.",
+  "tasks": [
+    {
+      "title": "Record the receipt",
+      "steps": [
+        "Enter [[Received at]], [[Received by]] and the [[Condition]].",
+        "Choose [[Refrigerant on arrival]] and [[Reported by]], and note any [[Discrepancies]].",
+        "Give the [[Reason]] and select [[Record receipt]]."
+      ]
+    },
+    {
+      "title": "Note a problem with one item",
+      "steps": [
+        "Choose its outcome under [[Exceptions per item]] and add a note."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A receipt is recorded once. A manager corrects it.",
+    "Nothing changes on the specimens. They are outside the repository.",
+    "For a lost shipment, Received at is when the loss was confirmed."
+  ],
   "sections": [
     {
       "title": "Who can use it",

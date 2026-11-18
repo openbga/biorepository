@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment history ui %}
 {% comment %}
 Equipment record: facts, the limits the repository set, current due dates, service events (with
 corrections and withdrawals), the latest LN2 entries and readings, excursions, status history and
@@ -9,9 +9,9 @@ by queries.with_latest), due_rows [(kind label, event or None)], events (with is
 superseded_by, may_correct), event_count, ln2, readings, excursions, status_changes,
 open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'equipment:equipment-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Equipment" section_url=list_url current=equipment.code %}{% endblock %}
+{% block breadcrumbs %}{% url 'equipment:equipment-list' as list_url %}{% breadcrumbs section="Equipment" section_url=list_url current=equipment.code %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ equipment.code }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% equipment_status equipment.status %}</li><li>{{ equipment.get_kind_display }}</li>{% if equipment.storage_unit %}<li>Storage unit <a class="vr-id" href="{% url 'storage:unit-detail' equipment.storage_unit_id %}">{{ equipment.storage_unit.code }}</a></li>{% endif %}{% if equipment.is_critical %}<li>Critical equipment</li>{% endif %}{% if equipment.location %}<li>{{ equipment.location }}</li>{% endif %}</ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% equipment_status equipment.status %}{% endmeta_item %}{% meta_item label="Kind" value=equipment.get_kind_display %}{% if equipment.storage_unit %}{% meta_item label="Storage unit" class="vr-id" %}<a href="{% url 'storage:unit-detail' equipment.storage_unit_id %}">{{ equipment.storage_unit.code }}</a>{% endmeta_item %}{% endif %}{% if equipment.is_critical %}{% meta_item %}{% status label="Critical equipment" tone="neutral" %}{% endmeta_item %}{% endif %}{% if equipment.location %}{% meta_item label="Location" value=equipment.location %}{% endif %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}
 {% if can_manage %}
 <a class="btn btn-outline-secondary" href="{% url 'equipment:equipment-edit' equipment.pk %}">Edit</a>
@@ -20,46 +20,39 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
 {% if can_operate %}{% if open_for_entries %}<a class="btn btn-primary" href="{% url 'equipment:service-create' equipment.pk %}">Record service event</a>{% else %}<button class="btn btn-primary" type="button" disabled aria-describedby="entries-why">Record service event</button><span class="vr-action-note" id="entries-why">{{ retired_note }}</span>{% endif %}{% endif %}
 {% endblock %}
 {% block content %}
-{% include "includes/page_toc.html" with items=toc %}
+{% page_toc items=toc %}
 {% if equipment.active_excursions %}
-<div class="alert alert-danger" role="status">{% include "includes/status.html" with label="Excursion" tone="danger" plain=True %}<div>{{ equipment.active_excursions }} excursion{{ equipment.active_excursions|pluralize }} open or awaiting review. <a href="#excursions-heading">See excursions</a></div></div>
+{% notice tone="danger" label="Excursion" %}{{ equipment.active_excursions }} excursion{{ equipment.active_excursions|pluralize }} open or awaiting review. <a href="#excursions-heading">See excursions</a>{% endnotice %}
 {% endif %}
 
-<section class="card mb-3" aria-labelledby="facts-heading">
-  <div class="card-header"><h2 class="card-title" id="facts-heading">Equipment</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Asset ID</dt><dd class="vr-id">{{ equipment.code }}</dd></div>
-    <div><dt>Name</dt><dd>{{ equipment.name }}</dd></div>
-    <div><dt>Kind</dt><dd>{{ equipment.get_kind_display }}</dd></div>
-    <div><dt>Status</dt><dd>{% equipment_status equipment.status plain=True %}</dd></div>
-    <div><dt>Critical equipment</dt><dd>{{ equipment.is_critical|yesno:"Yes,No" }}</dd></div>
-    <div><dt>Storage unit</dt><dd>{% if equipment.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' equipment.storage_unit_id %}">{{ equipment.storage_unit.code }}</a> <span class="vr-muted">{{ equipment.storage_unit.name }}</span>{% else %}None{% endif %}</dd></div>
-    <div><dt>Location</dt><dd>{{ equipment.location|default:"Not recorded" }}</dd></div>
-    <div><dt>Manufacturer and model</dt><dd>{% if equipment.manufacturer or equipment.model %}{{ equipment.manufacturer }} {{ equipment.model }}{% else %}Not recorded{% endif %}</dd></div>
-    <div><dt>Serial number</dt><dd>{% if equipment.serial_number %}<span class="vr-id">{{ equipment.serial_number }}</span>{% else %}Not recorded{% endif %}</dd></div>
-    <div><dt>Installed</dt><dd>{% if equipment.installed_on %}<time datetime="{{ equipment.installed_on|date:'Y-m-d' }}">{{ equipment.installed_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}</dd></div>
-    <div><dt>Service provider</dt><dd>{{ equipment.service_provider|default:"Not recorded" }}</dd></div>
-    <div><dt>Registered</dt><dd><time datetime="{{ equipment.created_at|date:'c' }}">{{ equipment.created_at|date:"Y-m-d H:i" }}</time> by {{ equipment.created_by|person }}</dd></div>
+{% panel title="Equipment" heading_id="facts-heading" class="mb-3" %}<dl class="vr-facts">
+    {% fact label="Asset ID" class="vr-id" %}{{ equipment.code }}{% endfact %}
+    {% fact label="Name" %}{{ equipment.name }}{% endfact %}
+    {% fact label="Kind" %}{{ equipment.get_kind_display }}{% endfact %}
+    {% fact label="Status" %}{% equipment_status equipment.status plain=True %}{% endfact %}
+    {% fact label="Critical equipment" %}{{ equipment.is_critical|yesno:"Yes,No" }}{% endfact %}
+    {% fact label="Storage unit" %}{% if equipment.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' equipment.storage_unit_id %}">{{ equipment.storage_unit.code }}</a> <span class="vr-muted">{{ equipment.storage_unit.name }}</span>{% else %}None{% endif %}{% endfact %}
+    {% fact label="Location" %}{{ equipment.location|default:"Not recorded" }}{% endfact %}
+    {% fact label="Manufacturer and model" %}{% if equipment.manufacturer or equipment.model %}{{ equipment.manufacturer }} {{ equipment.model }}{% else %}Not recorded{% endif %}{% endfact %}
+    {% fact label="Serial number" %}{% if equipment.serial_number %}<span class="vr-id">{{ equipment.serial_number }}</span>{% else %}Not recorded{% endif %}{% endfact %}
+    {% fact label="Installed" %}{% if equipment.installed_on %}<time datetime="{{ equipment.installed_on|date:'Y-m-d' }}">{{ equipment.installed_on|date:"Y-m-d" }}</time>{% else %}Not recorded{% endif %}{% endfact %}
+    {% fact label="Service provider" %}{{ equipment.service_provider|default:"Not recorded" }}{% endfact %}
+    {% fact label="Registered" %}<time datetime="{{ equipment.created_at|date:'c' }}">{{ equipment.created_at|date:"Y-m-d H:i" }}</time> by {{ equipment.created_by|person }}{% endfact %}
   </dl>
   {% if equipment.notes %}<details class="mt-3"><summary>Notes</summary><p class="mb-0">{{ equipment.notes|linebreaksbr }}</p></details>{% endif %}
-  </div>
-</section>
+  {% endpanel %}
 
-<section class="card mb-3" aria-labelledby="limits-heading">
-  <div class="card-header"><h2 class="card-title" id="limits-heading">Limits</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Lower limit</dt><dd>{% if equipment.lower_limit is not None %}<span class="vr-id">{{ equipment.lower_limit }} {{ equipment.temperature_unit }}</span>{% else %}No limit set{% endif %}</dd></div>
-    <div><dt>Upper limit</dt><dd>{% if equipment.upper_limit is not None %}<span class="vr-id">{{ equipment.upper_limit }} {{ equipment.temperature_unit }}</span>{% else %}No limit set{% endif %}</dd></div>
+{% panel title="Limits" heading_id="limits-heading" class="mb-3" %}<dl class="vr-facts">
+    {% fact label="Lower limit" %}{% if equipment.lower_limit is not None %}<span class="vr-id">{{ equipment.lower_limit }} {{ equipment.temperature_unit }}</span>{% else %}No limit set{% endif %}{% endfact %}
+    {% fact label="Upper limit" %}{% if equipment.upper_limit is not None %}<span class="vr-id">{{ equipment.upper_limit }} {{ equipment.temperature_unit }}</span>{% else %}No limit set{% endif %}{% endfact %}
     {% if equipment.keeps_ln2_log %}
-    <div><dt>Level unit</dt><dd>{{ equipment.get_level_unit_display|default:"Not set" }}</dd></div>
-    <div><dt>Low level</dt><dd>{% if equipment.level_low_limit is not None %}<span class="vr-id">{{ equipment.level_low_limit }} {{ equipment.level_unit }}</span>{% else %}No limit set{% endif %}</dd></div>
+    {% fact label="Level unit" %}{{ equipment.get_level_unit_display|default:"Not set" }}{% endfact %}
+    {% fact label="Low level" %}{% if equipment.level_low_limit is not None %}<span class="vr-id">{{ equipment.level_low_limit }} {{ equipment.level_unit }}</span>{% else %}No limit set{% endif %}{% endfact %}
     {% endif %}
   </dl>
-  <p class="vr-muted small mt-3 mb-0">Set by the repository for this equipment; there is no default. Each reading keeps the limits in force when it was recorded.</p></div>
-</section>
+  <p class="vr-muted small mt-3 mb-0">Set by the repository for this equipment; there is no default. Each reading keeps the limits in force when it was recorded.</p>{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="due-heading">
-  <div class="card-header"><h2 class="card-title" id="due-heading">Due dates</h2></div>
+{% panel title="Due dates" heading_id="due-heading" table=True class="mb-3" %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Service</th><th scope="col">State</th><th scope="col">Next due</th><th scope="col" class="text-end">Days</th><th scope="col">Last performed</th><th scope="col">Outcome</th></tr></thead>
     <tbody>{% for label, event in due_rows %}
@@ -76,12 +69,11 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         {% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  <div class="card-body pt-0"><p class="vr-muted small mb-0">The next due date recorded on the latest event of each kind; nothing is computed from an interval.</p></div>
-</section>
+  <p class="vr-muted small">The next due date recorded on the latest event of each kind; nothing is computed from an interval.</p>
+{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="service-heading">
-  <div class="card-header"><h2 class="card-title" id="service-heading">Service events</h2><span class="vr-count">{{ event_count }}{% if event_count > events|length %}, latest {{ events|length }} shown{% endif %}</span></div>
-  {% if events %}
+{% panel title="Service events" heading_id="service-heading" table=True class="mb-3" %}{% fill count %}{{ event_count }}{% if event_count > events|length %}, latest {{ events|length }} shown{% endif %}{% endfill %}
+  {% list_results items=events empty_title="No service events recorded" empty_body="Record maintenance, calibration, repair, temperature mapping or qualification as it is performed, with its certificate or report." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Performed</th><th scope="col">Service</th><th scope="col">Outcome</th><th scope="col">Performed by</th><th scope="col">Reference</th><th scope="col">As found → as left</th><th scope="col">Next due</th><th scope="col">Attachment</th><th scope="col">Entry</th>{% if can_operate %}<th scope="col"><span class="visually-hidden">Actions</span></th>{% endif %}</tr></thead>
     <tbody>{% for e in events %}
@@ -101,13 +93,12 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         {% if can_operate %}<td>{% if e.may_correct %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:service-correct' e.pk %}">Correct</a>{% endif %}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No service events recorded" body="Record maintenance, calibration, repair, temperature mapping or qualification as it is performed, with its certificate or report." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
 {% if equipment.keeps_ln2_log %}
-<section class="card vr-table-card mb-3" aria-labelledby="ln2-heading">
-  <div class="card-header"><h2 class="card-title" id="ln2-heading">LN2 log</h2><span class="vr-count">Latest {{ recent }}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:ln2-list' %}?equipment={{ equipment.pk }}">All entries in the LN2 log</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:ln2-create' %}?equipment={{ equipment.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Record LN2 entry</a>{% endif %}</div>
-  {% if ln2 %}
+{% panel title="LN2 log" heading_id="ln2-heading" table=True class="mb-3" %}{% fill count %}Latest {{ recent }}{% endfill %}{% fill actions %}<a class="btn btn-sm btn-link" href="{% url 'equipment:ln2-list' %}?equipment={{ equipment.pk }}">All entries in the LN2 log</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:ln2-create' %}?equipment={{ equipment.pk }}">{% icon name="plus-lg" %}Record LN2 entry</a>{% endif %}{% endfill %}
+  {% list_results items=ln2 empty_title="No LN2 entries yet" empty_body="Record level checks and fills; the change since the previous entry is worked out from the levels." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">When</th><th scope="col">Entry</th><th scope="col" class="text-end">Level before</th><th scope="col" class="text-end">Level</th><th scope="col" class="text-end">Change since previous</th><th scope="col" class="text-end">Amount added</th><th scope="col">Supply dewar</th><th scope="col">Recorded by</th></tr></thead>
     <tbody>{% for row in ln2 %}
@@ -122,14 +113,13 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td>{{ row.recorded_by|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No LN2 entries yet" body="Record level checks and fills; the change since the previous entry is worked out from the levels." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endif %}
 
 {% if equipment.takes_readings %}
-<section class="card vr-table-card mb-3" aria-labelledby="readings-heading">
-  <div class="card-header"><h2 class="card-title" id="readings-heading">Temperature readings</h2><span class="vr-count">Latest {{ recent }}</span><a class="btn btn-sm btn-link" href="{% url 'equipment:reading-list' %}?equipment={{ equipment.pk }}">All readings</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:reading-create' %}?equipment={{ equipment.pk }}">{% include "includes/icon.html" with name="plus-lg" %}Record reading</a>{% endif %}</div>
-  {% if readings %}
+{% panel title="Temperature readings" heading_id="readings-heading" table=True class="mb-3" %}{% fill count %}Latest {{ recent }}{% endfill %}{% fill actions %}<a class="btn btn-sm btn-link" href="{% url 'equipment:reading-list' %}?equipment={{ equipment.pk }}">All readings</a>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:reading-create' %}?equipment={{ equipment.pk }}">{% icon name="plus-lg" %}Record reading</a>{% endif %}{% endfill %}
+  {% list_results items=readings empty_title="No temperature readings yet" empty_body="Record readings by hand or import a logger's CSV." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Read at</th><th scope="col" class="text-end">Temperature (°C)</th><th scope="col">Limits</th><th scope="col">Probe position</th><th scope="col">Monitor</th><th scope="col">Source</th><th scope="col">Recorded by</th></tr></thead>
     <tbody>{% for row in readings %}
@@ -143,12 +133,11 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td>{{ row.recorded_by|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No temperature readings yet" body="Record readings by hand or import a logger's CSV." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="excursions-heading">
-  <div class="card-header"><h2 class="card-title" id="excursions-heading">Excursions</h2><span class="vr-count">{{ excursions|length }}</span>{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:excursion-create' %}?equipment={{ equipment.pk }}">{% include "includes/icon.html" with name="plus-lg" %}New excursion</a>{% endif %}</div>
-  {% if excursions %}
+{% panel title="Excursions" heading_id="excursions-heading" table=True class="mb-3" %}{% fill count %}{{ excursions|length }}{% endfill %}{% fill actions %}{% if can_operate and open_for_entries %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'equipment:excursion-create' %}?equipment={{ equipment.pk }}">{% icon name="plus-lg" %}New excursion</a>{% endif %}{% endfill %}
+  {% list_results items=excursions empty_title="No excursions recorded" empty_body="Record an excursion when the temperature went outside the limits set for this equipment." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Excursion</th><th scope="col">Status</th><th scope="col">Started</th><th scope="col">Ended</th><th scope="col" class="text-end">Extreme (°C)</th><th scope="col">Cause</th></tr></thead>
     <tbody>{% for row in excursions %}
@@ -161,13 +150,12 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td>{{ row.get_cause_category_display }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="No excursions recorded" body="Record an excursion when the temperature went outside the limits set for this equipment." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endif %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="status-heading">
-  <div class="card-header"><h2 class="card-title" id="status-heading">Status history</h2><span class="vr-count">{{ status_changes|length }}</span></div>
-  {% if status_changes %}
+{% panel title="Status history" heading_id="status-heading" table=True class="mb-3" %}{% fill count %}{{ status_changes|length }}{% endfill %}
+  {% list_results items=status_changes empty_title="In service since it was registered" empty_body="Status changes are listed here with their effective time and reason." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Effective from</th><th scope="col">Change</th><th scope="col">Reason</th><th scope="col">Recorded</th></tr></thead>
     <tbody>{% for row in status_changes %}
@@ -178,9 +166,10 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
         <td class="vr-nowrap">{{ row.recorded_at|date:"Y-m-d H:i" }} by {{ row.actor|person }}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% include "includes/empty_state.html" with title="In service since it was registered" body="Status changes are listed here with their effective time and reason." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
-{% include "storage/_history.html" %}
+{% history_panel events=history newest_first=True collapsible=True %}{% endhistory_panel %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=equipment.code %}{% endblock %}
+{% block page_kind %}record{% endblock %}
+{% block record_foot %}{% record_foot identifier=equipment.code %}{% endblock %}

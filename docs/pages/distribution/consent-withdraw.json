@@ -5,6 +5,28 @@
   ],
   "title": "Withdraw consent",
   "purpose": "Record that the participant withdrew consent, and stop use of their material where the withdrawal asks for it.",
+  "summary": "Record that the participant withdrew consent, and stop use of their material where the withdrawal asks for it. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Record the withdrawal",
+      "steps": [
+        "Choose [[What was withdrawn]].",
+        "Enter [[Effective on]], [[Received at]], [[Received via]] and the [[Reason]].",
+        "Check the specimens and shipments listed, then select [[Withdraw consent]]."
+      ]
+    },
+    {
+      "title": "Follow up distributed material",
+      "steps": [
+        "Afterwards, record what was done for each shipment from the consent page."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "No further use holds the participant's specimens and releases allocations not yet picked, in one step.",
+    "No further contact only flags Do not contact.",
+    "Nothing is disposed, deleted or anonymized. A withdrawal is undone only by reinstating."
+  ],
   "sections": [
     {
       "title": "Kinds",

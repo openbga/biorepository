@@ -5,6 +5,29 @@
   ],
   "title": "Record service event",
   "purpose": "Record maintenance, calibration, a repair, temperature mapping or a qualification performed on a piece of equipment, with its certificate or report.",
+  "summary": "Record maintenance, calibration, a repair, temperature mapping or a qualification performed on equipment, with its certificate or report.",
+  "tasks": [
+    {
+      "title": "Record the event",
+      "steps": [
+        "Choose the [[Kind]], the [[Performed on]] date and the [[Outcome]].",
+        "Name the staff member or outside provider, and attach the [[Certificate or report]].",
+        "Select [[Record service event]]."
+      ]
+    },
+    {
+      "title": "Set the next due date",
+      "steps": [
+        "Enter [[Next due]]. It appears under Maintenance due."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Next due is your repository's own date. It is never computed.",
+    "Files are checked by content, not only by name.",
+    "The kind cannot be changed by a correction.",
+    "Do not enter donor, patient or participant names in any field."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

@@ -5,6 +5,28 @@
   ],
   "title": "Agreements",
   "purpose": "Find material transfer and data use agreements and see which are in effect today.",
+  "summary": "Material transfer and data use agreements, and which are in effect today.",
+  "tasks": [
+    {
+      "title": "Record an agreement",
+      "steps": [
+        "Admin and manager: select [[New agreement]] to record its terms as a draft.",
+        "Execute it once it is signed."
+      ]
+    },
+    {
+      "title": "Find agreements needing attention",
+      "steps": [
+        "Open [[More filters]], choose Expiring or reporting due within 60 days and select [[Apply]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The software records agreements as stated. It does not draft or interpret them.",
+    "Today is worked out from the recorded dates.",
+    "Nothing expires or is enforced automatically, except validity at dispatch.",
+    "The 60 days is a display choice, not a policy."
+  ],
   "sections": [
     {
       "title": "What is recorded",

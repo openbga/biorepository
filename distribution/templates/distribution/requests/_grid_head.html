@@ -1,12 +1,5 @@
-{% comment %}Top of a distribution entry grid: error summary, the blocked notice or the required-fields note, and the facts about the record. Parameters: form, formset (optional), formset_label, blocked, facts, note (extra sentence after the required-fields note).{% endcomment %}
-{% include "includes/form_errors.html" with form=form formset=formset formset_label=formset_label %}
-{% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Error" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
-{% if blocked %}
-<div class="alert alert-warning" role="alert">
-  {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
-  <div>{{ blocked }}</div>
-</div>
-{% else %}
-<p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Times are repository local time.{% if note %} {{ note }}{% endif %}</p>
-{% endif %}
-{% if facts %}<section class="vr-form-section" aria-label="Record"><dl class="vr-facts">{% for label, value in facts %}<div><dt>{{ label }}</dt><dd>{{ value }}</dd></div>{% endfor %}</dl></section>{% endif %}
+{% load ui %}{% comment %}Top of a distribution entry grid: error summary, the blocked notice or the required-fields note, and the facts about the record. Parameters: form, formset (optional), formset_label, blocked, facts, note (extra sentence after the required-fields note).{% endcomment %}
+{% form_errors form=form formset=formset formset_label=formset_label %}
+{% if formset.non_form_errors %}{% notice tone="danger" label="Error" blocking=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endnotice %}{% endif %}
+{% if blocked %}{% notice tone="warning" label="Not available" blocking=True %}{{ blocked }}{% endnotice %}{% else %}{% required_note note=note times=True %}{% endif %}
+{% if facts %}<section class="vr-form-section" aria-label="Record"><dl class="vr-facts">{% for label, value in facts %}{% fact label=label value=value %}{% endfor %}</dl></section>{% endif %}

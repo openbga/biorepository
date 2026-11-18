@@ -6,6 +6,27 @@
   ],
   "title": "Box form",
   "purpose": "Add a box to a rack or shelf, creating all its positions, or change the name of an existing box.",
+  "summary": "Add a box to a rack or shelf, creating all of its positions, or change the name of an existing box.",
+  "tasks": [
+    {
+      "title": "Add a box",
+      "steps": [
+        "Choose the [[Rack or shelf]], the [[Box slot]] and the [[Container type]].",
+        "Type the [[Code]] and select [[Create box]]. Every position is created with it."
+      ]
+    },
+    {
+      "title": "Rename a box",
+      "steps": [
+        "Change the [[Name]], give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Check the physical box matches the container type's grid. The grid never changes later.",
+    "Only the name can be changed later. Use Move box to relocate it.",
+    "Codes are stored in capitals and never reused."
+  ],
   "sections": [
     {
       "title": "Fields",

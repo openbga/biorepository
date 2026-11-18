@@ -1,20 +1,19 @@
 {% extends "base.html" %}
-{% load distribution_requests navigation specimens %}
+{% load distribution_requests history navigation specimens ui %}
 {% comment %}Returned specimens, newest first (List page, tab Returns of the Shipments section). A return is recorded from the shipment record (Record return on a sent item); each returned specimen is on a use hold until a manager reviews it. Context: request_views.grid_response for request_lists.SPECS["return"]; rows carry is_reviewed and is_released.{% endcomment %}
 {% block page_actions %}{% include "distribution/requests/_list_actions.html" %}{% endblock %}
 {% block content %}
 {% section_tabs "distribution-shipments" %}
-<section class="card vr-table-card" aria-labelledby="returns-heading">
-  <h2 class="visually-hidden" id="returns-heading">Returns</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter returns" q=q placeholder="Specimen ID or shipment number" inline=inline more=more more_open=more_open grid="distribution.returns" %}
-  {% if page_obj.paginator.count %}
+{% panel title="Returns" heading_id="returns-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter returns" q=q placeholder="Specimen ID or shipment number" inline=inline more=more more_open=more_open grid="distribution.returns" %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No returns recorded" empty_body="Specimens that come back from a shipment are recorded on the shipment's page and listed here until and after review." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.returns" data-vr-grid-version="1" aria-labelledby="returns-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Specimen" asc="specimen" desc="-specimen" col="specimen" locked=True %}
+        {% sort_header label="Specimen" asc="specimen" desc="-specimen" col="specimen" locked=True %}
         <th scope="col" data-vr-col="review" data-vr-col-label="Review">Review</th>
-        {% include "includes/sort_header.html" with label="Shipment" asc="shipment" desc="-shipment" first="desc" col="shipment" %}
-        {% include "includes/sort_header.html" with label="Returned" asc="returned" desc="-returned" first="desc" col="returned" %}
+        {% sort_header label="Shipment" asc="shipment" desc="-shipment" first="desc" col="shipment" %}
+        {% sort_header label="Returned" asc="returned" desc="-returned" first="desc" col="returned" %}
         <th scope="col" class="text-end" data-vr-col="amount" data-vr-col-label="Amount returned">Amount returned</th>
         <th scope="col" class="text-end" data-vr-col="thaws" data-vr-col-label="Thaws reported (count)">Thaws reported (count)</th>
         <th scope="col" data-vr-col="recorded" data-vr-col-label="Recorded by">Recorded by</th>
@@ -36,9 +35,6 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
-  {% else %}
-  {% include "storage/_list_states.html" with title_empty="No returns recorded" body_empty="Specimens that come back from a shipment are recorded on the shipment's page and listed here until and after review." %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

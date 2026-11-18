@@ -5,6 +5,26 @@
   ],
   "title": "Storage class",
   "purpose": "Review one storage class and the units that use it.",
+  "summary": "One storage class and the units that use it.",
+  "tasks": [
+    {
+      "title": "Change the class",
+      "steps": [
+        "Admin and manager: select [[Edit]], change it and give a reason."
+      ]
+    },
+    {
+      "title": "Open a unit of this class",
+      "steps": [
+        "Select its code under Storage units."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Up to the first 100 units are listed, active and retired alike.",
+    "The code is fixed and never reused.",
+    "Classes are never deleted. Clear Active to stop offering one."
+  ],
   "sections": [
     {
       "title": "Storage class",
@@ -45,7 +65,7 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
       ]
     }
   ],
@@ -55,6 +75,6 @@
     "storage/lists.py",
     "storage/queries.py",
     "storage/templates/storage/class_detail.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

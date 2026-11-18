@@ -5,6 +5,26 @@
   ],
   "title": "Close request",
   "purpose": "Finish an approved request once nothing more will be allocated or shipped.",
+  "summary": "Finish an approved request once nothing more will be allocated or shipped. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Close the request",
+      "steps": [
+        "Give the [[Reason]] and select [[Close request]]."
+      ]
+    },
+    {
+      "title": "Clear what blocks closing",
+      "steps": [
+        "Release or put back allocated and picked specimens, and dispatch or cancel draft and packed shipments."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Closed is final.",
+    "No specimen may be allocated or picked, and no shipment a draft or packed.",
+    "The reason is kept in the timeline."
+  ],
   "sections": [
     {
       "title": "Who can use it",

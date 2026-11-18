@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Entry grid: the lines of a draft or returned request (docs/ui-standards.md section 7, rules 7 and
 8). Context (request_views.request_items): form (ItemsForm: reason, expected_revision), formset
@@ -8,8 +8,9 @@ request_obj, blocked, submit_label, back_url, crumbs, facts.
 row more or less and records nothing, so both work without JavaScript. A hidden copy of the save
 button comes first so Enter in a field saves rather than adding or removing a row.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
+{# form: entry-grid #}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}
@@ -46,7 +47,7 @@ button comes first so Enter in a field saves rather than adding or removing a ro
         </tbody>
       </table>
     </div>
-    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% include "includes/icon.html" with name="plus-lg" %}Add line</button>{% endif %}
+    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% icon name="plus-lg" %}Add line</button>{% endif %}
   </fieldset>
   {% include "distribution/requests/_grid_foot.html" %}
 </form>

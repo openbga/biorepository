@@ -5,6 +5,27 @@
   ],
   "title": "Inventory audits",
   "purpose": "Find box inventory audits and compare their recorded evidence.",
+  "summary": "Box inventory audits: a frozen snapshot of what a box should hold, compared with what was physically found.",
+  "tasks": [
+    {
+      "title": "Audit a box",
+      "steps": [
+        "Select [[New inventory audit]], choose the box and give the reason.",
+        "Check every position and record what you found with Complete audit."
+      ]
+    },
+    {
+      "title": "Find an audit",
+      "steps": [
+        "Type a box code, reason or AUD number in [[Search]], or choose [[Status]], then select [[Apply]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The box code and location are frozen when the audit is created.",
+    "Results are fixed once the audit is completed. A repeat check is a new linked audit.",
+    "Audits record evidence. They never change specimens, storage or holds."
+  ],
   "sections": [
     {
       "title": "Access and actions",

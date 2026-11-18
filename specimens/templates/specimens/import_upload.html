@@ -1,15 +1,13 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Upload a CSV file for validation (form dialog). Validation registers nothing; the import page
 shows errors and a preview. Context: form (ImportUploadForm), columns, required.
 {% endcomment %}
-{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Imports" section_url=list_url current=page_title %}{% endblock %}
+{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% breadcrumbs section="Imports" section_url=list_url current=page_title %}{% endblock %}
 {% block content %}
-<form class="vr-form" method="post" enctype="multipart/form-data" novalidate>
-  {% csrf_token %}
-  {% include "includes/form_errors.html" with form=form %}
-  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Uploading only checks the file; nothing is registered until you commit it.</p>
-  <p class="vr-form-note"><a href="{% url 'specimens:import-template' %}" download>{% include "includes/icon.html" with name="download" %}Download the CSV template</a></p>
+{% url 'specimens:import-list' as cancel_url %}
+{% form_page form=form multipart=True cancel_url=cancel_url submit_label="Validate file" note="Uploading only checks the file; nothing is registered until you commit it." %}
+  <p class="vr-form-note"><a href="{% url 'specimens:import-template' %}" download>{% icon name="download" %}Download the CSV template</a></p>
   {% for legend, fields in form.grouped %}
   <fieldset class="vr-form-section">
     {% for field in fields %}{{ field.as_field_group }}{% endfor %}
@@ -28,9 +26,5 @@ shows errors and a preview. Context: form (ImportUploadForm), columns, required.
       <li>All columns: {% for c in columns %}<code>{{ c }}</code>{% if not forloop.last %}, {% endif %}{% endfor %}.</li>
     </ul>
   </details>
-  <div class="vr-form-actions">
-    <a class="btn btn-link" href="{% url 'specimens:import-list' %}">Cancel</a>
-    <button class="btn btn-primary" type="submit">Validate file</button>
-  </div>
-</form>
+{% endform_page %}
 {% endblock %}

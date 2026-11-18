@@ -5,6 +5,29 @@
   ],
   "title": "Record completion",
   "purpose": "Record observed staff training completion and its supporting evidence.",
+  "summary": "Record that a staff member completed training, with the supporting evidence. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Record completion",
+      "steps": [
+        "Enter [[Completed on]], the [[Trainer / provider]] and the [[Completion evidence]].",
+        "Add a [[Competency assessment]] and [[Renewal due]] if your repository uses them.",
+        "Give the reason and select [[Record completion]]."
+      ]
+    },
+    {
+      "title": "Fix a completion recorded wrongly",
+      "steps": [
+        "Use [[Correct training record]] on the record after it is completed."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "No file is uploaded. Describe the evidence in the text.",
+    "The competency assessment is a human judgement. The application gives no automatic pass.",
+    "Renewal due is your repository's follow-up date. No interval is supplied.",
+    "Managers may record their own training. There is no independent approval step."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

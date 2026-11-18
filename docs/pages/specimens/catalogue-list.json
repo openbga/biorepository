@@ -9,6 +9,32 @@
   ],
   "title": "Specimen catalogues",
   "purpose": "Review the lists specimens are registered with: participants, collections, specimen types, specimen containers and units of amount.",
+  "summary": "The lists specimens are registered with: participants, collections, specimen types, specimen containers and units of amount.",
+  "tasks": [
+    {
+      "title": "Find an entry",
+      "steps": [
+        "Choose the tab, then type part of the code or name in [[Search]] and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Add an entry",
+      "steps": [
+        "Admin and manager: select the New button on the tab, for example [[New participant]]."
+      ]
+    },
+    {
+      "title": "Change or retire an entry",
+      "steps": [
+        "Select its code, change it or clear Active, and give a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Participants are codes only. No names or other identifying text are stored.",
+    "Entries are never deleted. Inactive entries stay on existing specimens but are not offered for new ones.",
+    "Specimen containers are vessels such as cryovials, not the box grids under Storage."
+  ],
   "sections": [
     {
       "title": "Tabs",

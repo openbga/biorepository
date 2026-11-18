@@ -5,6 +5,26 @@
   ],
   "title": "Storage templates",
   "purpose": "Maintain recorded unit layouts so identical tanks or freezers are created in one step.",
+  "summary": "Recorded unit layouts, so identical tanks or freezers can be created in one step.",
+  "tasks": [
+    {
+      "title": "Create a unit from a template",
+      "steps": [
+        "Open the template and select Apply template."
+      ]
+    },
+    {
+      "title": "Record a new layout",
+      "steps": [
+        "Admin and manager: select [[New storage template]], or Save layout as template on a unit."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Inactive templates cannot be applied.",
+    "All versions are listed unless you choose a [[Status]].",
+    "Units created counts the units made from each version."
+  ],
   "sections": [
     {
       "title": "Search, filters and sorting",
@@ -88,7 +108,7 @@
     "storage/exports.py",
     "storage/templates/storage/template_list.html",
     "storage/templates/storage/_list_actions.html",
-    "storage/templates/storage/_list_states.html",
+    "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
 }

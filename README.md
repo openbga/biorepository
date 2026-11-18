@@ -78,13 +78,13 @@ append-only and specimens are never deleted. [Workflow rules and limits](docs/wo
 describes each of these in more detail, and what is not built: requester accounts, monitoring and
 alarms come later (see [product scope](docs/product.md)).
 
-![Dashboard with the work queues: check-outs in progress, specimens waiting for a position, holds and disposal requests](docs/images/dashboard.png)
+![Dashboard: the specimen journey from receipt through storage and check-out to distribution or disposal, with the work waiting at each stage, under the storage units' temperatures](docs/images/dashboard.png)
 
-![A cryobox as a position map: occupied, free and blocked positions](docs/images/box.png)
+![A cryobox as a position map under its storage path: occupied, on-hold and free positions](docs/images/box.png)
 
 ![A specimen record with its custody events and thaw records](docs/images/specimen.png)
 
-![A liquid-nitrogen tank's equipment record: limits, service events, LN2 log and readings](docs/images/equipment.png)
+![A liquid-nitrogen tank's equipment record: its facts, limits and due dates, with links to service events, LN2 log, readings and excursions](docs/images/equipment.png)
 
 ![A specimen request with its progress panel: prepared, decided and allocated, with specimens picked and a shipment in preparation](docs/images/request.png)
 

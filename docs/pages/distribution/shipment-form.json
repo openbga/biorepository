@@ -6,6 +6,27 @@
   ],
   "title": "New shipment, Edit shipment",
   "purpose": "Start a shipment for an approved request, or change its ship-to and courier details.",
+  "summary": "Start a shipment for an approved request, or change its ship-to and courier details.",
+  "tasks": [
+    {
+      "title": "Start a shipment",
+      "steps": [
+        "Check the [[Recipient]], [[Institution]] and [[Address]], copied from the request.",
+        "Add the planned date and courier if known, and select [[Create shipment]]. Contents opens next."
+      ]
+    },
+    {
+      "title": "Change the details",
+      "steps": [
+        "Change the fields, give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A packed shipment can change only its planned date and courier details.",
+    "Ship-to details and storage instructions are printed on the manifest.",
+    "Courier and tracking number can also be given at dispatch."
+  ],
   "sections": [
     {
       "title": "Who can use it",

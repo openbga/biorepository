@@ -1,6 +1,7 @@
-{% comment %}
+{% load ui %}{% comment %}
 One sidebar item, rendered by the {% nav_item %} tag (core/templatetags/navigation.py), which declare every item and the routes that mark it current.
 Parameters:
+  visible  falsy renders nothing: the user's roles never use the item (NavItem.roles)
   url      resolved URL; empty renders a "Planned" placeholder
   label    link text
   icon     Bootstrap Icons name shown before the label (decorative)
@@ -8,12 +9,12 @@ Parameters:
   count    optional number shown at the end
 Usage: {% load navigation %}<ul class="vr-nav-list">{% nav_item "dashboard" %}</ul>
 {% endcomment %}
-<li>
+{% if visible %}<li>
   {% if url %}
   <a class="vr-navlink" href="{{ url }}"{% if current %} aria-current="page"{% endif %}>
-    {% if icon %}{% include "includes/icon.html" with name=icon %}{% endif %}<span>{{ label }}</span>{% if count %}<span class="vr-navlink-count">{{ count }}</span>{% endif %}
+    {% if icon %}{% icon name=icon %}{% endif %}<span>{{ label }}</span>{% if count %}<span class="vr-navlink-count">{{ count }}</span>{% endif %}
   </a>
   {% else %}
-  <span class="vr-navlink is-unavailable">{% if icon %}{% include "includes/icon.html" with name=icon %}{% endif %}<span>{{ label }}</span> <span class="vr-navlink-note">Planned</span></span>
+  <span class="vr-navlink is-unavailable">{% if icon %}{% icon name=icon %}{% endif %}<span>{{ label }}</span> <span class="vr-navlink-note">Planned</span></span>
   {% endif %}
-</li>
+</li>{% endif %}

@@ -193,15 +193,22 @@ def request_rows(cleaned, user):
             )
         )
     if cleaned.get("awaiting_me"):
-        latest = RequestSubmission.objects.filter(
-            request=OuterRef("pk"), number=OuterRef("latest_submission")
-        )
-        queryset = (
-            queryset.filter(status=SpecimenRequest.Status.SUBMITTED)
-            .exclude(created_by=user)
-            .exclude(Exists(latest.filter(submitted_by=user)))
-        )
+        queryset = awaiting_decision(user, queryset)
     return queryset
+
+
+def awaiting_decision(user, queryset=None):
+    """Submitted requests this user may decide: not created by them, latest submission not
+    theirs (the service repeats both checks under lock). The dashboard queue counts these rows."""
+    latest = RequestSubmission.objects.filter(
+        request=OuterRef("pk"), number=OuterRef("latest_submission")
+    )
+    queryset = SpecimenRequest.objects.all() if queryset is None else queryset
+    return (
+        queryset.filter(status=SpecimenRequest.Status.SUBMITTED)
+        .exclude(created_by=user)
+        .exclude(Exists(latest.filter(submitted_by=user)))
+    )
 
 
 def search_requests(queryset, text):

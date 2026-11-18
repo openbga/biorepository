@@ -1,19 +1,19 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% block page_actions %}
-  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}
+  {% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}
   {% if can_operate %}<a class="btn btn-primary" href="{% url 'quality:deviation-create' %}">New deviation</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="deviations-heading">
-  <h2 class="visually-hidden" id="deviations-heading">Deviations</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter deviations" q=q inline=inline grid="quality.deviations" %}
+{% panel title="Deviations" heading_id="deviations-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter deviations" q=q inline=inline grid="quality.deviations" %}
   {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
-  {% if page_obj.paginator.count %}
+  {% if can_operate %}{% url 'quality:deviation-create' as create_url %}{% endif %}
+  {% list_results items=page_obj noun="deviations" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No deviations yet" empty_body="Record a quality deviation, investigate it and retain another person's review." action_url=create_url action_label="New deviation" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap"><table class="table table-hover vr-table" data-vr-grid="quality.deviations" data-vr-grid-version="1" aria-labelledby="deviations-heading"><thead><tr>
-    {% include "includes/sort_header.html" with label="Deviation" asc="number" desc="-number" col="number" locked=True %}
-    {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
-    {% include "includes/sort_header.html" with label="Title" asc="title" desc="-title" col="title" %}
-    {% include "includes/sort_header.html" with label="Occurred at" asc="observed" desc="-observed" col="observed" %}
-    {% include "includes/sort_header.html" with label="Updated" asc="updated" desc="-updated" col="updated" %}
+    {% sort_header label="Deviation" asc="number" desc="-number" col="number" locked=True %}
+    {% sort_header label="Status" asc="status" desc="-status" col="status" %}
+    {% sort_header label="Title" asc="title" desc="-title" col="title" %}
+    {% sort_header label="Occurred at" asc="observed" desc="-observed" col="observed" %}
+    {% sort_header label="Updated" asc="updated" desc="-updated" col="updated" %}
     <th scope="col" data-vr-col="creator">Created by</th>
   </tr></thead><tbody>{% for deviation in page_obj %}<tr>
     <th scope="row"><a class="vr-row-link vr-id" href="{% url 'quality:deviation-detail' deviation.pk %}">{{ deviation.number }}</a></th>
@@ -23,10 +23,6 @@
     <td class="vr-nowrap"><time datetime="{{ deviation.updated_at|date:'c' }}">{{ deviation.updated_at|date:"Y-m-d H:i" }}</time></td>
     <td>{{ deviation.created_by.get_full_name|default:deviation.created_by.get_username }}</td>
   </tr>{% endfor %}</tbody></table></div>
-  {% include "includes/pagination.html" with noun="deviations" filtered=filtered %}
-  {% else %}
-    {% if can_operate %}{% url 'quality:deviation-create' as create_url %}{% endif %}
-    {% include "storage/_list_states.html" with title_empty="No deviations yet" body_empty="Record a quality deviation, investigate it and retain another person's review." create_label="New deviation" %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

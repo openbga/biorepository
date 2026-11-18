@@ -5,6 +5,26 @@
   ],
   "title": "Withdrawals",
   "purpose": "See every recorded withdrawal of consent and which still need follow-up.",
+  "summary": "Every recorded withdrawal of consent, and which still need follow-up.",
+  "tasks": [
+    {
+      "title": "Find withdrawals needing follow-up",
+      "steps": [
+        "Open [[More filters]], choose Needs follow-up and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Record a withdrawal",
+      "steps": [
+        "Open the consent and select Withdraw consent there."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Needs follow-up means specimens without its hold, or a shipment without a recorded follow-up.",
+    "Held, Allocations released and Distributed are counts from when it was recorded.",
+    "Withdrawals are recorded on consent pages, so this tab has no New button."
+  ],
   "sections": [
     {
       "title": "Tabs",

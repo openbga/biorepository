@@ -5,6 +5,29 @@
   ],
   "title": "Place holds",
   "purpose": "Choose affected specimens from an excursion and place an ordinary manual hold on each, with a recorded reason and the excursion number.",
+  "summary": "Choose specimens affected by an excursion and place an ordinary manual hold on each, with a reason and the excursion number.",
+  "tasks": [
+    {
+      "title": "Place holds",
+      "steps": [
+        "Tick the specimens on this page, up to 200.",
+        "Choose the [[Hold scope]] and give the [[Reason]].",
+        "Select [[Place holds]]."
+      ]
+    },
+    {
+      "title": "Find a specimen",
+      "steps": [
+        "Type part of its ID in the search."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Nothing is selected by default. The application records your decision; it does not decide which specimens to hold.",
+    "The excursion number is added to every hold reason.",
+    "Each hold is released on its specimen record. The excursion never releases them.",
+    "Disposed specimens are shown but cannot be selected."
+  ],
   "sections": [
     {
       "title": "Who can use it",

@@ -5,6 +5,33 @@
   ],
   "title": "Imports",
   "purpose": "Find specimen CSV uploads, review their validation results, export the register or open an import to commit it.",
+  "summary": "The CSV files uploaded to register many specimens at once. Open one to review or commit it.",
+  "tasks": [
+    {
+      "title": "Register many specimens",
+      "steps": [
+        "Select [[Upload CSV]] and validate your file.",
+        "Open the import, check it has no errors and commit it."
+      ]
+    },
+    {
+      "title": "Export the register",
+      "steps": [
+        "Filter the list, then select [[Export CSV]]."
+      ]
+    },
+    {
+      "title": "Find an earlier import",
+      "steps": [
+        "Type part of the file name in [[Search]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Uploading only checks a file. Nothing is registered until a valid file is committed, and then all rows or none.",
+    "An import expires 24 hours after validation. Upload the file again.",
+    "Every validation is listed, including repeats of the same file."
+  ],
   "sections": [
     {
       "title": "Who can use it",

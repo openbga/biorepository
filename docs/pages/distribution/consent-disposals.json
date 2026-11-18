@@ -5,6 +5,27 @@
   ],
   "title": "Request disposal of held specimens",
   "purpose": "File ordinary disposal requests for the specimens held by a withdrawal that asks for destruction.",
+  "summary": "File ordinary disposal requests for the specimens held by a withdrawal that asks for destruction. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Request the disposals",
+      "steps": [
+        "Type the [[Disposal method]], [[Destination]] and [[Reason]].",
+        "Select [[Request disposal of held specimens]]."
+      ]
+    },
+    {
+      "title": "Carry them out",
+      "steps": [
+        "Each request is approved by another person and recorded on its specimen."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "One request is filed per held specimen.",
+    "Nothing is disposed here.",
+    "Nobody approves their own disposal request."
+  ],
   "sections": [
     {
       "title": "What happens",

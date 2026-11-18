@@ -5,6 +5,28 @@
   ],
   "title": "Correct custody event",
   "purpose": "Correct who is named in a custody event or its destination by adding a correction, without rewriting the event.",
+  "summary": "Correct who is named in a custody event, or its destination, by adding a correction without rewriting the event. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Correct the event",
+      "steps": [
+        "Change [[Destination]], [[From]] or [[To]] as needed.",
+        "Explain why in [[Reason]] and select [[Correct custody event]]."
+      ]
+    },
+    {
+      "title": "Correct a return",
+      "steps": [
+        "For a return the destination field is labelled [[Returned from]]: where the material came back from."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Times, event kinds and locations cannot be corrected here.",
+    "The original event stays and is marked Corrected.",
+    "A correction that changes nothing is refused.",
+    "Only the latest version of an event can be corrected."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

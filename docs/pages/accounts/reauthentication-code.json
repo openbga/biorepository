@@ -6,6 +6,35 @@
   ],
   "title": "Confirm access with an emailed code",
   "purpose": "Reconfirm your identity before an account-sensitive action by entering a one-time code sent to one of your verified email addresses.",
+  "summary": "Confirm it is you before a sensitive account change, with a one-time code sent to one of your verified email addresses.",
+  "tasks": [
+    {
+      "title": "Get a code",
+      "steps": [
+        "Choose the address in [[Recipient]]. Only verified addresses are offered.",
+        "Select [[Request code]]."
+      ]
+    },
+    {
+      "title": "Enter the code and continue",
+      "steps": [
+        "Type the code from the latest email in [[Code]] within five minutes.",
+        "Select [[Confirm]]. The action you started continues."
+      ]
+    },
+    {
+      "title": "Get a new code",
+      "steps": [
+        "Select [[Request new code]]. It replaces earlier codes."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Verify an address on the Email addresses page first if none is offered.",
+    "A new code does not restart the five-minute deadline.",
+    "A confirmation counts as recent for five minutes.",
+    "Requests are rate limited."
+  ],
   "sections": [
     {
       "title": "Request the code",
@@ -15,7 +44,7 @@
           "description": "Choose which of your verified email addresses receives the code. Only verified addresses are offered; verify an address on the Email addresses page first if none appears."
         },
         {
-          "label": "Request Code",
+          "label": "Request code",
           "description": "Sends a one-time code to the chosen address and opens the code entry page. Requests are rate limited; a field error appears when the limit is reached."
         }
       ]

@@ -1,14 +1,16 @@
-{% load static whats_new %}<!doctype html>
+{% load static ui preferences whats_new %}<!doctype html>
 {% comment %}
 Application document and staff shell. Block contract (docs/ui-standards.md section 4):
   title          <title>; defaults to "{{ page_title }} · OpenBGA Biorepository"
   extra_css      extra <link> tags in <head> (local static only)
   body_class     classes on <body>
   body           everything inside <body>; the entrance layout replaces it
-  topbar         top bar
-  sidenav        staff navigation rail
+  topbar         top bar: brand, section menus, lookup and tools
+  sidenav        the section menus inside the top bar (an offcanvas below lg)
+  pathbar        storage path bar under the top bar, on pages with a storage context only
+                 (storage_path or storage_census in the context)
   page_header    whole page header; override only for unusual pages
-  page_dateline  overview pages: {% include "includes/dateline.html" %} above the title
+  page_dateline  overview pages: {% include "includes/dateline.html" %}, under the title and intro
   breadcrumbs    record, form, action, entry and document pages: {% include "includes/breadcrumbs.html" %}
   page_heading   <h1> text; defaults to {{ page_title }}
   page_meta      optional <ul class="vr-page-meta"> of key facts under the title (record pages)
@@ -19,7 +21,7 @@ Application document and staff shell. Block contract (docs/ui-standards.md secti
                  also marks the page as a record, which numbers its panel headings
   extra_js       extra <script> tags at the end of <body>
 Every page in this shell ends <main> with includes/source_footer.html.
-The sidebar items, and which one a page marks, are declared in
+The navigation items, and which one a page marks, are declared in
 core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for signed-in users.
 {% endcomment %}
 <html lang="en" data-bs-theme="light">
@@ -34,10 +36,13 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   <link rel="icon" href="{% static 'img/mark.svg' %}" type="image/svg+xml">
   <link rel="icon" href="{% static 'img/favicon-32.png' %}" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
-  <meta name="theme-color" content="#16293f">
+  <meta name="theme-color" content="#fbfdfe" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111c24" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-5.3.8/css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/datatables/dataTables.bootstrap5.min.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/datatables/colReorder.bootstrap5.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/tom-select/tom-select.bootstrap5.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/vanilla-calendar-pro-3.4.0/layout.css' %}">
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
   <link rel="stylesheet" href="{% static 'css/documentation.css' %}">
   {% block extra_css %}{% endblock %}
@@ -47,7 +52,11 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   <script src="{% static 'vendor/datatables/dataTables.bootstrap5.min.js' %}" defer></script>
   <script src="{% static 'vendor/datatables/dataTables.colReorder.min.js' %}" defer></script>
   <script src="{% static 'js/app.js' %}" defer></script>
+  <script src="{% static 'js/preferences.js' %}" defer></script>
   <script src="{% static 'js/grid.js' %}" defer></script>
+  <script src="{% static 'vendor/tom-select/tom-select.complete.min.js' %}" defer></script>
+  <script src="{% static 'vendor/vanilla-calendar-pro-3.4.0/index.js' %}" defer></script>
+  <script src="{% static 'js/controls.js' %}" defer></script>
   <script src="{% static 'js/documentation.js' %}" defer></script>
   <script src="{% static 'js/whats-new.js' %}" defer></script>
   <script src="{% static 'js/form-dialog.js' %}" defer></script>
@@ -58,28 +67,11 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   {% url 'dashboard' as dashboard_url %}
   {% block topbar %}
   <header class="vr-topbar">
-    <button class="btn btn-sm vr-topbar-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#vr-nav" aria-controls="vr-nav">{% include "includes/icon.html" with name="list" %}<span>Menu</span></button>
-    {% include "includes/brand.html" with href=dashboard_url|default:"/" %}
-    {% if repository.name %}<span class="vr-repository-name d-none d-lg-inline">{{ repository.name }}</span>{% endif %}
-    <div class="vr-topbar-end">
-      {% url 'specimens:lookup' as specimen_lookup_url %}
-      {% if specimen_lookup_url %}
-      <form class="vr-lookup d-none d-sm-block" action="{{ specimen_lookup_url }}" method="get" role="search">
-        <label class="visually-hidden" for="vr-lookup-q">Find a specimen by its ID</label>
-        {% include "includes/icon.html" with name="search" %}
-        <input class="form-control form-control-sm" type="search" id="vr-lookup-q" name="q" placeholder="Find specimen ID" autocomplete="off" spellcheck="false">
-      </form>
-      {% endif %}
-      {% whats_new_button %}
-      {% include "documentation/button.html" %}
-      {% include "includes/theme_menu.html" %}
-      {% if user.is_authenticated %}{% include "includes/user_menu.html" %}{% endif %}
-    </div>
-  </header>
-  {% endblock topbar %}
-  <div class="vr-shell">
+    <button class="btn btn-sm vr-topbar-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#vr-nav" aria-controls="vr-nav">{% icon name="list" %}<span>Menu</span></button>
+    {% brand href=dashboard_url|default:"/" repository=repository.name %}
     {% block sidenav %}
-    <nav class="vr-sidenav offcanvas-lg offcanvas-start" id="vr-nav" tabindex="-1" aria-label="Primary">
+    {# Legacy class name vr-sidenav (tests and e2e address it): it is the top menus from lg up and the phone offcanvas below. #}
+    <nav class="vr-sidenav vr-topnav offcanvas-lg offcanvas-start" id="vr-nav" tabindex="-1" aria-label="Primary">
       <div class="offcanvas-header d-lg-none">
         <p class="offcanvas-title h5 mb-0">OpenBGA Biorepository</p>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#vr-nav" aria-label="Close navigation"></button>
@@ -89,16 +81,27 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
       </div>
     </nav>
     {% endblock sidenav %}
+    <div class="vr-topbar-end">
+      {% include "includes/specimen_lookup.html" %}
+      {% whats_new_button %}
+      {% include "documentation/button.html" %}
+      {% include "includes/theme_menu.html" %}
+      {% if user.is_authenticated %}{% include "includes/user_menu.html" %}{% endif %}
+    </div>
+  </header>
+  {% endblock topbar %}
+  {% block pathbar %}{% if storage_path or storage_census %}{% include "includes/storage_path.html" %}{% endif %}{% endblock %}
+  <div class="vr-shell">
     <main class="vr-main" id="main" tabindex="-1"{% block form_surface_attributes %}{% if form_surface %} data-vr-form-page data-vr-form-url="{{ request.get_full_path }}" data-vr-form-size="{{ form_surface.size }}"{% endif %}{% endblock %}>
       {% block page_header %}
-      <div class="vr-page-header">
-        {% block page_dateline %}{% endblock %}
+      <div class="vr-page-header" data-page-kind="{% block page_kind %}{% endblock %}">
         {% block breadcrumbs %}{% endblock %}
         <div class="vr-page-header-row">
           <div>
             <h1 class="vr-page-title">{% block page_heading %}{{ page_title }}{% endblock %}</h1>
             {% block page_meta %}{% endblock %}
             {% block page_intro %}{% endblock %}
+            {% block page_dateline %}{% endblock %}
           </div>
           <div class="vr-page-actions">{% block page_actions %}{% endblock %}</div>
         </div>
@@ -107,15 +110,16 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
       {% include "includes/messages.html" %}
       {% block content %}{% endblock %}
       {% block record_foot %}{% endblock %}
-      {% include "includes/source_footer.html" %}
+      {% source_footer %}
     </main>
   </div>
   {% endblock body %}
   {% block documentation_panel %}{% include "documentation/panel.html" %}{% endblock %}
-  <div class="vr-live" id="vr-live"></div>
+  <template id="vr-request-error">{% notice tone="danger" blocking=True dismissible=True hook="vr-request-error" %}<span data-vr-notice-text></span>{% endnotice %}</template>
   {% include "includes/grid_columns_dialog.html" %}
   {{ form_route_patterns|json_script:"vr-form-routes" }}
   {% include "includes/form_dialog.html" %}
+  {% client_preferences %}
   {% block extra_js %}{% endblock %}
 </body>
 </html>

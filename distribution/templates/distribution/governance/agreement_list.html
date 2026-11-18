@@ -1,25 +1,26 @@
 {% extends "base.html" %}
-{% load distribution %}
+{% load distribution ui %}
 {% comment %}Agreements (List). Context: governance_views.grid_response for governance_lists.SPECS["agreement"], plus today (validity is computed for today, never stored) and horizon_days.{% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Material transfer and data use agreements as recorded; the software does not draft or interpret them.</p>{% endblock %}
 {% block page_actions %}{% url 'distribution:agreement-create' as create_url %}{% include "distribution/governance/_list_actions.html" with create_label="New agreement" may_create=can_manage %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="agreements-heading">
-  <h2 class="visually-hidden" id="agreements-heading">Agreements</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter agreements" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.agreements" %}
-  {% if page_obj.paginator.count %}
+{% panel title="Agreements" heading_id="agreements-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter agreements" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.agreements" %}
+  {% if can_manage %}{% url 'distribution:agreement-create' as create_url %}{% endif %}
+  {% if can_manage %}{% firstof "Record an agreement's terms as a draft, then record its execution." as empty_body %}{% else %}{% firstof "A repository manager records agreements and their documents." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No agreements recorded" empty_body=empty_body action_url=create_url action_label="New agreement" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.agreements" data-vr-grid-version="1" aria-labelledby="agreements-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Agreement" asc="number" desc="-number" first="desc" col="number" locked=True %}
-        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
+        {% sort_header label="Agreement" asc="number" desc="-number" first="desc" col="number" locked=True %}
+        {% sort_header label="Status" asc="status" desc="-status" col="status" %}
         <th scope="col" data-vr-col="validity" data-vr-col-label="Today">Today</th>
         <th scope="col" data-vr-col="kind" data-vr-col-label="Kind">Kind</th>
         <th scope="col" data-vr-col="title" data-vr-col-label="Title">Title</th>
-        {% include "includes/sort_header.html" with label="Institution" asc="institution" desc="-institution" col="institution" %}
+        {% sort_header label="Institution" asc="institution" desc="-institution" col="institution" %}
         <th scope="col" data-vr-col="investigator" data-vr-col-label="Investigator">Investigator</th>
-        {% include "includes/sort_header.html" with label="Expires" asc="expires" desc="-expires" col="expires" %}
-        {% include "includes/sort_header.html" with label="Reporting due" asc="reporting" desc="-reporting" col="reporting" %}
+        {% sort_header label="Expires" asc="expires" desc="-expires" col="expires" %}
+        {% sort_header label="Reporting due" asc="reporting" desc="-reporting" col="reporting" %}
       </tr></thead>
       <tbody>
         {% for row in page_obj %}
@@ -29,8 +30,8 @@
           <td>{% agreement_validity row today %}</td>
           <td>{{ row.get_kind_display }}</td>
           <td class="vr-wrap">{{ row.title }}</td>
-          <td class="vr-id">{{ row.institution.code }}</td>
-          <td class="vr-id">{{ row.investigator.code|default:"—" }}</td>
+          <td>{{ row.institution.name }} <span class="vr-muted vr-id">{{ row.institution.code }}</span></td>
+          <td>{% if row.investigator %}{{ row.investigator.name }} <span class="vr-muted vr-id">{{ row.investigator.code }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td class="vr-nowrap">{% if row.expires_on %}<time datetime="{{ row.expires_on|date:'Y-m-d' }}">{{ row.expires_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">No end date</span>{% endif %}</td>
           <td class="vr-nowrap">{% if row.reporting_due_on %}<time datetime="{{ row.reporting_due_on|date:'Y-m-d' }}">{{ row.reporting_due_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
         </tr>
@@ -38,10 +39,6 @@
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
-  {% else %}
-  {% url 'distribution:agreement-create' as create_url %}
-  {% if can_manage %}{% include "storage/_list_states.html" with title_empty="No agreements recorded" body_empty="Record an agreement's terms as a draft, then record its execution." create_url=create_url create_label="New agreement" %}{% else %}{% include "storage/_list_states.html" with title_empty="No agreements recorded" body_empty="A repository manager records agreements and their documents." %}{% endif %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 Disposal requests, newest first. Context: page_obj (DisposalRequest rows with .state from
 queries.with_states), filter_form (state, mine, and awaiting_me for disposal approvers), q, sort,
@@ -7,20 +7,19 @@ inline, active_filters, filtered. A request is made from its specimen's record, 
 no New button.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Every disposal needs approval by a different person with disposal approval.</p>{% endblock %}
-{% block page_actions %}{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}{% endblock %}
+{% block page_actions %}{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="disposals-heading">
-  <h2 class="visually-hidden" id="disposals-heading">Disposal requests</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter disposal requests" q=q placeholder="Specimen ID" inline=inline grid="specimens.disposals" %}
-  {{ filter_form.non_field_errors }}
+{% panel title="Disposal requests" heading_id="disposals-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter disposal requests" q=q placeholder="Specimen ID" inline=inline grid="specimens.disposals" %}
+  {% if filter_form.non_field_errors %}{% notice tone="danger" %}{{ filter_form.non_field_errors|join:" " }}{% endnotice %}{% endif %}
   {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
-  {% if page_obj.paginator.count %}
+  {% list_results items=page_obj noun="disposal requests" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No disposal requests yet" empty_body="Request a disposal from the specimen's record. It is listed here until it is approved and recorded." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.disposals" data-vr-grid-version="1" aria-labelledby="disposals-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Request" asc="recorded_at" desc="-recorded_at" first="desc" col="request" locked=True %}
+        {% sort_header label="Request" asc="recorded_at" desc="-recorded_at" first="desc" col="request" locked=True %}
         <th scope="col" data-vr-col="state" data-vr-col-label="State">State</th>
-        {% include "includes/sort_header.html" with label="Specimen" asc="specimen" desc="-specimen" col="specimen" %}
+        {% sort_header label="Specimen" asc="specimen" desc="-specimen" col="specimen" %}
         <th scope="col" data-vr-col="method" data-vr-col-label="Method">Method</th>
         <th scope="col" data-vr-col="destination" data-vr-col-label="Destination">Destination</th>
         <th scope="col" data-vr-col="requested_by" data-vr-col-label="Requested by">Requested by</th>
@@ -41,9 +40,6 @@ no New button.
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun="disposal requests" filtered=filtered %}
-  {% else %}
-  {% include "specimens/includes/list_states.html" with title_empty="No disposal requests yet" body_empty="Request a disposal from the specimen's record. It is listed here until it is approved and recorded." %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

@@ -5,6 +5,29 @@
   ],
   "title": "Decide request",
   "purpose": "Record the access decision on the latest submission of a request: approve, return for changes or reject.",
+  "summary": "Record the access decision on a request's latest submission: approve, return for changes or reject.",
+  "tasks": [
+    {
+      "title": "Record the decision",
+      "steps": [
+        "Choose the [[Decision]] and give the [[Reason]].",
+        "Add the [[Committee or reviewer reference]], [[Conditions]] and [[Conflicts of interest]] where they apply.",
+        "Select [[Record decision]]."
+      ]
+    },
+    {
+      "title": "Send it back for changes",
+      "steps": [
+        "Choose Return for changes and say what is needed in the reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The decision permission is given to named people. Superuser status alone does not grant it.",
+    "You cannot decide a request you created or submitted.",
+    "The software records the committee's or reviewer's decision. It does not judge the request.",
+    "Rejected is final. Allocated specimens are released."
+  ],
   "sections": [
     {
       "title": "Who can use it",

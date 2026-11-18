@@ -558,7 +558,10 @@ def test_dashboard_queues_link_to_filtered_lists(client, people, dist, world):
     as_user(client, people["decider_manager"])
     html = client.get(reverse("dashboard")).content.decode()
     assert "Requests awaiting my decision" in html
-    assert reverse("distribution:request-list") + "?status=submitted" in html
+    decide = reverse("distribution:request-list") + "?awaiting_me=on"
+    assert f'href="{decide}"' in html
+    # The link opens the requests the queue counts: this one, submitted by someone else.
+    assert submitted.number in client.get(decide).content.decode()
     as_user(client, people["viewer"])
     viewer = client.get(reverse("dashboard")).content.decode()
     assert "Withdrawals needing follow-up" not in viewer

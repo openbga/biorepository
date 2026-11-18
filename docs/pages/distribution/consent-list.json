@@ -5,6 +5,33 @@
   ],
   "title": "Consent",
   "purpose": "Find the recorded consent of a coded participant in a study.",
+  "summary": "The recorded consent of each coded participant in each study.",
+  "tasks": [
+    {
+      "title": "Find a participant's consent",
+      "steps": [
+        "Type the participant code in [[Participant]] or [[Search]] and select [[Apply]].",
+        "Select the row to open the consent."
+      ]
+    },
+    {
+      "title": "Record a consent",
+      "steps": [
+        "Admin and manager: select [[Record consent]]."
+      ]
+    },
+    {
+      "title": "See withdrawals",
+      "steps": [
+        "Open the [[Withdrawals]] tab."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Participants are coded identifiers only. The system holds no names.",
+    "Status comes from the newest record and any withdrawal in effect.",
+    "Do not contact is Yes after any withdrawal."
+  ],
   "sections": [
     {
       "title": "Tabs",

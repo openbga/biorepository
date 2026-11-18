@@ -5,6 +5,27 @@
   ],
   "title": "Record custody transfer",
   "purpose": "Hand responsibility for a specimen to another person without moving it.",
+  "summary": "Hand responsibility for a specimen to another person without moving it.",
+  "tasks": [
+    {
+      "title": "Hand the specimen over",
+      "steps": [
+        "Choose the person in [[Hand over to]].",
+        "Enter [[Handed over at]] and the [[Reason]], then select [[Record custody transfer]]."
+      ]
+    },
+    {
+      "title": "Correct a transfer recorded wrongly",
+      "steps": [
+        "Admin and manager: use the correction action on the custody event in the specimen record."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The location does not change. Only the custodian does.",
+    "You cannot hand it to the person who already has custody.",
+    "A use hold or an all-use hold blocks the transfer."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

@@ -5,6 +5,26 @@
   ],
   "title": "Distribution catalogues",
   "purpose": "Find and maintain the consent forms used by consent records.",
+  "summary": "The consent form versions consent records are recorded on.",
+  "tasks": [
+    {
+      "title": "Add a consent form version",
+      "steps": [
+        "Admin and manager: select [[New consent form]], or Add consent form on the study."
+      ]
+    },
+    {
+      "title": "Find a study's forms",
+      "steps": [
+        "Choose the [[Study]] and select [[Apply]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Each version is its own entry. A changed form is a new version.",
+    "Every consent on a version answers each category it asks.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Tabs",

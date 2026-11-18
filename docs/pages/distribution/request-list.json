@@ -5,6 +5,33 @@
   ],
   "title": "Requests",
   "purpose": "Find specimen requests from investigators and follow each one from draft through decision, allocation and shipment.",
+  "summary": "Specimen requests from investigators, followed from draft through decision, allocation and shipment.",
+  "tasks": [
+    {
+      "title": "Record a request you received",
+      "steps": [
+        "Select [[New request]] and enter it as it was received.",
+        "Add the lines of material asked for, then submit it for a decision."
+      ]
+    },
+    {
+      "title": "Find requests to decide",
+      "steps": [
+        "Open [[More filters]], tick [[Awaiting my decision]] and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Find a request",
+      "steps": [
+        "Type the RQ number or part of the title in [[Search]], or choose [[Status]] or [[Investigator]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Investigators do not sign in. Staff record requests as they arrive.",
+    "You never decide a request you created or submitted.",
+    "[[Specimen]] under More filters finds every request that ever allocated that specimen."
+  ],
   "sections": [
     {
       "title": "What the page shows",
@@ -38,11 +65,11 @@
         },
         {
           "label": "Specimens to pick",
-          "description": "Under More filters. Requests with allocated specimens that are not yet picked. The dashboard queue \"Approved requests with specimens to pick\" links here with this filter and Status set to Approved."
+          "description": "Under More filters. Requests with allocated specimens that are not yet picked. The dashboard queue \"Approved requests with allocations to pick\" links here with this filter and Status set to Approved."
         },
         {
           "label": "Awaiting my decision",
-          "description": "Under More filters, only for people with the request decision permission. Requests awaiting a decision that you neither created nor submitted, so you may decide them."
+          "description": "Under More filters, only for people with the request decision permission. Requests awaiting a decision that you neither created nor submitted, so you may decide them. The dashboard queue \"Requests awaiting my decision\" links here with this filter."
         }
       ]
     },

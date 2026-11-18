@@ -5,6 +5,28 @@
   ],
   "title": "Put back",
   "purpose": "Return picked specimens of a request to storage, keeping them allocated or releasing them.",
+  "summary": "Return picked specimens of a request to storage, keeping them allocated or releasing them.",
+  "tasks": [
+    {
+      "title": "Put specimens back",
+      "steps": [
+        "Tick [[Put back]] on each row and choose the [[Box]] and [[Position]].",
+        "Answer [[Thaw observed while out]] and choose the [[Custodian after check-in]].",
+        "Enter [[Put back at]] and the [[Reason]], then select [[Record put back]]."
+      ]
+    },
+    {
+      "title": "Release them from the request",
+      "steps": [
+        "Managers and administrators: tick [[Release them from the request]] before saving."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Leaving storage is not a thaw. Record only what was observed.",
+    "Specimens in a packed shipment are not listed. Unpack the shipment first.",
+    "Unless released, the specimens stay allocated to the request."
+  ],
   "sections": [
     {
       "title": "Who can use it",

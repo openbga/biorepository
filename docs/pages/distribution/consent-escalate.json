@@ -5,6 +5,27 @@
   ],
   "title": "Escalate to destruction",
   "purpose": "Record a later destruction instruction when a No further use withdrawal is in effect.",
+  "summary": "Record a later destruction instruction when a No further use withdrawal is in effect. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Record the instruction",
+      "steps": [
+        "Enter [[Effective on]], [[Received at]] and [[Received via]], and the [[Reason]].",
+        "Select [[Escalate to destruction]]."
+      ]
+    },
+    {
+      "title": "Then request disposal",
+      "steps": [
+        "On the consent, open More and choose Request disposal of held specimens."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The original withdrawal stays in effect with its holds.",
+    "It can be recorded once for each withdrawal.",
+    "Nothing is disposed until each disposal request is approved and recorded."
+  ],
   "sections": [
     {
       "title": "Original withdrawal",

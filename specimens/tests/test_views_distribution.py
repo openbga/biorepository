@@ -125,7 +125,12 @@ def test_distributed_record_page_blocks_physical_actions(client, people, world):
         "Adjust amount",
     ):
         assert f'{label}<span class="d-block small">Distributed:' in page, label
-    assert 'disabled aria-describedby="dispose-why">Request disposal' in page
+    # Request disposal stays offered but disabled, with its reason, in the header's More menu.
+    assert (
+        'aria-disabled="true" data-vr-action="dispose">Request disposal'
+        '<span class="d-block small">Distributed:'
+    ) in page
+    assert 'href="' not in page.split('data-vr-action="dispose"', 1)[1].split("</li>", 1)[0]
     assert "Record check-in" not in page and "Record check-out" not in page
     # Holds and record corrections stay available.
     assert reverse("specimens:hold-add", args=[specimen.pk]) in page
@@ -162,6 +167,10 @@ def test_returned_specimen_offers_check_in(client, people, world):
     specimen = returned(people["technician"], world)
     page = detail(client, people["manager"], specimen)
     assert "Returned, in hand" in page
+    # The header's warm cell names the clock; the state stays in the Location fact.
+    assert 'class="is-warm"><span class="vr-meta-label">Out of storage</span>' in page
+    listed = client.get(reverse("specimens:specimen-list"), {"q": specimen.accession})
+    assert "Returned, in hand</span> · " in listed.content.decode()
     assert "from Example University (SH-000003)" in page
     assert "Checked out since" not in page
     assert reverse("specimens:check-in", args=[specimen.pk]) in page

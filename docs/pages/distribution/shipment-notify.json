@@ -5,6 +5,27 @@
   ],
   "title": "Record notification",
   "purpose": "Record that the recipient was told about a shipment, or acknowledged it.",
+  "summary": "Record that the recipient was told about a shipment, or acknowledged it.",
+  "tasks": [
+    {
+      "title": "Record the notification",
+      "steps": [
+        "Choose [[What happened]] and [[When]], and add a [[Note]] on how and to whom.",
+        "Select [[Record notification]]."
+      ]
+    },
+    {
+      "title": "Record an acknowledgement",
+      "steps": [
+        "Choose The recipient acknowledged."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Nothing is sent by the software. This records what people did.",
+    "It can be recorded until the shipment is final.",
+    "Never enter participant names or contact details."
+  ],
   "sections": [
     {
       "title": "Who can use it",

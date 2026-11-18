@@ -5,6 +5,28 @@
   ],
   "title": "Record check-in",
   "purpose": "Return a checked-out specimen to a free storage position, say who has it now and state explicitly whether a thaw was observed.",
+  "summary": "Return a checked-out specimen to a free position, say who has it now and state whether a thaw was observed.",
+  "tasks": [
+    {
+      "title": "Check the specimen in",
+      "steps": [
+        "Choose the [[Box]] and type the free [[Position]] label.",
+        "Choose the [[Custodian after check-in]] and answer [[Was a thaw observed while it was out?]].",
+        "Select [[Record check-in]]."
+      ]
+    },
+    {
+      "title": "Store a returned specimen",
+      "steps": [
+        "After a return from outside the repository, use this same form to put it back in storage."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The thaw question has no preset answer. Record only what was observed; choose Not known if nobody knows.",
+    "Check-in closes the time out of storage.",
+    "The position is rechecked when you save, so a position taken meanwhile is refused."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

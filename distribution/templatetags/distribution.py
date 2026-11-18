@@ -44,8 +44,8 @@ TONES = {
     },
     "consent": {
         Consent.Status.CONSENTED: "success",
-        Consent.Status.REFUSED: "danger",
-        Consent.Status.WITHDRAWN: "hold",
+        Consent.Status.REFUSED: "neutral",
+        Consent.Status.WITHDRAWN: "danger",
     },
     "study": {
         Study.Status.ACTIVE: "success",
@@ -79,6 +79,14 @@ MODELS = {
 def distribution_status(kind, value, plain=False):
     """{% distribution_status "request" request.status %}: label, tone and glyph."""
     return {"label": MODELS[kind](value).label, "tone": TONES[kind][value], "plain": plain}
+
+
+@register.simple_tag
+def distribution_status_parts(kind, value):
+    """{% distribution_status_parts "request" request.status as st %}: the label and tone
+    distribution_status shows, for a {% notice tone=st.tone label=st.label %} that opens with the
+    record's status. Named per app: a template loading several libraries keeps the last tag."""
+    return {"label": MODELS[kind](value).label, "tone": TONES[kind][value]}
 
 
 @register.inclusion_tag("includes/status.html")

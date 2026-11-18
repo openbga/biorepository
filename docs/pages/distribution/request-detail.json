@@ -5,6 +5,40 @@
   ],
   "title": "Specimen request",
   "purpose": "Read one specimen request and start its next step: lines, submission and decision, allocation, picking and shipments.",
+  "summary": "One specimen request and its next step: lines, submission and decision, allocation, picking and shipments.",
+  "tasks": [
+    {
+      "title": "Prepare and submit it",
+      "steps": [
+        "Select [[Edit lines]] to add the material, then [[Submit for decision]]."
+      ]
+    },
+    {
+      "title": "Decide it",
+      "steps": [
+        "With the decision permission, select [[Decide request]]. You cannot decide a request you created or submitted."
+      ]
+    },
+    {
+      "title": "Fulfil an approved request",
+      "steps": [
+        "Managers: select [[Allocate]] on each line.",
+        "Select [[Pick specimens]], then [[New shipment]]."
+      ]
+    },
+    {
+      "title": "Finish it",
+      "steps": [
+        "Select [[Close request]] when nothing more will be shipped, or [[Cancel request]] if it will not be fulfilled."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Progress shows the six steps. Next names what the request needs now, or why it is blocked.",
+    "Each submission keeps the request exactly as submitted, with its decision.",
+    "Dispatch needs a linked agreement valid on the dispatch date.",
+    "The timeline cannot be edited."
+  ],
   "sections": [
     {
       "title": "What the page shows",

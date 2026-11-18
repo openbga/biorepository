@@ -6,6 +6,27 @@
   ],
   "title": "New investigator or Edit investigator",
   "purpose": "Record a requesting investigator as a professional contact.",
+  "summary": "Record a requesting investigator as a professional contact. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Add an investigator",
+      "steps": [
+        "Type the [[Code]] and [[Name]], choose the [[Institution]] and add work contacts if known.",
+        "Select [[Create investigator]]."
+      ]
+    },
+    {
+      "title": "Stop offering them",
+      "steps": [
+        "Clear [[Active]], give the [[Reason]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Once a request names the investigator, the code and institution are fixed.",
+    "Record professional contacts only.",
+    "Entries are never deleted."
+  ],
   "sections": [
     {
       "title": "Fields",
@@ -61,6 +82,6 @@
     "distribution/services.py",
     "distribution/templates/distribution/governance/form.html",
     "distribution/templates/distribution/governance/catalogue_form.html",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

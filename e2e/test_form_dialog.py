@@ -8,7 +8,7 @@ from datetime import timedelta
 
 import pytest
 from conftest import NARROW
-from helpers import field, local_input, make_announcement
+from helpers import field, local_input, make_announcement, native_select
 from playwright.sync_api import Locator, Page, expect
 
 from core.models import Announcement
@@ -128,14 +128,26 @@ def test_dirty_dialog_keeps_edits_until_discard_is_explicit(page: Page, sign_in_
     title = "E2E unsaved modal announcement"
     field(dialog, "Title").fill(title)
     dialog.locator("[data-vr-form-close]").click()
-    keep = dialog.locator("[data-vr-form-keep]")
-    expect(keep).to_be_visible()
+    # Unsaved changes ask in a confirm pop-up over the form, whose safe choice has the focus.
+    confirm = page.locator("#vr-form-discard")
+    expect(confirm).to_be_visible()
+    expect(confirm.get_by_role("heading", name="Discard unsaved changes?")).to_be_visible()
+    keep = confirm.locator("[data-vr-form-keep]").last
+    expect(keep).to_be_focused()
     keep.click()
+    expect(confirm).to_be_hidden()
     expect(field(dialog, "Title")).to_have_value(title)
     expect(dialog).to_be_visible()
 
+    # Escape in the pop-up means Keep editing.
     page.keyboard.press("Escape")
-    discard = dialog.locator("[data-vr-form-discard]")
+    expect(confirm).to_be_visible()
+    page.keyboard.press("Escape")
+    expect(confirm).to_be_hidden()
+    expect(dialog).to_be_visible()
+
+    page.keyboard.press("Escape")
+    discard = confirm.locator("[data-vr-form-discard]")
     expect(discard).to_be_visible()
     discard.click()
     expect(dialog).to_be_hidden()
@@ -166,7 +178,8 @@ def test_invalid_post_preserves_input_and_focus_then_save_closes_and_reloads_the
     expect(dialog.get_by_text("Choose at least one place").first).to_be_visible()
     expect(field(dialog, "Title")).to_have_value(title)
     expect(field(dialog, "Message")).to_have_value("Example text only.")
-    expect(until).to_have_value(re.compile(r"^\d{4}-\d\d-\d\dT\d\d:\d\d$"))
+    # The submitted value keeps the server format; the visible field shows the typed one.
+    expect(native_select(until)).to_have_value(re.compile(r"^\d{4}-\d\d-\d\dT\d\d:\d\d$"))
     expect(dialog).to_be_visible()
     expect(page).to_have_url(origin)
     assert not Announcement.objects.filter(title=title).exists()
@@ -205,7 +218,8 @@ def test_edit_opens_in_the_dialog_saves_and_shows_history(page: Page, sign_in_as
     assert page.console_errors == []
 
 
-def test_direct_form_url_opens_dialog_and_cancel_returns_to_its_list(page: Page, sign_in_as):
+def test_direct_form_url_opens_over_its_list_and_cancel_closes_it(page: Page, sign_in_as):
+    """Opened by its address, a form opens in the dialog over the page it belongs to."""
     sign_in_as("admin")
     path = "/repository/announcements/new/"
     page.goto(path)
@@ -213,11 +227,15 @@ def test_direct_form_url_opens_dialog_and_cancel_returns_to_its_list(page: Page,
     expect(dialog).to_be_visible()
     expect(dialog.locator("#vr-form-title")).to_have_text("New announcement")
     expect(field(dialog, "Title")).to_be_visible()
-    expect(page).to_have_url(re.compile(re.escape(path) + r"$"))
-    dialog.get_by_role("link", name="Cancel", exact=True).click()
+    # Behind it is the list, at the list's clean address.
+    expect(page).to_have_url(re.compile(re.escape(LIST) + r"$"))
+    expect(page.get_by_role("heading", name="Announcements", exact=True, level=1)).to_be_attached()
+    dialog.get_by_role("button", name="Cancel", exact=True).or_(
+        dialog.get_by_role("link", name="Cancel", exact=True)
+    ).click()
+    expect(dialog).to_be_hidden()
     expect(page).to_have_url(re.compile(re.escape(LIST) + r"$"))
     expect(page.get_by_role("heading", name="Announcements", exact=True, level=1)).to_be_visible()
-    expect(dialog).to_be_hidden()
     assert page.console_errors == []
 
 
@@ -315,4 +333,63 @@ def test_withdraw_confirm_dialog_cancels_and_confirms(page: Page, sign_in_as):
     expect(dialog).to_be_visible()
     expect(field(dialog, "Title")).to_be_disabled()
     expect(dialog.get_by_role("button", name="Save changes")).to_have_count(0)
+    assert page.console_errors == []
+
+
+@pytest.fixture
+def header_action_route(settings, monkeypatch):
+    """The fixture route (e2e/fixture_urls.py) registered as a dialog form for this test only."""
+    from core import form_surfaces
+
+    settings.ROOT_URLCONF = "fixture_urls"
+    monkeypatch.setitem(form_surfaces.FORM_SURFACES, "e2e-header-action", "lg")
+    form_surfaces.form_route_patterns.cache_clear()
+    yield "/e2e/form-with-header-action/"
+    form_surfaces.form_route_patterns.cache_clear()
+
+
+def test_page_header_actions_move_into_the_dialog_header(
+    page: Page, sign_in_as, header_action_route
+):
+    sign_in_as("admin")
+    page.goto(header_action_route)  # by its address: it opens over its Cancel page, the list
+    dialog = page.locator("#vr-form-dialog")
+    expect(dialog).to_be_visible()
+    expect(page).to_have_url(re.compile(re.escape(LIST) + r"$"))
+    tools = dialog.locator("[data-vr-form-tools]")
+    action = tools.get_by_role("link", name="Open the list", exact=True)
+    expect(action).to_be_visible()
+    expect(action).to_have_attribute("data-vr-page-action", "")
+    # The action sits before the dialog's own tools, and nowhere else in the dialog.
+    assert action.evaluate("el => el.parentElement.firstElementChild === el")
+    expect(
+        dialog.locator("#vr-form-content").get_by_role("link", name="Open the list")
+    ).to_have_count(0)
+    # The form's action row stays the dialog body's last element.
+    assert dialog.locator(".vr-form-actions").evaluate(
+        "el => { const body = el.closest('.modal-body');"
+        " return el.getBoundingClientRect().bottom <= body.getBoundingClientRect().bottom + 1; }"
+    )
+    dialog.get_by_role("link", name="Cancel", exact=True).click()
+    expect(dialog).to_be_hidden()
+    expect(tools.locator("[data-vr-page-action]")).to_have_count(0)
+    assert page.console_errors == []
+
+
+def test_a_crafted_form_address_opens_nothing_and_breaks_nothing(page: Page, sign_in_as):
+    """#vr-form= opens only a dialog form of this site: never another origin or any other page."""
+    sign_in_as("admin")
+    dialog = page.locator("#vr-form-dialog")
+    for crafted in (
+        "%E0%A4%A",  # not decodable
+        "https%3A%2F%2Fevil.example.invalid%2Frepository%2Fannouncements%2Fnew%2F",
+        "%2F%2Fevil.example.invalid%2Fx",
+        "%2Frepository%2Frecord-retention%2F",  # this site, but not a form
+    ):
+        page.goto("/")  # a full load each time: a hash-only change runs no script
+        page.goto(f"{LIST}#vr-form={crafted}")
+        expect(page.get_by_role("heading", level=1, name="Announcements")).to_be_visible()
+        page.wait_for_timeout(300)  # the dialog would open on the next task
+        expect(dialog).to_be_hidden()
+        assert page.url.endswith(LIST), page.url  # the address is cleaned, never followed
     assert page.console_errors == []

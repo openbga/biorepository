@@ -1,7 +1,7 @@
 """Explicit excursion holds retain provenance and survive review until a manager releases them."""
 
 import pytest
-from helpers import field, sign_in, sign_out
+from helpers import field, native_select, pick, sign_in, sign_out
 from playwright.sync_api import expect
 
 from equipment import services
@@ -55,7 +55,7 @@ def test_selected_excursion_hold_is_reviewed_and_released_from_specimen(page, pe
     expect(
         form.get_by_role("checkbox", name=f"Select {unselected.accession}", exact=True)
     ).not_to_be_checked()
-    field(form, "Hold scope").select_option("use")
+    pick(field(form, "Hold scope"), "use")
     field(form, "Reason").fill("Synthetic review hold; no physical quality finding.")
     with page.expect_response(
         lambda response: response.request.method == "POST" and response.url.endswith("/holds/")
@@ -66,7 +66,7 @@ def test_selected_excursion_hold_is_reviewed_and_released_from_specimen(page, pe
     # Chromium reports the deliberately rejected submission as a failed resource.
     assert len(page.console_errors) == 1 and "status of 422" in page.console_errors[0]
     page.console_errors.clear()
-    expect(field(form, "Hold scope")).to_have_value("use")
+    expect(native_select(field(form, "Hold scope"))).to_have_value("use")
     expect(field(form, "Reason")).to_have_value(
         "Synthetic review hold; no physical quality finding."
     )

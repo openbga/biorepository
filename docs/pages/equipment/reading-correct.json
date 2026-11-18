@@ -5,6 +5,26 @@
   ],
   "title": "Correct reading",
   "purpose": "Replace the values of a temperature reading recorded wrongly, or withdraw it, keeping the original visible.",
+  "summary": "Replace the values of a temperature reading recorded wrongly, or withdraw it. The original stays visible.",
+  "tasks": [
+    {
+      "title": "Correct the reading",
+      "steps": [
+        "Change the values, give the [[Reason for the correction]] and select [[Correct reading]]."
+      ]
+    },
+    {
+      "title": "Withdraw a reading recorded in error",
+      "steps": [
+        "Tick [[Withdraw this reading]], give the reason and save."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The original reading stays, marked Corrected.",
+    "A withdrawn reading no longer counts as the latest reading.",
+    "Technicians can correct only readings they recorded."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

@@ -6,6 +6,27 @@
   ],
   "title": "Container type form",
   "purpose": "Create a box grid or a new version of one, or change an existing version.",
+  "summary": "Create a box grid or a new version of one, or change an existing version.",
+  "tasks": [
+    {
+      "title": "Create a grid",
+      "steps": [
+        "Type the [[Code]] and [[Name]], then [[Rows]], [[Columns]], [[Position labels]] and [[Numbering order]].",
+        "Select [[Create container type]]."
+      ]
+    },
+    {
+      "title": "Retire a version",
+      "steps": [
+        "Clear [[Active]], give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "An existing code adds the next version. Earlier versions and their boxes are unchanged.",
+    "Once any box uses a version, its grid fields are no longer offered.",
+    "Counting starts from the labelled top-left corner."
+  ],
   "sections": [
     {
       "title": "Fields",

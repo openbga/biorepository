@@ -6,6 +6,28 @@
   ],
   "title": "New study or Edit study",
   "purpose": "Record a study or change its recorded approval, consent basis and status.",
+  "summary": "Record a study or change its recorded approval, consent basis and status. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Record a study",
+      "steps": [
+        "Type the [[Code]] and [[Title]], and the ethics details if known.",
+        "Choose the [[Consent basis]]; a study-level determination needs its [[Determination reference]].",
+        "Select [[Create study]]."
+      ]
+    },
+    {
+      "title": "Suspend or close a study",
+      "steps": [
+        "Change [[Status]], give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Suspending or closing blocks distribution of the study's material.",
+    "The code is fixed once the study has consent forms, collections or consents.",
+    "The study records what its ethics approval says. The software does not judge it."
+  ],
   "sections": [
     {
       "title": "Fields",

@@ -5,6 +5,27 @@
   ],
   "title": "Change contents",
   "purpose": "Choose which picked specimens of the request go in a draft shipment.",
+  "summary": "Choose which picked specimens of the request go in a draft shipment.",
+  "tasks": [
+    {
+      "title": "Choose the contents",
+      "steps": [
+        "Tick the specimens that go in this shipment; untick to take one out.",
+        "Select [[Save contents]]."
+      ]
+    },
+    {
+      "title": "Pack it",
+      "steps": [
+        "Back on the shipment, select [[Pack]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only picked specimens not in another shipment are offered.",
+    "A specimen taken out stays picked for the request.",
+    "Contents can change only while the shipment is a draft."
+  ],
   "sections": [
     {
       "title": "Who can use it",

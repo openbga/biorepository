@@ -6,6 +6,27 @@
   ],
   "title": "Storage unit form",
   "purpose": "Create a freezer, tank or other storage unit, or change the name, storage class or nominal temperature of an existing one.",
+  "summary": "Create a freezer, tank or other storage unit, or change the name, storage class or nominal temperature of an existing one.",
+  "tasks": [
+    {
+      "title": "Create a unit",
+      "steps": [
+        "Choose the [[Room]], type the [[Code]] and [[Name]], and choose [[Technology]] and [[Storage class]].",
+        "Enter [[Nominal temperature (°C)]] and select [[Create storage unit]]. Add racks from its page."
+      ]
+    },
+    {
+      "title": "Change a unit",
+      "steps": [
+        "Change the name, class or temperature, give the [[Reason for the change]] and select [[Save changes]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Room, code and technology cannot be changed later.",
+    "Codes are stored in capitals and never reused.",
+    "A retired unit cannot be edited."
+  ],
   "sections": [
     {
       "title": "Fields",

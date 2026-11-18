@@ -5,6 +5,27 @@
   ],
   "title": "Generate recovery codes",
   "purpose": "Replace the backup codes for your two-factor authentication.",
+  "summary": "Replace your recovery codes with a new set of ten. The old codes stop working.",
+  "tasks": [
+    {
+      "title": "Get a new set of recovery codes",
+      "steps": [
+        "Select [[Generate]]. The new codes open on the Recovery codes page.",
+        "Save the new codes somewhere private."
+      ]
+    },
+    {
+      "title": "Keep the current codes",
+      "steps": [
+        "Select [[Cancel]] without selecting Generate."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Generating new codes invalidates every earlier code, used or not.",
+    "Your authenticator app keeps working.",
+    "Generating again replaces the set again. Keep only the latest set."
+  ],
   "sections": [
     {
       "title": "Confirmation",
@@ -15,14 +36,15 @@
         },
         {
           "label": "Generate",
-          "description": "Requires sign-in, recent reauthentication and an existing non-recovery authenticator. Replaces the recovery-code record under a user lock with ten new eight-digit single-use codes, invalidating the previous set, then opens Recovery Codes."
+          "description": "Requires sign-in, recent reauthentication and an existing non-recovery authenticator. Replaces the recovery-code record under a user lock with ten new eight-digit single-use codes, invalidating the previous set, then opens Recovery codes."
         }
-      ]
+      ],
+      "paragraphs": []
     },
     {
       "title": "Navigation and limits",
       "paragraphs": [
-        "No Back or Cancel button appears on this confirmation. Leave via normal account navigation without submitting to retain the set. Generation does not disable the app. Repeated successful generation replaces the set again; keep the latest set."
+        "The confirmation opens in the shared form dialog over Two-factor authentication. Cancel closes it and keeps the set (opened by its address, Cancel goes to Two-factor authentication). Generation does not disable the app. Repeated successful generation replaces the set again; keep the latest set."
       ]
     }
   ],
@@ -30,6 +52,8 @@
     "config/settings.py",
     "templates/allauth/layouts/base.html",
     "templates/allauth/layouts/manage.html",
-    "uv.lock"
+    "uv.lock",
+    "core/form_surfaces.py",
+    "templates/allauth/elements/form__manage.html"
   ]
 }

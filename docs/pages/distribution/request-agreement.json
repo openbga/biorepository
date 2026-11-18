@@ -5,6 +5,26 @@
   ],
   "title": "Link agreement",
   "purpose": "Link the material transfer or data use agreement that covers a request, or remove it.",
+  "summary": "Link the material transfer or data use agreement that covers a request, or remove it. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Link an agreement",
+      "steps": [
+        "Choose the [[Agreement]], give the [[Reason]] and select [[Link agreement]]."
+      ]
+    },
+    {
+      "title": "Remove the link",
+      "steps": [
+        "Choose No agreement and save with a reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only agreements with the request's institution that are not terminated are offered.",
+    "A draft agreement can be linked, but dispatch needs one valid on the dispatch date.",
+    "The change is kept in the timeline."
+  ],
   "sections": [
     {
       "title": "Who can use it",

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 Shipment manifest (Document page) and the decision about it: Download PDF. A draft or packed
 shipment shows its current contents under a "Not dispatched" notice; a dispatched or received one
@@ -8,30 +8,26 @@ codes appear only when the shipment includes them; collection dates never. The c
 the one the shipper declared. Context (documents.manifest_context): shipment, request_number,
 lines (ManifestLine), studies, show_participants, sent, repository_name, generated_at, crumbs.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li class="vr-id">{{ shipment.number }}</li><li>Revision {{ shipment.revision }}</li><li>{{ lines|length }} specimen{{ lines|length|pluralize }}</li></ul>{% endblock %}
-{% block page_actions %}<a class="btn btn-primary" href="{% url 'distribution:manifest-pdf' shipment.pk %}">{% include "includes/icon.html" with name="download" %}Download PDF</a>{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item label="Manifest" value=shipment.number class="vr-id" %}{% meta_item label="Revision" value=shipment.revision %}{% meta_item label="Specimens" value=lines|length class="vr-id" %}{% endpage_meta %}{% endblock %}
+{% block page_actions %}<a class="btn btn-primary" href="{% url 'distribution:manifest-pdf' shipment.pk %}">{% icon name="download" %}Download PDF</a>{% endblock %}
 {% block content %}
 {% if not sent %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Not dispatched" tone="warning" plain=True %}<div>This manifest shows the shipment's contents as they are now and is marked Not dispatched. Once dispatched, the manifest is fixed from what was sent.</div></div>
+{% notice tone="warning" label="Not dispatched" %}This manifest shows the shipment's contents as they are now and is marked Not dispatched. Once dispatched, the manifest is fixed from what was sent.{% endnotice %}
 {% endif %}
-<section class="card mb-3" aria-labelledby="manifest-heading">
-  <div class="card-header"><h2 class="card-title" id="manifest-heading">Manifest {{ shipment.number }}</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>From</dt><dd>{{ repository_name|default:"Repository name not set" }}</dd></div>
-    <div><dt>Request</dt><dd class="vr-id">{{ request_number }}</dd></div>
-    <div><dt>Studies</dt><dd>{{ studies|join:", "|default:"None recorded" }}</dd></div>
-    <div><dt>Ship to</dt><dd class="vr-wrap">{{ shipment.ship_to_name }}<span class="d-block">{{ shipment.ship_to_institution }}</span><span class="d-block">{{ shipment.ship_to_address|linebreaksbr }}</span>{% if shipment.ship_to_contact %}<span class="d-block">{{ shipment.ship_to_contact }}</span>{% endif %}</dd></div>
-    <div><dt>Temperature class</dt><dd>{{ shipment.get_temperature_class_display|default:"Not yet declared" }}</dd></div>
-    <div><dt>Refrigerant</dt><dd>{{ shipment.get_refrigerant_display|default:"Not yet declared" }}{% if shipment.dry_ice_kg %}, <span class="vr-id">{{ shipment.dry_ice_kg }} kg</span> dry ice{% endif %}</dd></div>
-    <div><dt>Classification declared by the shipper</dt><dd>{{ shipment.get_classification_display|default:"Not yet declared" }}{% if shipment.classification_note %} ({{ shipment.classification_note }}){% endif %}</dd></div>
-    <div><dt>Packages</dt><dd class="vr-id">{{ shipment.package_count|default_if_none:"Not yet declared" }}</dd></div>
-    <div><dt>Storage instructions</dt><dd>{{ shipment.storage_instructions|default:"None" }}</dd></div>
-    <div><dt>Emergency contact</dt><dd>{{ shipment.emergency_contact|default:"Not yet declared" }}</dd></div>
-  </dl></div>
-</section>
-<section class="card vr-table-card" aria-labelledby="lines-heading">
-  <div class="card-header"><h2 class="card-title" id="lines-heading">Contents</h2><span class="vr-count">{{ lines|length }}</span></div>
+{% panel heading_id="manifest-heading" class="mb-3" %}{% fill title %}Manifest <span class="vr-id">{{ shipment.number }}</span>{% endfill %}<dl class="vr-facts">
+    {% fact label="From" %}{{ repository_name|default:"Repository name not set" }}{% endfact %}
+    {% fact label="Request" class="vr-id" %}{{ request_number }}{% endfact %}
+    {% fact label="Studies" %}{{ studies|join:", "|default:"None recorded" }}{% endfact %}
+    {% fact label="Ship to" class="vr-wrap" %}{{ shipment.ship_to_name }}<span class="d-block">{{ shipment.ship_to_institution }}</span><span class="d-block">{{ shipment.ship_to_address|linebreaksbr }}</span>{% if shipment.ship_to_contact %}<span class="d-block">{{ shipment.ship_to_contact }}</span>{% endif %}{% endfact %}
+    {% fact label="Temperature class" %}{{ shipment.get_temperature_class_display|default:"Not yet declared" }}{% endfact %}
+    {% fact label="Refrigerant" %}{{ shipment.get_refrigerant_display|default:"Not yet declared" }}{% if shipment.dry_ice_kg %}, <span class="vr-id">{{ shipment.dry_ice_kg }} kg</span> dry ice{% endif %}{% endfact %}
+    {% fact label="Classification declared by the shipper" %}{{ shipment.get_classification_display|default:"Not yet declared" }}{% if shipment.classification_note %} ({{ shipment.classification_note }}){% endif %}{% endfact %}
+    {% fact label="Packages" class="vr-id" %}{{ shipment.package_count|default_if_none:"Not yet declared" }}{% endfact %}
+    {% fact label="Storage instructions" %}{{ shipment.storage_instructions|default:"None" }}{% endfact %}
+    {% fact label="Emergency contact" %}{{ shipment.emergency_contact|default:"Not yet declared" }}{% endfact %}
+  </dl>{% endpanel %}
+{% panel title="Contents" heading_id="lines-heading" table=True %}{% fill count %}{{ lines|length }}{% endfill %}
   {% if lines %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Line</th><th scope="col">Specimen</th><th scope="col">Type</th><th scope="col">Container</th><th scope="col" class="text-end">Amount</th><th scope="col">Study</th>{% if show_participants %}<th scope="col">Participant</th>{% endif %}</tr></thead>
@@ -46,9 +42,9 @@ lines (ManifestLine), studies, show_participants, sent, repository_name, generat
         {% if show_participants %}<td class="vr-id">{{ line.participant_code|default:"—" }}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  <div class="card-body pt-0"><p class="vr-muted small mb-0">{% if sent %}As recorded at dispatch on <time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time>.{% else %}Current contents, <time datetime="{{ generated_at|date:'c' }}">{{ generated_at|date:"Y-m-d H:i" }}</time>.{% endif %} The declarations are the shipper's, recorded as entered.</p></div>
+  <p class="vr-muted small">{% if sent %}As recorded at dispatch on <time datetime="{{ shipment.dispatched_at|date:'c' }}">{{ shipment.dispatched_at|date:"Y-m-d H:i" }}</time>.{% else %}Current contents, <time datetime="{{ generated_at|date:'c' }}">{{ generated_at|date:"Y-m-d H:i" }}</time>.{% endif %} The declarations are the shipper's, recorded as entered.</p>
   {% else %}
-  <div class="card-body">{% include "includes/empty_state.html" with title="No specimens in this shipment" %}</div>
+  {% empty_state title="No specimens in this shipment" %}
   {% endif %}
-</section>
+{% endpanel %}
 {% endblock %}

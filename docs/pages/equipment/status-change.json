@@ -5,6 +5,27 @@
   ],
   "title": "Change status",
   "purpose": "Put equipment out of service, retire it, or return it to service, from a stated time and with a reason.",
+  "summary": "Put equipment out of service, retire it, or return it to service, from a stated time and with a reason. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Change the status",
+      "steps": [
+        "Choose the [[New status]] and give the [[Reason]], for example the fault or the expected return date.",
+        "Select [[Change status]]."
+      ]
+    },
+    {
+      "title": "Correct a status change",
+      "steps": [
+        "Record a further change. Earlier changes cannot be edited."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Out of service and retired equipment stays in the register with its history.",
+    "Retiring needs every excursion of the equipment closed first.",
+    "Only one tank or freezer that is not retired can be linked to a storage unit when returning to service."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

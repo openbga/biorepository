@@ -5,6 +5,26 @@
   ],
   "title": "Correct receipt",
   "purpose": "Correct the recorded receipt of a shipment; the earlier version is kept.",
+  "summary": "Correct the recorded receipt of a shipment. The earlier version is kept. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Correct the receipt",
+      "steps": [
+        "Change the wrong values, give the [[Reason for the correction]] and select [[Correct receipt]]."
+      ]
+    },
+    {
+      "title": "Keep the current file",
+      "steps": [
+        "Leave the attachment empty. A new file replaces it only if you choose one."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only the latest version of the receipt can be corrected.",
+    "The earlier version stays in the timeline.",
+    "Nothing changes on the specimens."
+  ],
   "sections": [
     {
       "title": "Who can use it",
@@ -63,7 +83,7 @@
     {
       "title": "What happens",
       "paragraphs": [
-        "A corrected receipt is added; the earlier one stays, listed under Earlier versions on the shipment. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+        "A corrected receipt is added; the earlier one stays, listed under Earlier receipt versions on the shipment. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
       ]
     }
   ],

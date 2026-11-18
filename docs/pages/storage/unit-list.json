@@ -5,6 +5,27 @@
   ],
   "title": "Storage units",
   "purpose": "Find freezers, vapor-phase tanks and other storage units, and see how full each is. Open a unit for its racks, shelves and boxes.",
+  "summary": "Find freezers, vapor-phase tanks and other storage units and see how full each is.",
+  "tasks": [
+    {
+      "title": "Find a unit with room",
+      "steps": [
+        "Set [[Free positions]] to Has free positions and select [[Apply]].",
+        "Select the unit's code to open it."
+      ]
+    },
+    {
+      "title": "Add a storage unit",
+      "steps": [
+        "Admin and manager: select [[New storage unit]]. To create a whole layout at once, apply a storage template instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only active units are listed until you change [[Status]].",
+    "Counts cover active boxes in active racks and shelves only.",
+    "Nominal temperature is a stated set point, not a measurement."
+  ],
   "sections": [
     {
       "title": "Search, filters and sorting",
@@ -112,7 +133,7 @@
     "storage/exports.py",
     "storage/templates/storage/unit_list.html",
     "storage/templates/storage/_list_actions.html",
-    "storage/templates/storage/_list_states.html",
+    "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
 }

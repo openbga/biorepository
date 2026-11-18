@@ -1,18 +1,13 @@
-{% comment %}Record header actions (docs/ui-standards.md section 4): destructive first, up to two secondary, the More menu, the primary last; an action unavailable in the record's state is a disabled button with its reason beside it. Parameter: actions = {destructive, secondary, more, primary}, each item {label, url, reason}; built by request_views.request_actions or shipment_actions.{% endcomment %}
+{% load ui %}{% comment %}Record header actions (docs/ui-standards.md section 4): destructive first, up to two secondary, the More menu, the primary last; an action unavailable in the record's state is a disabled button with its reason beside it. Parameter: actions = {destructive, secondary, more, primary}, each item {label, url, reason}; built by request_views.request_actions or shipment_actions.{% endcomment %}
 {% with d=actions.destructive p=actions.primary %}
 {% if d %}{% if d.reason %}<button class="btn btn-outline-danger" type="button" disabled aria-describedby="destructive-why">{{ d.label }}</button>{% else %}<a class="btn btn-outline-danger" href="{{ d.url }}">{{ d.label }}</a>{% endif %}{% endif %}
-{% for item in actions.secondary %}<a class="btn btn-outline-secondary" href="{{ item.url }}">{% if item.label == "New shipment" %}{% include "includes/icon.html" with name="plus-lg" %}{% endif %}{{ item.label }}</a>{% endfor %}
-{% if actions.more %}
-<div class="dropdown">
-  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">More</button>
-  <ul class="dropdown-menu dropdown-menu-end">
+{% for item in actions.secondary %}<a class="btn btn-outline-secondary" href="{{ item.url }}">{% if item.label == "New shipment" %}{% icon name="plus-lg" %}{% endif %}{{ item.label }}</a>{% endfor %}
+{% if actions.more %}{% more_actions %}
     {% for item in actions.more %}
     <li>{% if item.reason %}<span class="dropdown-item disabled text-wrap" aria-disabled="true">{{ item.label }}<span class="d-block small">{{ item.reason }}</span></span>{% else %}<a class="dropdown-item" href="{{ item.url }}">{{ item.label }}</a>{% endif %}</li>
     {% endfor %}
-  </ul>
-</div>
-{% endif %}
-{% if p %}{% if p.reason %}<button class="btn btn-primary" type="button" disabled aria-describedby="primary-why">{{ p.label }}</button>{% else %}<a class="btn btn-primary" href="{{ p.url }}">{% if p.label == "New shipment" %}{% include "includes/icon.html" with name="plus-lg" %}{% endif %}{{ p.label }}</a>{% endif %}{% endif %}
+{% endmore_actions %}{% endif %}
+{% if p %}{% if p.reason %}<button class="btn btn-primary" type="button" disabled aria-describedby="primary-why">{{ p.label }}</button>{% else %}<a class="btn btn-primary" href="{{ p.url }}">{% if p.label == "New shipment" %}{% icon name="plus-lg" %}{% endif %}{{ p.label }}</a>{% endif %}{% endif %}
 {% if d.reason %}<span class="vr-action-note" id="destructive-why">{{ d.label }}: {{ d.reason }}</span>{% endif %}
 {% if p.reason %}<span class="vr-action-note" id="primary-why">{{ p.label }}: {{ p.reason }}</span>{% endif %}
 {% endwith %}

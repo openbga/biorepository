@@ -5,6 +5,26 @@
   ],
   "title": "Cancel request",
   "purpose": "End a request that will not be fulfilled.",
+  "summary": "End a request that will not be fulfilled. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Cancel the request",
+      "steps": [
+        "Give the [[Reason]] and select [[Cancel request]]."
+      ]
+    },
+    {
+      "title": "When specimens were already shipped",
+      "steps": [
+        "Close the request instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Cancelled is final. The request and its history stay.",
+    "Allocated specimens and their holds are released, and draft shipments are cancelled.",
+    "Put picked specimens back first."
+  ],
   "sections": [
     {
       "title": "Who can use it",

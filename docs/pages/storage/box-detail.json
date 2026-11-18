@@ -5,6 +5,39 @@
   ],
   "title": "Box",
   "purpose": "Review one box: its facts, the grid of positions with their state and counts, the specimen IDs and storage keys of what is stored, recorded moves and history.",
+  "summary": "One box: its grid of positions, the specimens stored in it, recorded moves and history.",
+  "tasks": [
+    {
+      "title": "See what is in a position",
+      "steps": [
+        "Hover over a filled well, or select it to open the specimen record."
+      ]
+    },
+    {
+      "title": "Take a position out of use",
+      "steps": [
+        "Admin and manager: select an empty position in the grid and block it with a reason."
+      ]
+    },
+    {
+      "title": "Move the box",
+      "steps": [
+        "Select [[Move box]], choose the rack or shelf and slot, and give a reason."
+      ]
+    },
+    {
+      "title": "List the specimens in the box",
+      "steps": [
+        "Select [[Specimens in this box]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The grid is seen from the labelled top-left corner.",
+    "A checked-out item's position counts as free. Free positions are not reserved.",
+    "An occupied position cannot be blocked. Move the item out first.",
+    "[[Retire box]] is available only when the box is empty."
+  ],
   "sections": [
     {
       "title": "Box",
@@ -30,7 +63,7 @@
         },
         {
           "label": "Container type",
-          "description": "Grid code and version, with rows × columns and the labelling scheme; opens the container type."
+          "description": "Container type name, then its code and version, with rows × columns and the labelling scheme; opens the container type."
         },
         {
           "label": "Unit conditions",
@@ -41,7 +74,7 @@
     {
       "title": "Positions",
       "paragraphs": [
-        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover). The key above the grid counts occupied, free and blocked positions and the total. The grid is created in full with the box and never changes.",
+        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover); with the specimens module, a well whose specimen has an unreleased hold is marked as on hold. The key above the grid counts occupied, free, on hold and blocked positions and the total; a count of zero is muted. The grid is created in full with the box and never changes.",
         "Counts cover positions in active boxes; a retired box offers no free capacity. A checked-out item's position counts as free, and free positions are not reserved: a position is claimed only when an item is stored in it.",
         "Admin and manager roles can select any position that is not occupied to Block position or Unblock position while the box is active. An occupied position cannot be selected: move the item out first.",
         "An occupied well that holds a specimen links to that specimen's record; hover shows its specimen ID and type, and screen readers hear the specimen ID after the position. Where no specimen can be shown, hover shows the storage key instead."
@@ -59,7 +92,7 @@
         },
         {
           "label": "Specimen",
-          "description": "Specimen ID, linked to the specimen record, with its specimen type code. A dash means no specimen could be shown for that key."
+          "description": "Specimen ID, linked to the specimen record, with its specimen type name. A dash means no specimen could be shown for that key."
         },
         {
           "label": "Storage key",
@@ -103,7 +136,7 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted."
+        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
       ]
     }
   ],
@@ -116,7 +149,7 @@
     "storage/templates/storage/box_detail.html",
     "storage/templates/storage/_capacity.html",
     "storage/templates/storage/_moves.html",
-    "storage/templates/storage/_history.html",
+    "templates/includes/history_panel.html",
     "storage/tests/test_views.py"
   ]
 }

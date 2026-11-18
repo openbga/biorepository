@@ -1,22 +1,23 @@
 {% extends "base.html" %}
-{% load equipment %}
+{% load equipment ui %}
 {% comment %}Temperature excursions, newest first. Context: equipment.views.grid_response for lists.SPECS["excursion"] (Awaiting my review is offered to managers only).{% endcomment %}
 {% block page_actions %}{% url 'equipment:excursion-create' as create_url %}{% include "equipment/_list_actions.html" with create_label="New excursion" may_create=can_operate %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="excursions-heading">
-  <h2 class="visually-hidden" id="excursions-heading">Temperature excursions</h2>
-  {% include "includes/grid_toolbar.html" with label="Filter excursions" q=q placeholder="Excursion number or asset ID" inline=inline more=more more_open=more_open grid="equipment.excursions" %}
-  {% if page_obj.paginator.count %}
+{% panel title="Temperature excursions" heading_id="excursions-heading" table=True hidden_title=True %}
+  {% grid_toolbar label="Filter excursions" q=q placeholder="Excursion number or asset ID" inline=inline more=more more_open=more_open grid="equipment.excursions" %}
+  {% if can_operate %}{% url 'equipment:excursion-create' as create_url %}{% endif %}
+  {% if can_operate %}{% firstof "Record an excursion when a unit's temperature went outside the limits your repository set." as empty_body %}{% else %}{% firstof "Excursions recorded by technicians and managers appear here." as empty_body %}{% endif %}
+  {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No temperature excursions recorded" empty_body=empty_body action_url=create_url action_label="New excursion" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="equipment.excursions" data-vr-grid-version="1" aria-labelledby="excursions-heading">
       <thead><tr>
-        {% include "includes/sort_header.html" with label="Excursion" asc="number" desc="-number" first="desc" col="number" locked=True %}
-        {% include "includes/sort_header.html" with label="Status" asc="status" desc="-status" col="status" %}
-        {% include "includes/sort_header.html" with label="Equipment" asc="equipment" desc="-equipment" col="equipment" %}
+        {% sort_header label="Excursion" asc="number" desc="-number" first="desc" col="number" locked=True %}
+        {% sort_header label="Status" asc="status" desc="-status" col="status" %}
+        {% sort_header label="Equipment" asc="equipment" desc="-equipment" col="equipment" %}
         <th scope="col" data-vr-col="unit" data-vr-col-label="Storage unit">Storage unit</th>
-        {% include "includes/sort_header.html" with label="Started" asc="started" desc="-started" first="desc" col="started" %}
-        {% include "includes/sort_header.html" with label="Ended" asc="ended" desc="-ended" first="desc" col="ended" %}
-        {% include "includes/sort_header.html" with label="Extreme (°C)" asc="extreme" desc="-extreme" col="extreme" class="text-end" %}
+        {% sort_header label="Started" asc="started" desc="-started" first="desc" col="started" %}
+        {% sort_header label="Ended" asc="ended" desc="-ended" first="desc" col="ended" %}
+        {% sort_header label="Extreme (°C)" asc="extreme" desc="-extreme" col="extreme" class="text-end" %}
         <th scope="col" data-vr-col="cause" data-vr-col-label="Cause">Cause</th>
       </tr></thead>
       <tbody>
@@ -27,18 +28,14 @@
           <td><a class="vr-id" href="{% url 'equipment:equipment-detail' row.equipment_id %}">{{ row.equipment.code }}</a></td>
           <td>{% if row.storage_unit %}<a class="vr-id" href="{% url 'storage:unit-detail' row.storage_unit_id %}">{{ row.storage_unit.code }}</a>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td class="vr-nowrap"><time datetime="{{ row.started_at|date:'c' }}">{{ row.started_at|date:"Y-m-d H:i" }}</time></td>
-          <td class="vr-nowrap">{% if row.ended_at %}<time datetime="{{ row.ended_at|date:'c' }}">{{ row.ended_at|date:"Y-m-d H:i" }}</time>{% else %}Ongoing{% endif %}</td>
-          <td class="text-end vr-id">{% if row.extreme_value is not None %}{{ row.extreme_value }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
+          <td class="vr-nowrap">{% if row.ended_at %}<time datetime="{{ row.ended_at|date:'c' }}">{{ row.ended_at|date:"Y-m-d H:i" }}</time>{% else %}{% clock value=row.started_at|timesince running=True tone="neutral" label="Ongoing for" %}{% endif %}</td>
+          <td class="text-end vr-id">{% if row.extreme_value is not None %}<span class="vr-tone" data-tone="danger">{{ row.extreme_value }}</span>{% if row.storage_unit %} <span class="vr-muted">nominal {{ row.storage_unit.nominal_temperature }}</span>{% endif %}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td>{{ row.get_cause_category_display }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  {% include "includes/pagination.html" with noun=noun filtered=filtered %}
-  {% else %}
-  {% url 'equipment:excursion-create' as create_url %}
-  {% if can_operate %}{% include "storage/_list_states.html" with title_empty="No temperature excursions recorded" body_empty="Record an excursion when a unit's temperature went outside the limits your repository set." create_url=create_url create_label="New excursion" %}{% else %}{% include "storage/_list_states.html" with title_empty="No temperature excursions recorded" body_empty="Excursions recorded by technicians and managers appear here." %}{% endif %}
-  {% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 {% endblock %}

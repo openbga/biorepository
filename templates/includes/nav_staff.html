@@ -1,22 +1,25 @@
 {% load navigation %}{% comment %}
-Staff navigation, grouped by the repository's work. Labels, targets and the routes that mark each
-item current are declared in core/templatetags/navigation.py; this template only groups the items
-and hides those a role never uses. An unmounted route renders as "Planned". Storage and specimen sections sit between the dashboard and Setup.
+Staff navigation, grouped by the repository's work: from lg up each group is a section menu in the
+top bar (a disclosure: Tab moves through the items, Escape closes), below lg the same groups list
+open in the offcanvas. The section holding the current page is marked by CSS (:has(aria-current)). Labels, targets and the routes that mark each
+item current, and the roles that see each, are declared in core/templatetags/navigation.py; this
+template only groups the items, and leaves out the menus of an account without a role (every item
+needs one, except Accounts & roles for a superuser). An unmounted route renders as "Planned". Storage and specimen sections sit between the dashboard and Setup.
 {% endcomment %}
-<ul class="vr-nav-list">
+{% if user_roles %}<ul class="vr-nav-list vr-nav-top">
   {% nav_item "dashboard" %}
 </ul>
-<div class="vr-nav-section">
-  <p class="vr-nav-heading" id="vr-nav-specimens">Specimens</p>
-  <ul class="vr-nav-list" aria-labelledby="vr-nav-specimens">
+<div class="vr-nav-section dropdown">
+  <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-specimens" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Specimens</button>
+  <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-specimens">
     {% nav_item "specimens" %}
     {% nav_item "specimen-disposals" %}
-    {% if "technician" in user_roles or "manager" in user_roles %}{% nav_item "specimen-imports" %}{% endif %}
+    {% nav_item "specimen-imports" %}
   </ul>
 </div>
-<div class="vr-nav-section">
-  <p class="vr-nav-heading" id="vr-nav-distribution">Distribution</p>
-  <ul class="vr-nav-list" aria-labelledby="vr-nav-distribution">
+<div class="vr-nav-section dropdown">
+  <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-distribution" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Distribution</button>
+  <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-distribution">
     {% nav_item "distribution-requests" %}
     {% nav_item "distribution-shipments" %}
     {% nav_item "distribution-agreements" %}
@@ -24,9 +27,9 @@ and hides those a role never uses. An unmounted route renders as "Planned". Stor
     {% nav_item "distribution-consents" %}
   </ul>
 </div>
-<div class="vr-nav-section">
-  <p class="vr-nav-heading" id="vr-nav-storage">Storage</p>
-  <ul class="vr-nav-list" aria-labelledby="vr-nav-storage">
+<div class="vr-nav-section dropdown">
+  <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-storage" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Storage</button>
+  <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-storage">
     {% nav_item "storage-overview" %}
     {% nav_item "storage-units" %}
     {% nav_item "storage-nodes" %}
@@ -36,9 +39,9 @@ and hides those a role never uses. An unmounted route renders as "Planned". Stor
     {% nav_item "storage-rooms" %}
   </ul>
 </div>
-<div class="vr-nav-section">
-  <p class="vr-nav-heading" id="vr-nav-equipment">Equipment</p>
-  <ul class="vr-nav-list" aria-labelledby="vr-nav-equipment">
+<div class="vr-nav-section dropdown">
+  <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-equipment" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Equipment</button>
+  <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-equipment">
     {% nav_item "equipment" %}
     {% nav_item "equipment-due" %}
     {% nav_item "equipment-ln2" %}
@@ -46,22 +49,22 @@ and hides those a role never uses. An unmounted route renders as "Planned". Stor
     {% nav_item "equipment-excursions" %}
   </ul>
 </div>
-<div class="vr-nav-section">
-  <p class="vr-nav-heading" id="vr-nav-quality">Quality</p>
-  <ul class="vr-nav-list" aria-labelledby="vr-nav-quality">
+<div class="vr-nav-section dropdown">
+  <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-quality" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Quality</button>
+  <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-quality">
     {% nav_item "quality-audits" %}
     {% nav_item "quality-deviations" %}
     {% nav_item "quality-training" %}
   </ul>
-</div>
-<div class="vr-nav-section">
-  <p class="vr-nav-heading" id="vr-nav-setup">Setup</p>
-  <ul class="vr-nav-list" aria-labelledby="vr-nav-setup">
+</div>{% endif %}
+{% if user_roles or user.is_superuser %}<div class="vr-nav-section dropdown">
+  <button class="vr-nav-heading vr-nav-toggle" type="button" id="vr-nav-setup" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">Setup</button>
+  <ul class="vr-nav-list dropdown-menu" aria-labelledby="vr-nav-setup">
     {% nav_item "storage-catalogues" %}
     {% nav_item "specimen-catalogues" %}
     {% nav_item "distribution-catalogues" %}
     {% nav_item "record-retention" %}
-    {% if "admin" in user_roles %}{% nav_item "announcements" %}{% endif %}
-    {% if user.is_superuser %}{% nav_item "accounts-roles" %}{% endif %}
+    {% nav_item "announcements" %}
+    {% nav_item "accounts-roles" %}
   </ul>
-</div>
+</div>{% endif %}

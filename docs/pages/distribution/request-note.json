@@ -5,6 +5,26 @@
   ],
   "title": "Add note",
   "purpose": "Add a note to a request's timeline at any stage.",
+  "summary": "Add a note to a request's timeline at any stage.",
+  "tasks": [
+    {
+      "title": "Add a note",
+      "steps": [
+        "Type the [[Note]] and select [[Add note]]."
+      ]
+    },
+    {
+      "title": "Change the request itself",
+      "steps": [
+        "Use Edit on a draft or returned request instead."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Notes never change the request.",
+    "Notes cannot be edited or deleted.",
+    "Never enter participant names, signatures or contact details."
+  ],
   "sections": [
     {
       "title": "Who can use it",

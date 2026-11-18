@@ -5,6 +5,26 @@
   ],
   "title": "Cancel training record",
   "purpose": "End an incorrect or no-longer-needed assignment or completion record without deleting evidence.",
+  "summary": "End an incorrect or no-longer-needed training record without deleting its evidence. Managers and administrators only.",
+  "tasks": [
+    {
+      "title": "Cancel the record",
+      "steps": [
+        "Check the trainee and topic, give the [[Reason]] and select [[Cancel training record]]."
+      ]
+    },
+    {
+      "title": "Fix a mistake instead",
+      "steps": [
+        "Use Edit or Correct training record when the record should stay."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Cancellation is final.",
+    "Completion dates, evidence and assessments are kept.",
+    "Cancelled records never appear in due-date filters."
+  ],
   "sections": [
     {
       "title": "Access and meaning",

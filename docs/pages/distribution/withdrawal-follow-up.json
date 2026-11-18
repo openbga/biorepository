@@ -5,6 +5,27 @@
   ],
   "title": "Record follow-up",
   "purpose": "Record what was done about material already distributed when the participant withdrew.",
+  "summary": "Record what was done about material already distributed when the participant withdrew. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Record a follow-up",
+      "steps": [
+        "Choose the [[Shipment]] and [[What was done]], and enter [[When]] and the [[Note]].",
+        "Attach evidence if any, then select [[Record follow-up]]."
+      ]
+    },
+    {
+      "title": "Add more later",
+      "steps": [
+        "Follow-ups cannot be edited. Record another one."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The software sends nothing and does not recall material. This records what people did.",
+    "Never upload consent forms or documents that identify a participant.",
+    "What the agreement says about end of use is shown with the shipment."
+  ],
   "sections": [
     {
       "title": "Withdrawal details",

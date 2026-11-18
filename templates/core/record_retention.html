@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Repository record-retention statement, read-only for staff.
 Context: repository (or None), statement (possibly blank), policy_events (AuditEvent newest first: actor,
@@ -8,32 +8,16 @@ occurred_at, reason), can_manage_policy (edit happens in Django admin).
 {% if can_manage_policy and repository %}{% url 'admin:core_repository_change' repository.pk as edit_url %}{% if edit_url %}<a class="btn btn-outline-secondary" href="{{ edit_url }}">Edit in administration</a>{% endif %}{% endif %}
 {% endblock %}
 {% block content %}
-<section class="card vr-narrow" aria-labelledby="retention-heading">
-  <div class="card-header"><h2 class="card-title" id="retention-heading">Retention statement</h2>{% if repository %}<span class="vr-count">{{ repository.name }}</span>{% endif %}</div>
-  <div class="card-body">
-    {% if not repository %}
-    {% include "includes/empty_state.html" with title="No repository configured" body="The repository is not configured yet, so no retention statement exists." %}
-    {% elif statement %}
-    <div class="vr-retention-statement">{{ statement|linebreaks }}</div>
-    {% else %}
-    {% include "includes/empty_state.html" with title="Not recorded" body="The repository has not entered its record-retention statement." %}
-    {% endif %}
-  </div>
-  <div class="card-footer vr-muted small">
-    This is the repository's own statement. The application never deletes or purges records automatically; disposal of physical specimens is recorded separately, with approval.
-  </div>
-</section>
-
-<section class="card mt-3 vr-narrow" aria-labelledby="retention-history-heading">
-  <div class="card-header"><h2 class="card-title" id="retention-history-heading">History</h2></div>
-  <div class="card-body">
-    {% if policy_events %}
-    <ol class="vr-timeline">
-      {% for event in policy_events|dictsort:"occurred_at" %}{% include "includes/history_item.html" with title="Statement changed" at=event.occurred_at actor=event.actor by="Recorded by" reason=event.reason %}{% endfor %}
-    </ol>
-    {% else %}
-    {% include "includes/empty_state.html" with title="No changes recorded" body="Changes to the retention statement are listed here with their reasons." %}
-    {% endif %}
-  </div>
-</section>
+{% panel title="Retention statement" heading_id="retention-heading" class="vr-narrow" %}{% fill count %}{% if repository %}{{ repository.name }}{% endif %}{% endfill %}{% fill footer %}<span class="vr-muted small">This is the repository's own statement. The application never deletes or purges records automatically; disposal of physical specimens is recorded separately, with approval.</span>{% endfill %}
+  {% if not repository %}
+  {% empty_state title="No repository configured" body="The repository is not configured yet, so no retention statement exists." %}
+  {% elif statement %}
+  <div class="vr-retention-statement">{{ statement|linebreaks }}</div>
+  {% else %}
+  {% empty_state title="Not recorded" body="The repository has not entered its record-retention statement." %}
+  {% endif %}
+{% endpanel %}
+{% history_panel events=policy_events class="mt-3 vr-narrow" empty_title="No changes recorded" empty_body="Changes to the retention statement are listed here with their reasons." heading_id="retention-history-heading" %}
+  {% for event in policy_events|dictsort:"occurred_at" %}{% history_item title="Statement changed" at=event.occurred_at actor=event.actor by="Recorded by" reason=event.reason %}{% endfor %}
+{% endhistory_panel %}
 {% endblock %}

@@ -5,6 +5,47 @@
   ],
   "title": "Specimen record",
   "purpose": "See everything recorded about one specimen: what it is, how much is left, where it is (or that it was distributed outside the repository), who has it, its holds, disposal requests, custody and thaw records, and the full history. Start actions on it from here.",
+  "summary": "Everything recorded about one specimen: what it is, how much is left, where it is, who has it, its holds, disposal requests, custody and thaw records, and its history.",
+  "tasks": [
+    {
+      "title": "Take it out of storage and put it back",
+      "steps": [
+        "Select [[Record check-out]] while it is in a position.",
+        "When it comes back, select [[Record check-in]] and choose a free position."
+      ]
+    },
+    {
+      "title": "Use or split material",
+      "steps": [
+        "Open [[More]] and choose [[Record consumption]] or [[Make aliquots or derivatives]]. The specimen must be in hand, not in a position."
+      ]
+    },
+    {
+      "title": "Stop work on it",
+      "steps": [
+        "Open [[More]] and choose [[Place hold]]. Admin and manager release holds from the Holds section."
+      ]
+    },
+    {
+      "title": "Print its label",
+      "steps": [
+        "Open [[More]] and choose [[Print label]]."
+      ]
+    },
+    {
+      "title": "Dispose of it",
+      "steps": [
+        "Open [[More]] and choose [[Request disposal]]. Another person with disposal approval must approve before the disposal is recorded."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "A blocked action stays visible but disabled, with the reason beside it. The running clock in the header is the time out of storage now.",
+    "Amount on hand is the balance of the amount ledger. It changes only by adding entries, never by editing the number.",
+    "Time out of storage and thaw counts are worked out from the custody and thaw records. A check-out is not a thaw.",
+    "Records are never deleted. Corrections add a record beside the original, with a reason.",
+    "A distributed specimen takes no physical step until its return is recorded."
+  ],
   "sections": [
     {
       "title": "Who can use it",
@@ -16,8 +57,8 @@
     {
       "title": "Header and alerts",
       "paragraphs": [
-        "The header shows the specimen ID with its status, type, amount on hand, location and custodian. Coloured notices above the facts call out what needs attention: a disposed specimen (the record is final and its history is kept); a distributed specimen, with when it was dispatched and where to; each active hold with its kind, what it blocks, who placed it, when and why, and the reference of the workflow that placed it; a check-out in progress with its destination and the running time out of storage; a returned specimen still in hand (“Returned, in hand of …”, with where it came back from), which is stored with Record check-in; and an open disposal request with a link to it.",
-        "Print label opens the label preview for this specimen and is available to every role. Request disposal, the primary button and the More menu are the work actions; an action that is blocked right now stays visible but disabled with the reason beside it (for example “An active disposal hold blocks disposal. A repository manager can release it.”, or “Distributed: it is outside the repository until its return is recorded.”). Actions that no role you hold could use are left out."
+        "The header shows the specimen ID and its key facts: the status (with “on hold” added when a hold is active), Type, On hand (the amount with its unit), Out of storage with a running clock while it is in hand outside storage (checked out, or returned from outside the repository and not yet stored) and Thaws, the count alone: a number, “At least n” when thaws while away are unknown, or Unknown when the thaw history before registration is unknown. Where it is and who holds it are in the Specimen facts below, under Location and Custodian; while it is out, Location also says since when and with whom. Coloured notices above the facts call out what needs attention: a disposed specimen (the record is final and its history is kept); a distributed specimen, with when it was dispatched and where to; each active hold with its kind, what it blocks, who placed it, when and why, and the reference of the workflow that placed it; and an open disposal request with a link to it.",
+        "The header has one primary button, the next step for the specimen's state, and More, which holds Print label (every role), the other work actions and, last, Request disposal. An action that is blocked right now stays visible but disabled with the reason beside it (for example “An active disposal hold blocks disposal. A repository manager can release it.”, or “Distributed: it is outside the repository until its return is recorded.”). Actions that no role you hold could use are left out."
       ]
     },
     {
@@ -40,7 +81,7 @@
         },
         {
           "label": "Request disposal",
-          "description": "Starts the two-person disposal process. Disabled while a disposal hold or an all-use hold is active (a use hold does not block it), while another disposal request is open, and while the specimen is distributed."
+          "description": "In More, last. Starts the two-person disposal process. Disabled while a disposal hold or an all-use hold is active (a use hold does not block it), while another disposal request is open, and while the specimen is distributed."
         },
         {
           "label": "Make aliquots or derivatives",
@@ -83,9 +124,9 @@
         "Amount on hand is the balance of the amount ledger; it changes only when a ledger entry is added, never by editing the number. Amounts are exact decimals with their unit, and the Initial amount is the first ledger entry.",
         "Participant is a code only. Derived from links an aliquot or derivative to its parent and says which kind it is; primary specimens show their kind (Primary) and no parent. Processing shows the start and, when recorded, the finish of processing.",
         "Time out of storage is computed from the custody events: the sum of every period in hand outside storage, from each check-out or return to its check-in (or to dispatch or disposal), and the period still open is counted up to now and marked running. Time away lists each period from dispatch to return (running while it is still away) with where it was sent; that time was outside the repository's custody and is not counted in time out of storage. It is never typed in. Registration to first storage appears when it applies and counts how long the specimen waited for its first placement, running while it is not yet stored.",
-        "Thaws counts observed thaws and the thaws a recipient reported for time away. A check-out is not counted as a thaw. When a recipient did not report thaws, it adds “unknown while away” with the dates of that period. If the thaw history before registration is unknown it says “Unknown before registration” and how many thaws were recorded here (including those inherited from parents); the unknown part is never guessed or counted as zero.",
+        "Thaws counts observed thaws and the thaws a recipient reported for time away. A check-out is not counted as a thaw. When a recipient did not report thaws, the header shows “At least n” and Time away explains it, with the dates of that period. If the thaw history before registration is unknown it says “Unknown before registration” and how many thaws were recorded here (including those inherited from parents); the unknown part is never guessed or counted as zero.",
         "Temperature excursions links to the equipment excursion list filtered to this specimen ID: the excursions that recorded it as affected. An excursion records the specimens stored in its storage unit when it is closed, so an open excursion is not listed yet.",
-        "Distribution appears when the distribution module is installed: links to the distribution requests and the shipments that include this specimen, and, when the specimen has a participant, to that participant's consent records."
+        "Distribution appears when the distribution module is installed: the distribution requests that allocated this specimen and, when the specimen has a participant, that participant's consent records, each linked with its status, followed by links to the filtered request, shipment and consent lists for it."
       ],
       "items": [
         {
@@ -110,7 +151,7 @@
         },
         {
           "label": "Location",
-          "description": "Full storage path; Checked out, Returned, in hand, Not in storage, Disposed, or Distributed: outside the repository (with where it was sent)."
+          "description": "Full storage path while it is in a position. While it is checked out: since when and to whom (and the destination); after a return from outside the repository: Returned, in hand of whom since when, with a reminder to record a check-in. Otherwise Not in storage, Disposed, or Distributed: outside the repository (with where it was sent)."
         }
       ]
     },

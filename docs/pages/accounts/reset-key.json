@@ -5,20 +5,42 @@
   ],
   "title": "Choose a new password",
   "purpose": "Use the recovery link to replace the account password.",
+  "summary": "Choose a new password from your recovery link.",
+  "tasks": [
+    {
+      "title": "Set the new password",
+      "steps": [
+        "Type it in [[New password]] and again in [[New password (again)]].",
+        "Select [[Change password]]. Then sign in with it; you are not signed in automatically."
+      ]
+    },
+    {
+      "title": "Get a new link when this one fails",
+      "steps": [
+        "If the page says the link is bad, select [[new password reset]] to ask for another."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Continue in the same browser that opened the link.",
+    "A used, invalid or expired link cannot change the password.",
+    "Resetting the password does not reset two-factor authentication or repository roles.",
+    "Opening another account's link while signed in signs out the current account."
+  ],
   "sections": [
     {
       "title": "Fields and actions",
       "items": [
         {
-          "label": "New Password",
+          "label": "New password",
           "description": "Required new password, at least eight characters. It must pass the configured checks for similarity to account details, common passwords and entirely numeric values. The confirmation must match exactly. Errors keep the form open; password fields may need entering again."
         },
         {
-          "label": "New Password (again)",
+          "label": "New password (again)",
           "description": "Required identical repeat of the replacement."
         },
         {
-          "label": "Change Password",
+          "label": "Change password",
           "description": "Saves only for a valid, unexpired recovery token. Success opens the password-changed acknowledgement. This deployment does not automatically sign in the account after reset."
         },
         {
@@ -27,7 +49,7 @@
         },
         {
           "label": "new password reset",
-          "description": "A Bad Token page has no password form and offers this link to request another reset. Already-used, invalid or expired tokens cannot change the account."
+          "description": "A Bad token page has no password form and offers this link to request another reset. Already-used, invalid or expired tokens cannot change the account."
         }
       ]
     },

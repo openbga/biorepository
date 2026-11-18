@@ -54,6 +54,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "allauth.account.middleware.AccountMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "core.preferences.GridPreferenceMiddleware",
     "accounts.middleware.LockedCredentialsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "core.form_dialog.FormDialogMiddleware",
@@ -136,6 +137,8 @@ ACCOUNT_LOGIN_BY_CODE_SUPPORTS_RESEND = True
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = os.environ.get("TIME_ZONE", "America/New_York")
 USE_I18N = True
+# English catalog that sentence-cases allauth's account pages (locale/en/LC_MESSAGES/django.po).
+LOCALE_PATHS = [BASE_DIR / "locale"]
 USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"

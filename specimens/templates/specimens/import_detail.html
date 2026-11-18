@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load specimens %}
+{% load specimens ui %}
 {% comment %}
 One validated CSV import: warnings, file and row errors, a preview of the normalized rows, then
 either the commit form (valid, unexpired, not committed) or the specimens it registered.
@@ -7,24 +7,23 @@ Context: batch (errors keeps the first importing.MAX_ERRORS; total_errors, error
 state, file_errors, row_errors, rows, commit, created, label_query, may_commit,
 form (ImportCommitForm).
 {% endcomment %}
-{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% include "includes/breadcrumbs.html" with section="Imports" section_url=list_url current=page_title %}{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% import_status state %}</li><li>{{ batch.row_count }} row{{ batch.row_count|pluralize }}</li><li>Validated <time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor.get_full_name|default:batch.actor.get_username }}</li></ul>{% endblock %}
-{% block page_actions %}{% if created %}<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?{{ label_query }}">{% include "includes/icon.html" with name="printer" %}Print labels</a>{% endif %}{% endblock %}
+{% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% breadcrumbs section="Imports" section_url=list_url current=page_title %}{% endblock %}
+{% block page_meta %}{% page_meta %}{% specimen_status_parts "import" state as st %}{% meta_item %}{% status label=st.label tone=st.tone size="lg" %}{% endmeta_item %}{% meta_item label="Rows" value=batch.row_count class="vr-id" %}{% meta_item label="Validated" %}<time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor.get_full_name|default:batch.actor.get_username }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
+{% block page_actions %}{% if created %}<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?{{ label_query }}">{% icon name="printer" %}Print labels</a>{% endif %}{% endblock %}
 {% block content %}
 {% for warning in batch.warnings %}
-<div class="alert alert-warning" role="status">{% include "includes/status.html" with label="Check" tone="warning" plain=True %}<div>{{ warning }}</div></div>
+{% notice tone="warning" label="Check" %}{{ warning }}{% endnotice %}
 {% endfor %}
 {% if state == "invalid" %}
-<div class="alert alert-danger" role="alert">{% import_status state plain=True %}<div>Nothing can be registered from this file. Correct the errors below in your file and upload it again.</div></div>
+{% specimen_status_parts "import" state as st %}{% notice tone=st.tone label=st.label blocking=True %}Nothing can be registered from this file. Correct the errors below in your file and upload it again.{% endnotice %}
 {% elif state == "expired" %}
-<div class="alert alert-secondary" role="status">{% import_status state plain=True %}<div>This validation expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to validate it against the current catalogues and positions.</div></div>
+{% specimen_status_parts "import" state as st %}{% notice tone=st.tone label=st.label %}This validation expired <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>. Upload the file again to validate it against the current catalogues and positions.{% endnotice %}
 {% endif %}
 
 {% if file_errors or row_errors %}
-<section class="card vr-table-card mb-3" aria-labelledby="errors-heading">
-  <div class="card-header"><h2 class="card-title" id="errors-heading">Errors</h2><span class="vr-count">{{ batch.total_errors }}</span></div>
-  {% if batch.errors_truncated %}<div class="card-body"><p class="vr-form-note mb-0" role="status">Showing the first {{ batch.errors|length }} of {{ batch.total_errors }} errors; the rest were counted but not kept. Correct these in your file and upload it again to see any that remain.</p></div>{% endif %}
-  {% if file_errors %}<div class="card-body"><ul class="mb-0">{% for e in file_errors %}<li>{{ e.message }}</li>{% endfor %}</ul></div>{% endif %}
+{% panel title="Errors" heading_id="errors-heading" table=True class="mb-3" %}{% fill count %}{{ batch.total_errors }}{% endfill %}
+{% if batch.errors_truncated %}{% panel_section %}<p class="vr-form-note mb-0" role="status">Showing the first {{ batch.errors|length }} of {{ batch.total_errors }} errors; the rest were counted but not kept. Correct these in your file and upload it again to see any that remain.</p>{% endpanel_section %}{% endif %}
+  {% if file_errors %}{% panel_section %}<ul class="mb-0">{% for e in file_errors %}<li>{{ e.message }}</li>{% endfor %}</ul>{% endpanel_section %}{% endif %}
   {% if row_errors %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col" class="text-end">Line</th><th scope="col">Row key</th><th scope="col">Column</th><th scope="col">Problem</th></tr></thead>
@@ -32,60 +31,57 @@ form (ImportCommitForm).
       <tr><th scope="row" class="text-end vr-id">{{ e.line }}</th><td class="vr-id">{{ e.row_key|default:"—" }}</td><td class="vr-id">{{ e.column }}</td><td class="vr-wrap">{{ e.message }}</td></tr>
     {% endfor %}</tbody></table></div>
   {% endif %}
-</section>
+{% endpanel %}
 {% endif %}
 
 {% if commit %}
-<section class="card vr-table-card mb-3" aria-labelledby="created-heading">
-  <div class="card-header"><h2 class="card-title" id="created-heading">Registered specimens</h2><span class="vr-count">{{ created|length }}</span></div>
-  <div class="card-body"><p class="mb-0">Committed <time datetime="{{ commit.recorded_at|date:'c' }}">{{ commit.recorded_at|date:"Y-m-d H:i" }}</time> by {{ commit.actor.get_full_name|default:commit.actor.get_username }}: {{ commit.reason }}</p></div>
+{% panel title="Registered specimens" heading_id="created-heading" table=True class="mb-3" %}{% fill count %}{{ created|length }}{% endfill %}
+{% panel_section %}<p class="mb-0">Committed <time datetime="{{ commit.recorded_at|date:'c' }}">{{ commit.recorded_at|date:"Y-m-d H:i" }}</time> by {{ commit.actor.get_full_name|default:commit.actor.get_username }}: {{ commit.reason }}</p>{% endpanel_section %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Specimen ID</th><th scope="col">Type</th><th scope="col" class="text-end">Amount</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for s in created %}
       <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' s.pk %}">{{ s.accession }}</a></th><td>{{ s.specimen_type.name }}</td><td class="text-end vr-id vr-nowrap">{{ s.quantity_on_hand|amount:s.unit }}</td><td>{% specimen_status s plain=True %}</td></tr>
     {% endfor %}</tbody></table></div>
-</section>
+{% endpanel %}
 {% endif %}
 
 {% if rows %}
-<section class="card vr-table-card mb-3" aria-labelledby="preview-heading">
-  <div class="card-header"><h2 class="card-title" id="preview-heading">Rows as read</h2><span class="vr-count">{{ rows|length }}</span></div>
-  <div class="vr-table-wrap"><table class="table vr-table">
+{% panel title="Rows as read" heading_id="preview-heading" table=True class="mb-3" %}{% fill count %}{{ rows|length }}{% endfill %}
+<div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Row key</th><th scope="col" class="text-end">Line</th><th scope="col">Type</th><th scope="col">Container</th><th scope="col" class="text-end">Amount</th><th scope="col">Collected</th><th scope="col">Participant</th><th scope="col">Collection</th><th scope="col">Position</th><th scope="col" class="text-end">Prior thaws</th></tr></thead>
     <tbody>{% for row in rows %}
       <tr>
         <th scope="row" class="vr-id">{{ row.row_key|default:"—" }}</th>
         <td class="text-end vr-id">{{ row.line }}</td>
-        <td class="vr-id">{{ row.specimen_type.code|default:"—" }}</td>
-        <td class="vr-id">{{ row.container_type.code|default:"—" }}</td>
+        <td>{% if row.specimen_type %}{{ row.specimen_type.name|default:row.specimen_type.code }}{% if row.specimen_type.name %} <span class="vr-muted vr-id">{{ row.specimen_type.code }}</span>{% endif %}{% else %}—{% endif %}</td>
+        <td>{% if row.container_type %}{{ row.container_type.name|default:row.container_type.code }}{% if row.container_type.name %} <span class="vr-muted vr-id">{{ row.container_type.code }}</span>{% endif %}{% else %}—{% endif %}</td>
         <td class="text-end vr-id vr-nowrap">{% if row.quantity %}{{ row.quantity|amount:row.unit.code }}{% else %}—{% endif %}</td>
         <td class="vr-nowrap">{% if row.collected %}<time datetime="{{ row.collected|date:'c' }}">{{ row.collected|date:"Y-m-d H:i" }}</time>{% else %}—{% endif %}</td>
         <td class="vr-id">{{ row.participant_code.code|default:"—" }}</td>
-        <td class="vr-id">{{ row.collection_code.code|default:"—" }}</td>
+        <td>{% if row.collection_code %}{{ row.collection_code.name|default:row.collection_code.code }}{% if row.collection_code.name %} <span class="vr-muted vr-id">{{ row.collection_code.code }}</span>{% endif %}{% else %}—{% endif %}</td>
         <td class="vr-id">{% if row.position %}{{ row.position.box }} {{ row.position.label }}{% else %}<span class="vr-muted">Not placed</span>{% endif %}</td>
         <td class="text-end vr-id">{% if row.baseline_thaws is None %}Unknown{% else %}{{ row.baseline_thaws }}{% endif %}</td>
       </tr>
     {% endfor %}</tbody></table></div>
-</section>
+{% endpanel %}
 {% endif %}
 
 {% if state == "valid" %}
-<section class="card mb-3" aria-labelledby="commit-heading">
-  <div class="card-header"><h2 class="card-title" id="commit-heading">Register these specimens</h2></div>
-  <div class="card-body">
-    {% if may_commit %}
-    <form class="vr-form" method="post" action="{% url 'specimens:import-commit' batch.pk %}" novalidate>
-      {% csrf_token %}
-      <p class="vr-form-note">All {{ batch.row_count }} rows are registered together, or none if anything changed since validation. Each specimen gets its own ID. The validation expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.</p>
+{% panel title="Register these specimens" heading_id="commit-heading" class="mb-3" %}
+{% if may_commit %}
+    {% url 'specimens:import-commit' batch.pk as commit_url %}
+    {% with n=batch.row_count|stringformat:"s" s=batch.row_count|pluralize %}{% with label="Register "|add:n|add:" specimen"|add:s %}
+    {% form_page form=form action=commit_url local=True submit_label=label title="Register these specimens" %}
+      {% fill note %}All {{ batch.row_count }} rows are registered together, or none if anything changed since validation. Each specimen gets its own ID. The validation expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.{% endfill %}
       <fieldset class="vr-form-section">{{ form.reason.as_field_group }}</fieldset>
       {{ form.expected_sha256 }}
-      <div class="vr-form-actions"><button class="btn btn-primary" type="submit">Register {{ batch.row_count }} specimen{{ batch.row_count|pluralize }}</button></div>
-    </form>
+    {% endform_page %}
+    {% endwith %}{% endwith %}
     {% else %}
     <p class="mb-0">Only the person who validated the file or a repository manager can commit it.</p>
     {% endif %}
-  </div>
-</section>
+{% endpanel %}
 {% endif %}
 {% endblock %}
-{% block record_foot %}{% include "includes/record_foot.html" with identifier=page_title %}{% endblock %}
+{% block page_kind %}record{% endblock %}
+{% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

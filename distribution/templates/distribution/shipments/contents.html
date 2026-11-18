@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load distribution_requests specimens %}
+{% load distribution_requests history specimens ui %}
 {% comment %}
 Entry grid: choose which picked specimens of the request go in this draft shipment. Offered:
 picked allocations of the request not in another shipment; ticked: those in this one now.
@@ -7,8 +7,9 @@ Unticking takes a specimen out (it stays picked). Context (request_views.shipmen
 form (ContentsForm: allocations, reason, expected_revision), rows [{allocation, checked}],
 shipment, blocked, submit_label, back_url, crumbs, facts.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
+{# form: entry-grid #}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% include "distribution/requests/_grid_head.html" with note="Contents change only while the shipment is a draft; packing freezes them." %}
@@ -22,10 +23,10 @@ shipment, blocked, submit_label, back_url, crumbs, facts.
         <tbody>
           {% for row in rows %}{% with a=row.allocation %}
           <tr>
-            <td><input class="form-check-input" type="checkbox" name="{{ form.allocations.html_name }}" value="{{ a.pk }}" id="content-{{ forloop.counter }}"{% if row.checked %} checked{% endif %}{% if blocked %} disabled{% endif %}><label class="visually-hidden" for="content-{{ forloop.counter }}">Include {{ a.specimen.accession }}</label></td>
+            <td>{% with n=forloop.counter|stringformat:"s" %}{% with label="Include "|add:a.specimen.accession id="content-"|add:n %}{% row_select name=form.allocations.html_name value=a.pk label=label id=id checked=row.checked disabled=blocked %}{% endwith %}{% endwith %}</td>
             <th scope="row"><a class="vr-id" href="{% url 'specimens:specimen-detail' a.specimen_id %}">{{ a.specimen.accession }}</a></th>
             <td class="vr-id">{{ a.item.line }}</td>
-            <td>{{ a.specimen.specimen_type.code }}</td>
+            <td>{{ a.specimen.specimen_type.name }} <span class="vr-muted vr-id">{{ a.specimen.specimen_type.code }}</span></td>
             <td class="text-end vr-id">{{ a.specimen.quantity_on_hand|amount:a.specimen.unit }}</td>
             <td>{{ a.specimen.open_checkout.to_custodian|person }}</td>
           </tr>
@@ -34,7 +35,7 @@ shipment, blocked, submit_label, back_url, crumbs, facts.
       </table>
     </div>
     {% else %}
-    {% include "includes/empty_state.html" with title="No picked specimens available" body="Pick specimens for the request first; a specimen in another shipment of the request is not offered." %}
+    {% empty_state title="No picked specimens available" body="Pick specimens for the request first; a specimen in another shipment of the request is not offered." %}
     {% endif %}
   </fieldset>
   {% include "distribution/requests/_grid_foot.html" %}

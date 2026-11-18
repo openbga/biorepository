@@ -5,12 +5,40 @@
   ],
   "title": "Import",
   "purpose": "Review one validated CSV file and, if it is valid, register all of its specimens in one step.",
+  "summary": "Review one validated CSV file and, if it is valid, register all of its specimens in one step.",
+  "tasks": [
+    {
+      "title": "Register the specimens",
+      "steps": [
+        "Check the state is Ready to commit and the rows are right.",
+        "Give the reason and select the Register button, which shows the number of specimens."
+      ]
+    },
+    {
+      "title": "Fix a file with errors",
+      "steps": [
+        "Read each problem's line, row key and column, correct the file and upload it again."
+      ]
+    },
+    {
+      "title": "Print labels for the new specimens",
+      "steps": [
+        "After the commit, select [[Print labels]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "All rows are registered or none. If anything changed since validation, nothing is registered and the problems are listed.",
+    "An import is never edited. Upload a corrected file instead.",
+    "A Check notice means the same file was validated before. Commit again only if these are different specimens.",
+    "Only the person who validated the file, or an admin or manager, can commit it."
+  ],
   "sections": [
     {
       "title": "What the page shows",
       "paragraphs": [
         "The header shows the state, the number of rows and who validated the file and when. A Check notice appears when the same file was validated before (and whether it was committed); commit it again only if these are different specimens.",
-        "Errors gives the number of problems found and lists file problems and then each row problem with its line, row key, column and reason. At most 200 problems are kept: when there are more, a note says how many are shown; correct those and upload the file again to see the rest. A supplied value repeated in a message is shortened to 40 characters. Rows as read shows what the system understood from each row: types and containers by code, the exact amount with its unit, collected time in repository time, participant and collection codes, the position (or Not placed) and prior thaws (Unknown when blank). Check this before committing."
+        "Errors gives the number of problems found and lists file problems and then each row problem with its line, row key, column and reason. At most 200 problems are kept: when there are more, a note says how many are shown; correct those and upload the file again to see the rest. A supplied value repeated in a message is shortened to 40 characters. Rows as read shows what the system understood from each row: specimen types, containers and collections by name with their codes, the exact amount with its unit, collected time in repository time, the participant code, the position (or Not placed) and prior thaws (Unknown when blank). Check this before committing."
       ]
     },
     {

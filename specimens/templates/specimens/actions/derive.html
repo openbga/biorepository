@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Entry grid: make aliquots or derivatives from one specimen (docs/ui-standards.md section 7, rules
 7 and 8). Context (specimens.action_views.derive): page_title, form (DeriveForm), formset (prefix
@@ -8,21 +8,12 @@ submit_label, back_url, crumbs and the _context.html parameters.
 row more or less and records nothing, so both work without JavaScript. A hidden copy of the save
 button comes first so Enter in a field saves rather than removing the first row.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
-<form class="vr-form vr-form-wide" method="post" novalidate>
-  {% csrf_token %}
+{% form_page form=form formset=formset formset_label="new specimens" class="vr-form-wide" cancel_url=back_url submit_label=submit_label no_submit=blocked no_required_note=blocked times=True note="Each new specimen gets its own identifier and keeps the parent's participant, collection, collection time, custodian and thaw history." %}
   {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}
-  {% include "includes/form_errors.html" with form=form formset=formset formset_label="new specimens" %}
-  {% if formset.non_form_errors %}<div class="alert alert-danger" role="alert">{% include "includes/status.html" with label="Error" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul></div>{% endif %}
-  {% if blocked %}
-  <div class="alert alert-warning" role="alert">
-    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
-    <div>{{ blocked }}</div>
-  </div>
-  {% else %}
-  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required. Times are repository local time. Each new specimen gets its own identifier and keeps the parent's participant, collection, collection time, custodian and thaw history.</p>
-  {% endif %}
+  {% if formset.non_form_errors %}{% notice tone="danger" label="Error" blocking=True %}<ul class="mb-0 ps-3">{% for error in formset.non_form_errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endnotice %}{% endif %}
+  {% if blocked %}{% notice tone="warning" label="Not available" blocking=True %}{{ blocked }}{% endnotice %}{% endif %}
   {% include "specimens/actions/_context.html" %}
   {% with sections=form.grouped %}{% for legend, rows in sections %}
   {% if forloop.last %}
@@ -58,18 +49,14 @@ button comes first so Enter in a field saves rather than removing the first row.
         </tbody>
       </table>
     </div>
-    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% include "includes/icon.html" with name="plus-lg" %}Add specimen</button>{% endif %}
+    {% if not blocked and formset.total_form_count < max_rows %}<button class="btn btn-sm btn-outline-secondary" type="submit" name="add_row" value="1" formnovalidate>{% icon name="plus-lg" %}Add specimen</button>{% endif %}
   </fieldset>
   {% endif %}
   <fieldset class="vr-form-section">
     <legend>{{ legend }}</legend>
-    {% for row in rows %}{% include "includes/field.html" with field=row.0 suffix=row.0.field.suffix %}{% endfor %}
+    {% for row in rows %}{% field field=row.0 suffix=row.0.field.suffix %}{% endfor %}
   </fieldset>
   {% endfor %}{% endwith %}
   {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-  <div class="vr-form-actions">
-    <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
-    {% if not blocked %}<button class="btn btn-primary" type="submit">{{ submit_label }}</button>{% endif %}
-  </div>
-</form>
+{% endform_page %}
 {% endblock %}

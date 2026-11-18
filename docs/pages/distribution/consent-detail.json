@@ -5,6 +5,40 @@
   ],
   "title": "Consent",
   "purpose": "Read one participant's consent in one study: the current record and its answers, the participant's specimens and where their material went, the records history, withdrawals and reinstatements.",
+  "summary": "One participant's consent in one study: the current record and answers, their specimens, where their material went, and the history of records and withdrawals.",
+  "tasks": [
+    {
+      "title": "Record a withdrawal",
+      "steps": [
+        "Admin and manager: select [[Withdraw consent]]."
+      ]
+    },
+    {
+      "title": "Act on a withdrawal in effect",
+      "steps": [
+        "Select [[Hold withdrawn specimens]] when specimens lack its hold.",
+        "Use [[Record follow-up]] on each shipment that carried the participant's material."
+      ]
+    },
+    {
+      "title": "Fix a transcription error",
+      "steps": [
+        "Select [[Correct consent]]. The earlier version stays."
+      ]
+    },
+    {
+      "title": "Record a re-consent",
+      "steps": [
+        "Select [[Record consent]]. The participant and study are filled in."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Specimens registered after a withdrawal are not held automatically. Hold withdrawn specimens covers them.",
+    "Escalate to destruction and Request disposal of held specimens are in [[More]].",
+    "Whoever recorded the withdrawal, its escalation or the new consent cannot reinstate it.",
+    "Nothing is deleted or anonymized."
+  ],
   "sections": [
     {
       "title": "Notices",
@@ -140,6 +174,6 @@
     "distribution/templates/distribution/governance/_header_action.html",
     "distribution/templates/distribution/governance/_attachment.html",
     "distribution/templatetags/distribution_governance.py",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.html" %}{% load ui %}
 {% comment %}
 Specimen action form (docs/ui-standards.md: Action form), in the shared dialog with this page as
 the no-JavaScript fallback. Context (specimens.action_views._page): page_title, form
@@ -7,19 +7,10 @@ a field's optional `suffix` attribute, e.g. a unit, renders as input-group text)
 back_url, crumbs, blocked (reason the action is impossible in the current state: alert, fields
 disabled, no submit), notes, destructive, and for a specimen the _context.html parameters.
 {% endcomment %}
-{% block breadcrumbs %}{% include "includes/breadcrumbs.html" with crumbs=crumbs %}{% endblock %}
+{% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
-<form class="vr-form" method="post" novalidate>
-  {% csrf_token %}
-  {% include "includes/form_errors.html" with form=form %}
-  {% if blocked %}
-  <div class="alert alert-warning" role="alert">
-    {% include "includes/status.html" with label="Not available" tone="warning" plain=True %}
-    <div>{{ blocked }}</div>
-  </div>
-  {% else %}
-  <p class="vr-form-note">Fields marked <span class="vr-req" aria-hidden="true">*</span><span class="visually-hidden">with an asterisk</span> are required.{% if form.has_times %} Times are repository local time.{% endif %}</p>
-  {% endif %}
+{% form_page form=form cancel_url=back_url submit_label=submit_label destructive=destructive no_submit=blocked no_required_note=blocked times=form.has_times %}
+  {% if blocked %}{% notice tone="warning" label="Not available" blocking=True %}{{ blocked }}{% endnotice %}{% endif %}
   {% if specimen %}{% include "specimens/actions/_context.html" %}{% endif %}
   {% for note in notes %}<p class="vr-form-note">{{ note }}</p>{% endfor %}
   {% with sections=form.grouped %}{% for legend, rows in sections %}
@@ -28,25 +19,14 @@ disabled, no submit), notes, destructive, and for a specimen the _context.html p
     {% for row in rows %}
     {% if row|length > 1 %}
     <div class="row g-3 mb-4">
-      {% for field in row %}<div class="{{ field.field.col|default:'col-md' }}">{% include "includes/field.html" with field=field suffix=field.field.suffix %}</div>{% endfor %}
+      {% for field in row %}<div class="{{ field.field.col|default:'col-md' }}">{% field field=field suffix=field.field.suffix %}</div>{% endfor %}
     </div>
     {% else %}
-    {% include "includes/field.html" with field=row.0 suffix=row.0.field.suffix %}
+    {% field field=row.0 suffix=row.0.field.suffix %}
     {% endif %}
     {% endfor %}
   </fieldset>
   {% endfor %}{% endwith %}
   {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-  <div class="vr-form-actions">
-    {% if blocked %}
-    <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
-    {% elif destructive %}
-    <button class="btn btn-outline-danger vr-form-actions-start" type="submit">{{ submit_label }}</button>
-    <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
-    {% else %}
-    <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
-    <button class="btn btn-primary" type="submit">{{ submit_label }}</button>
-    {% endif %}
-  </div>
-</form>
+{% endform_page %}
 {% endblock %}

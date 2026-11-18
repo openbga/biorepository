@@ -5,6 +5,28 @@
   ],
   "title": "Upload readings",
   "purpose": "Check a CSV file of temperature readings before anything is recorded.",
+  "summary": "Check a CSV file of temperature readings before anything is recorded.",
+  "tasks": [
+    {
+      "title": "Check the file",
+      "steps": [
+        "Choose it in [[CSV file]].",
+        "Choose the [[Equipment]] for rows that do not name it, or leave Named in the file.",
+        "Select [[Validate file]]. The import page shows the result."
+      ]
+    },
+    {
+      "title": "Prepare the file",
+      "steps": [
+        "Give measured_at and temperature_c on each row, and the equipment asset ID when the file covers several units."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Checking records nothing.",
+    "A time without an offset is read in the repository's time zone.",
+    "Equipment and monitors are given by asset ID and must be registered and not retired."
+  ],
   "sections": [
     {
       "title": "Who can use it",

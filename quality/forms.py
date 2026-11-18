@@ -3,6 +3,7 @@
 from django import forms
 
 from accounts.roles import require_role
+from core.lookups import RemoteSelect
 from equipment.forms import GroupedForm
 from storage.forms import apply_errors  # noqa: F401 -- shared view error adapter
 
@@ -20,7 +21,7 @@ def reason_field(label="Reason"):
 
 
 class AuditCreateForm(GroupedForm):
-    box = forms.ModelChoiceField(queryset=None, label="Box")
+    box = forms.ModelChoiceField(queryset=None, label="Box", widget=RemoteSelect("audit-boxes"))
     reason = reason_field("Reason for the audit")
     supersedes = forms.ModelChoiceField(
         queryset=InventoryAudit.objects.none(),

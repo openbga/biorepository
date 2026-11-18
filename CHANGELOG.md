@@ -10,6 +10,14 @@ The same list is shown in the application under What's new.
 
 ### High impact
 
+- **Changed:** A new look with section menus in the top bar (2026-11-18)
+
+  The sidebar is replaced by a light top bar: each section (Specimens, Distribution, Storage, Equipment, Quality, Setup) opens a menu of its pages, and the repository name shows beside the product name. New type and colours run through the application in light and dark themes, with a new sign-in illustration and icon.
+
+- **Changed:** Every form opens in a dialog over the page it belongs to (2026-11-18)
+
+  Every form now opens in a dialog over the page you opened it from, including password and two-factor changes; a form opened by its address opens over its record or list. A new Password page shows whether a password is set. Leaving a form with unsaved changes asks in a pop-up.
+
 - **Added:** Escalate a withdrawal to destruction while keeping its holds (2026-11-17, Consent records)
 
   Managers can escalate an active no-further-use withdrawal to destruction from its consent record. Consent stays withdrawn and its existing holds remain in place; the original instruction and escalation remain visible in history. Disposal still requires an ordinary request and a different person's approval.
@@ -60,6 +68,18 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Added:** A storage path bar shows where things are (2026-11-18)
+
+  Storage records and the specimen record show a path bar under the top bar, from the site down to the box and position, with the storage unit's nominal temperature. While a specimen is checked out, the bar marks the position it left and shows how long it has been out of storage.
+
+- **Fixed:** Dashboard counts open exactly the rows they count, with a specimen journey (2026-11-18)
+
+  Requests awaiting my decision now opens exactly the requests it counts, and every dashboard count matches the rows its link opens. A specimen journey at the top of the dashboard shows where work is waiting, from receipt and storage through check-out to distribution or disposal.
+
+- **Changed:** Distribution and quality pages show status and key facts first (2026-11-18)
+
+  Distribution and quality records open with their status and labelled key facts, one main action with the rest under More, and their history in its own panels. Institutions, investigators and specimen types show their names before their codes.
+
 - **Added:** Export the disposal request register (2026-11-18, Disposal requests)
 
   In Disposal requests, staff can download all matching requests in the selected order. The CSV includes each request’s current state, requester and decision maker.
@@ -76,6 +96,26 @@ The same list is shown in the application under What's new.
 - **Added:** Export the specimen import register (2026-11-18, Imports)
 
   Use Export CSV on the Imports page to download the state, row and error counts, and validation details for each file matching your search. The download follows your selected sort order across all pages.
+
+- **Changed:** Lists remember your columns, rows per page and sort on any workstation (2026-11-18)
+
+  List column layouts, rows per page and sort are remembered for each user on the server, so they follow you to any workstation and the next person at a shared one starts from the defaults. On narrower screens, less important columns start hidden; Columns brings them back.
+
+  Technical notes:
+
+  > Migration `core` 0004 adds the table `core_userpreference` (additive).
+
+- **Changed:** One date field, searchable menus and units beside numbers in every form (2026-11-18)
+
+  Dates and date-times use one typed field with a calendar (weeks start on Sunday; Today, Yesterday, Now and Clear; labelled with the repository time zone). Choice lists are searchable menus, numbers show their unit beside the field (°C, kg) and keep exactly what you type, file fields accept drag and drop, and hints open as tooltips.
+
+- **Changed:** Page help opens with a summary, common tasks and good-to-know notes (2026-11-18)
+
+  Help on every page now starts with a short summary, the common tasks with the exact buttons to use, and a few things good to know. The full field reference is still there, collapsed behind a filter.
+
+- **Changed:** The specimen record's header shows what matters first (2026-11-18)
+
+  A specimen's header now shows its status (including an active hold), type, amount on hand, a running time-out-of-storage clock while it is checked out, and its thaw count. Print label and Request disposal moved into the More menu.
 
 - **Added:** Export the training register to CSV (2026-11-17, Training records)
 
@@ -111,9 +151,57 @@ The same list is shown in the application under What's new.
 
 ### Low impact
 
+- **Changed:** Account pages use sentence case and the standard controls (2026-11-18)
+
+  Account pages use sentence case throughout (Email addresses, Make primary, Two-factor authentication, Change password). On the email page, Remove is an outlined destructive button at the start of the row, and address choices use the standard radio control.
+
+- **Changed:** Ongoing excursions show a running clock and their extreme (2026-11-18)
+
+  Ongoing temperature excursions show a running clock, and their extreme temperature beside the unit's nominal temperature.
+
 - **Fixed:** Page help describes the specimen lookup and What's new link as they work (2026-11-18)
 
   The help for the top bar now says that Find specimen ID opens the specimen with that ID, or the specimen list with a warning when none matches, and that the field is hidden on very narrow screens. The What's new help says the link appears on signed-in pages.
+
+- **Fixed:** Pick lists and manifests take the new look; draft manifests show their watermark (2026-11-18)
+
+  Printed pick lists and shipment manifests take the new look in black and white. A manifest printed before dispatch now shows its "Not dispatched" watermark, which was hidden before.
+
+- **Changed:** Sign-in shows Remember me and the password-reset link on one row (2026-11-18)
+
+  On the sign-in page, Remember me and Forgot your password? share one row under the password.
+
+- **Added:** Specimen records list their requests and consents; box maps mark holds (2026-11-18)
+
+  A specimen's record lists the requests it was allocated to and its participant's consents, each with its status, for people who may read distribution. The box map marks specimens on hold and counts them.
+
+- **Changed:** Status labels show an icon for their tone (2026-11-18)
+
+  Every status label now carries an icon for its tone, so colour is never the only cue. A box with no blocked positions now shows 0 blocked instead of a blank.
+
+- **Changed:** Storage, specimen and repository pages use the shared panels, lists and history (2026-11-18)
+
+  Storage, specimen, announcement, record-retention and What's new pages use the shared panels, lists, notices and history; long histories start collapsed.
+
+- **Added:** The dashboard shows the cold census of every storage unit (2026-11-18)
+
+  The dashboard's path bar shows every storage unit with its nominal temperature, how full it is and any open excursion, as on the storage overview.
+
+- **Added:** The full demonstration includes quality records (2026-11-18)
+
+  The full demonstration (`seed_demo --full`) now includes inventory audits, deviations and training records in several states, so the quality pages show working examples.
+
+- **Changed:** The storage overview flags open excursions and names sites and rooms (2026-11-18)
+
+  The storage overview flags units with an open temperature excursion and names their sites and rooms. Box and import pages show catalogue names before codes.
+
+- **Changed:** What's new groups changes as tiles by impact (2026-11-18)
+
+  What's new uses the full width: changes are tiles grouped by impact, with high impact highlighted, the type as a coloured label, and the area and Go to link at the foot of each change. Labels such as statuses and counts never break across lines.
+
+- **Fixed:** What's new links only to pages you can open (2026-11-18)
+
+  What's new shows a Go to link only when your own menus offer that page, so a viewer no longer sees a link to Imports. An account without a role no longer sees section menus that lead nowhere.
 
 - **Fixed:** Demonstration data no longer fails to load after a daylight-saving change (2026-11-15, [#10](https://github.com/openbga/biorepository/pull/10))
 

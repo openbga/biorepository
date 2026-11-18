@@ -5,6 +5,32 @@
   ],
   "title": "Agreement",
   "purpose": "Read one agreement: parties, dates, the terms as recorded, the requests under it, its documents and its timeline.",
+  "summary": "One agreement: parties, dates, the terms as recorded, the requests under it, its documents and its timeline.",
+  "tasks": [
+    {
+      "title": "Record that it was signed",
+      "steps": [
+        "Admin and manager: select [[Execute agreement]]."
+      ]
+    },
+    {
+      "title": "Attach the signed copy or an amendment",
+      "steps": [
+        "Select [[Add document]] in the documents card."
+      ]
+    },
+    {
+      "title": "End the agreement",
+      "steps": [
+        "Select [[Terminate agreement]] and give the date and reason."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Nothing can be dispatched under a draft or a terminated agreement.",
+    "Requests whose uses fall outside the permitted scope categories cannot be dispatched under it.",
+    "Documents are downloaded as files, never displayed."
+  ],
   "sections": [
     {
       "title": "Header and notices",
@@ -101,6 +127,6 @@
     "distribution/templates/distribution/governance/agreement_detail.html",
     "distribution/templates/distribution/governance/_attachment.html",
     "distribution/templatetags/distribution.py",
-    "storage/templates/storage/_history.html"
+    "templates/includes/history_panel.html"
   ]
 }

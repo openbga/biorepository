@@ -5,6 +5,28 @@
   ],
   "title": "Adjust amount",
   "purpose": "Correct the amount on hand to a measured value by adding a signed adjustment to the amount ledger.",
+  "summary": "Correct the amount on hand to a measured value by adding a signed adjustment to the amount ledger. Admin and manager only.",
+  "tasks": [
+    {
+      "title": "Adjust the amount",
+      "steps": [
+        "Type the [[Change in amount]]: positive adds, negative removes, for example -0.25.",
+        "Enter [[Measured at]] and say what was measured in [[Reason]].",
+        "Select [[Adjust amount]]."
+      ]
+    },
+    {
+      "title": "Undo an adjustment",
+      "steps": [
+        "Reverse the Adjusted entry from the amount ledger on the specimen record."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "You enter the change, not the new total.",
+    "Earlier ledger entries stay, with the balance after each.",
+    "The adjustment cannot make the amount negative."
+  ],
   "sections": [
     {
       "title": "Who can use it and when",

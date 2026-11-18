@@ -5,6 +5,26 @@
   ],
   "title": "Racks and shelves",
   "purpose": "Find racks, towers, shelves and canisters across all storage units. Each one holds either other shelves or racks, or boxes.",
+  "summary": "Find racks, towers, shelves and canisters across all storage units. Each holds either other racks or shelves, or boxes.",
+  "tasks": [
+    {
+      "title": "Find a rack or shelf",
+      "steps": [
+        "Type part of the code or name in [[Search]], or choose the [[Storage unit]], then select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Add a rack or shelf",
+      "steps": [
+        "Admin and manager: select [[New rack or shelf]], or use Add rack or shelf on the unit's page."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "Only active racks and shelves are listed until you change [[Status]].",
+    "Counts include everything inside the node.",
+    "Location is the path of codes from the top of the unit."
+  ],
   "sections": [
     {
       "title": "Search, filters and sorting",
@@ -116,7 +136,7 @@
     "storage/exports.py",
     "storage/templates/storage/node_list.html",
     "storage/templates/storage/_list_actions.html",
-    "storage/templates/storage/_list_states.html",
+    "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
 }

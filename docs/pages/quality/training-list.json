@@ -5,6 +5,32 @@
   ],
   "title": "Training records",
   "purpose": "Find staff training assignments and retained completion evidence.",
+  "summary": "Staff training assignments and their completion evidence.",
+  "tasks": [
+    {
+      "title": "Assign training",
+      "steps": [
+        "Managers and administrators: select [[New training record]]."
+      ]
+    },
+    {
+      "title": "Find overdue training",
+      "steps": [
+        "Choose the due-date filter, for example Assignment overdue, and select [[Apply]]."
+      ]
+    },
+    {
+      "title": "Download the register",
+      "steps": [
+        "Apply your filters and sort, then select [[Export CSV]]."
+      ]
+    }
+  ],
+  "good_to_know": [
+    "The application does not certify competence, grant permissions or block specimen work.",
+    "Due dates are follow-up dates your repository entered. There is no automatic renewal interval.",
+    "Only managers and administrators change training records."
+  ],
   "sections": [
     {
       "title": "Access and meaning",
