@@ -5,12 +5,12 @@
   ],
   "title": "Readings imports",
   "purpose": "See the CSV files of temperature readings that were uploaded, whether each is ready to record, and open one.",
-  "summary": "The CSV files of temperature readings that were uploaded, and whether each is ready to record.",
+  "summary": "Find uploaded temperature-reading files, check their validation state and download a summary of the imports you selected.",
   "tasks": [
     {
       "title": "Import readings",
       "steps": [
-        "Select [[Upload readings]] and check your file.",
+        "As a technician, manager or administrator, select [[Upload readings]] and check your file.",
         "Open the import and record its readings."
       ]
     },
@@ -19,11 +19,18 @@
       "steps": [
         "Set [[State]] to Ready to commit and select [[Apply]]."
       ]
+    },
+    {
+      "title": "Download a register of imports",
+      "steps": [
+        "Apply the file name search and [[State]] you want.",
+        "Select [[Export CSV]] to download every matching import in the current sort order."
+      ]
     }
   ],
   "good_to_know": [
     "Uploading only checks a file. Nothing is recorded until it is committed.",
-    "An import expires after 24 hours. Upload the file again.",
+    "An uncommitted, valid import expires after 24 hours. The CSV shows the state at download time.",
     "A file with any error cannot be committed."
   ],
   "sections": [
@@ -32,7 +39,7 @@
       "paragraphs": [
         "This is the Imports tab of Temperature readings. Each row is one uploaded and checked file: nothing is recorded from a file until a technician, manager or administrator commits it from its page. The file itself is not kept; the page keeps the checked rows, errors and warnings.",
         "Every role that can sign in to the workspace can read this list, including viewers.",
-        "Type in the search box to narrow the rows, use the filters beside it, and choose 25, 50 or 100 rows per page (the default is 25). Active filters appear as chips that you can remove one by one, and the sort and column choices are kept in the address, so a view can be shared. A filter value that is not valid shows no rows rather than all of them. Changing a filter returns you to the first page."
+        "Choose 25, 50 or 100 rows per page. The initial size is 25. The register remembers your last accepted page size and sort. You can remove an active filter with its chip. Applying filters returns you to the first page."
       ]
     },
     {
@@ -60,7 +67,7 @@
         },
         {
           "label": "Rows",
-          "description": "Readings found in the file."
+          "description": "Number of reading rows that passed validation in this upload. A file with any errors still needs correction before you can commit it."
         },
         {
           "label": "Errors",
@@ -80,6 +87,10 @@
       "title": "Actions",
       "items": [
         {
+          "label": "Export CSV",
+          "description": "Every workspace role, including viewers, can download the seven register columns for all matching imports in the applied sort order. Validation times include the repository time zone offset. A download records who exported the selection, its filters and sort, and how many rows it contained."
+        },
+        {
           "label": "Upload readings",
           "description": "Technicians, managers and administrators. Opens the upload form."
         },
@@ -87,6 +98,9 @@
           "label": "Readings, Imports tabs",
           "description": "Switch between the two lists."
         }
+      ],
+      "paragraphs": [
+        "A search with no matches downloads the column headings. Correct invalid filters to enable the download. If more than 10,000 imports match, the page shows the row limit. Narrow the selection to export. Open an individual import for its reading rows, warnings and error messages."
       ]
     },
     {
@@ -106,6 +120,9 @@
     "equipment/lists.py",
     "equipment/queries.py",
     "equipment/exports.py",
-    "equipment/templates/equipment/import_list.html"
+    "equipment/templates/equipment/import_list.html",
+    "equipment/models.py",
+    "equipment/templates/equipment/_list_actions.html",
+    "equipment/tests/test_import_register_export.py"
   ]
 }

@@ -23,10 +23,10 @@
       <tbody>
         {% for batch in page_obj %}
         <tr>
-          <th scope="row" class="vr-wrap"><a class="vr-row-link" href="{% url 'equipment:import-detail' batch.pk %}">{% if batch.filename %}{{ batch.filename }}{% else %}Import {{ batch.recorded_at|date:"Y-m-d H:i" }}{% endif %}</a></th>
+          <th scope="row" class="vr-wrap"><a class="vr-row-link" href="{% url 'equipment:import-detail' batch.pk %}">{{ batch.name }}</a></th>
           <td>{% equipment_import_status batch.state plain=True %}</td>
           <td class="text-end vr-id">{{ batch.row_count }}</td>
-          <td class="text-end vr-id">{{ batch.errors|length }}</td>
+          <td class="text-end vr-id">{{ batch.error_total }}</td>
           <td>{% if batch.equipment %}<span class="vr-id">{{ batch.equipment.code }}</span>{% else %}<span class="vr-muted">Named in the file</span>{% endif %}</td>
           <td>{{ batch.actor|person }}</td>
           <td class="vr-nowrap"><time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time></td>

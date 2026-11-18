@@ -40,7 +40,7 @@ compliance or accreditation.
   temperature readings entered or imported from CSV; and temperature excursions reviewed by a
   second person, with the specimens that were in the unit captured when one is closed. Operators
   can select affected specimens and place manual holds with a reason. Staff can filter and export
-  readings with no recorded limits. The limits,
+  readings with no recorded limits. The Imports tab also exports the filtered register of logger files. The limits,
   low levels and due dates are the repository's own: the product sets none, and it does not
   monitor or raise alarms.
 - **Inventory audits:** check one box against a saved inventory snapshot, enter observations

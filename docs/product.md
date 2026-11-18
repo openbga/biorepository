@@ -124,7 +124,9 @@ Acceptance outcomes:
     events and the due dates the repository enters, an LN2 level and fill log, temperature
     readings entered or imported, and excursions reviewed by a second person that capture the
     specimens in the unit when closed. Operators can place manual holds on selected affected
-    specimens, with an attributed reason and excursion history.
+    specimens, with an attributed reason and excursion history. All staff can export the seven
+    temperature-reading import register columns across pages for the selected file name search,
+    validation state and sort.
 15. A study governs collections; consent records and withdrawals are recorded per coded participant
     and study; a request is decided by a second person; allocation, picking, packing and dispatch
     each pass one gate that quotes the recorded fact behind any refusal; the manifest is frozen at

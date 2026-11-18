@@ -25,12 +25,12 @@ PAGING = ("page", "per_page", "sort")
 
 
 def export_list(*, actor, kind, filters, sort=""):
-    """CSV bytes of one equipment list (`equipment`, `due`, `ln2`, `reading`, `excursion`)."""
+    """CSV bytes of all rows matching an equipment register selection."""
     require_role(actor, *READ_ROLES)
     if kind not in EXPORT_KINDS:
         raise ValidationError("Unknown list.", code="invalid")
     spec = SPECS[kind]
-    data = filters if isinstance(filters, QueryDict) else QueryDict(mutable=True)
+    data = filters.copy() if isinstance(filters, QueryDict) else QueryDict(mutable=True)
     if not isinstance(filters, QueryDict):
         for key, value in (filters or {}).items():
             data[key] = "" if value is None else str(getattr(value, "pk", value))
@@ -38,23 +38,26 @@ def export_list(*, actor, kind, filters, sort=""):
     unknown = {key for key in data if key not in allowed}
     if unknown:
         raise ValidationError("Unknown filter: " + ", ".join(sorted(unknown)), code="invalid")
+    sort = sort or data.get("sort") or spec.default_sort
+    if sort.removeprefix("-") not in spec.columns:
+        sort = spec.default_sort
+    data["q"] = data.get("q", "").strip()
     form, queryset = filtered(spec, data, actor)
-    if form.errors:
+    if form.errors or data.get("per_page") == "":
         raise ValidationError("These filters cannot be applied.", code="invalid")
     queryset = ordered(spec, queryset, sort)
-    total = queryset.count()
-    if total > EXPORT_CAP:
-        raise ValidationError(
-            f"This selection has {total} rows; exports are limited to {EXPORT_CAP}. "
-            "Narrow the filters and export again.",
-            code="invalid",
-        )
-    buffer = io.StringIO()
+    buffer = io.StringIO(newline="")
     writer = csv.writer(buffer, lineterminator="\r\n")
     writer.writerow([header for header, _ in spec.export_columns])
-    for row in queryset[:EXPORT_CAP]:
+    total = 0
+    for total, row in enumerate(queryset[: EXPORT_CAP + 1].iterator(), start=1):
+        if total > EXPORT_CAP:
+            raise ValidationError(
+                f"Exports are limited to {EXPORT_CAP:,} rows. Narrow the filters and export again.",
+                code="invalid",
+            )
         writer.writerow([safe_cell(getter(row)) for _, getter in spec.export_columns])
-    selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k != "page"}
+    selection = {k: data[k] for k in sorted(data) if data[k] and k not in PAGING}
     with transaction.atomic():
         AuditEvent.objects.create(
             actor=actor,
