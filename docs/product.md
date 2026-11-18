@@ -112,6 +112,8 @@ Acceptance outcomes:
    Staff can download the seven disposal request register columns across all matching pages in
    the selected order, including requests they made or those awaiting their approval.
 10. Specimens import in bulk from CSV with a validation pass before anything is committed.
+    Administrators, managers and technicians can download the six import register columns for
+    all files matching their search, in the selected order. Each validation has its own row.
 11. Lists filter, sort, paginate and export to CSV.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,
     old value, new value, reason. Controlled fields require a reason to change.

@@ -11,15 +11,16 @@ from datetime import UTC
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.utils import timezone
 
 from accounts.roles import require_role
 from core.audit import record_event
 from storage import queries as storage_queries
 
-from .list_forms import DISPOSAL_STATE_LABELS, disposal_selection
+from .list_forms import DISPOSAL_STATE_LABELS, disposal_selection, import_selection
 from .models import OutputRecord
 from .queries import catalogue_queryset, specimen_queryset
-from .services import CATALOGUE_FIELDS, READ_ROLES, request_state
+from .services import CATALOGUE_FIELDS, OPERATE_ROLES, READ_ROLES, request_state
 
 MAX_ROWS = 10000
 FORMULA_START = ("=", "+", "-", "@", "\t", "\r")
@@ -154,6 +155,43 @@ def export_disposals(*, actor, params):
         OutputRecord.Kind.EXPORT,
         count,
         {"list": "disposal", "filters": form.filters(), "sort": grid.sort},
+    )
+    return content
+
+
+def export_imports(*, actor, params):
+    require_role(actor, *OPERATE_ROLES)
+    try:
+        grid, form, rows = import_selection(params)
+    except ValueError as exc:
+        raise ValidationError(str(exc)) from exc
+    if not form.is_valid():
+        raise ValidationError("These import filters or sort order cannot be applied.")
+
+    batches = list(rows[: MAX_ROWS + 1])
+    if len(batches) > MAX_ROWS:
+        raise ValidationError(f"Narrow the filters to {MAX_ROWS:,} imports or fewer.")
+    now = timezone.now()
+    content = _csv(
+        ("Import", "State", "Rows", "Errors", "Validated by", "Validated"),
+        (
+            (
+                batch.name,
+                batch.state_at(now, error_total=batch.error_total).label,
+                batch.row_count,
+                batch.error_total,
+                batch.actor.get_full_name() or batch.actor.get_username(),
+                batch.recorded_at,
+            )
+            for batch in batches
+        ),
+    )
+    filters = {"q": grid.query} if grid.query else {}
+    _record(
+        actor,
+        OutputRecord.Kind.EXPORT,
+        len(batches),
+        {"list": "imports", "filters": filters, "sort": grid.sort},
     )
     return content
 

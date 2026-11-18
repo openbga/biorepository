@@ -60,6 +60,7 @@ NON_PAGE_ROUTES = {
     "specimens:label-pdf",
     "specimens:catalogue-export",
     "specimens:import-commit",
+    "specimens:import-export",
     "specimens:import-template",
     "health",
     "ready",

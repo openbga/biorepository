@@ -41,6 +41,7 @@ NON_PAGE_ROUTES = {
     "specimens:label-pdf": "PDF download from the label preview",
     "specimens:catalogue-export": "CSV download from the specimen catalogue lists",
     "specimens:import-commit": "POST action on the import page",
+    "specimens:import-export": "CSV download from the specimen import register",
     "specimens:import-template": "CSV template download from the import upload form",
     "equipment:attachment": "File download from the equipment and excursion pages",
     "quality:audit-export": "CSV download from the inventory audit register",

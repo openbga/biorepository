@@ -26,6 +26,7 @@ urlpatterns = [
     path("disposals/export/", views.disposal_export, name="disposal-export"),
     path("disposals/<uuid:pk>/", views.disposal_detail, name="disposal-detail"),
     path("imports/", views.import_list, name="import-list"),
+    path("imports/export/", views.import_export, name="import-export"),
     path("imports/upload/", views.import_upload, name="import-upload"),
     path("imports/template.csv", views.import_template, name="import-template"),
     path("imports/<uuid:pk>/", views.import_detail, name="import-detail"),

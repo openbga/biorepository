@@ -5,11 +5,16 @@ CSV import batches, newest first (technicians and managers). Context: page_obj (
 with .state, .name, .error_total), filter_form, q, sort, active_filters, filtered.
 {% endcomment %}
 {% block page_intro %}<p class="vr-page-intro">Register many specimens from a CSV file: validate first, then commit all rows or none.</p>{% endblock %}
-{% block page_actions %}<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% include "includes/icon.html" with name="plus-lg" %}Upload CSV</a>{% endblock %}
+{% block page_actions %}
+{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% include "includes/icon.html" with name="download" %}Export CSV</a>{% endif %}
+<a class="btn btn-primary" href="{% url 'specimens:import-upload' %}">{% include "includes/icon.html" with name="plus-lg" %}Upload CSV</a>{% endblock %}
 {% block content %}
 <section class="card vr-table-card" aria-labelledby="imports-heading">
   <h2 class="visually-hidden" id="imports-heading">Imports</h2>
   {% include "includes/grid_toolbar.html" with label="Filter imports" q=q placeholder="File name" grid="specimens.imports" %}
+  {{ filter_form.q.errors }}
+  {{ filter_form.non_field_errors }}
+  {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% if page_obj.paginator.count %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="specimens.imports" data-vr-grid-version="1" aria-labelledby="imports-heading">
