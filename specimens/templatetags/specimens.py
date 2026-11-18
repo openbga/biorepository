@@ -42,9 +42,13 @@ IMPORT_STATES = {
 
 
 @register.inclusion_tag("includes/status.html")
-def specimen_status(specimen, plain=False):
+def specimen_status(specimen, plain=False, held=False, size=None):
+    """held=True folds an active hold into the label ("Available, on hold", hold tone): the
+    record header's one status. The view sets specimen.held; lists show it as a second label."""
     label, tone = SPECIMEN_STATES[specimen.status]
-    return {"label": label, "tone": tone, "plain": plain}
+    if held and getattr(specimen, "held", False):
+        label, tone = f"{label}, on hold", "hold"
+    return {"label": label, "tone": tone, "plain": plain, "size": size}
 
 
 @register.inclusion_tag("includes/status.html")

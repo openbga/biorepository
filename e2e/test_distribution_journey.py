@@ -10,7 +10,7 @@ import re
 from datetime import timedelta
 
 import pytest
-from helpers import field, make_user, pick, sign_in, sign_out
+from helpers import field, make_user, native_select, pick, sign_in, sign_out
 from playwright.sync_api import Page, expect
 
 pytestmark = pytest.mark.django_db(transaction=True)
@@ -30,7 +30,7 @@ def heading(page: Page):
 
 def pick_option(select, pattern):
     """Select the first option whose text matches `pattern`."""
-    texts = select.locator("option").all_text_contents()
+    texts = native_select(select).locator("option").all_text_contents()
     label = next(t for t in texts if re.search(pattern, t))
     pick(select, label=label)
 

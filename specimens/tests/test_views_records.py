@@ -132,7 +132,11 @@ def test_record_primary_follows_the_state(client, people, specimens):
     assert "Record check-out" in stored
     assert "A disposal request is already open." in stored  # blocked with the reason
     out = detail(specimens["out"])
-    assert "Record check-in" in out and "Time out of storage is running" in out
+    assert "Record check-in" in out
+    # The header's warm cell: the time out of storage clock, running.
+    assert 'class="is-warm"><span class="vr-meta-label">Out of storage</span>' in out
+    assert '<span class="vr-clock" data-state="running">' in out
+    assert '<span class="vr-clock"' not in stored
     assert "Place in storage" in detail(specimens["loose"])
     assert "Unknown before registration" not in stored  # baseline 0 is known
 

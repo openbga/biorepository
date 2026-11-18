@@ -61,13 +61,12 @@ form (ImportCommitForm), crumbs, can_operate.
   <div class="card-header"><h2 class="card-title" id="record-heading">Record these readings</h2></div>
   <div class="card-body">
     {% if can_operate %}
-    <form class="vr-form" method="post" novalidate>
-      {% csrf_token %}
-      {% form_errors form=form %}
-      <p class="vr-form-note">All {{ batch.row_count }} readings are recorded together, or none if anything changed since the check. Each keeps the limits set on its equipment when it is recorded. The check expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.</p>
+    {% with n=batch.row_count|stringformat:"s" s=batch.row_count|pluralize %}{% with label="Record "|add:n|add:" reading"|add:s %}
+    {% form_page form=form action=request.path local=True submit_label=label title="Record these readings" %}
+      {% fill note %}All {{ batch.row_count }} readings are recorded together, or none if anything changed since the check. Each keeps the limits set on its equipment when it is recorded. The check expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.{% endfill %}
       <fieldset class="vr-form-section">{{ form.reason.as_field_group }}</fieldset>
-      <div class="vr-form-actions"><button class="btn btn-primary" type="submit">Record {{ batch.row_count }} reading{{ batch.row_count|pluralize }}</button></div>
-    </form>
+    {% endform_page %}
+    {% endwith %}{% endwith %}
     {% else %}
     <p class="mb-0">A technician, manager or administrator records the readings from a valid file.</p>
     {% endif %}
@@ -75,4 +74,5 @@ form (ImportCommitForm), crumbs, can_operate.
 </section>
 {% endif %}
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

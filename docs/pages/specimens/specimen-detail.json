@@ -27,14 +27,20 @@
       ]
     },
     {
+      "title": "Print its label",
+      "steps": [
+        "Open [[More]] and choose [[Print label]]."
+      ]
+    },
+    {
       "title": "Dispose of it",
       "steps": [
-        "Select [[Request disposal]]. Another person with disposal approval must approve before the disposal is recorded."
+        "Open [[More]] and choose [[Request disposal]]. Another person with disposal approval must approve before the disposal is recorded."
       ]
     }
   ],
   "good_to_know": [
-    "A blocked action stays visible but disabled, with the reason beside it.",
+    "A blocked action stays visible but disabled, with the reason beside it. The running clock in the header is the time out of storage now.",
     "Amount on hand is the balance of the amount ledger. It changes only by adding entries, never by editing the number.",
     "Time out of storage and thaw counts are worked out from the custody and thaw records. A check-out is not a thaw.",
     "Records are never deleted. Corrections add a record beside the original, with a reason.",
@@ -51,8 +57,8 @@
     {
       "title": "Header and alerts",
       "paragraphs": [
-        "The header shows the specimen ID with its status, type, amount on hand, location and custodian. Coloured notices above the facts call out what needs attention: a disposed specimen (the record is final and its history is kept); a distributed specimen, with when it was dispatched and where to; each active hold with its kind, what it blocks, who placed it, when and why, and the reference of the workflow that placed it; a check-out in progress with its destination and the running time out of storage; a returned specimen still in hand (“Returned, in hand of …”, with where it came back from), which is stored with Record check-in; and an open disposal request with a link to it.",
-        "Print label opens the label preview for this specimen and is available to every role. Request disposal, the primary button and the More menu are the work actions; an action that is blocked right now stays visible but disabled with the reason beside it (for example “An active disposal hold blocks disposal. A repository manager can release it.”, or “Distributed: it is outside the repository until its return is recorded.”). Actions that no role you hold could use are left out."
+        "The header shows the specimen ID and its key facts: the status (with “on hold” added when a hold is active), Type, On hand (the amount with its unit), Out of storage with a running clock while it is checked out (Returned, in hand after a return from outside the repository, until it is stored) and Thaws. Where it is and who holds it are in the Specimen facts below, under Location and Custodian; while it is out, Location also says since when and with whom. Coloured notices above the facts call out what needs attention: a disposed specimen (the record is final and its history is kept); a distributed specimen, with when it was dispatched and where to; each active hold with its kind, what it blocks, who placed it, when and why, and the reference of the workflow that placed it; and an open disposal request with a link to it.",
+        "The header has one primary button, the next step for the specimen's state, and More, which holds Print label (every role), the other work actions and, last, Request disposal. An action that is blocked right now stays visible but disabled with the reason beside it (for example “An active disposal hold blocks disposal. A repository manager can release it.”, or “Distributed: it is outside the repository until its return is recorded.”). Actions that no role you hold could use are left out."
       ]
     },
     {
@@ -75,7 +81,7 @@
         },
         {
           "label": "Request disposal",
-          "description": "Starts the two-person disposal process. Disabled while a disposal hold or an all-use hold is active (a use hold does not block it), while another disposal request is open, and while the specimen is distributed."
+          "description": "In More, last. Starts the two-person disposal process. Disabled while a disposal hold or an all-use hold is active (a use hold does not block it), while another disposal request is open, and while the specimen is distributed."
         },
         {
           "label": "Make aliquots or derivatives",
@@ -145,7 +151,7 @@
         },
         {
           "label": "Location",
-          "description": "Full storage path; Checked out, Returned, in hand, Not in storage, Disposed, or Distributed: outside the repository (with where it was sent)."
+          "description": "Full storage path while it is in a position. While it is checked out: since when and to whom (and the destination); after a return from outside the repository: Returned, in hand of whom since when, with a reminder to record a check-in. Otherwise Not in storage, Disposed, or Distributed: outside the repository (with where it was sent)."
         }
       ]
     },

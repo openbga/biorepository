@@ -48,7 +48,7 @@ tab, create_noun, create_url, edit_route, can_manage.
           {% endif %}
           {% if kind == "category" %}<td>{{ row.gates_use|yesno:"Yes,No" }}</td>{% endif %}
           {% if kind == "institution" %}<td class="vr-id">{{ row.country|default:"—" }}</td>{% endif %}
-          {% if kind == "investigator" %}<td class="vr-id">{{ row.institution.code }}</td><td>{{ row.email|default:"—" }}</td>{% endif %}
+          {% if kind == "investigator" %}<td>{{ row.institution.name }} <span class="vr-muted vr-id">{{ row.institution.code }}</span></td><td>{{ row.email|default:"—" }}</td>{% endif %}
           <td>{% if row.is_active %}{% status label="Active" tone="success" plain=True %}{% else %}{% status label="Inactive" tone="neutral" plain=True %}{% endif %}</td>
         </tr>
         {% endfor %}

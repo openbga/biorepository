@@ -81,6 +81,13 @@ def distribution_status(kind, value, plain=False):
     return {"label": MODELS[kind](value).label, "tone": TONES[kind][value], "plain": plain}
 
 
+@register.simple_tag
+def status_parts(kind, value):
+    """{% status_parts "request" request.status as st %}: the label and tone distribution_status
+    shows, for a {% notice tone=st.tone label=st.label %} that opens with the record's status."""
+    return {"label": MODELS[kind](value).label, "tone": TONES[kind][value]}
+
+
 @register.inclusion_tag("includes/status.html")
 def blocker_status(blocker, plain=True):
     """A gate blocker as a danger stamp; its message is the accessible description."""

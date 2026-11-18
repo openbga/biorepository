@@ -195,13 +195,28 @@ def capture(job: tuple) -> dict:
     with sync_playwright() as p:
         browser = p.chromium.launch()
         _context, page = login(browser, account)
+        # Server errors seen while a page or dialog loads: such a view is recorded as URL and
+        # status only and never screenshotted (a DEBUG error page shows the environment).
+        failed = []
+        page.on(
+            "response",
+            lambda r: (
+                failed.append(f"HTTP {r.status} {urlsplit(r.url).path}")
+                if r.status >= 500
+                else None
+            ),
+        )
         for item in pages:
             try:
+                failed.clear()
                 response = page.goto(item["path"])
                 if response is not None and response.status >= 400:
                     errors.append(f"{account} {item['path']}: HTTP {response.status}")
                     continue
                 settle(page)
+                if failed:  # a fragment or asset failed on the server: record it, never show it
+                    errors.append(f"{account} {item['path']}: {', '.join(failed)}")
+                    continue
                 widths = WIDTHS + ((NARROW,) if item["nav"] else ())
                 shots += shoot(page, out, item["key"], widths, full=True)
             except PlaywrightError as exc:
@@ -215,10 +230,13 @@ def capture(job: tuple) -> dict:
                         set_theme(page, theme)
                         page.reload()
                         settle(page)
+                        failed.clear()
                         link = page.locator(f'main a[href="{item["href"]}"]:visible').first
                         link.click(timeout=5000)
                         page.locator("#vr-form-dialog.show").wait_for(timeout=10000)
                         settle(page)
+                        if failed:
+                            raise PlaywrightError(", ".join(failed))
                         page.screenshot(path=out / f"{item['key']}--{width}-{theme}.png")
                         shots += 1
             except PlaywrightError as exc:
@@ -232,6 +250,24 @@ def capture(job: tuple) -> dict:
 
 # ------------------------------------------------------------------------- before snapshot
 
+# Never handed to a spawned server: a DEBUG error page would print the process environment.
+SECRET_NAMES = {"DEMO_PASSWORD", "DEMO_ADMIN_PASSWORD"}
+
+
+def server_env() -> dict:
+    """A scrubbed environment for a spawned server (like `env -i`): PATH and HOME for uv, plus
+    the repository's .env settings minus the demo passwords. Nothing else of this shell leaks."""
+    env = {k: os.environ[k] for k in ("PATH", "HOME", "LANG", "TMPDIR", "USER") if k in os.environ}
+    for line in (REPO / ".env").read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.removeprefix("export ").strip()
+        if key not in SECRET_NAMES:
+            env[key] = value.strip().strip('"').strip("'")
+    return env
+
 
 def serve_ref(ref: str) -> subprocess.Popen:
     """Export REF with git archive (no change to the repository) and serve it on BEFORE_PORT."""
@@ -239,8 +275,7 @@ def serve_ref(ref: str) -> subprocess.Popen:
     BEFORE_TREE.mkdir(parents=True)
     archive = subprocess.run(["git", "archive", ref], cwd=REPO, check=True, capture_output=True)
     subprocess.run(["tar", "-x", "-C", str(BEFORE_TREE)], input=archive.stdout, check=True)
-    shutil.copy(REPO / ".env", BEFORE_TREE / ".env")
-    env = {k: v for k, v in os.environ.items() if k != "VIRTUAL_ENV"}  # the snapshot's own venv
+    env = server_env()
     quiet = {"cwd": BEFORE_TREE, "env": env, "check": True, "stdout": subprocess.DEVNULL}
     subprocess.run(["uv", "sync", "-q"], **quiet)
     manage = ["uv", "run", "python", "manage.py"]

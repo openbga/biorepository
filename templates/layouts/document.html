@@ -100,7 +100,7 @@ core/templatetags/navigation.py. Error pages (400/403/404) keep this shell for s
   <div class="vr-shell">
     <main class="vr-main" id="main" tabindex="-1"{% block form_surface_attributes %}{% if form_surface %} data-vr-form-page data-vr-form-url="{{ request.get_full_path }}" data-vr-form-size="{{ form_surface.size }}"{% endif %}{% endblock %}>
       {% block page_header %}
-      <div class="vr-page-header">
+      <div class="vr-page-header" data-page-kind="{% block page_kind %}{% endblock %}">
         {% block breadcrumbs %}{% endblock %}
         <div class="vr-page-header-row">
           <div>

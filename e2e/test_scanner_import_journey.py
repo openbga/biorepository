@@ -70,8 +70,9 @@ def test_scanner_upload_preview_errors_and_reviewed_completion(page, people, wor
         {"name": "observations.csv", "mimeType": "text/csv", "buffer": scanner_csv(audit)}
     )
     form.get_by_role("button", name="Load observations", exact=True).click()
-    expect(native_select(field(form, "A1: observed contents"))).to_have_value("empty")
+    # Wait for the re-rendered form (field() re-resolves) before reading a select's native value.
     expect(field(form, "A2: observed accession")).to_have_value("SYNTHETIC-SCANNER-001")
+    expect(native_select(field(form, "A1: observed contents"))).to_have_value("empty")
     expect(field(form, "Completion reason")).to_have_value("Synthetic scanner review")
     assert not AuditFinalization.objects.exists()
     assert events.count() == events_before

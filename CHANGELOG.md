@@ -68,6 +68,10 @@ The same list is shown in the application under What's new.
 
   Requests awaiting my decision now opens exactly the requests it counts, and every dashboard count matches the rows its link opens. A specimen journey at the top of the dashboard shows where work is waiting, from receipt and storage through check-out to distribution or disposal.
 
+- **Changed:** Distribution and quality pages show status and key facts first (2026-11-18)
+
+  Distribution and quality records open with their status and labelled key facts, one main action with the rest under More, and their history in its own panels. Institutions, investigators and specimen types show their names before their codes.
+
 - **Added:** Export the filtered deviation register (2026-11-18, Deviations)
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
@@ -79,6 +83,10 @@ The same list is shown in the application under What's new.
 - **Changed:** Page help opens with a summary, common tasks and good-to-know notes (2026-11-18)
 
   Help on every page now starts with a short summary, the common tasks with the exact buttons to use, and a few things good to know. The full field reference is still there, collapsed behind a filter.
+
+- **Changed:** The specimen record's header shows what matters first (2026-11-18)
+
+  A specimen's header now shows its status (including an active hold), type, amount on hand, a running time-out-of-storage clock while it is checked out, and its thaw count. Print label and Request disposal moved into the More menu.
 
 - **Added:** Export the training register to CSV (2026-11-17, Training records)
 

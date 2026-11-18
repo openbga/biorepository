@@ -13,10 +13,11 @@ rows with row.info = the Allocation), packed (allocations in a packed shipment),
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
+{# form: entry-grid #}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% include "distribution/requests/_grid_head.html" with formset_label="specimens" note="Putting back is an ordinary check-in: the position is checked again when you save." %}
-  {% if packed %}<div class="alert alert-info" role="status">{% status label="In a packed shipment" tone="info" plain=True %}<div>{% for a in packed %}<span class="vr-id">{{ a.specimen.accession }}</span> ({{ a.shipment.number }}){% if not forloop.last %}, {% endif %}{% endfor %}: unpack the shipment before putting {{ packed|length|pluralize:"it,them" }} back.</div></div>{% endif %}
+  {% if packed %}{% notice tone="info" label="In a packed shipment" %}{% for a in packed %}<span class="vr-id">{{ a.specimen.accession }}</span> ({{ a.shipment.number }}){% if not forloop.last %}, {% endif %}{% endfor %}: unpack the shipment before putting {{ packed|length|pluralize:"it,them" }} back.{% endnotice %}{% endif %}
   <fieldset class="vr-form-section">
     <legend>Picked specimens</legend>
     {{ formset.management_form }}

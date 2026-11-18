@@ -14,11 +14,7 @@ allocate, pick, ship, close; one _progress_step.html each. Parameters: request_o
   {% else %}{% firstof 3 as step %}{% endif %}
 {% elif s == "closed" %}{% firstof 7 as step %}
 {% else %}{% firstof 0 as step %}{% endif %}
-<section class="card mb-3 vr-progress-card" aria-labelledby="progress-heading">
-  <div class="card-header"><h2 class="card-title" id="progress-heading">Progress</h2>
-    {% if s == "rejected" or s == "cancelled" %}<span class="vr-count">Ended: {{ request_obj.get_status_display|lower }}</span>{% elif s == "closed" %}<span class="vr-count">All steps done</span>{% endif %}
-  </div>
-  <div class="card-body">
+{% panel title="Progress" heading_id="progress-heading" class="mb-3" %}{% fill count %}{% if s == "rejected" or s == "cancelled" %}Ended: {{ request_obj.get_status_display|lower }}{% elif s == "closed" %}All steps done{% endif %}{% endfill %}
     {% with st=step|add:0 %}
     <ol class="vr-steps">
       {% include "distribution/requests/_progress_step.html" with n=1 label="Prepare" %}
@@ -44,6 +40,5 @@ allocate, pick, ship, close; one _progress_step.html each. Parameters: request_o
     </p>
     {% endif %}
     {% endwith %}
-  </div>
-</section>
+{% endpanel %}
 {% endwith %}

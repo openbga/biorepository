@@ -90,7 +90,7 @@
     {
       "title": "Receipt",
       "paragraphs": [
-        "After dispatch: the receipt as reported by the recipient (who received and unpacked it and when, condition, refrigerant on arrival, temperature note, discrepancies, how it was reported, per-item exceptions and the attachment). A corrected receipt shows the latest version; earlier versions are kept under Earlier versions."
+        "After dispatch: the receipt as reported by the recipient (who received and unpacked it and when, condition, refrigerant on arrival, temperature note, discrepancies, how it was reported, per-item exceptions and the attachment). A corrected receipt shows the latest version; earlier versions are kept in the Earlier receipt versions panel below it."
       ]
     },
     {

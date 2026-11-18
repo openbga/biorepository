@@ -272,10 +272,11 @@ COMPONENTS = {
     ),
     # Single components
     "icon": Component(I + "icon.html", ("name", "class")),
+    "clock": Component(I + "clock.html", ("value", "running", "long", "label")),
     "due_pill": Component(
         I + "due_pill.html", ("due", "soon_days", "today", "plain"), derive=due_pill_values
     ),
-    "status": Component(I + "status.html", ("label", "tone", "plain", "title")),
+    "status": Component(I + "status.html", ("label", "tone", "plain", "title", "size")),
     "brand": Component(I + "brand.html", ("href", "name", "variant", "repository")),
     "breadcrumbs": Component(
         I + "breadcrumbs.html",

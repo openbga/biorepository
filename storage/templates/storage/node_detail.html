@@ -57,4 +57,5 @@
 {% include "storage/_moves.html" with noun=node.get_kind_display|lower kind="node" obj=node %}
 {% include "storage/_history.html" %}
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=node.code %}{% endblock %}

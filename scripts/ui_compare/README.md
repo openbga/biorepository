@@ -26,6 +26,11 @@ open .local/shots/index.html
   `--recrawl` crawls again instead of replaying the before URLs (new pages appear only then).
 - `--roles demo_admin,demo_viewer` limits the roles; `--workers N` sets processes per role.
 
+The :8027 server gets a scrubbed environment (PATH, HOME and the `.env` settings without the
+demo passwords), since a DEBUG error page prints the process environment. A page or dialog that
+answers with a server error (5xx, including a fragment it loads) is never screenshotted: the run
+records only its URL and status as a gap.
+
 Images go to the ignored `.local/shots/<side>/<role>/<page-key>--<width>-<theme>.png`, with a
 `manifest.json` per side listing the pages, dialogs and any capture gaps (the command exits
 non-zero when there are gaps). The viewer, `.local/shots/index.html`, pairs before and after by

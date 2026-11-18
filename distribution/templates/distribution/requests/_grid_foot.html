@@ -7,7 +7,4 @@
 </fieldset>
 {% endfor %}{% endwith %}
 {% for field in form.hidden_fields %}{{ field }}{% endfor %}
-<div class="vr-form-actions">
-  <a class="btn btn-link" href="{{ back_url }}">Cancel</a>
-  {% if not blocked %}<button class="btn btn-primary" type="submit">{{ submit_label }}</button>{% endif %}
-</div>
+{% form_actions cancel_url=back_url submit_label=submit_label no_submit=blocked %}{% endform_actions %}

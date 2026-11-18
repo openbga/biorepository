@@ -10,6 +10,7 @@ button comes first so Enter in a field saves rather than adding or removing a ro
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
+{# form: entry-grid #}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% if not blocked %}<button class="visually-hidden" type="submit" tabindex="-1" aria-hidden="true">{{ submit_label }}</button>{% endif %}

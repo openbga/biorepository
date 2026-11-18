@@ -8,11 +8,10 @@ PDF records who generated it. Context (documents.pick_list_context): request_obj
 (queries.PickRow), blocked_count, repository_name, generated_at, crumbs, can_operate.
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li class="vr-id">{{ request_obj.number }}</li><li>{{ rows|length }} specimen{{ rows|length|pluralize }}</li>{% if blocked_count %}<li>{{ blocked_count }} cannot be picked now</li>{% endif %}</ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item label="Request" value=request_obj.number class="vr-id" %}{% meta_item label="Specimens" value=rows|length class="vr-id" %}{% if blocked_count %}{% meta_item %}{% status label=blocked_count|stringformat:"s"|add:" cannot be picked now" tone="warning" %}{% endmeta_item %}{% endif %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% if rows %}<a class="btn btn-primary" href="{% url 'distribution:pick-list-pdf' request_obj.pk %}">{% icon name="download" %}Download PDF</a>{% endif %}{% endblock %}
 {% block content %}
-<section class="card vr-table-card" aria-labelledby="pick-heading">
-  <div class="card-header"><h2 class="card-title" id="pick-heading">Allocated specimens in walking order</h2><span class="vr-count">{{ rows|length }}</span>{% if can_operate and rows %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:pick' request_obj.pk %}">Pick specimens</a>{% endif %}</div>
+{% panel title="Allocated specimens in walking order" heading_id="pick-heading" table=True %}{% fill count %}{{ rows|length }}{% endfill %}{% fill actions %}{% if can_operate and rows %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:pick' request_obj.pk %}">Pick specimens</a>{% endif %}{% endfill %}
   {% if rows %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">#</th><th scope="col">Specimen</th><th scope="col">Type</th><th scope="col" class="text-end">Amount</th><th scope="col">Location</th><th scope="col">Consent restrictions</th><th scope="col">Cannot be picked now</th></tr></thead>
@@ -20,16 +19,16 @@ PDF records who generated it. Context (documents.pick_list_context): request_obj
       <tr>
         <td class="vr-id">{{ forloop.counter }}</td>
         <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' row.specimen.pk %}">{{ row.specimen.accession }}</a></th>
-        <td>{{ row.specimen.specimen_type.code }}</td>
+        <td>{{ row.specimen.specimen_type.name }} <span class="vr-muted vr-id">{{ row.specimen.specimen_type.code }}</span></td>
         <td class="text-end vr-id">{{ row.specimen.quantity_on_hand|amount:row.specimen.unit }}</td>
         <td class="vr-id vr-path">{% if row.path %}{% include "storage/_path.html" with p=row.path %}{% else %}Not in storage{% endif %}</td>
         <td class="vr-wrap small">{{ row.restrictions|default:"—" }}</td>
         <td>{% for b in row.blockers %}{% blocker_status b %}<span class="d-block small">{{ b.message }}</span>{% empty %}<span class="vr-muted">—</span>{% endfor %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  <div class="card-body pt-0"><p class="vr-muted small mb-0">Locations as recorded now, <time datetime="{{ generated_at|date:'c' }}">{{ generated_at|date:"Y-m-d H:i" }}</time>. Picking checks every specimen again.</p></div>
+  <p class="vr-muted small">Locations as recorded now, <time datetime="{{ generated_at|date:'c' }}">{{ generated_at|date:"Y-m-d H:i" }}</time>. Picking checks every specimen again.</p>
   {% else %}
-  <div class="card-body">{% empty_state title="Nothing to pick" body="No specimens of this request are allocated and waiting to be picked." %}</div>
+  {% empty_state title="Nothing to pick" body="No specimens of this request are allocated and waiting to be picked." %}
   {% endif %}
-</section>
+{% endpanel %}
 {% endblock %}

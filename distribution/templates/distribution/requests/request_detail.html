@@ -12,50 +12,47 @@ decision_row), shipments (with planned_count, item_count), refusal (why this use
 or ""), today, use_categories, studies, actions, timeline, toc, history,
 can_manage, can_operate, can_decide.
 {% endcomment %}
+{% block page_kind %}record{% endblock %}
 {% block breadcrumbs %}{% url 'distribution:request-list' as list_url %}{% breadcrumbs section="Requests" section_url=list_url current=request_obj.number %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ request_obj.number }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% distribution_status "request" request_obj.status %}</li><li>{{ request_obj.title }}</li><li>{{ request_obj.investigator.name }}</li><li>{{ request_obj.institution.name }}</li></ul>{% endblock %}
+{% block page_meta %}{% page_meta %}{% meta_item %}{% distribution_status "request" request_obj.status %}{% endmeta_item %}{% meta_item label="Title" value=request_obj.title %}{% meta_item label="Investigator" value=request_obj.investigator.name %}{% meta_item label="Institution" value=request_obj.institution.name %}{% endpage_meta %}{% endblock %}
 {% block page_actions %}{% include "distribution/requests/_header_actions.html" with actions=actions %}{% endblock %}
 {% block content %}
 {% page_toc items=toc %}
 {% if request_obj.status == "submitted" %}
-<div class="alert alert-info" role="status">{% distribution_status "request" request_obj.status plain=True %}<div>Submission {{ request_obj.latest_submission }} awaits a decision by a person with request decision permission who did not create or submit it.{% if refusal %} {{ refusal }}{% endif %}</div></div>
+{% status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}Submission {{ request_obj.latest_submission }} awaits a decision by a person with request decision permission who did not create or submit it.{% if refusal %} {{ refusal }}{% endif %}{% endnotice %}
 {% elif request_obj.status == "returned" %}
-<div class="alert alert-warning" role="status">{% distribution_status "request" request_obj.status plain=True %}<div>The decision returned it for changes. Edit it and submit it again.</div></div>
+{% status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}The decision returned it for changes. Edit it and submit it again.{% endnotice %}
 {% elif request_obj.status == "draft" and request_obj.latest_submission %}
-<div class="alert alert-warning" role="status">{% distribution_status "request" request_obj.status plain=True %}<div>Reopened after a decision. It needs a new decision; its allocations cannot be picked, packed or dispatched until then.</div></div>
+{% status_parts "request" request_obj.status as st %}{% notice tone=st.tone label=st.label %}Reopened after a decision. It needs a new decision; its allocations cannot be picked, packed or dispatched until then.{% endnotice %}
 {% elif request_obj.status == "approved" and not request_obj.agreement %}
-<div class="alert alert-warning" role="status">{% status label="No agreement" tone="warning" plain=True %}<div>Dispatch needs an executed agreement with {{ request_obj.institution.name }} that is valid on the dispatch date.{% if can_manage %} Link one with Link agreement.{% endif %}</div></div>
+{% notice tone="warning" label="No agreement" %}Dispatch needs an executed agreement with {{ request_obj.institution.name }} that is valid on the dispatch date.{% if can_manage %} Link one with Link agreement.{% endif %}{% endnotice %}
 {% endif %}
 
 {% include "distribution/requests/_progress.html" %}
-<section class="card mb-3" aria-labelledby="facts-heading">
-  <div class="card-header"><h2 class="card-title" id="facts-heading">Request</h2></div>
-  <div class="card-body"><dl class="vr-facts">
-    <div><dt>Title</dt><dd>{{ request_obj.title }}</dd></div>
-    <div><dt>Investigator</dt><dd>{{ request_obj.investigator.name }} <span class="vr-muted vr-id">{{ request_obj.investigator.code }}</span>{% if request_obj.investigator.email %}<span class="d-block vr-muted small">{{ request_obj.investigator.email }}</span>{% endif %}</dd></div>
-    <div><dt>Institution</dt><dd>{{ request_obj.institution.name }} <span class="vr-muted vr-id">{{ request_obj.institution.code }}</span></dd></div>
-    <div><dt>Purpose</dt><dd class="vr-wrap">{{ request_obj.purpose|linebreaksbr }}</dd></div>
-    <div><dt>Uses requested</dt><dd>{% for c in use_categories %}<span class="vr-id">{{ c.code }}</span>{% if not forloop.last %}, {% endif %}{% empty %}None chosen{% endfor %}</dd></div>
-    <div><dt>Studies</dt><dd>{% for s in studies %}<a class="vr-id" href="{% url 'distribution:study-detail' s.pk %}">{{ s.code }}</a>{% if not forloop.last %}, {% endif %}{% empty %}Any study{% endfor %}</dd></div>
-    <div><dt>Ethics approval</dt><dd>{{ request_obj.ethics_reference|default:"None recorded" }}{% if request_obj.ethics_approved_until %}, valid until <time datetime="{{ request_obj.ethics_approved_until|date:'Y-m-d' }}">{{ request_obj.ethics_approved_until|date:"Y-m-d" }}</time>{% if request_obj.ethics_approved_until < today %} <span class="vr-muted">(past)</span>{% endif %}{% endif %}</dd></div>
-    <div><dt>Data requested</dt><dd class="vr-wrap">{{ request_obj.data_requested|linebreaksbr|default:"None" }}</dd></div>
-    <div><dt>Needed by</dt><dd>{% if request_obj.needed_by %}<time datetime="{{ request_obj.needed_by|date:'Y-m-d' }}">{{ request_obj.needed_by|date:"Y-m-d" }}</time>{% else %}Not given{% endif %}</dd></div>
-    <div><dt>Received by</dt><dd>{{ request_obj.get_received_via_display }}</dd></div>
-    <div><dt>Agreement</dt><dd>{% if request_obj.agreement %}<a class="vr-id" href="{% url 'distribution:agreement-detail' request_obj.agreement_id %}">{{ request_obj.agreement.number }}</a> {{ request_obj.agreement.title }} {% agreement_validity request_obj.agreement today %}{% if request_obj.agreement.expires_on %}<span class="d-block vr-muted small">Expires <time datetime="{{ request_obj.agreement.expires_on|date:'Y-m-d' }}">{{ request_obj.agreement.expires_on|date:"Y-m-d" }}</time>; data level {{ request_obj.agreement.get_data_level_display|lower }}.</span>{% endif %}{% else %}None linked{% endif %}</dd></div>
-    <div><dt>Created</dt><dd><time datetime="{{ request_obj.created_at|date:'c' }}">{{ request_obj.created_at|date:"Y-m-d H:i" }}</time> by {{ request_obj.created_by|person }}</dd></div>
-  </dl></div>
-</section>
+{% panel title="Request" heading_id="facts-heading" class="mb-3" %}<dl class="vr-facts">
+    {% fact label="Title" %}{{ request_obj.title }}{% endfact %}
+    {% fact label="Investigator" %}{{ request_obj.investigator.name }} <span class="vr-muted vr-id">{{ request_obj.investigator.code }}</span>{% if request_obj.investigator.email %}<span class="d-block vr-muted small">{{ request_obj.investigator.email }}</span>{% endif %}{% endfact %}
+    {% fact label="Institution" %}{{ request_obj.institution.name }} <span class="vr-muted vr-id">{{ request_obj.institution.code }}</span>{% endfact %}
+    {% fact label="Purpose" class="vr-wrap" %}{{ request_obj.purpose|linebreaksbr }}{% endfact %}
+    {% fact label="Uses requested" %}{% for c in use_categories %}<span class="vr-id">{{ c.code }}</span>{% if not forloop.last %}, {% endif %}{% empty %}None chosen{% endfor %}{% endfact %}
+    {% fact label="Studies" %}{% for s in studies %}<a class="vr-id" href="{% url 'distribution:study-detail' s.pk %}">{{ s.code }}</a>{% if not forloop.last %}, {% endif %}{% empty %}Any study{% endfor %}{% endfact %}
+    {% fact label="Ethics approval" %}{{ request_obj.ethics_reference|default:"None recorded" }}{% if request_obj.ethics_approved_until %}, valid until <time datetime="{{ request_obj.ethics_approved_until|date:'Y-m-d' }}">{{ request_obj.ethics_approved_until|date:"Y-m-d" }}</time>{% if request_obj.ethics_approved_until < today %} <span class="vr-muted">(past)</span>{% endif %}{% endif %}{% endfact %}
+    {% fact label="Data requested" class="vr-wrap" %}{{ request_obj.data_requested|linebreaksbr|default:"None" }}{% endfact %}
+    {% fact label="Needed by" %}{% if request_obj.needed_by %}<time datetime="{{ request_obj.needed_by|date:'Y-m-d' }}">{{ request_obj.needed_by|date:"Y-m-d" }}</time>{% else %}Not given{% endif %}{% endfact %}
+    {% fact label="Received by" %}{{ request_obj.get_received_via_display }}{% endfact %}
+    {% fact label="Agreement" %}{% if request_obj.agreement %}<a class="vr-id" href="{% url 'distribution:agreement-detail' request_obj.agreement_id %}">{{ request_obj.agreement.number }}</a> {{ request_obj.agreement.title }} {% agreement_validity request_obj.agreement today %}{% if request_obj.agreement.expires_on %}<span class="d-block vr-muted small">Expires <time datetime="{{ request_obj.agreement.expires_on|date:'Y-m-d' }}">{{ request_obj.agreement.expires_on|date:"Y-m-d" }}</time>; data level {{ request_obj.agreement.get_data_level_display|lower }}.</span>{% endif %}{% else %}None linked{% endif %}{% endfact %}
+    {% fact label="Created" %}<time datetime="{{ request_obj.created_at|date:'c' }}">{{ request_obj.created_at|date:"Y-m-d H:i" }}</time> by {{ request_obj.created_by|person }}{% endfact %}
+  </dl>{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="lines-heading">
-  <div class="card-header"><h2 class="card-title" id="lines-heading">Lines</h2><span class="vr-count">{{ items|length }}</span>{% if can_operate and request_obj.is_editable %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:request-items' request_obj.pk %}">Edit lines</a>{% endif %}</div>
+{% panel title="Lines" heading_id="lines-heading" table=True class="mb-3" %}{% fill count %}{{ items|length }}{% endfill %}{% fill actions %}{% if can_operate and request_obj.is_editable %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:request-items' request_obj.pk %}">Edit lines</a>{% endif %}{% endfill %}
   {% if items %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Line</th><th scope="col">Specimen type</th><th scope="col">Study</th><th scope="col" class="text-end">Requested (specimens)</th><th scope="col" class="text-end">Minimum amount each</th><th scope="col" class="text-end">Allocated</th><th scope="col" class="text-end">Picked</th><th scope="col" class="text-end">Shipped</th><th scope="col">Notes</th>{% if can_manage and request_obj.status == "approved" %}<th scope="col"><span class="visually-hidden">Actions</span></th>{% endif %}</tr></thead>
     <tbody>{% for item in items %}
       <tr>
         <th scope="row" class="vr-id">{{ item.line }}</th>
-        <td>{{ item.specimen_type }}</td>
+        <td>{{ item.specimen_type.name }} <span class="vr-muted vr-id">{{ item.specimen_type.code }}</span></td>
         <td>{% if item.study %}<span class="vr-id">{{ item.study.code }}</span>{% else %}<span class="vr-muted">Any</span>{% endif %}</td>
         <td class="text-end vr-id">{{ item.count }}</td>
         <td class="text-end vr-id">{% if item.minimum_quantity is not None %}{{ item.minimum_quantity|amount:item.unit }}{% else %}<span class="vr-muted">—</span>{% endif %}</td>
@@ -66,11 +63,10 @@ can_manage, can_operate, can_decide.
         {% if can_manage and request_obj.status == "approved" %}<td>{% if item.remaining %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:allocate' request_obj.pk item.pk %}">Allocate<span class="visually-hidden"> line {{ item.line }}</span></a>{% else %}<span class="vr-muted small">All allocated</span>{% endif %}</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% if can_operate and request_obj.is_editable %}{% url 'distribution:request-items' request_obj.pk as items_url %}{% empty_state title="No lines yet" body="Add what kind of material is requested and how much before submitting." action_url=items_url action_label="Edit lines" %}{% else %}{% empty_state title="No lines" body="The request has no lines." %}{% endif %}</div>{% endif %}
-</section>
+  {% else %}{% if can_operate and request_obj.is_editable %}{% url 'distribution:request-items' request_obj.pk as items_url %}{% empty_state title="No lines yet" body="Add what kind of material is requested and how much before submitting." action_url=items_url action_label="Edit lines" %}{% else %}{% empty_state title="No lines" body="The request has no lines." %}{% endif %}{% endif %}
+{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="allocations-heading">
-  <div class="card-header"><h2 class="card-title" id="allocations-heading">Allocations</h2><span class="vr-count">{{ allocations|length }}</span>{% if counts.allocated %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:pick-list' request_obj.pk %}">Pick list</a>{% endif %}</div>
+{% panel title="Allocations" heading_id="allocations-heading" table=True class="mb-3" %}{% fill count %}{{ allocations|length }}{% endfill %}{% fill actions %}{% if counts.allocated %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:pick-list' request_obj.pk %}">Pick list</a>{% endif %}{% endfill %}
   {% if allocations %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Specimen</th><th scope="col">State</th><th scope="col">Line</th><th scope="col">Type</th><th scope="col" class="text-end">Amount</th><th scope="col">Location</th><th scope="col">Shipment</th><th scope="col">Cannot be picked now</th></tr></thead>
@@ -79,19 +75,18 @@ can_manage, can_operate, can_decide.
         <th scope="row"><a class="vr-row-link vr-id" href="{% url 'specimens:specimen-detail' a.specimen_id %}">{{ a.specimen.accession }}</a></th>
         <td>{% distribution_status "allocation" a.state plain=True %}</td>
         <td class="vr-id">{{ a.item.line }}</td>
-        <td>{{ a.specimen.specimen_type.code }}</td>
+        <td>{{ a.specimen.specimen_type.name }} <span class="vr-muted vr-id">{{ a.specimen.specimen_type.code }}</span></td>
         <td class="text-end vr-id">{{ a.specimen.quantity_on_hand|amount:a.specimen.unit }}</td>
         <td class="vr-id vr-path">{% if a.path %}{% include "storage/_path.html" with p=a.path %}{% elif a.state == "picked" %}Picked, out of storage{% elif a.state == "shipped" %}Outside the repository{% else %}Not in storage{% endif %}</td>
         <td>{% if a.shipment %}<a class="vr-id" href="{% url 'distribution:shipment-detail' a.shipment_id %}">{{ a.shipment.number }}</a>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
         <td>{% for b in a.blockers %}{% blocker_status b %}<span class="d-block small">{{ b.message }}</span>{% empty %}<span class="vr-muted">—</span>{% endfor %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% if request_obj.status == "approved" %}{% empty_state title="Nothing allocated yet" body="A manager allocates specimens to each line with Allocate. Allocation reserves the specimen, not its position." %}{% else %}{% empty_state title="Nothing allocated" body="Specimens are allocated once the request is approved." %}{% endif %}</div>{% endif %}
-</section>
+  {% else %}{% if request_obj.status == "approved" %}{% empty_state title="Nothing allocated yet" body="A manager allocates specimens to each line with Allocate. Allocation reserves the specimen, not its position." %}{% else %}{% empty_state title="Nothing allocated" body="Specimens are allocated once the request is approved." %}{% endif %}{% endif %}
+{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="submissions-heading">
-  <div class="card-header"><h2 class="card-title" id="submissions-heading">Submissions and decisions</h2><span class="vr-count">{{ submissions|length }}</span></div>
-  {% if submissions %}
+{% panel title="Submissions and decisions" heading_id="submissions-heading" table=True class="mb-3" %}{% fill count %}{{ submissions|length }}{% endfill %}
+  {% list_results items=submissions empty_title="Not submitted yet" empty_body="Submitting keeps the request as it is then as a numbered submission for the decision." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Submission</th><th scope="col">Submitted</th><th scope="col">Decision</th><th scope="col">Decided</th><th scope="col">Committee reference</th><th scope="col">Conditions</th><th scope="col">Conflicts of interest</th><th scope="col">Reason</th></tr></thead>
     <tbody>{% for s in submissions %}{% with d=s.decision_row %}
@@ -106,12 +101,11 @@ can_manage, can_operate, can_decide.
         <td class="vr-wrap">{{ d.reason|default:"" }}</td>
       </tr>{% endwith %}{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% empty_state title="Not submitted yet" body="Submitting keeps the request as it is then as a numbered submission for the decision." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
-<section class="card vr-table-card mb-3" aria-labelledby="shipments-heading">
-  <div class="card-header"><h2 class="card-title" id="shipments-heading">Shipments</h2><span class="vr-count">{{ shipments|length }}</span>{% if can_operate and request_obj.status == "approved" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:shipment-create' request_obj.pk %}">{% icon name="plus-lg" %}New shipment</a>{% endif %}</div>
-  {% if shipments %}
+{% panel title="Shipments" heading_id="shipments-heading" table=True class="mb-3" %}{% fill count %}{{ shipments|length }}{% endfill %}{% fill actions %}{% if can_operate and request_obj.status == "approved" %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'distribution:shipment-create' request_obj.pk %}">{% icon name="plus-lg" %}New shipment</a>{% endif %}{% endfill %}
+  {% list_results items=shipments empty_title="No shipments" empty_body="A shipment is prepared once specimens are picked." %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Shipment</th><th scope="col">State</th><th scope="col">Ship to</th><th scope="col" class="text-end">Specimens</th><th scope="col">Dispatched</th></tr></thead>
     <tbody>{% for s in shipments %}
@@ -123,15 +117,12 @@ can_manage, can_operate, can_decide.
         <td class="vr-nowrap">{% if s.dispatched_at %}<time datetime="{{ s.dispatched_at|date:'c' }}">{{ s.dispatched_at|date:"Y-m-d H:i" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
-  {% else %}<div class="card-body">{% empty_state title="No shipments" body="A shipment is prepared once specimens are picked." %}</div>{% endif %}
-</section>
+  {% endlist_results %}
+{% endpanel %}
 
-<section class="card mb-3" aria-labelledby="timeline-heading">
-  <div class="card-header"><h2 class="card-title" id="timeline-heading">Timeline</h2><span class="vr-count">{{ timeline|length }} entr{{ timeline|length|pluralize:"y,ies" }}, oldest first</span></div>
-  <div class="card-body">{% if timeline %}<ol class="vr-timeline">
-    {% for e in timeline %}{% history_item title=e.title at=e.at actor=e.actor reason=e.reason detail=e.detail %}{% endfor %}
-  </ol>{% else %}{% empty_state title="Nothing recorded yet" %}{% endif %}</div>
-</section>
+{% history_panel events=timeline title="Timeline" heading_id="timeline-heading" class="mb-3" empty_title="Nothing recorded yet" %}{% fill count %}{{ timeline|length }} entr{{ timeline|length|pluralize:"y,ies" }}, oldest first{% endfill %}
+  {% for e in timeline %}{% history_item title=e.title at=e.at actor=e.actor reason=e.reason detail=e.detail %}{% endfor %}
+{% endhistory_panel %}
 
 {% include "storage/_history.html" %}
 {% endblock %}

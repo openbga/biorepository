@@ -74,13 +74,14 @@ form (ImportCommitForm).
   <div class="card-header"><h2 class="card-title" id="commit-heading">Register these specimens</h2></div>
   <div class="card-body">
     {% if may_commit %}
-    <form class="vr-form" method="post" action="{% url 'specimens:import-commit' batch.pk %}" novalidate>
-      {% csrf_token %}
-      <p class="vr-form-note">All {{ batch.row_count }} rows are registered together, or none if anything changed since validation. Each specimen gets its own ID. The validation expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.</p>
+    {% url 'specimens:import-commit' batch.pk as commit_url %}
+    {% with n=batch.row_count|stringformat:"s" s=batch.row_count|pluralize %}{% with label="Register "|add:n|add:" specimen"|add:s %}
+    {% form_page form=form action=commit_url local=True submit_label=label title="Register these specimens" %}
+      {% fill note %}All {{ batch.row_count }} rows are registered together, or none if anything changed since validation. Each specimen gets its own ID. The validation expires <time datetime="{{ batch.expires_at|date:'c' }}">{{ batch.expires_at|date:"Y-m-d H:i" }}</time>.{% endfill %}
       <fieldset class="vr-form-section">{{ form.reason.as_field_group }}</fieldset>
       {{ form.expected_sha256 }}
-      <div class="vr-form-actions"><button class="btn btn-primary" type="submit">Register {{ batch.row_count }} specimen{{ batch.row_count|pluralize }}</button></div>
-    </form>
+    {% endform_page %}
+    {% endwith %}{% endwith %}
     {% else %}
     <p class="mb-0">Only the person who validated the file or a repository manager can commit it.</p>
     {% endif %}
@@ -88,4 +89,5 @@ form (ImportCommitForm).
 </section>
 {% endif %}
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=page_title %}{% endblock %}

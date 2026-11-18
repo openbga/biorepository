@@ -226,6 +226,9 @@
   --vr-motion-fast: 160ms;
   --vr-z-raised: 1;
   --vr-z-menu: 1060; /* select menus and date popovers: over the top bar, and within a dialog */
+  --vr-z-confirm-backdrop: 1065; /* a confirmation stacked over the form dialog, and its scrim */
+  --vr-z-confirm: 1070;
+  --vr-z-sticky: 5; /* a form dialog's sticky action row, over enhanced fields scrolled beneath it */
 
   /* Space: a 4px-step scale (rem of the 14px desktop root), and the panel spacing system shared
      with Environmental LIMS (same names): content sits --vr-panel-inset from a panel's edge, and
@@ -1877,6 +1880,129 @@ a.vr-path-seg:hover {
   }
 }
 
+/* Record pass: a record page's header ({% block page_kind %}record) is one panel. The title is
+   the ice cell; each {% meta_item %} is a cell (label over value) after a dashed rule, status
+   first in its large capsule; a running clock's cell (li.is-warm) is the region's one warm
+   emphasis; the actions sit inside on the right. Breadcrumbs stay above the panel. */
+.vr-page-header[data-page-kind="record"] .vr-page-header-row {
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border-radius: var(--vr-radius-xl);
+  background: var(--vr-surface);
+  box-shadow: var(--vr-shadow-panel), inset 0 1px 0 var(--vr-frost-edge);
+}
+
+.vr-page-header[data-page-kind="record"] .vr-page-header-row > :first-child {
+  flex: 1 1 32rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+
+[data-page-kind="record"] .vr-page-title {
+  display: flex;
+  flex: none;
+  align-items: center;
+  padding: var(--vr-space-4) var(--vr-space-8) var(--vr-space-4) var(--vr-space-6);
+  background: var(--vr-cold-bg);
+  color: var(--vr-cold-text);
+}
+
+/* The cells wrap among themselves, to the right of the title cell. */
+[data-page-kind="record"] .vr-page-meta {
+  flex: 1 1 0;
+  min-width: 12rem;
+  align-items: stretch;
+  gap: 0;
+  margin: -1px 0 0; /* the first row's top rule sits under the pass edge, which clips it */
+}
+
+[data-page-kind="record"] .vr-page-meta > li {
+  flex: 0 0 auto; /* cells wrap whole; a long value (a storage path) wraps only past the row */
+  max-width: 100%;
+  padding: var(--vr-space-4) var(--vr-space-5);
+  border-top: 1px dashed var(--vr-border);
+  border-left: 1px dashed var(--vr-border);
+  color: var(--vr-text);
+  font-size: var(--vr-font-size-3);
+  font-weight: var(--vr-font-weight-semibold);
+}
+
+[data-page-kind="record"] .vr-page-meta > li:first-child {
+  border-left: 0;
+}
+
+/* The status cell has no label: its capsule centres in the cell. */
+[data-page-kind="record"] .vr-page-meta > li:first-child:not(:has(.vr-meta-label)) {
+  display: flex;
+  align-items: center;
+}
+
+/* Label over value inside the pass; the value is inline content (a path, a status, a time). */
+[data-page-kind="record"] .vr-meta-label {
+  display: block;
+  margin-bottom: var(--vr-space-1);
+}
+
+.vr-meta-label {
+  font-family: var(--vr-font-sans); /* a label, also when its value is an identifier or amount */
+  font-stretch: normal;
+  color: var(--vr-text-muted);
+  font-size: var(--vr-font-size-1);
+  font-weight: var(--vr-font-weight-regular);
+}
+
+[data-page-kind="record"] .vr-page-meta > li.is-warm {
+  background: var(--vr-warm-bg);
+  color: var(--vr-warm-text);
+}
+
+[data-page-kind="record"] .vr-page-meta > li.is-warm .vr-meta-label {
+  color: var(--vr-warm-text);
+}
+
+/* Intro and dateline run under the cells, across the pass. */
+[data-page-kind="record"] :is(.vr-page-intro, .vr-dateline) {
+  flex-basis: 100%;
+  max-width: none;
+  margin: 0;
+  padding: var(--vr-space-3) var(--vr-space-6);
+  border-top: 1px dashed var(--vr-border);
+}
+
+/* The actions fill what the cells leave; when they wrap under the cells they take the full width,
+   still right-aligned from 992px. */
+[data-page-kind="record"] .vr-page-actions {
+  flex: 1 1 auto;
+  max-width: none;
+  align-content: center;
+  padding: var(--vr-space-4) var(--vr-space-6);
+}
+
+@media (min-width: 992px) {
+  [data-page-kind="record"] .vr-page-actions {
+    flex-grow: 0; /* the cells take the room; the actions keep their own width */
+    max-width: 50%;
+  }
+}
+
+/* A toggle that draws its own chevron (includes/more_actions.html) drops Bootstrap's caret. */
+.dropdown-toggle:has(> .vr-caret)::after {
+  display: none;
+}
+
+.vr-caret {
+  margin-left: var(--vr-space-1);
+}
+
+/* Narrow: the title and the cells fill their rows. */
+@media (max-width: 767.98px) {
+  [data-page-kind="record"] :is(.vr-page-title, .vr-page-meta > li) {
+    flex: 1 1 auto;
+  }
+}
+
 /* Dateline: today's date in the repository's time zone on an overview (includes/dateline.html).
    Cryo shows it as a quiet line, never as an eyebrow above the title. */
 .vr-dateline {
@@ -2930,6 +3056,37 @@ fieldset.vr-field > legend {
   display: none;
 }
 
+/* A dialog ends with its form's action row: header actions move to the dialog header
+   (form-dialog.js tags them data-vr-page-action), where they are small secondary tools. */
+.vr-form-dialog :is(.vr-page-only, [data-vr-form-page] > .vr-page-actions) {
+  display: none;
+}
+
+.vr-form-dialog-header [data-vr-page-action].btn {
+  --bs-btn-padding-y: 0;
+  --bs-btn-padding-x: var(--vr-space-3);
+  --bs-btn-font-size: var(--vr-font-size-2);
+  min-height: var(--vr-control-height-sm);
+}
+
+/* A confirmation (includes/confirm_dialog.html) may open over the form dialog (Discard changes):
+   it and its own scrim sit above the dialog. Bootstrap does not stack modals itself. */
+.vr-confirm-dialog {
+  z-index: var(--vr-z-confirm);
+}
+
+.modal-backdrop ~ .modal-backdrop {
+  z-index: var(--vr-z-confirm-backdrop);
+}
+
+.vr-confirm-dialog .modal-dialog {
+  max-width: 28rem;
+}
+
+.vr-confirm-dialog :is(.modal-header, .modal-body, .modal-footer) {
+  padding-inline: var(--vr-space-6);
+}
+
 .vr-form-dialog .vr-form,
 .vr-form-dialog .vr-form-wide > .vr-form-section {
   max-width: none;
@@ -2960,9 +3117,11 @@ fieldset.vr-field > legend {
   padding-inline: 0;
 }
 
+/* The dialog's action row is a sticky footer and always its last element. */
 .vr-form-dialog .vr-form-actions {
   position: sticky;
   bottom: calc(-1 * var(--vr-dialog-pad));
+  z-index: var(--vr-z-sticky);
   margin: 1.5rem calc(-1 * var(--vr-dialog-pad)) calc(-1 * var(--vr-dialog-pad));
   padding: 0.75rem var(--vr-dialog-pad);
   border-top: 1px solid var(--vr-border);

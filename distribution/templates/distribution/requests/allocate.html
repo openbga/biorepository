@@ -14,25 +14,27 @@ submit_label, back_url, crumbs, facts.
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
+{# form: filter #}
 <form class="vr-form vr-form-wide mb-3" method="get" role="search" aria-label="Find candidates">
   <fieldset class="vr-form-section">
     <legend>Find specimens</legend>
     <div class="row g-3">
-      <div class="col-md"><div class="vr-field"><label class="form-label" for="cand-q">Specimen ID contains</label><input class="form-control" type="search" id="cand-q" name="q" value="{{ filters.q|default:'' }}" maxlength="40"></div></div>
-      <div class="col-md"><div class="vr-field"><label class="form-label" for="cand-participant">Participant code</label><input class="form-control" type="search" id="cand-participant" name="participant" value="{{ filters.participant|default:'' }}" maxlength="40"></div></div>
-      <div class="col-md"><div class="vr-field"><label class="form-label" for="cand-collection">Collection code</label><input class="form-control" type="search" id="cand-collection" name="collection" value="{{ filters.collection|default:'' }}" maxlength="40"></div></div>
+      <div class="col-md">{% grid_search label="Specimen ID contains" name="q" id="cand-q" value=filters.q %}</div>
+      <div class="col-md">{% grid_search label="Participant code" name="participant" id="cand-participant" value=filters.participant %}</div>
+      <div class="col-md">{% grid_search label="Collection code" name="collection" id="cand-collection" value=filters.collection %}</div>
     </div>
     <div class="vr-filter-actions"><button class="btn btn-outline-secondary" type="submit">Apply</button>{% if filters %}<a class="btn btn-link" href="{{ request.path }}">Clear all</a>{% endif %}</div>
   </fieldset>
 </form>
+{# form: entry-grid #}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% include "distribution/requests/_grid_head.html" with note="Allocation reserves the specimen, not its position: it stays where it is, cannot be disposed of meanwhile, and is checked again when picked." %}
-  {% if unlisted_blockers %}<div class="alert alert-danger" role="alert">{% status label="Refused" tone="danger" plain=True %}<ul class="mb-0 ps-3">{% for accession, labels in unlisted_blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul></div>{% endif %}
+  {% if unlisted_blockers %}{% notice tone="danger" label="Refused" blocking=True %}<ul class="mb-0 ps-3">{% for accession, labels in unlisted_blockers %}<li><span class="vr-id">{{ accession }}</span>: {{ labels|join:", " }}</li>{% endfor %}</ul>{% endnotice %}{% endif %}
   <fieldset class="vr-form-section">
     <legend>Candidates</legend>
-    <p class="vr-form-note">Available specimens of {{ line.specimen_type }}{% if line.study %} in study {{ line.study.code }}{% endif %}. Tick up to {{ remaining }}. Same type left counts the participant's available specimens of this type, this one included: allocating the last ones depletes the participant's material.</p>
-    {% if candidates %}
+    <p class="vr-form-note">Available specimens of {{ line.specimen_type.name }} ({{ line.specimen_type.code }}){% if line.study %} in study {{ line.study.code }}{% endif %}. Tick up to {{ remaining }}. Same type left counts the participant's available specimens of this type, this one included: allocating the last ones depletes the participant's material.</p>
+    {% list_results items=page_obj noun="candidates" filtered=filters clear_url=request.path empty_title="No available specimens of this type" empty_body="Only available specimens of the line's type, in the studies the line or request names, are offered." no_results_title="No candidates match" no_results_body="Change or clear the search." %}
     <div class="vr-table-wrap">
       <table class="table vr-table" id="candidates-grid">
         <thead><tr>
@@ -49,7 +51,7 @@ submit_label, back_url, crumbs, facts.
         <tbody>
           {% for c in candidates %}
           <tr{% if c.errors %} class="table-danger"{% endif %}>
-            <td><input class="form-check-input" type="checkbox" name="specimen" value="{{ c.value }}" id="choose-{{ forloop.counter }}"{% if c.chosen %} checked{% endif %}{% if c.blockers or blocked %} disabled aria-describedby="why-{{ forloop.counter }}"{% endif %}><label class="visually-hidden" for="choose-{{ forloop.counter }}">Allocate {{ c.specimen.accession }}</label></td>
+            <td>{% with n=forloop.counter|stringformat:"s" %}{% with label="Allocate "|add:c.specimen.accession id="choose-"|add:n why="why-"|add:n %}{% if c.blockers or blocked %}{% row_select name="specimen" value=c.value label=label id=id checked=c.chosen disabled=True describedby=why %}{% else %}{% row_select name="specimen" value=c.value label=label id=id checked=c.chosen %}{% endif %}{% endwith %}{% endwith %}</td>
             <th scope="row"><a class="vr-id" href="{% url 'specimens:specimen-detail' c.specimen.pk %}">{{ c.specimen.accession }}</a></th>
             <td class="vr-id">{{ c.specimen.participant.code|default:"—" }}</td>
             <td class="vr-id">{{ c.study.code|default:"—" }}</td>
@@ -63,10 +65,7 @@ submit_label, back_url, crumbs, facts.
         </tbody>
       </table>
     </div>
-    {% pagination page_obj=page_obj noun="candidates" %}
-    {% else %}
-    {% if filters %}{% empty_state kind="no-results" title="No candidates match" body="Change or clear the search." clear_url=request.path %}{% else %}{% empty_state title="No available specimens of this type" body="Only available specimens of the line's type, in the studies the line or request names, are offered." %}{% endif %}
-    {% endif %}
+    {% endlist_results %}
   </fieldset>
   {% include "distribution/requests/_grid_foot.html" %}
 </form>

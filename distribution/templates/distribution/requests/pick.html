@@ -11,6 +11,7 @@ row.errors_for_row), request_obj, blocked, submit_label, back_url, crumbs, facts
 {% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block content %}
+{# form: entry-grid #}
 <form class="vr-form vr-form-wide" method="post" novalidate>
   {% csrf_token %}
   {% include "distribution/requests/_grid_head.html" with formset_label="specimens" note="Picking is an ordinary check-out: the position becomes free and the time-out-of-storage clock starts. Locations and reasons are checked again when you save." %}

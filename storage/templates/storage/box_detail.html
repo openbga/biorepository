@@ -71,4 +71,5 @@
 {% include "storage/_moves.html" with noun="box" kind="box" obj=box %}
 {% include "storage/_history.html" %}
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=box.code %}{% endblock %}

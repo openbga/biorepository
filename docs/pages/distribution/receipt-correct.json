@@ -83,7 +83,7 @@
     {
       "title": "What happens",
       "paragraphs": [
-        "A corrected receipt is added; the earlier one stays, listed under Earlier versions on the shipment. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
+        "A corrected receipt is added; the earlier one stays, listed under Earlier receipt versions on the shipment. If someone changed the record after you opened the form, saving is refused with a message to reload; your entries stay in the form and the next save uses the current version."
       ]
     }
   ],

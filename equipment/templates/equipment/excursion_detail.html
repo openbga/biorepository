@@ -100,4 +100,5 @@ shown, events (with change_rows, detail), own_submission, toc, history, can_mana
 
 {% include "storage/_history.html" %}
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=excursion.number %}{% endblock %}

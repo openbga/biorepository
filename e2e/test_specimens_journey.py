@@ -193,7 +193,7 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     assert specimen.quantity_on_hand == Decimal("2") and specimen.participant.code == "P-000123"
 
     # Label: preview, then the PDF carries the ID.
-    page.locator(".vr-page-actions").get_by_role("link", name="Print label").click()
+    record_action(page, "Print label")
     expect(page.get_by_role("heading", level=1)).to_contain_text("label", ignore_case=True)
     href = page.get_by_role("link", name="Download PDF").get_attribute("href")
     response = page.request.get(href)
@@ -220,7 +220,8 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     field(form, "Destination").fill("Processing bench 2")
     field(form, "Reason").fill("Aliquoting")
     submit(form, "Record check-out")
-    expect(page.locator(".vr-page-meta")).to_contain_text("Checked out")
+    expect(page.locator(".vr-page-meta .is-warm")).to_contain_text("Out of storage")
+    expect(page.locator('.vr-page-meta .vr-clock[data-state="running"]')).to_be_visible()
 
     record_action(page, "Make aliquots or derivatives")
     form = dialog(page)
@@ -275,7 +276,8 @@ def test_first_journey_from_registration_to_disposal(page: Page, tmp_path, trans
     sign_out(page, r"specimens_tech")
 
     sign_in(page, approver.username, PASSWORD)
-    page.get_by_role("link", name=re.compile("awaiting my approval", re.I)).click()
+    queues = page.get_by_role("region", name="Your work queues")
+    queues.get_by_role("link", name=re.compile("awaiting my approval", re.I)).click()
     page.get_by_role("link", name=re.compile(r"^Request \d{4}-")).first.click()
     page.locator(".vr-page-actions").get_by_role("link", name="Approve disposal").click()
     form = dialog(page)

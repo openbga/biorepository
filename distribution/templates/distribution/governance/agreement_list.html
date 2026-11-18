@@ -30,8 +30,8 @@
           <td>{% agreement_validity row today %}</td>
           <td>{{ row.get_kind_display }}</td>
           <td class="vr-wrap">{{ row.title }}</td>
-          <td class="vr-id">{{ row.institution.code }}</td>
-          <td class="vr-id">{{ row.investigator.code|default:"—" }}</td>
+          <td>{{ row.institution.name }} <span class="vr-muted vr-id">{{ row.institution.code }}</span></td>
+          <td>{% if row.investigator %}{{ row.investigator.name }} <span class="vr-muted vr-id">{{ row.investigator.code }}</span>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
           <td class="vr-nowrap">{% if row.expires_on %}<time datetime="{{ row.expires_on|date:'Y-m-d' }}">{{ row.expires_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">No end date</span>{% endif %}</td>
           <td class="vr-nowrap">{% if row.reporting_due_on %}<time datetime="{{ row.reporting_due_on|date:'Y-m-d' }}">{{ row.reporting_due_on|date:"Y-m-d" }}</time>{% else %}<span class="vr-muted">—</span>{% endif %}</td>
         </tr>

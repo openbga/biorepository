@@ -15,22 +15,23 @@ A distributed specimen has no custodian and no position: both read "Outside the 
 {% endcomment %}
 {% block breadcrumbs %}{% url 'specimens:specimen-list' as list_url %}{% breadcrumbs section="Specimens" section_url=list_url current=specimen.accession %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ specimen.accession }}</span>{% endblock %}
-{% block page_meta %}<ul class="vr-page-meta"><li>{% specimen_status specimen %}</li><li>{{ specimen.specimen_type.name }}</li><li class="vr-id">{{ specimen.quantity_on_hand|amount:specimen.unit }}</li>{% if location %}<li class="vr-id vr-path">{% include "storage/_path.html" with p=location %}</li>{% else %}<li>{% if state.checked_out %}{% if returned %}Returned, in hand{% else %}Checked out{% endif %}{% elif specimen.is_distributed %}Outside the repository{% else %}Not in storage{% endif %}</li>{% endif %}{% if specimen.custodian %}<li>{{ specimen.custodian.get_full_name|default:specimen.custodian.get_username }}</li>{% endif %}</ul>{% endblock %}
+{% block page_meta %}{% page_meta %}
+{% meta_item %}{% specimen_status specimen held=True size="lg" %}{% endmeta_item %}
+{% meta_item label="Type" value=specimen.specimen_type.name %}
+{% meta_item label="On hand" value=specimen.quantity_on_hand|amount:specimen.unit class="vr-id" %}
+{% if timeout.open %}{% if returned %}{% meta_item label="Returned, in hand" warm=True %}{% clock value=timeout.total|duration running=True %}{% endmeta_item %}{% else %}{% meta_item label="Out of storage" warm=True %}{% clock value=timeout.total|duration running=True %}{% endmeta_item %}{% endif %}{% endif %}
+{% meta_item label="Thaws" value=thaw|thaw_text %}
+{% endpage_meta %}{% endblock %}
 {% block page_actions %}
-{% if destructive %}{% if destructive.reason %}<button class="btn btn-outline-danger" type="button" disabled aria-describedby="dispose-why">{{ destructive.label }}</button>{% else %}<a class="btn btn-outline-danger" href="{{ destructive.url }}">{{ destructive.label }}</a>{% endif %}{% endif %}
-<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?id={{ specimen.pk }}">{% icon name="printer" %}Print label</a>
-{% if more %}
-<div class="dropdown">
-  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">More</button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    {% for item in more %}
-    <li>{% if item.reason %}<span class="dropdown-item disabled text-wrap" aria-disabled="true">{{ item.label }}<span class="d-block small">{{ item.reason }}</span></span>{% else %}<a class="dropdown-item" href="{{ item.url }}">{{ item.label }}</a>{% endif %}</li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
+{% more_actions %}
+<li><a class="dropdown-item" href="{% url 'specimens:label-preview' %}?id={{ specimen.pk }}">{% icon name="printer" %}Print label</a></li>
+{% for item in more %}
+<li>{% if item.reason %}<span class="dropdown-item disabled text-wrap" aria-disabled="true">{{ item.label }}<span class="d-block small">{{ item.reason }}</span></span>{% else %}<a class="dropdown-item" href="{{ item.url }}">{{ item.label }}</a>{% endif %}</li>
+{% endfor %}
+{% if destructive %}<li><hr class="dropdown-divider"></li>
+<li>{% if destructive.reason %}<span class="dropdown-item disabled text-wrap" aria-disabled="true" data-vr-action="dispose">{{ destructive.label }}<span class="d-block small">{{ destructive.reason }}</span></span>{% else %}<a class="dropdown-item" href="{{ destructive.url }}" data-vr-action="dispose">{{ destructive.label }}</a>{% endif %}</li>{% endif %}
+{% endmore_actions %}
 {% if primary %}{% if primary.reason %}<button class="btn btn-primary" type="button" disabled aria-describedby="primary-why">{{ primary.label }}</button>{% else %}<a class="btn btn-primary" href="{{ primary.url }}">{{ primary.label }}</a>{% endif %}{% endif %}
-{% if destructive.reason %}<span class="vr-action-note" id="dispose-why">{{ destructive.label }}: {{ destructive.reason }}</span>{% endif %}
 {% if primary.reason %}<span class="vr-action-note" id="primary-why">{{ primary.label }}: {{ primary.reason }}</span>{% endif %}
 {% endblock %}
 {% block content %}
@@ -53,15 +54,6 @@ A distributed specimen has no custodian and no position: both read "Outside the 
   {% if hold.reference %}<span class="d-block vr-muted small">Released through its workflow: {{ hold.reference }}</span>{% elif can_manage %}<a class="btn btn-sm btn-outline-secondary ms-2" href="{% url 'specimens:hold-release' hold.pk %}">Release hold</a>{% endif %}</div>
 </div>
 {% endfor %}
-{% if specimen.open_checkout %}{% with out=specimen.open_checkout %}
-<div class="alert alert-info" role="status">
-  {% if returned %}{% status label="Returned, in hand" tone="warning" plain=True %}
-  <div>Returned, in hand of {{ out.to_custodian.get_full_name|default:out.to_custodian.get_username }} since <time datetime="{{ out.occurred_at|date:'c' }}">{{ out.occurred_at|date:"Y-m-d H:i" }}</time>{% if out.destination %} (from {{ out.destination }}){% endif %}. Record a check-in to store it. Time out of storage is running: {{ timeout.total|duration }} in total.</div>
-  {% else %}{% status label="Checked out" tone="warning" plain=True %}
-  <div>Checked out since <time datetime="{{ out.occurred_at|date:'c' }}">{{ out.occurred_at|date:"Y-m-d H:i" }}</time> to {{ out.to_custodian.get_full_name|default:out.to_custodian.get_username }}{% if out.destination %}, destination {{ out.destination }}{% endif %}. Time out of storage is running: {{ timeout.total|duration }} in total.</div>
-  {% endif %}
-</div>
-{% endwith %}{% endif %}
 {% if open_request %}
 <div class="alert alert-info" role="status">
   {% request_status open_request.state plain=True %}
@@ -85,7 +77,7 @@ A distributed specimen has no custodian and no position: both read "Outside the 
     <div><dt>Processing</dt><dd>{% if specimen.processing_started_at %}<time datetime="{{ specimen.processing_started_at|date:'c' }}">{{ specimen.processing_started_at|date:"Y-m-d H:i" }}</time> to {% if specimen.processing_completed_at %}<time datetime="{{ specimen.processing_completed_at|date:'c' }}">{{ specimen.processing_completed_at|date:"Y-m-d H:i" }}</time>{% else %}not recorded{% endif %}{% else %}Not recorded{% endif %}</dd></div>
     <div><dt>Registered</dt><dd>{% with when=registration.occurred_at|default:specimen.registered_at %}<time datetime="{{ when|date:'c' }}">{{ when|date:"Y-m-d H:i" }}</time> by {{ specimen.registered_by.get_full_name|default:specimen.registered_by.get_username }}{% if when|date:"YmdHi" != specimen.registered_at|date:"YmdHi" %}<span class="d-block vr-muted small">Recorded <time datetime="{{ specimen.registered_at|date:'c' }}">{{ specimen.registered_at|date:"Y-m-d H:i" }}</time></span>{% endif %}{% endwith %}</dd></div>
     <div><dt>Custodian</dt><dd>{% if specimen.custodian %}{{ specimen.custodian.get_full_name|default:specimen.custodian.get_username }}{% else %}Outside the repository{% endif %}</dd></div>
-    <div><dt>Location</dt><dd>{% if location %}<span class="vr-id vr-path">{% include "storage/_path.html" with p=location %}</span>{% elif state.checked_out %}{% if returned %}Returned, in hand{% else %}Checked out{% endif %}{% elif specimen.is_disposed %}Disposed{% elif specimen.is_distributed %}Distributed: outside the repository{% if away_now.destination %}<span class="d-block vr-muted small">Sent to {{ away_now.destination }}</span>{% endif %}{% else %}Not in storage{% endif %}</dd></div>
+    <div><dt>Location</dt><dd>{% if location %}<span class="vr-id vr-path">{% include "storage/_path.html" with p=location %}</span>{% elif state.checked_out %}{% with out=specimen.open_checkout %}{% if returned %}Returned, in hand of {{ out.to_custodian.get_full_name|default:out.to_custodian.get_username }} since <time datetime="{{ out.occurred_at|date:'c' }}">{{ out.occurred_at|date:"Y-m-d H:i" }}</time>{% if out.destination %} (from {{ out.destination }}){% endif %}. Record a check-in to store it.{% else %}Checked out since <time datetime="{{ out.occurred_at|date:'c' }}">{{ out.occurred_at|date:"Y-m-d H:i" }}</time> to {{ out.to_custodian.get_full_name|default:out.to_custodian.get_username }}{% if out.destination %}, destination {{ out.destination }}{% endif %}.{% endif %}{% endwith %}{% elif specimen.is_disposed %}Disposed{% elif specimen.is_distributed %}Distributed: outside the repository{% if away_now.destination %}<span class="d-block vr-muted small">Sent to {{ away_now.destination }}</span>{% endif %}{% else %}Not in storage{% endif %}</dd></div>
     <div><dt>Time out of storage</dt><dd>{{ timeout.total|duration }}{% if timeout.open %} <span class="vr-muted">running</span>{% endif %}<span class="d-block vr-muted small">Sum of the periods in hand outside storage (check-outs, and returns until stored), computed from the custody events.</span></dd></div>
     {% if timeout.away %}<div><dt>Time away</dt><dd><ul class="list-unstyled mb-0">{% for period in timeout.away %}<li><time datetime="{{ period.started|date:'c' }}">{{ period.started|date:"Y-m-d H:i" }}</time> to {% if period.ended %}<time datetime="{{ period.ended|date:'c' }}">{{ period.ended|date:"Y-m-d H:i" }}</time>{% else %}now{% endif %}: {{ period.duration|duration }}{% if not period.ended %} <span class="vr-muted">running</span>{% endif %}{% if period.destination %} <span class="vr-muted">· {{ period.destination }}</span>{% endif %}</li>{% endfor %}</ul><span class="d-block vr-muted small">Dispatched until returned: outside the repository, not counted in time out of storage.</span></dd></div>{% endif %}
     {% if timeout.unplaced_since_registration is not None %}<div><dt>Registration to first storage</dt><dd class="vr-id">{{ timeout.unplaced_since_registration|duration }}{% if unplaced_running %} <span class="vr-muted">running, not yet stored</span>{% endif %}</dd></div>{% endif %}
@@ -216,4 +208,5 @@ A distributed specimen has no custodian and no position: both read "Outside the 
   </div>
 </section>
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=specimen.accession %}{% endblock %}

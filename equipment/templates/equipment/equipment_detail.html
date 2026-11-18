@@ -183,4 +183,5 @@ open_for_entries, retired_note, toc, history, recent, can_manage, can_operate.
 
 {% include "storage/_history.html" %}
 {% endblock %}
+{% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=equipment.code %}{% endblock %}
