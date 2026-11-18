@@ -107,6 +107,10 @@ The same list is shown in the application under What's new.
 
 ### Low impact
 
+- **Fixed:** Page help describes the specimen lookup and What's new link as they work (2026-11-18)
+
+  The help for the top bar now says that Find specimen ID opens the specimen with that ID, or the specimen list with a warning when none matches, and that the field is hidden on very narrow screens. The What's new help says the link appears on signed-in pages.
+
 - **Fixed:** Demonstration data no longer fails to load after a daylight-saving change (2026-11-15, [#10](https://github.com/openbga/biorepository/pull/10))
 
   Loading the full demonstration data near midnight after an autumn clock change could stop with an import error, because two temperature readings fell on the same local morning. Each demonstration reading now falls on its own local date.

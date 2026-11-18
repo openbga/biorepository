@@ -9,7 +9,7 @@ shell or secret manager, never in Git, tickets or logs.
 
 All state is in PostgreSQL: accounts, the repository record, announcements, the audit trail,
 storage, specimens, custody, equipment, distribution records, inventory audits, deviations and
-training records. Uploaded files (equipment and agreement attachments) are stored once in the `attachment` table as a binary column with their
+training records. Uploaded files (equipment and distribution attachments) are stored once in the `attachment` table as a binary column with their
 SHA-256 hash and size, so there is no file storage to back up separately. The container
 filesystem is disposable.
 
@@ -243,12 +243,8 @@ ALLOW_DEMO_RESET=true python manage.py reset_demo --full --announce-accounts
 Use `--full` for a public demonstration, as `render.demo.yaml` does. The plain seed holds the
 four accounts, the storage structure of one tank and one freezer, and one short specimen journey:
 enough to start from, too little to judge the product by. `--full` adds a believable working
-repository (about 350 specimens from 70 coded participants in seven storage units, aliquot
-families, check-outs in progress for up to a month, holds, disposal requests in every state,
-bulk imports, corrections, every unit's equipment record with about three months of service
-events, LN2 level checks, temperature readings and excursions, and distribution: studies,
-consent records and a withdrawal, agreements, requests, shipments, a receipt and a return), so a visitor opens the dashboard queues, filters and box maps onto
-real-looking records instead of an empty room. It is made through the same services as real
+repository ([contents](workflows.md#demonstration-accounts-and-reset)), so a visitor opens the
+dashboard queues, filters and box maps onto real-looking records instead of an empty room. It is made through the same services as real
 work, in 30 seconds to a minute and a half (tens of thousands of queries; the time follows the database's
 latency and load). Every record is invented, and times are relative
 to the reset, so the demonstration always looks like the day after the last reset. Without

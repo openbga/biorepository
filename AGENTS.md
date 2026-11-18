@@ -4,7 +4,8 @@ Working rules for AI coding agents. Human contributors: start with `CONTRIBUTING
 
 Read `docs/product.md`, `docs/architecture.md`, and the source/tests for assigned work. Product
 requirements belong in the product document; code is the implementation reference. Do not build
-another process manual.
+another process manual. When documentation and code disagree, the code is right. Follow the code
+and correct or delete the documentation.
 
 ## Scope
 
