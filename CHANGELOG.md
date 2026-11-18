@@ -72,6 +72,10 @@ The same list is shown in the application under What's new.
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
 
+- **Changed:** One date field, searchable menus and units beside numbers in every form (2026-11-18)
+
+  Dates and date-times use one typed field with a calendar (weeks start on Sunday; Today, Yesterday, Now and Clear; labelled with the repository time zone). Choice lists are searchable menus, numbers show their unit beside the field (°C, kg) and keep exactly what you type, file fields accept drag and drop, and hints open as tooltips.
+
 - **Changed:** Page help opens with a summary, common tasks and good-to-know notes (2026-11-18)
 
   Help on every page now starts with a short summary, the common tasks with the exact buttons to use, and a few things good to know. The full field reference is still there, collapsed behind a filter.
