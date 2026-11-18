@@ -150,7 +150,26 @@ def link_for(page: Page, href: str):
     return link
 
 
-def ready(page: Page):
+class LeftPage(Exception):
+    """The opener led to another page (re-authentication, a sign-in step), not the dialog."""
+
+
+OPENED = """opener => {
+    const dialog = document.getElementById('vr-form-dialog');
+    const content = document.getElementById('vr-form-content');
+    if (dialog && dialog.classList.contains('show') && content
+        && content.getAttribute('aria-busy') === 'false'
+        && content.querySelector('form, [role=alert]')) return 'dialog';
+    if (location.pathname !== opener) return 'left:' + location.pathname;
+    return '';
+}"""
+
+
+def ready(page: Page, opener: str = ""):
+    if opener:
+        outcome = page.wait_for_function(OPENED, arg=opener, timeout=10000).json_value()
+        if outcome.startswith("left:"):
+            raise LeftPage(outcome[5:])
     dialog = page.locator("#vr-form-dialog")
     expect(dialog).to_be_visible()
     expect(page.locator("#vr-form-content")).to_have_attribute("aria-busy", "false")
@@ -160,7 +179,7 @@ def ready(page: Page):
 def open_by_mouse(page: Page, item: dict):
     page.goto(item["opener"])
     link_for(page, item["href"]).click()
-    return ready(page)
+    return ready(page, urlsplit(item["opener"]).path)
 
 
 def blocked(dialog) -> bool:
@@ -217,6 +236,12 @@ DESCRIBE_FOCUS = """() => {
     if (!el || !el.closest('#vr-form-dialog')) return 'outside: ' + (el ? el.tagName : '');
     return el.outerHTML.slice(0, 80);
 }"""
+
+
+def leave(page: Page) -> None:
+    """Sign out from the dashboard: some account pages have no top bar."""
+    page.goto("/")
+    sign_out(page)
 
 
 def close_quietly(page: Page) -> None:
@@ -282,7 +307,7 @@ def check_keyboard(page: Page, item: dict, problems: list, notes: dict) -> None:
     link = link_for(page, item["href"])
     link.focus()
     page.keyboard.press("Enter")
-    dialog = ready(page)
+    dialog = ready(page, urlsplit(item["opener"]).path)
     if not page.evaluate("() => !!document.activeElement.closest('#vr-form-dialog')"):
         problems.append(f"{item['route']}: Enter opened the dialog without moving focus into it")
     field = page.locator(TEXT_FIELDS).filter(visible=True).first
@@ -291,6 +316,8 @@ def check_keyboard(page: Page, item: dict, problems: list, notes: dict) -> None:
         notes["keyboard"] = "opened and closed (no field to change)"
         return
     field.focus()
+    # Replace the value rather than append: a field at its maximum length ignores typing.
+    page.keyboard.press("ControlOrMeta+a")
     page.keyboard.type("x")
     page.keyboard.press("Escape")
     confirm = page.locator("#vr-form-discard")
@@ -393,7 +420,7 @@ def test_every_form_opens_and_works_by_mouse_and_keyboard(page: Page, full_demo,
     for account in ("demo_manager", "demo_admin"):
         sign_in(page, account, full_demo)
         discover(page, base, account, found, selected_apps())
-        sign_out(page)
+        leave(page)
     apps = selected_apps()
     items = sorted(
         (dict(route=route, **info) for route, info in found.items()),
@@ -426,6 +453,9 @@ def test_every_form_opens_and_works_by_mouse_and_keyboard(page: Page, full_demo,
                             check(page, item, problems, notes)
                         else:
                             fill_and_submit(page, item, notes)
+                    except LeftPage as exc:
+                        notes[step] = f"left the page for {exc} (no dialog to check)"
+                        page.goto("/")
                     except (PlaywrightError, AssertionError) as exc:
                         message = str(exc).splitlines()[0][:160]
                         if check:
@@ -435,7 +465,7 @@ def test_every_form_opens_and_works_by_mouse_and_keyboard(page: Page, full_demo,
                         else:
                             notes["submit"] = f"not reached: {message}"
                         close_quietly(page)
-            sign_out(page)
+            leave(page)
     if os.environ.get("FORM_SWEEP_REPORT"):
         with open(os.environ["FORM_SWEEP_REPORT"], "w") as handle:
             json.dump(

@@ -39,6 +39,10 @@
           "description": "Select a menu destination or a section tab to change pages. The current destination is marked and keyboard focus has a visible outline. Availability depends on the signed-in account and role; opening a direct link still checks permission."
         },
         {
+          "label": "Storage path bar",
+          "description": "A band under the top bar on pages about something in storage. It shows where it is, from the repository down: site, room, storage unit (with its nominal temperature), rack or shelf, box and position. Each level above the current one opens its page. While a specimen is out of storage, its freed position reads free while out and the band shows how long it has been out. On the dashboard and the storage overview the band lists every active storage unit instead, coldest first, with its nominal temperature, how full it is and a warning mark while an excursion is open; each unit opens its page. Nominal temperatures are set points, not measurements."
+        },
+        {
           "label": "What's new",
           "description": "What's new in the top bar opens the list of changes to this application, newest first. A number beside it counts the changes made since you last looked in this browser; opening the list clears it. The first visit in a browser starts with no number."
         },
@@ -105,6 +109,8 @@
     "tests/test_core_request_limits.py",
     "accounts/middleware.py",
     "accounts/adapter.py",
-    "accounts/tests/test_locked_credentials.py"
+    "accounts/tests/test_locked_credentials.py",
+    "templates/includes/storage_path.html",
+    "storage/pathbar.py"
   ]
 }

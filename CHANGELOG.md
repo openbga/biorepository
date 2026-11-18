@@ -68,6 +68,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Added:** A storage path bar shows where things are (2026-11-18)
+
+  Storage records and the specimen record show a path bar under the top bar, from the site down to the box and position, with the storage unit's nominal temperature. While a specimen is checked out, the bar marks the position it left and shows how long it has been out of storage.
+
 - **Fixed:** Dashboard counts open exactly the rows they count, with a specimen journey (2026-11-18)
 
   Requests awaiting my decision now opens exactly the requests it counts, and every dashboard count matches the rows its link opens. A specimen journey at the top of the dashboard shows where work is waiting, from receipt and storage through check-out to distribution or disposal.
@@ -79,6 +83,14 @@ The same list is shown in the application under What's new.
 - **Added:** Export the filtered deviation register (2026-11-18, Deviations)
 
   On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
+
+- **Changed:** Lists remember your columns, rows per page and sort on any workstation (2026-11-18)
+
+  List column layouts, rows per page and sort are remembered for each user on the server, so they follow you to any workstation and the next person at a shared one starts from the defaults. On narrower screens, less important columns start hidden; Columns brings them back.
+
+  Technical notes:
+
+  > Migration `core` 0004 adds the table `core_userpreference` (additive).
 
 - **Changed:** One date field, searchable menus and units beside numbers in every form (2026-11-18)
 

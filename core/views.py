@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import connection
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -73,6 +74,12 @@ def dashboard(request):
     all_queues = (
         queues(request.user) + equipment_queues(request.user) + distribution_queues(request.user)
     )
+    from storage import pathbar
+
+    try:  # the path bar's census of every active unit; none for a role that cannot read storage
+        census = pathbar.census(actor=request.user)
+    except PermissionDenied:
+        census = None
     return render(
         request,
         "core/dashboard.html",
@@ -81,6 +88,7 @@ def dashboard(request):
             "queues": all_queues,
             "journey": journey(all_queues, in_storage(request.user)),
             "recently_stored": recently_stored(request.user),
+            "storage_census": census,
         },
     )
 
