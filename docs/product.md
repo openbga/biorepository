@@ -132,7 +132,9 @@ Acceptance outcomes:
     one box, then reviewed before completion.
 17. Staff can report a deviation, record investigation, corrective action and effectiveness
     evidence, and submit it for a separate manager's review. Corrections, returns and reopening
-    keep the earlier record and reason without changing inventory or holds.
+    keep the earlier record and reason without changing inventory or holds. Staff can export the
+    six deviation register columns for a search and status in the selected sort order. The
+    individual report holds the investigation, review and history.
 18. Managers assign staff training with an optional deadline, record completion and assessment
     evidence, and retain corrections and cancellation. Staff can find assignments and renewal
     dates that need attention and export the filtered register in its displayed order. The CSV

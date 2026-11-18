@@ -6,7 +6,7 @@ What was added or changed in OpenBGA Biorepository, newest first. Changes are
 grouped by the calendar month they were merged in and ranked from high to low impact.
 The same list is shown in the application under What's new.
 
-## November 2026 (2026-11-13 to 2026-11-17)
+## November 2026 (2026-11-13 to 2026-11-18)
 
 ### High impact
 
@@ -59,6 +59,10 @@ The same list is shown in the application under What's new.
   > Django and PostgreSQL with Bootstrap and HTMX, licensed AGPL-3.0-only. Run `migrate` before the first start; `seed_demo` loads synthetic demonstration records and must stay away from a real repository database. This software supports a repository's own records and does not certify compliance or accreditation.
 
 ### Medium impact
+
+- **Added:** Export the filtered deviation register (2026-11-18, Deviations)
+
+  On Deviations, apply a search and status filter, then choose Export CSV to download the six register columns in the selected order. The file includes matching reports across all pages.
 
 - **Added:** Export the training register to CSV (2026-11-17, Training records)
 

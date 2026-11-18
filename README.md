@@ -50,7 +50,8 @@ compliance or accreditation.
 - **Deviations:** report an issue, record investigation, corrective action and effectiveness
   evidence, then submit for a separate manager's review. Optional links connect a report to an
   excursion or inventory audit. Corrections, returns and reopening retain the earlier values and
-  reasons. Review changes no specimen status or hold.
+  reasons. Staff can download the filtered deviation register as a CSV for review meetings.
+  Review changes no specimen status or hold.
 - **Training:** staff assignments with explicit due dates, completion evidence, trainer/provider,
   optional competency assessments and renewal dates. Managers record corrections and cancellation
   with retained history. Staff can filter the register and export matching rows to CSV. Records do

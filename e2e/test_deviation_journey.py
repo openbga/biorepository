@@ -1,9 +1,12 @@
 """A reported deviation retains corrections through independent review and reopening."""
 
+import csv
+import io
 import re
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
-from helpers import field, sign_in, sign_out
+from helpers import field, save_download, sign_in, sign_out
 from playwright.sync_api import expect
 
 from specimens.tests import conftest as specimen_fixtures
@@ -20,7 +23,7 @@ def ready_dialog(page):
     return dialog
 
 
-def test_deviation_report_investigation_review_and_reopening(page, people):
+def test_deviation_report_investigation_review_and_reopening(page, people, tmp_path):
     from quality.models import Deviation, DeviationEvent
 
     sign_in(page, people["technician"].username, PASSWORD)
@@ -114,7 +117,24 @@ def test_deviation_report_investigation_review_and_reopening(page, people):
     expect(page.get_by_role("link", name="Edit", exact=True)).to_have_count(0)
     expect(page.get_by_role("link", name="Submit for review", exact=True)).to_have_count(0)
     page.get_by_role("link", name="Deviations", exact=True).first.click()
-    page.locator('main input[name="q"]').fill("Synthetic work instruction")
-    page.get_by_role("button", name="Apply", exact=True).click()
+    toolbar = page.get_by_role("search", name="Filter deviations")
+    search = toolbar.get_by_role("searchbox")
+    search.fill("Synthetic work instruction")
+    toolbar.locator('[name="status"]').select_option("open")
+    toolbar.get_by_role("button", name="Apply", exact=True).click()
+    page.get_by_role("link", name="Deviation", exact=True).click()
     expect(page.get_by_role("link", name=deviation.number, exact=True)).to_be_visible()
+
+    search.fill("Unsaved synthetic search")
+    export = page.get_by_role("link", name="Export CSV", exact=True)
+    assert parse_qs(urlsplit(export.get_attribute("href")).query) == {
+        "q": ["Synthetic work instruction"],
+        "status": ["open"],
+        "sort": ["number"],
+    }
+    download = save_download(page, export.click, tmp_path / "deviations.csv")
+    records = csv.DictReader(io.StringIO(download.decode(), newline=""))
+    assert [record["Deviation"] for record in records] == [deviation.number]
+    page.locator(".vr-topbar [data-vr-documentation-toggle]").click()
+    expect(help_panel.get_by_role("heading", name="Export CSV", exact=True)).to_be_visible()
     assert page.console_errors == []

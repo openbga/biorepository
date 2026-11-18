@@ -13,6 +13,7 @@ urlpatterns = [
     path("training/<int:pk>/correct/", training_views.training_correct, name="training-correct"),
     path("training/<int:pk>/cancel/", training_views.training_cancel, name="training-cancel"),
     path("deviations/", deviation_views.deviation_list, name="deviation-list"),
+    path("deviations/export/", deviation_views.deviation_export, name="deviation-export"),
     path("deviations/new/", deviation_views.deviation_create, name="deviation-create"),
     path("deviations/<int:pk>/", deviation_views.deviation_detail, name="deviation-detail"),
     path("deviations/<int:pk>/edit/", deviation_views.deviation_edit, name="deviation-edit"),
