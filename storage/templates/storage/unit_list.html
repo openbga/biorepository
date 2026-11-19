@@ -27,7 +27,7 @@
           <td>{{ row.storage_class.name }}</td>
           <td>{{ row.get_technology_display }}</td>
           <td class="text-end vr-id">{{ row.nominal_temperature }}</td>
-          {% include "storage/_capacity_cells.html" %}
+          {% include "storage/_capacity_cells.html" with row=row scope="unit" only %}
           <td>{% include "storage/_status.html" with obj=row plain=True %}</td>
         </tr>
         {% endfor %}

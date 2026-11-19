@@ -27,7 +27,7 @@
           <td><a class="vr-id" href="{% url 'storage:node-detail' row.node_id %}">{{ row.node.code }}</a></td>
           <td class="text-end vr-id">{{ row.slot }}</td>
           <td><a class="vr-id" href="{% url 'storage:container-type-detail' row.container_type_id %}">{{ row.container_type }}</a></td>
-          {% include "storage/_capacity_cells.html" %}
+          {% include "storage/_capacity_cells.html" with row=row scope="box" only %}
           <td>{% include "storage/_status.html" with obj=row plain=True %}</td>
         </tr>
         {% endfor %}

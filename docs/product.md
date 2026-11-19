@@ -94,8 +94,9 @@ Acceptance outcomes:
 1. A manager defines storage: site, room, unit (with storage class, technology and nominal
    temperature), racks, towers, canisters or shelves, boxes, and positions from a container type
    with a grid and a numbering scheme. Templates build a unit like an existing one.
-2. Occupancy is visible per unit, rack and box. Staff can open the available positions in a
-   room, unit, rack, shelf or box from its free count and follow a position to the box grid. A retired
+2. Occupancy is visible per unit, rack and box. From a storage list or a location record, staff
+   can select a positive Free count to see available positions in that room, unit, rack, shelf or
+   box. Selecting a position opens its cell in the box grid. A retired
    box retains its grid and recorded block reasons. Every position is shown as unavailable.
 3. A technician registers a specimen. The system assigns an opaque ID. Type, container, amount
    with unit, collection and processing times, and an optional coded participant and collection

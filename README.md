@@ -19,7 +19,8 @@ compliance or accreditation.
 
 - **Storage:** sites, rooms, freezers and LN2 tanks (vapor or liquid phase), racks, towers,
   shelves and boxes, each box with a position grid from a container type. Occupancy is shown per
-  unit, rack and box. Select a Free count on a location record to find available positions there.
+  unit, rack and box. Select a Free count in a storage list or on a location record to open
+  the available positions there.
   Retired boxes keep their position labels and show every position as unavailable.
   Staff can search or block positions and move boxes and racks with their contents in one
   recorded event. Templates build a unit like an existing one. CSV downloads from storage lists and storage catalogues
