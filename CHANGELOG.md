@@ -163,6 +163,10 @@ The same list is shown in the application under What's new.
 
   Specimen and distribution lists and catalogues check the 10,000-row limit when you download a CSV. If another staff member changes the matching records, you receive the full selection within the limit or a message to narrow your filters. The audit trail records the number of data rows in each file.
 
+- **Fixed:** Retired boxes show every position as unavailable (2026-11-19, Boxes)
+
+  Open a retired box to see its original position labels and any block reasons recorded at retirement. The grid marks all positions as unavailable.
+
 - **Changed:** Account pages use sentence case and the standard controls (2026-11-18)
 
   Account pages use sentence case throughout (Email addresses, Make primary, Two-factor authentication, Change password). On the email page, Remove is an outlined destructive button at the start of the row, and address choices use the standard radio control.
