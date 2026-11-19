@@ -25,7 +25,7 @@
     {% fact label="Unit conditions" %}{{ node.unit.get_technology_display }}, {{ node.unit.nominal_temperature }} {{ node.unit.temperature_unit }} nominal{% endfact %}
   </dl>
 {% endpanel %}
-{% include "storage/_capacity.html" with c=node %}
+{% include "storage/_capacity.html" with c=node scope="node" location=node only %}
 {% if node.box_slots %}
 {% panel title="Box slots" heading_id="node-slots" table=True class="mb-3" %}{% fill count %}{{ node.box_count }} of {{ node.box_slots }} used{% endfill %}{% fill actions %}{% if can_manage and node.is_active and node.box_count < node.box_slots %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:box-create' %}?node={{ node.pk }}">{% icon name="plus-lg" %}Add box</a>{% endif %}{% endfill %}
 <div class="vr-table-wrap"><table class="table vr-table">
@@ -33,7 +33,7 @@
     <tbody>{% for slot, box in box_slots %}
       <tr>
         <th scope="row" class="text-end vr-id">{{ slot }}</th>
-        {% if box %}<td><a class="vr-id" href="{% url 'storage:box-detail' box.pk %}">{{ box.code }}</a></td><td>{{ box.container_type }}</td><td class="text-end vr-id">{{ box.installed }}</td><td class="text-end vr-id">{{ box.occupied }}</td><td class="text-end vr-id">{{ box.free }}</td>
+        {% if box %}<td><a class="vr-id" href="{% url 'storage:box-detail' box.pk %}">{{ box.code }}</a></td><td>{{ box.container_type }}</td><td class="text-end vr-id">{{ box.installed }}</td><td class="text-end vr-id">{{ box.occupied }}</td><td class="text-end vr-id">{% include "storage/_free_count.html" with count=box.free scope="box" location=box only %}</td>
         {% else %}<td colspan="5" class="vr-muted">Empty slot</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>
@@ -45,7 +45,7 @@
     <tbody>{% for slot, child in slots %}
       <tr>
         <th scope="row" class="text-end vr-id">{{ slot }}</th>
-        {% if child %}<td><a class="vr-id" href="{% url 'storage:node-detail' child.pk %}">{{ child.code }}</a> <span class="vr-muted">{{ child.name }}</span></td><td>{{ child.get_kind_display }}</td><td class="text-end vr-id">{{ child.installed }}</td><td class="text-end vr-id">{{ child.occupied }}</td><td class="text-end vr-id">{{ child.free }}</td>
+        {% if child %}<td><a class="vr-id" href="{% url 'storage:node-detail' child.pk %}">{{ child.code }}</a> <span class="vr-muted">{{ child.name }}</span></td><td>{{ child.get_kind_display }}</td><td class="text-end vr-id">{{ child.installed }}</td><td class="text-end vr-id">{{ child.occupied }}</td><td class="text-end vr-id">{% include "storage/_free_count.html" with count=child.free scope="node" location=child only %}</td>
         {% else %}<td colspan="5" class="vr-muted">Empty slot</td>{% endif %}
       </tr>{% endfor %}
     </tbody></table></div>

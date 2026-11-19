@@ -8,6 +8,13 @@
   "summary": "One site: its time zone, its rooms with their occupancy, and its history.",
   "tasks": [
     {
+      "title": "Find space in a room",
+      "steps": [
+        "In [[Rooms]], select the room’s [[Free]] count.",
+        "Select a position in the list to open its cell in the box grid."
+      ]
+    },
+    {
       "title": "Add a room",
       "steps": [
         "Admin and manager: select [[Add room]]."
@@ -50,7 +57,8 @@
     {
       "title": "Rooms",
       "paragraphs": [
-        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it."
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it.",
+        "A positive Free count opens the available positions in that room. Zero means there are currently none."
       ],
       "items": [
         {
@@ -91,6 +99,8 @@
     "storage/lists.py",
     "storage/queries.py",
     "storage/templates/storage/site_detail.html",
-    "templates/includes/history_panel.html"
+    "templates/includes/history_panel.html",
+    "storage/templates/storage/_free_count.html",
+    "storage/templates/storage/free_position_list.html"
   ]
 }

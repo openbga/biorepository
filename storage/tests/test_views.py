@@ -261,6 +261,67 @@ def test_list_filters_sorts_and_states(client, tree, people):
     assert free.context["page_obj"].paginator.count == 81
 
 
+def test_location_records_link_only_positive_free_counts_to_the_counted_scope(client, tree, people):
+    client.force_login(people["viewer"])
+    register = reverse("storage:free-position-list")
+    room = f"{register}?room={tree.room.pk}"
+    unit = f"{register}?unit={tree.unit.pk}"
+    tower = f"{register}?node={tree.tower.pk}"
+    shelf = f"{register}?node={tree.shelf1.pk}"
+    box = f"{register}?box={tree.box.pk}"
+
+    for kind, record, expected in (
+        ("site", tree.site, {room}),
+        ("room", tree.room, {room, unit}),
+        ("unit", tree.unit, {unit, tower, shelf, box}),
+        ("node", tree.tower, {tower, shelf}),
+        ("node", tree.shelf1, {shelf, box}),
+        ("box", tree.box, {box}),
+    ):
+        response = client.get(reverse(f"storage:{kind}-detail", args=[record.pk]))
+        assert response.status_code == 200
+        links = re.findall(rf'href="({re.escape(register)}\?[^"]+)"', response.content.decode())
+        assert set(links) == expected, (kind, record.code)
+
+    empty = client.get(reverse("storage:unit-detail", args=[tree.other_unit.pk])).content.decode()
+    assert f'href="{register}?' not in empty
+    assert re.search(r">Free</dt>\s*<dd\b[^>]*>\s*(?:<span\b[^>]*>)?0\b", empty)
+
+
+def test_viewer_follows_tower_free_count_to_available_box_position(client, tree, people):
+    manager, technician = people["manager"], people["technician"]
+    services.create_box(
+        actor=manager,
+        node_id=tree.rack.pk,
+        code="OTHER-BOX",
+        name="Other box",
+        slot=1,
+        container_type_id=tree.grid.pk,
+    )
+    place(technician, new_item(technician), cell(tree.box, "A1"))
+    services.set_position_blocked(
+        actor=manager,
+        position_id=cell(tree.box, "A2").pk,
+        expected_revision=1,
+        blocked=True,
+        reason="Damaged position",
+    )
+    gate = StorageGate.objects.get(pk=1).revision
+    client.force_login(people["viewer"])
+    tower = client.get(reverse("storage:node-detail", args=[tree.tower.pk]))
+    scoped = reverse("storage:free-position-list", query={"node": tree.tower.pk})
+    assert re.search(rf'<a\b[^>]*href="{re.escape(scoped)}"[^>]*>\s*79\b', tower.content.decode())
+    positions = client.get(scoped)
+    page = positions.context["page_obj"]
+    assert page.paginator.count == 79
+    assert page[0].pk == cell(tree.box, "A3").pk
+    box = reverse("storage:box-detail", args=[tree.box.pk])
+    anchor = f"position-{page[0].pk}"
+    assert f'href="{box}#{anchor}"' in positions.content.decode()
+    assert f'id="{anchor}" data-state="free"' in client.get(box).content.decode()
+    assert StorageGate.objects.get(pk=1).revision == gate
+
+
 def test_exports_match_filters_neutralize_formulas_and_are_audited(client, tree, people):
     services.edit_storage_definition(
         actor=people["manager"],

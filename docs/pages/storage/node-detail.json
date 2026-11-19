@@ -8,6 +8,13 @@
   "summary": "One rack, tower, shelf or canister: its slots and what fills them, occupancy, recorded moves and history.",
   "tasks": [
     {
+      "title": "Find space in this location",
+      "steps": [
+        "Select [[Free]] under [[Occupancy]] for this location and its contents, or select a count in the slots table.",
+        "Select a position in the list to open its cell in the box grid."
+      ]
+    },
+    {
       "title": "Add a box or shelf in a free slot",
       "steps": [
         "Admin and manager: select the Add button in the slots section, for example [[Add box]]."
@@ -67,7 +74,8 @@
     {
       "title": "Occupancy",
       "paragraphs": [
-        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it. For a node the counts include everything beneath it."
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it. For a node the counts include everything beneath it.",
+        "A positive Free count under Occupancy lists available positions throughout this location. A count in the slots table lists positions in that child location or box. A zero count has no link."
       ]
     },
     {
@@ -127,6 +135,8 @@
     "storage/templates/storage/node_detail.html",
     "storage/templates/storage/_capacity.html",
     "storage/templates/storage/_moves.html",
-    "templates/includes/history_panel.html"
+    "templates/includes/history_panel.html",
+    "storage/templates/storage/_free_count.html",
+    "storage/templates/storage/free_position_list.html"
   ]
 }

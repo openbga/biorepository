@@ -8,6 +8,13 @@
   "summary": "One freezer or tank: its facts, occupancy, racks and shelves, boxes and history.",
   "tasks": [
     {
+      "title": "Find space in the unit",
+      "steps": [
+        "Select [[Free]] under [[Occupancy]] for the whole unit, or select the count for a rack, shelf or box.",
+        "Select a position in the list to open its cell in the box grid."
+      ]
+    },
+    {
       "title": "Add racks or shelves",
       "steps": [
         "Admin and manager: select [[Add rack or shelf]]."
@@ -80,7 +87,8 @@
     {
       "title": "Occupancy",
       "paragraphs": [
-        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it."
+        "Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it.",
+        "A positive Free count opens available positions in the unit. Counts in the Racks and shelves and Boxes tables open the list for the selected row. A zero count has no link."
       ]
     },
     {
@@ -152,6 +160,8 @@
     "storage/services.py",
     "storage/templates/storage/unit_detail.html",
     "storage/templates/storage/_capacity.html",
-    "templates/includes/history_panel.html"
+    "templates/includes/history_panel.html",
+    "storage/templates/storage/_free_count.html",
+    "storage/templates/storage/free_position_list.html"
   ]
 }

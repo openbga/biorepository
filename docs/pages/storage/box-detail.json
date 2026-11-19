@@ -14,6 +14,13 @@
       ]
     },
     {
+      "title": "Find an available position",
+      "steps": [
+        "In the key above the grid, select the [[Free]] count.",
+        "Select a position in the list to open its cell in the box grid."
+      ]
+    },
+    {
       "title": "Take a position out of use",
       "steps": [
         "Admin and manager: select an empty position in the grid and block it with a reason."
@@ -77,7 +84,8 @@
         "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover); with the specimens module, a well whose specimen has an unreleased hold is marked as on hold. The key above the grid counts occupied, free, on hold and blocked positions and the total; a count of zero is muted. The grid is created in full with the box and never changes.",
         "Counts cover positions in active boxes; a retired box offers no free capacity. A checked-out item's position counts as free, and free positions are not reserved: a position is claimed only when an item is stored in it.",
         "Admin and manager roles can select any position that is not occupied to Block position or Unblock position while the box is active. An occupied position cannot be selected: move the item out first.",
-        "An occupied well that holds a specimen links to that specimen's record; hover shows its specimen ID and type, and screen readers hear the specimen ID after the position. Where no specimen can be shown, hover shows the storage key instead."
+        "An occupied well that holds a specimen links to that specimen's record; hover shows its specimen ID and type, and screen readers hear the specimen ID after the position. Where no specimen can be shown, hover shows the storage key instead.",
+        "A positive Free count above the grid lists available positions in this box in filling order. A zero count has no link."
       ]
     },
     {
@@ -150,6 +158,8 @@
     "storage/templates/storage/_capacity.html",
     "storage/templates/storage/_moves.html",
     "templates/includes/history_panel.html",
-    "storage/tests/test_views.py"
+    "storage/tests/test_views.py",
+    "storage/templates/storage/_free_count.html",
+    "storage/templates/storage/free_position_list.html"
   ]
 }
