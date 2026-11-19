@@ -349,6 +349,11 @@ def test_exports_match_filters_neutralize_formulas_and_are_audited(client, tree,
     assert client.get(reverse("storage:export", args=["nope"])).status_code == 404
     catalogue = client.get(reverse("storage:catalogue-export", args=["container-type"]))
     assert b"GRID-9X9" in catalogue.content
+    empty = client.get(reverse("storage:catalogue-export", args=["class"]), {"q": "ABSENT"})
+    assert empty.status_code == 200
+    assert len(list(csv.reader(io.StringIO(empty.content.decode())))) == 1  # Header only.
+    audit = AuditEvent.objects.get(action="storage.exported", object_id="class")
+    assert audit.after["rows"] == 0
     client.force_login(people["nobody"])
     assert client.get(reverse("storage:export", args=["unit"])).status_code == 403
 

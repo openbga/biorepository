@@ -134,7 +134,7 @@ def test_request_to_return_and_withdrawal(page: Page, transactional_db):
     pick_option(field(form, "Collection"), "^DEMO")
     field(form, "Reason").fill("Collection governed under the study")
     submit(form, "Link collection")
-    expect(page.locator("main")).to_contain_text("DEMO")
+    expect(page.get_by_role("rowheader", name="DEMO", exact=True)).to_be_visible()
 
     from accounts.models import User
     from distribution import services

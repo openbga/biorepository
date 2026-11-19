@@ -142,6 +142,7 @@ def test_dirty_dialog_keeps_edits_until_discard_is_explicit(page: Page, sign_in_
     # Escape in the pop-up means Keep editing.
     page.keyboard.press("Escape")
     expect(confirm).to_be_visible()
+    expect(keep).to_be_focused()
     page.keyboard.press("Escape")
     expect(confirm).to_be_hidden()
     expect(dialog).to_be_visible()

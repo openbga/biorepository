@@ -1,7 +1,7 @@
 import csv
 import io
 from concurrent.futures import ThreadPoolExecutor
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from threading import Barrier
 from unittest.mock import patch
 
@@ -182,19 +182,23 @@ def test_manager_can_record_own_training_and_exact_history(people, monkeypatch):
         assert exc.value.code == "invalid_transition"
 
 
+VALIDATION_DAY = date(2026, 1, 15)
+
+
 @pytest.mark.parametrize(
     "values",
     [
         {"completed_on": None},
-        {"completed_on": timezone.localdate() + timedelta(days=1)},
+        {"completed_on": VALIDATION_DAY + timedelta(days=1)},
         {"completed_on": "2026-01-01"},
-        {"completed_on": timezone.now()},
+        {"completed_on": datetime(2026, 1, 15, 12, tzinfo=UTC)},
         {"trainer_provider": " "},
         {"completion_evidence": " "},
-        {"renewal_due": timezone.localdate() - timedelta(days=3)},
+        {"renewal_due": VALIDATION_DAY - timedelta(days=3)},
     ],
 )
-def test_completion_validation_is_atomic(people, values):
+def test_completion_validation_is_atomic(people, values, monkeypatch):
+    monkeypatch.setattr(timezone, "localdate", lambda: VALIDATION_DAY)
     record = create(people)
     with pytest.raises(ValidationError):
         change(people, record, "complete", values=completion(**values))

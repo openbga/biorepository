@@ -21,7 +21,8 @@ compliance or accreditation.
   shelves and boxes, each box with a position grid from a container type. Occupancy is shown per
   unit, rack and box. Select a Free count on a location record to find available positions there.
   Staff can search or block positions and move boxes and racks with their contents in one
-  recorded event. Templates build a unit like an existing one.
+  recorded event. Templates build a unit like an existing one. CSV downloads from storage lists and storage catalogues
+  record the exported row count in the audit trail.
 - **Specimens:** registration with an opaque ID (`VP-000123` style) that carries no location or
   participant meaning, a coded participant (no names or record numbers), exact decimal amounts
   with units kept as a ledger, aliquots and derivatives with their lineage.

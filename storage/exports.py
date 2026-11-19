@@ -57,17 +57,16 @@ def _export(*, actor, spec, filters, sort, label):
     if form.errors:
         raise ValidationError("These filters cannot be applied.", code="invalid")
     queryset = ordered(spec, queryset, sort)
-    total = queryset.count()
-    if total > EXPORT_CAP:
-        raise ValidationError(
-            f"This selection has {total} rows; exports are limited to {EXPORT_CAP}. "
-            "Narrow the filters and export again.",
-            code="invalid",
-        )
-    buffer = io.StringIO()
+    buffer = io.StringIO(newline="")
     writer = csv.writer(buffer, lineterminator="\r\n")
     writer.writerow([header for header, _ in spec.export_columns])
-    for row in queryset[:EXPORT_CAP]:
+    total = 0
+    for total, row in enumerate(queryset[: EXPORT_CAP + 1].iterator(), start=1):
+        if total > EXPORT_CAP:
+            raise ValidationError(
+                f"Exports are limited to {EXPORT_CAP:,} rows. Narrow the filters and export again.",
+                code="invalid",
+            )
         writer.writerow([safe_cell(getter(row)) for _, getter in spec.export_columns])
     selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k != "page"}
     with transaction.atomic():

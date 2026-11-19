@@ -5,15 +5,19 @@ before commit) while "second" runs; `blocked` asks PostgreSQL whether "second" i
 behind it. Then "first" commits and "second" revalidates against the committed state.
 """
 
+import csv
+import io
 import threading
 import time
 
 import pytest
 from django.core.exceptions import ValidationError
 from django.db import connection
+from django.urls import reverse
 
+from core.models import AuditEvent
 from storage import services
-from storage.models import Box, MoveEvent, Occupancy, Position, StorageGate
+from storage.models import Box, MoveEvent, Occupancy, Position, Site, StorageGate
 
 from .conftest import ago, gate_revision, new_item, place
 from .test_occupancy import cell
@@ -168,3 +172,39 @@ def test_a_failed_audit_rolls_back_the_whole_operation(tree, people, monkeypatch
         )
     after = (Box.objects.count(), Position.objects.count(), StorageGate.objects.get().revision)
     assert after == before
+
+
+@pytest.mark.parametrize("cap", [2, 1], ids=["exact-limit", "over-limit"])
+def test_storage_export_uses_the_downloaded_rows_for_the_limit_and_audit(
+    client, people, monkeypatch, cap
+):
+    def add_site(code):
+        return services.create_site(actor=people["manager"], code=code, name=code, timezone="UTC")
+
+    add_site("EXAMPLE-A")
+    client.force_login(people["viewer"])
+    monkeypatch.setattr("storage.exports.EXPORT_CAP", cap)
+    outcomes = {}
+
+    def add_site_before_row_read(execute, sql, params, many, context):
+        # Commit the second site after any preliminary count, just before PostgreSQL reads
+        # the ordered rows. This interleaving needs neither sleeps nor a mocked row count.
+        if 'FROM "storage_site"' in sql and "ORDER BY" in sql and not outcomes:
+            worker = run("writer", lambda: add_site("EXAMPLE-B"), outcomes, {})
+            worker.join(15)
+            assert isinstance(outcomes.get("writer"), Site), outcomes
+        return execute(sql, params, many, context)
+
+    with connection.execute_wrapper(add_site_before_row_read):
+        response = client.get(reverse("storage:export", args=["site"]))
+    assert "writer" in outcomes
+    audits = AuditEvent.objects.filter(action="storage.exported", object_id="site")
+    if cap == 1:
+        assert response.status_code == 400
+        assert "Content-Disposition" not in response
+        assert not audits.exists()
+    else:
+        assert response.status_code == 200
+        rows = list(csv.reader(io.StringIO(response.content.decode())))[1:]
+        assert [row[0] for row in rows] == ["EXAMPLE-A", "EXAMPLE-B"]
+        assert audits.get().after["rows"] == len(rows)
