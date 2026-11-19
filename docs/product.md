@@ -115,7 +115,9 @@ Acceptance outcomes:
 10. Specimens import in bulk from CSV with a validation pass before anything is committed.
     Administrators, managers and technicians can download the six import register columns for
     all files matching their search, in the selected order. Each validation has its own row.
-11. Lists filter, sort, paginate and export to CSV.
+11. Lists filter, sort, paginate and export to CSV. CSV downloads from storage lists and storage
+    catalogues record the number of data rows in the file, including zero. If the selection exceeds 10,000 rows when
+    the export runs, staff must narrow it before downloading.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,
     old value, new value, reason. Controlled fields require a reason to change.
 13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,

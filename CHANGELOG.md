@@ -163,6 +163,10 @@ The same list is shown in the application under What's new.
 
   Account pages use sentence case throughout (Email addresses, Make primary, Two-factor authentication, Change password). On the email page, Remove is an outlined destructive button at the start of the row, and address choices use the standard radio control.
 
+- **Fixed:** Accurate row counts for storage CSV downloads (2026-11-18, Storage)
+
+  CSV exports from storage lists and storage catalogues now check the 10,000-row limit and record the audit count from the rows in the download, even when another staff member changes the inventory during export.
+
 - **Changed:** Ongoing excursions show a running clock and their extreme (2026-11-18)
 
   Ongoing temperature excursions show a running clock, and their extreme temperature beside the unit's nominal temperature.

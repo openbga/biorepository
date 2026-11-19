@@ -70,7 +70,7 @@
       "items": [
         {
           "label": "Export CSV",
-          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file. Any role that can read this list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe, and numbers are exact decimals. Each download is recorded in the audit trail with who exported which selection and how many rows, never the file itself."
+          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file. Any role that can read this list can download it. The download uses the rows that match when the export runs. If more than 10,000 rows match, narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe, and numbers are exact decimals. The audit trail records who exported the selection and the number of data rows in the CSV. An over-limit request produces no download or export event."
         },
         {
           "label": "New room",
