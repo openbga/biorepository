@@ -8,20 +8,21 @@
   "summary": "One storage class and the units that use it.",
   "tasks": [
     {
+      "title": "Find a unit in this class",
+      "steps": [
+        "Select its code under Storage units, or select [[All units in this class]] to open the filtered register.",
+        "Search by code or name to find a unit beyond the preview."
+      ]
+    },
+    {
       "title": "Change the class",
       "steps": [
         "Admin and manager: select [[Edit]], change it and give a reason."
       ]
-    },
-    {
-      "title": "Open a unit of this class",
-      "steps": [
-        "Select its code under Storage units."
-      ]
     }
   ],
   "good_to_know": [
-    "Up to the first 100 units are listed, active and retired alike.",
+    "Retired units appear in the preview and the register. The Active storage units count excludes them.",
     "The code is fixed and never reused.",
     "Classes are never deleted. Clear Active to stop offering one."
   ],
@@ -50,7 +51,8 @@
     {
       "title": "Storage units",
       "paragraphs": [
-        "Up to the first 100 units of this class, by code, active and retired alike (the header says when more exist). Each shows code, name, room and status."
+        "The preview lists up to 100 active and retired units in code order. Each row shows the unit code, name, room and status. The heading says “First 100 shown” when more units belong to the class.",
+        "When the class has units, All units in this class opens the Storage units register with this class and both statuses selected. Search, sort or page through all matching units there."
       ]
     },
     {
@@ -75,6 +77,7 @@
     "storage/lists.py",
     "storage/queries.py",
     "storage/templates/storage/class_detail.html",
-    "templates/includes/history_panel.html"
+    "templates/includes/history_panel.html",
+    "storage/tests/test_views.py"
   ]
 }

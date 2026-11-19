@@ -96,6 +96,8 @@ Acceptance outcomes:
    with a grid and a numbering scheme. A manager can save an active layout as a template and apply it to a new unit.
    Within the template size limits, all four levels, top-level slot numbers and box grid versions
    carry over. The manager can review and edit the unique code suffixes before saving.
+   Staff can open the complete register of active and retired units from their storage class,
+   including units beyond the first 100 shown on the class record.
 2. Occupancy is visible per unit, rack and box. From a storage list or a location record, staff
    can select a positive Free count to see available positions in that room, unit, rack, shelf or
    box. Selecting a position opens its cell in the box grid. A retired
