@@ -24,6 +24,7 @@ FORM_SWEEP_REPORT=<path> writes the per-form outcomes as JSON.
 import json
 import os
 import re
+import time
 from collections import deque
 from urllib.parse import urlsplit
 
@@ -172,22 +173,30 @@ SESSION = {}
 
 def confirm_access(page: Page) -> None:
     """Answer allauth's recent-authentication step: the password, or a code from the app."""
+    challenge = page.url
     if page.get_by_label("Password").count():
         page.get_by_label("Password").fill(SESSION["password"])
-        page.get_by_role("button", name="Confirm").click()
     else:
         page.get_by_label("Code").fill(totp_code())
-        page.get_by_role("button", name="Confirm").click()
+    page.get_by_role("button", name="Confirm").click()
+    expect(page).not_to_have_url(challenge)
 
 
 def totp_code() -> str:
-    from allauth.mfa.totp.internal.auth import (
-        format_hotp_value,
-        hotp_value,
-        yield_hotp_counters_from_time,
-    )
+    """Leave time to submit the app code and never reuse one from the last challenge."""
+    from allauth.mfa import app_settings
+    from allauth.mfa.totp.internal.auth import format_hotp_value, hotp_value
 
-    return format_hotp_value(hotp_value(SESSION["secret"], next(yield_hotp_counters_from_time())))
+    period = app_settings.TOTP_PERIOD
+    while True:
+        now = time.time()
+        counter = int(now) // period
+        remaining = (counter + 1) * period - now
+        code = format_hotp_value(hotp_value(SESSION["secret"], counter))
+        if remaining >= period / 2 and code != SESSION.get("last_totp_code"):
+            SESSION["last_totp_code"] = code
+            return code
+        time.sleep(remaining)
 
 
 def ready(page: Page, opener: str = ""):
@@ -292,7 +301,7 @@ def enter(page: Page, account: str, live_server) -> None:
     if account == WITH_APP:
         page.get_by_label("Code").fill(totp_code())
         page.get_by_role("button", name="Sign in").click()
-        page.wait_for_load_state()
+        expect(page).to_have_url(live_server.url + "/")
 
 
 def leave(page: Page) -> None:
