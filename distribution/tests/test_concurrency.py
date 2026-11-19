@@ -5,22 +5,34 @@ The thread named "first" is held after its writes and audit event, before commit
 "first" holds, then "second" revalidates after "first" commits. All data is synthetic.
 """
 
+import csv
+import io
 import threading
+from functools import partial
 
 import pytest
 from django.core.exceptions import ValidationError
 from django.db import connection
+from django.urls import reverse
 
+from core.models import AuditEvent
 from distribution import services
-from distribution.models import Allocation, ConsentWithdrawal, ConsentWithdrawalEscalation
+from distribution.models import (
+    Allocation,
+    ConsentWithdrawal,
+    ConsentWithdrawalEscalation,
+    OutputRecord,
+)
 from specimens.models import Hold
-from specimens.tests.test_concurrency import race
+from specimens.tests.test_concurrency import race, run
 
 from .helpers import (
     approved_request,
     codes,
     fast_password_hashing,  # noqa: F401
     fresh,
+    new_request,
+    save,
     timezone,
 )
 from .test_services_consent import withdraw
@@ -267,3 +279,63 @@ def test_two_deciders_of_one_request_leave_one_decision(people, dist, world, mon
     }
     request.refresh_from_db()
     assert request.status == "approved"
+
+
+@pytest.mark.parametrize("cap", [1, 2], ids=["over-limit", "exact-limit"])
+@pytest.mark.parametrize("kind", ["requests", "institutions"])
+def test_distribution_export_uses_the_selected_rows_for_limit_and_audit(
+    client, people, dist, world, monkeypatch, cap, kind
+):
+    if kind == "requests":
+        create = partial(new_request, people["technician"], dist, world)
+        first = create()
+        route, sort, count_key = "export", "number", "rows"
+        monkeypatch.setattr("distribution.exports.MAX_ROWS", cap)
+    else:
+        first = dist.institution
+        create = partial(
+            save,
+            people["manager"],
+            "institution",
+            code="EXZ",
+            name="Example Z",
+            address="100 Plaza",
+        )
+        route, sort, count_key = "catalogue-export", "code", "count"
+        monkeypatch.setattr("distribution.governance_views.EXPORT_CAP", cap)
+
+    client.force_login(people["viewer"])
+    url = reverse(f"distribution:{route}", args=[kind])
+    outcomes = {}
+
+    def insert_before_selection(execute, sql, params, many, context):
+        # Commit a matching row on another connection just before the ordered SELECT.
+        if f'FROM "{first._meta.db_table}"' in sql and "ORDER BY" in sql and not outcomes:
+            thread = run("writer", create, outcomes, {})
+            thread.join(15)
+            assert isinstance(outcomes.get("writer"), type(first)), outcomes
+        return execute(sql, params, many, context)
+
+    with connection.execute_wrapper(insert_before_selection):
+        response = client.get(url, {"sort": sort})
+    assert "writer" in outcomes
+    records = OutputRecord.objects.filter(kind=OutputRecord.Kind.EXPORT)
+    audits = AuditEvent.objects.filter(action="distribution.exported")
+    if cap == 1:
+        assert response.status_code == 400
+        assert "Content-Disposition" not in response
+        assert not records.exists() and not audits.exists()
+    else:
+        assert response.status_code == 200
+        rows = list(csv.reader(io.StringIO(response.content.decode())))[1:]
+        assert [row[0] for row in rows] == [
+            getattr(obj, sort) for obj in (first, outcomes["writer"])
+        ]
+        record = records.get()
+        assert record.count == audits.get(object_id=str(record.pk)).after[count_key] == len(rows)
+
+    empty = client.get(url, {"q": "not-a-matching-record"})
+    assert empty.status_code == 200
+    assert len(list(csv.reader(io.StringIO(empty.content.decode())))) == 1
+    record = records.get(count=0)
+    assert audits.get(object_id=str(record.pk)).after[count_key] == 0

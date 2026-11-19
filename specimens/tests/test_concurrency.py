@@ -9,15 +9,19 @@ import threading
 import time
 
 import pytest
+from django.contrib.messages import get_messages
 from django.db import connection
+from django.urls import reverse
 
+from core.models import AuditEvent
 from specimens import services
-from specimens.models import DisposalDecision, Specimen
+from specimens.models import DisposalDecision, OutputRecord, Participant, Specimen
 from storage.models import Occupancy
 
 from .conftest import (
     ago,
     ask_disposal,
+    catalogue,
     codes,
     fresh,
     make_user,
@@ -162,3 +166,47 @@ def test_a_failed_concurrent_transaction_leaves_nothing_behind(people, world, mo
     )
     assert isinstance(first, Specimen) and codes(second) == {"occupied"}
     assert Specimen.objects.count() == 1  # the loser registered nothing at all
+
+
+@pytest.mark.parametrize("kind", ["specimen", "participant"])
+def test_export_refuses_rows_added_over_the_limit_before_download(
+    client, people, world, monkeypatch, kind
+):
+    if kind == "specimen":
+        register(people["technician"], world)
+        url = reverse("specimens:export")
+        model = Specimen
+    else:
+        # The catalogue already contains the participant in the specimen fixture.
+        url = reverse("specimens:catalogue-export", args=["participant"])
+        model = Participant
+
+    def add_matching_row():
+        if kind == "specimen":
+            return register(people["technician"], world)
+        return catalogue(people["manager"], "participant", code="P-000124")
+
+    client.force_login(people["viewer"])
+    monkeypatch.setattr("specimens.exports.MAX_ROWS", 1)
+    outcomes = {}
+
+    def grow_selection(execute, sql, params, many, context):
+        # Commit on a separate connection immediately before the ordered export query.
+        if f'FROM "{model._meta.db_table}"' in sql and "ORDER BY" in sql and not outcomes:
+            writer = run("writer", add_matching_row, outcomes, {})
+            writer.join(15)
+            assert isinstance(outcomes.get("writer"), model), outcomes
+        return execute(sql, params, many, context)
+
+    with connection.execute_wrapper(grow_selection):
+        response = client.get(url)
+    assert "writer" in outcomes
+    assert response.status_code == 302
+    assert "Content-Disposition" not in response
+    assert any(
+        "narrow the filters" in str(msg).lower() for msg in get_messages(response.wsgi_request)
+    )
+    assert not OutputRecord.objects.exists()
+    assert not AuditEvent.objects.filter(
+        action__in=["specimens.export", "specimens.catalogue_export"]
+    ).exists()

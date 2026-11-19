@@ -41,6 +41,22 @@ def _cell(value):
     return safe_cell(value)
 
 
+def register_csv(queryset, columns, *, limit):
+    """Return CSV bytes and their data-row count, refusing any selection over the limit."""
+    buffer = io.StringIO(newline="")
+    writer = csv.writer(buffer, lineterminator="\r\n")
+    writer.writerow([header for header, _ in columns])
+    total = 0
+    for total, row in enumerate(queryset[: limit + 1].iterator(chunk_size=500), start=1):
+        if total > limit:
+            raise ValidationError(
+                f"Exports are limited to {limit:,} rows. Narrow the filters and export again.",
+                code="invalid",
+            )
+        writer.writerow([_cell(getter(row)) for _, getter in columns])
+    return buffer.getvalue().encode("utf-8"), total
+
+
 def export_list(*, actor, kind, filters, sort=""):
     """CSV bytes of one list: `requests`, `shipments` or `returns`."""
     require_role(actor, *READ_ROLES)
@@ -56,18 +72,7 @@ def export_list(*, actor, kind, filters, sort=""):
     if form.errors:
         raise ValidationError("These filters cannot be applied.", code="invalid")
     queryset = ordered(spec, queryset, sort)
-    total = queryset.count()
-    if total > MAX_ROWS:
-        raise ValidationError(
-            f"This selection has {total} rows; exports are limited to {MAX_ROWS}. "
-            "Narrow the filters and export again.",
-            code="invalid",
-        )
-    buffer = io.StringIO(newline="")
-    writer = csv.writer(buffer, lineterminator="\r\n")
-    writer.writerow([header for header, _ in spec.export_columns])
-    for row in queryset[:MAX_ROWS]:
-        writer.writerow([_cell(getter(row)) for _, getter in spec.export_columns])
+    content, total = register_csv(queryset, spec.export_columns, limit=MAX_ROWS)
     selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k not in PAGING}
     with transaction.atomic():
         record = OutputRecord.objects.create(
@@ -83,4 +88,4 @@ def export_list(*, actor, kind, filters, sort=""):
             after={"list": kind, "filters": selection, "sort": sort, "rows": total},
             reason="Download",
         )
-    return buffer.getvalue().encode("utf-8")
+    return content

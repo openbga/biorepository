@@ -9,8 +9,6 @@ again by the service under lock; a control hidden or disabled here is a courtesy
 The software records what people decided; it does not decide consent or interpret agreements.
 """
 
-import csv
-import io
 import uuid
 
 from django.contrib import messages
@@ -29,11 +27,11 @@ from core.attachments import download_response
 from core.audit import record_event
 from core.grids import GridRequest
 from core.models import Attachment, AuditEvent
-from specimens.exports import safe_cell
 from specimens.models import Participant
 
 from . import governance_lists as lists
 from . import queries, services
+from .exports import register_csv
 from .governance_forms import (
     STUDY_VALUES,
     AgreementForm,
@@ -282,18 +280,7 @@ def export_rows(*, actor, slug, filters, sort=""):
     if form.errors:
         raise ValidationError("These filters cannot be applied.", code="invalid")
     queryset = lists.ordered(spec, queryset, sort)
-    total = queryset.count()
-    if total > EXPORT_CAP:
-        raise ValidationError(
-            f"This selection has {total} rows; exports are limited to {EXPORT_CAP}. "
-            "Narrow the filters and export again.",
-            code="invalid",
-        )
-    buffer = io.StringIO(newline="")
-    writer = csv.writer(buffer, lineterminator="\r\n")
-    writer.writerow([header for header, _ in spec.export_columns])
-    for row in queryset[:EXPORT_CAP]:
-        writer.writerow([safe_cell(getter(row)) for _, getter in spec.export_columns])
+    content, total = register_csv(queryset, spec.export_columns, limit=EXPORT_CAP)
     selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k != "page"}
     details = {"list": slug, "filters": selection, "sort": sort}
     with transaction.atomic():
@@ -307,7 +294,7 @@ def export_rows(*, actor, slug, filters, sort=""):
             after={"count": total, **details},
             reason="Download",
         )
-    return buffer.getvalue().encode("utf-8")
+    return content
 
 
 @staff_role_required(*READ)

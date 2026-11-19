@@ -105,7 +105,7 @@
         },
         {
           "label": "Export CSV",
-          "description": "Downloads the rows matching the current filters and sort as UTF-8 CSV (up to 10,000 rows; a larger selection is refused, narrow the filters). Cells a spreadsheet would read as a formula are prefixed with an apostrophe. Each export is recorded with who exported which selection and how many rows, never the file itself."
+          "description": "Downloads all matching rows across pages as UTF-8 CSV, using the current filters and sort. If more than 10,000 rows match when the export runs, the download stops. Narrow the filters and try again. Text that starts like a spreadsheet formula gets a leading apostrophe. The audit trail records who downloaded the selection, the filters and the number of data rows in the file. With no matches, the CSV contains only the header and the audit count is zero."
         }
       ]
     },
@@ -126,6 +126,7 @@
     "core/grids.py",
     "distribution/templates/distribution/governance/consent_list.html",
     "distribution/templates/distribution/governance/_list_actions.html",
-    "specimens/views.py"
+    "specimens/views.py",
+    "distribution/tests/test_views_governance.py"
   ]
 }

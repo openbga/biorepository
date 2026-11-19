@@ -486,6 +486,15 @@ def test_consent_export_matches_the_filter_and_is_audited(client, people, dist):
     assert client.get(reverse("distribution:catalogue-export", args=["nope"])).status_code == 404
 
 
+def test_consent_form_export_includes_its_prefetched_categories(client, people, dist):
+    as_user(client, people["viewer"])
+    response = client.get(reverse("distribution:catalogue-export", args=["consent-forms"]))
+    assert response.status_code == 200
+    (row,) = csv.DictReader(io.StringIO(response.content.decode()))
+    assert row["Code"] == dist.form.code
+    assert set(row["Categories asked"].split()) == set(dist.categories)
+
+
 # --- agreements and catalogues --------------------------------------------------------------
 
 
