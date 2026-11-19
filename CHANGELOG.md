@@ -68,6 +68,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Fixed:** Copy four-level storage layouts into a new unit (2026-11-19, Storage units)
+
+  Save layout as template keeps all four rack and shelf levels, including top-level slots above 100. When existing codes would give a duplicate or invalid suffix, the form suggests a unique suffix you can edit before saving.
+
 - **Added:** A storage path bar shows where things are (2026-11-18)
 
   Storage records and the specimen record show a path bar under the top bar, from the site down to the box and position, with the storage unit's nominal temperature. While a specimen is checked out, the bar marks the position it left and shows how long it has been out of storage.

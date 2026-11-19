@@ -550,7 +550,7 @@ def create_node(*, actor, unit_id, parent_id, code, name, kind, slot, child_slot
         )
     if parent is None:
         _active_chain([], unit, "unit")
-        slot = _whole(slot, "slot", low=1, high=10**6, label="Slot")
+        slot = _whole(slot, "slot", low=1, high=recipes.MAX_TOP_LEVEL_SLOT, label="Slot")
         depth = 1
         taken = LayoutNode.objects.filter(unit=unit, parent__isnull=True, slot=slot, is_active=True)
     else:
@@ -1196,7 +1196,9 @@ def move_container(
             new_depth = target_node.depth + 1
             siblings = LayoutNode.objects.filter(parent=target_node, slot=slot, is_active=True)
         else:
-            slot = _whole(target_slot, "target_slot", low=1, high=10**6, label="Slot")
+            slot = _whole(
+                target_slot, "target_slot", low=1, high=recipes.MAX_TOP_LEVEL_SLOT, label="Slot"
+            )
             new_depth = 1
             siblings = LayoutNode.objects.filter(
                 unit=target_unit, parent__isnull=True, slot=slot, is_active=True

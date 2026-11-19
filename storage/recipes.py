@@ -23,6 +23,7 @@ the new unit's code ("VP-02" + "-" + "T01" -> "VP-02-T01"), so suffixes are uniq
 
 import re
 from decimal import Decimal, InvalidOperation
+from itertools import chain, count
 
 from django.core.exceptions import ValidationError
 
@@ -39,6 +40,8 @@ from .models import (
 
 SCHEMA = 1
 MAX_SLOTS = 100
+MAX_TOP_LEVEL_SLOT = 1_000_000
+MAX_SUFFIX_LENGTH = 30
 MAX_RECIPE_NODES = 400
 MAX_RECIPE_BOXES = 400
 MAX_RECIPE_POSITIONS = 40000
@@ -71,10 +74,14 @@ def _text(value, where, name, *, limit=160, required=True):
     return value.strip()
 
 
+def _valid_suffix(text):
+    return len(text) <= MAX_SUFFIX_LENGTH and _SUFFIX.fullmatch(text) is not None
+
+
 def _suffix(value, where, seen):
     text = value.strip().upper() if isinstance(value, str) else ""
-    if not text or len(text) > 30 or not text.isascii() or not _SUFFIX.match(text):
-        _fail(f"{where}: suffix must be 1-30 letters, digits, '.', '_' or '-'.")
+    if not _valid_suffix(text):
+        _fail(f"{where}: suffix must be 1-{MAX_SUFFIX_LENGTH} letters, digits, '.', '_' or '-'.")
     if text in seen:
         _fail(f"{where}: suffix {text} is used twice in this template.")
     seen.add(text)
@@ -133,11 +140,11 @@ def validate_definition(definition):
 
 
 def _nodes(items, parent, depth, where, seen, counts, grids):
-    if depth > MAX_DEPTH:
-        _fail(f"{where}: layouts are at most {MAX_DEPTH} levels deep.")
     if not isinstance(items, list):
         _fail(f"{where}: children must be a list.")
-    capacity = parent["child_slots"] if parent else None
+    if items and depth > MAX_DEPTH:
+        _fail(f"{where}: layouts are at most {MAX_DEPTH} levels deep.")
+    capacity = parent["child_slots"] if parent else MAX_TOP_LEVEL_SLOT
     slots = set()
     result = []
     for index, item in enumerate(items, start=1):
@@ -163,7 +170,7 @@ def _nodes(items, parent, depth, where, seen, counts, grids):
             _fail(f"{here}: kind must be shelf, rack, tower or canister.")
         if parent and kind not in CHILD_KINDS[parent["kind"]]:
             _fail(f"{here}: a {parent['kind']} cannot hold a {kind}.")
-        slot = _int(item.get("slot"), here, "slot", low=1, high=capacity or MAX_SLOTS)
+        slot = _int(item.get("slot"), here, "slot", low=1, high=capacity)
         if slot in slots:
             _fail(f"{here}: slot {slot} is used twice.")
         slots.add(slot)
@@ -241,22 +248,39 @@ def _boxes(items, node, where, seen, counts, grids):
     return result
 
 
+def _captured_suffixes(unit, nodes, boxes):
+    prefix = f"{unit.code}-"
+    suffixes = {}
+    reserved = set()
+    for record in chain(nodes, boxes):
+        preferred = record.code.removeprefix(prefix) or record.code
+        if _valid_suffix(preferred) and preferred not in reserved:
+            suffixes[record] = preferred
+            reserved.add(preferred)
+
+    # All usable source suffixes are reserved before assigning any replacements.
+    for records, label in ((nodes, "NODE"), (boxes, "BOX")):
+        candidates = (f"{label}-{number}" for number in count(1))
+        for record in records:
+            if record not in suffixes:
+                suffixes[record] = next(code for code in candidates if code not in reserved)
+    return suffixes
+
+
 def recipe_from_unit(unit):
     """A recipe reproducing an existing unit's active layout (for "Save layout as template")."""
-    prefix = f"{unit.code}-"
     nodes = list(
         LayoutNode.objects.filter(unit=unit, is_active=True).order_by("depth", "slot", "code")
     )
-    boxes = {}
-    for box in unit_boxes(unit):
-        boxes.setdefault(box.node_id, []).append(box)
-
-    def suffix(code):
-        return code.removeprefix(prefix) if code.startswith(prefix) and code != prefix else code
+    boxes = list(unit_boxes(unit))
+    suffixes = _captured_suffixes(unit, nodes, boxes)
+    boxes_by_node = {}
+    for box in boxes:
+        boxes_by_node.setdefault(box.node_id, []).append(box)
 
     def node_recipe(node):
         return {
-            "suffix": suffix(node.code),
+            "suffix": suffixes[node],
             "name": node.name,
             "kind": node.kind,
             "slot": node.slot,
@@ -265,7 +289,7 @@ def recipe_from_unit(unit):
             "children": [node_recipe(c) for c in nodes if c.parent_id == node.pk],
             "boxes": [
                 {
-                    "suffix": suffix(box.code),
+                    "suffix": suffixes[box],
                     "name": box.name,
                     "slot": box.slot,
                     "container_type": {
@@ -273,7 +297,7 @@ def recipe_from_unit(unit):
                         "version": box.container_type.version,
                     },
                 }
-                for box in sorted(boxes.get(node.pk, []), key=lambda b: b.slot)
+                for box in sorted(boxes_by_node.get(node.pk, []), key=lambda b: b.slot)
             ],
         }
 

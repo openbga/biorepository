@@ -460,6 +460,8 @@ def test_template_instantiates_a_whole_unit_atomically(tree, people):
         lambda d: d.update(nominal_temperature=-160.0),
         lambda d: d.update(storage_class="MISSING"),
         lambda d: d["nodes"][0].update(kind="cassette"),
+        lambda d: d["nodes"][0].update(slot=1_000_001),
+        lambda d: d["nodes"][0]["children"][0].update(slot=3),
         lambda d: d["nodes"][0]["children"][0].update(kind="tower"),
         lambda d: d["nodes"][0]["children"][0]["boxes"][0].update(slot=3),
         lambda d: d["nodes"][0]["children"][0].update(suffix="T01"),
@@ -481,6 +483,108 @@ def test_recipe_from_unit_round_trips(tree, people):
         "code": "GRID-9X9",
         "version": 1,
     }
+
+
+@pytest.mark.parametrize("depth,root_slot", [(4, 2), (1, 1_000_000)])
+def test_captured_template_recreates_supported_depth_and_root_slots(tree, people, depth, root_slot):
+    manager = people["manager"]
+    parent = None
+    for level in range(1, depth + 1):
+        parent = services.create_node(
+            actor=manager,
+            unit_id=tree.unit.pk,
+            parent_id=parent.pk if parent else None,
+            code=f"LEVEL-{level}",
+            name=f"Level {level}",
+            kind="rack" if level % 2 else "shelf",
+            slot=1 if parent else root_slot,
+            child_slots=1 if level < depth else 0,
+            box_slots=1 if level == depth else 0,
+        )
+    services.create_box(
+        actor=manager,
+        node_id=parent.pk,
+        container_type_id=tree.grid.pk,
+        code="INNER",
+        name="Inner box",
+        slot=1,
+    )
+    template = services.save_storage_catalogue(
+        actor=manager,
+        kind="template",
+        object_id=None,
+        expected_revision=None,
+        values={
+            "code": "TEST-LAYOUT",
+            "name": "Example layout",
+            "definition": recipes.recipe_from_unit(tree.unit),
+        },
+        reason="",
+    )
+    unit = services.instantiate_template(
+        actor=manager,
+        template_id=template.pk,
+        room_id=tree.room.pk,
+        unit_code="COPY",
+        unit_name="Copy",
+    )
+    copied = Box.objects.get(code="COPY-INNER")
+    assert copied.node.depth == depth and copied.positions.count() == tree.grid.capacity
+    assert unit.nodes.get(code="COPY-LEVEL-1").slot == root_slot
+    assert recipes.validate_definition(recipes.recipe_from_unit(unit)) == template.definition
+
+
+def test_template_still_rejects_a_fifth_level(tree):
+    nodes = []
+    for depth in range(5, 0, -1):
+        nodes = [
+            {
+                "suffix": f"N{depth}",
+                "kind": "rack" if depth % 2 else "shelf",
+                "slot": 1,
+                "child_slots": 1 if nodes else 0,
+                "box_slots": 0 if nodes else 1,
+                "children": nodes,
+            }
+        ]
+    definition = {**template_definition(tree.grid), "nodes": nodes}
+    with pytest.raises(ValidationError, match="at most 4 levels"):
+        recipes.validate_definition(definition)
+
+
+def test_captured_suffixes_stay_unique_and_valid(tree, people):
+    manager = people["manager"]
+    rack = services.create_node(
+        actor=manager,
+        unit_id=tree.unit.pk,
+        parent_id=None,
+        kind="rack",
+        code="VP-01--RACK",
+        name="Spare rack",
+        slot=2,
+        child_slots=0,
+        box_slots=6,
+    )
+    # The last two valid codes must survive even though other records need generated suffixes.
+    codes = ["VP-01-T-01", "X" * 40, "VP-01--BOX", "T-01-S1", "NODE-1", "BOX-1"]
+    for slot, code in enumerate(codes, start=1):
+        services.create_box(
+            actor=manager,
+            node_id=rack.pk,
+            container_type_id=tree.grid.pk,
+            code=code,
+            name=code,
+            slot=slot,
+        )
+    definition = recipes.recipe_from_unit(tree.unit)
+    assert definition == recipes.recipe_from_unit(tree.unit)
+    recipe = recipes.validate_definition(definition)
+    tower, spare = recipe["nodes"]
+    assert tower["suffix"] == "T-01" and spare["suffix"].startswith("NODE-")
+    assert tower["children"][0]["suffix"] == "T-01-S1"
+    assert tower["children"][0]["boxes"][0]["suffix"] == "BOX-001"
+    assert [box["name"] for box in spare["boxes"]] == codes
+    assert [box["suffix"] for box in spare["boxes"][-2:]] == ["NODE-1", "BOX-1"]
 
 
 def test_container_type_capacity_property():
