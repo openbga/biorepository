@@ -140,6 +140,58 @@ def test_box_page_shows_grid_states(client, tree, people):
     assert blocked in content  # zero is shown, not left blank
 
 
+def test_retired_box_keeps_its_positions_and_block_reason_without_offering_storage(
+    client, tree, people
+):
+    manager = people["manager"]
+    original = {str(pk): label for pk, label in tree.box.positions.values_list("pk", "label")}
+    blocked = cell(tree.box, "B2")
+    services.set_position_blocked(
+        actor=manager,
+        position_id=blocked.pk,
+        expected_revision=blocked.revision,
+        blocked=True,
+        reason="Cracked base",
+    )
+    services.retire_storage(
+        actor=manager,
+        kind="box",
+        object_id=tree.box.pk,
+        expected_revision=tree.box.revision,
+        reason="Box replaced",
+    )
+
+    for actor in (people["viewer"], manager):
+        client.force_login(actor)
+        response = client.get(reverse("storage:box-detail", args=[tree.box.pk]))
+        assert response.status_code == 200
+        content = response.content.decode()
+        cells = re.findall(
+            r'<td id="position-([^"]+)" data-state="([^"]+)"[^>]*>(.*?)</td>', content, re.S
+        )
+        assert len(cells) == len(original)
+        assert {pk for pk, _, _ in cells} == original.keys()
+        for pk, state, body in cells:
+            assert state == "unavailable"
+            assert f">{original[pk]}</span>" in body
+            assert ", unavailable" in body and "<a " not in body
+        description_id = f"prior-block-{blocked.pk}"
+        assert (
+            f'id="position-{blocked.pk}" data-state="unavailable" '
+            f'aria-describedby="{description_id}"' in content
+        )
+        assert re.search(
+            rf'<p id="{description_id}"[^>]*><a[^>]*href="#position-{blocked.pk}">'
+            r"B2</a> was blocked at retirement\. Cracked base</p>",
+            content,
+        )
+        assert reverse("storage:free-position-list", query={"box": tree.box.pk}) not in content
+        assert (
+            'data-state="unavailable"></span>Unavailable</dt><dd class="vr-id">81</dd>' in content
+        )
+        assert "Specimens are stored in its positions" not in content
+
+
 def test_manager_defines_storage_through_the_forms(client, tree, people):
     client.force_login(people["manager"])
     response = client.post(

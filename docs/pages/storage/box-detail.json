@@ -16,7 +16,7 @@
     {
       "title": "Find an available position",
       "steps": [
-        "In the key above the grid, select the [[Free]] count.",
+        "In an active box, select the [[Free]] count above the grid.",
         "Select a position in the list to open its cell in the box grid."
       ]
     },
@@ -43,7 +43,7 @@
     "The grid is seen from the labelled top-left corner.",
     "A checked-out item's position counts as free. Free positions are not reserved.",
     "An occupied position cannot be blocked. Move the item out first.",
-    "[[Retire box]] is available only when the box is empty."
+    "Only an empty box can be retired. Its grid remains available for reference, with every position marked unavailable."
   ],
   "sections": [
     {
@@ -81,17 +81,18 @@
     {
       "title": "Positions",
       "paragraphs": [
-        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. A filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover); with the specimens module, a well whose specimen has an unreleased hold is marked as on hold. The key above the grid counts occupied, free, on hold and blocked positions and the total; a count of zero is muted. The grid is created in full with the box and never changes.",
-        "Counts cover positions in active boxes; a retired box offers no free capacity. A checked-out item's position counts as free, and free positions are not reserved: a position is claimed only when an item is stored in it.",
-        "Admin and manager roles can select any position that is not occupied to Block position or Unblock position while the box is active. An occupied position cannot be selected: move the item out first.",
+        "The grid shows the box as seen from its labelled top-left corner: column numbers across the top, row labels down the side, one well per position with its label. In an active box, a filled well is occupied, an open ring is free, and a hatched, dashed ring is blocked (the block reason appears on hover); with the specimens module, a well whose specimen has an unreleased hold is marked as on hold. The key above the grid counts occupied, free, on hold and blocked positions and the total; a count of zero is muted. The grid is created in full with the box and never changes.",
+        "In a retired box, Grid positions gives the original grid size. Unavailable counts every position. Below the grid, each position that was blocked at retirement links to its cell and shows the recorded reason.",
+        "In an active box, administrators and managers can select a free or blocked position to block or unblock it. Move an occupying item out before blocking its position.",
         "An occupied well that holds a specimen links to that specimen's record; hover shows its specimen ID and type, and screen readers hear the specimen ID after the position. Where no specimen can be shown, hover shows the storage key instead.",
-        "A positive Free count above the grid lists available positions in this box in filling order. A zero count has no link."
+        "A positive Free count opens the available positions in filling order. A zero count has no link. Checking out an item frees its position. Storing an item claims the position."
       ]
     },
     {
       "title": "Occupied positions",
       "paragraphs": [
-        "One row per occupied position, with the specimen stored there and its opaque storage key. Specimens in this box (shown while the box holds items) opens the specimen list filtered to this box."
+        "One row per occupied position, with the specimen stored there and its opaque storage key. Specimens in this box (shown while the box holds items) opens the specimen list filtered to this box.",
+        "For a retired box, this section confirms that the box was empty at retirement."
       ],
       "items": [
         {
