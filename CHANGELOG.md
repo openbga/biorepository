@@ -163,6 +163,10 @@ The same list is shown in the application under What's new.
 
   Specimen and distribution lists and catalogues check the 10,000-row limit when you download a CSV. If another staff member changes the matching records, you receive the full selection within the limit or a message to narrow your filters. The audit trail records the number of data rows in each file.
 
+- **Changed:** Open free positions from storage lists (2026-11-19, Storage units)
+
+  In Rooms, Storage units, Racks and shelves, or Boxes, select a positive Free count to see the available positions in that location. Select a position to open its cell in the box.
+
 - **Fixed:** Retired boxes show every position as unavailable (2026-11-19, Boxes)
 
   Open a retired box to see its original position labels and any block reasons recorded at retirement. The grid marks all positions as unavailable.

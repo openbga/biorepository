@@ -1,1 +1,5 @@
-{% comment %}Four right-aligned count cells for a row annotated by storage.lists.with_capacity.{% endcomment %}<td class="text-end vr-id">{{ row.installed|floatformat:"0g" }}</td><td class="text-end vr-id">{{ row.blocked_count|floatformat:"0g" }}</td><td class="text-end vr-id">{{ row.occupied|floatformat:"0g" }}</td><td class="text-end vr-id">{{ row.free|floatformat:"0g" }}</td>
+{% comment %}Capacity counts for row, with scope naming the matching Free positions filter.{% endcomment %}
+<td class="text-end vr-id">{{ row.installed|floatformat:"0g" }}</td>
+<td class="text-end vr-id">{{ row.blocked_count|floatformat:"0g" }}</td>
+<td class="text-end vr-id">{{ row.occupied|floatformat:"0g" }}</td>
+<td class="text-end vr-id">{% include "storage/_free_count.html" with count=row.free scope=scope location=row only %}</td>

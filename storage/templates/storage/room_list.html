@@ -22,7 +22,7 @@
           <td>{{ row.name }}</td>
           <td><a class="vr-id" href="{% url 'storage:site-detail' row.site_id %}">{{ row.site.code }}</a></td>
           <td class="text-end vr-id">{{ row.unit_count }}</td>
-          {% include "storage/_capacity_cells.html" %}
+          {% include "storage/_capacity_cells.html" with row=row scope="room" only %}
         </tr>
         {% endfor %}
       </tbody>

@@ -7,6 +7,7 @@ import re
 
 import pytest
 from django.urls import reverse
+from django.utils.html import strip_tags
 
 from core.models import AuditEvent
 from storage import services
@@ -311,6 +312,34 @@ def test_list_filters_sorts_and_states(client, tree, people):
     assert client.get(url, {"per_page": "7"}).status_code == 400
     free = client.get(reverse("storage:free-position-list"), {"box": tree.box.pk})
     assert free.context["page_obj"].paginator.count == 81
+
+
+def test_storage_registers_link_free_counts_to_the_location_in_each_row(client, tree, people):
+    client.force_login(people["viewer"])
+    for scope, locations in (
+        ("room", [(tree.room, 81)]),
+        ("unit", [(tree.unit, 81), (tree.other_unit, 0)]),
+        ("node", [(tree.tower, 81), (tree.shelf1, 81), (tree.shelf2, 0)]),
+        ("box", [(tree.box, 81)]),
+    ):
+        response = client.get(reverse(f"storage:{scope}-list"))
+        assert response.status_code == 200
+        content = response.content.decode()
+        headers = re.findall(r'<th\b[^>]*data-vr-col="([^"]+)"', content)
+        free_column = headers.index("free")
+        rows = re.findall(r"<tr>(.*?)</tr>", content, re.S)
+        for location, count in locations:
+            detail = reverse(f"storage:{scope}-detail", args=[location.pk])
+            row = next(row for row in rows if f'href="{detail}"' in row)
+            cells = re.findall(r"<t[hd]\b[^>]*>(.*?)</t[hd]>", row, re.S)
+            free_cell = cells[free_column]
+            if count:
+                url = reverse("storage:free-position-list", query={scope: location.pk})
+                assert f'href="{url}"' in free_cell
+                assert strip_tags(free_cell).strip() == f"{count} free positions in {location.code}"
+            else:
+                assert strip_tags(free_cell).strip() == "0"
+                assert "<a " not in free_cell
 
 
 def test_location_records_link_only_positive_free_counts_to_the_counted_scope(client, tree, people):

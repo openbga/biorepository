@@ -10,7 +10,8 @@
     {
       "title": "Find a rack or shelf",
       "steps": [
-        "Type part of the code or name in [[Search]], or choose the [[Storage unit]], then select [[Apply]]."
+        "Type part of the code or name in [[Search]], or choose the [[Storage unit]], then select [[Apply]].",
+        "Select the number in the [[Free]] column to see available positions in that rack or shelf."
       ]
     },
     {
@@ -88,8 +89,8 @@
           "description": "Node slots or box slots it offers."
         },
         {
-          "label": "Positions, Occupied, Free",
-          "description": "Counts for the whole node including everything under it. Position counts cover positions in active boxes that sit in active racks, shelves and storage units. Retired structure is never counted as capacity. Installed is every such position; Blocked are positions held out of use; Occupied have an item stored in them; Free is installed minus blocked minus occupied. Free positions are not reserved: a position is claimed only when an item is stored in it."
+          "label": "Positions, Blocked, Occupied, Free",
+          "description": "Counts cover installed positions in the rack or shelf and its child locations. Only active storage contributes to capacity. Free is the total minus blocked and occupied positions. Select a positive Free count to list those positions. Zero has no link. Opening the list does not reserve a position. Occupied and Free are sortable."
         },
         {
           "label": "Status",
@@ -135,6 +136,8 @@
     "storage/queries.py",
     "storage/exports.py",
     "storage/templates/storage/node_list.html",
+    "storage/templates/storage/_capacity_cells.html",
+    "storage/templates/storage/_free_count.html",
     "storage/templates/storage/_list_actions.html",
     "templates/includes/list_results.html",
     "storage/tests/test_views.py"

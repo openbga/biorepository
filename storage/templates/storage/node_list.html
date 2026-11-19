@@ -29,7 +29,7 @@
           <td class="vr-id">{{ row.parent.code|default:"Top level" }}</td>
           <td class="text-end vr-id">{{ row.slot }}</td>
           <td>{% if row.box_slots %}{{ row.box_count }} of {{ row.box_slots }} box slots used{% else %}{{ row.child_count }} of {{ row.child_slots }} node slots used{% endif %}</td>
-          {% include "storage/_capacity_cells.html" %}
+          {% include "storage/_capacity_cells.html" with row=row scope="node" only %}
           <td>{% include "storage/_status.html" with obj=row plain=True %}</td>
         </tr>
         {% endfor %}
