@@ -7,7 +7,7 @@ import re
 
 import pytest
 from django.urls import reverse
-from django.utils.html import strip_tags
+from django.utils.html import escape, strip_tags
 
 from core.models import AuditEvent
 from storage import services
@@ -126,6 +126,73 @@ def test_every_page_renders_for_its_roles(client, tree, people, template):
         client.get(reverse("storage:container-move", args=["site", tree.site.pk])).status_code
         == 404
     )
+
+
+def test_viewer_opens_all_units_of_a_class_including_retired_units_beyond_preview(
+    client, tree, people
+):
+    manager = people["manager"]
+    storage_class = services.save_storage_catalogue(
+        actor=manager,
+        kind="class",
+        object_id=None,
+        expected_revision=None,
+        values={"code": "EXAMPLE-CLASS", "name": "Example class"},
+        reason="",
+    )
+    client.force_login(people["viewer"])
+    detail = reverse("storage:class-detail", args=[storage_class.pk])
+    register = reverse(
+        "storage:unit-list", query={"storage_class": storage_class.pk, "status": "all"}
+    )
+    register_link = f'href="{escape(register)}">All units in this class</a>'
+    empty = client.get(detail)
+    assert b"No storage units use this class" in empty.content
+    assert register_link not in empty.content.decode()
+
+    StorageUnit.objects.bulk_create(
+        [
+            StorageUnit(
+                code=f"EXAMPLE-{number:03d}",
+                name=f"Example freezer {number}",
+                room=tree.room,
+                storage_class=storage_class,
+                technology=tree.other_unit.technology,
+                nominal_temperature=tree.other_unit.nominal_temperature,
+                created_by=manager,
+            )
+            for number in range(1, 101)
+        ]
+    )
+    full = client.get(detail)
+    assert len(full.context["units"]) == 100
+    assert b'<span class="vr-count">100</span>' in full.content
+    assert register_link in full.content.decode()
+
+    last = services.create_unit(
+        actor=manager,
+        code="EXAMPLE-101",
+        name="Example retired freezer",
+        room_id=tree.room.pk,
+        storage_class_id=storage_class.pk,
+        technology=tree.other_unit.technology,
+        nominal_temperature=tree.other_unit.nominal_temperature,
+    )
+    services.retire_storage(
+        actor=manager,
+        kind="unit",
+        object_id=last.pk,
+        expected_revision=last.revision,
+        reason="Example freezer replaced",
+    )
+    preview = client.get(detail)
+    assert len(preview.context["units"]) == 100
+    assert b'<span class="vr-count">First 100 shown</span>' in preview.content
+    assert last.code.encode() not in preview.content
+    assert register_link in preview.content.decode()
+    final_page = client.get(register + "&per_page=100&page=2").context["page_obj"]
+    assert final_page.paginator.count == 101
+    assert [unit.pk for unit in final_page] == [last.pk]
 
 
 def test_box_page_shows_grid_states(client, tree, people):

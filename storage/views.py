@@ -854,6 +854,8 @@ def _catalogue_save(request, kind, obj, form, values, success):
 @staff_role_required(*READ)
 def class_detail(request, pk):
     obj = get_object_or_404(lists.classes(), pk=pk)
+    preview_limit = 100
+    units = list(obj.units.select_related("room__site").order_by("code")[: preview_limit + 1])
     return render(
         request,
         "storage/class_detail.html",
@@ -861,9 +863,8 @@ def class_detail(request, pk):
             "page_title": obj.code,
             "obj": obj,
             "crumbs": _catalogue_crumbs("class", None, (obj.code, None)),
-            "units": StorageUnit.objects.filter(storage_class=obj)
-            .select_related("room__site")
-            .order_by("code")[:100],
+            "units": units[:preview_limit],
+            "has_more_units": len(units) > preview_limit,
             "history": history(obj),
             **flags(request.user),
         },

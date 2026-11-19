@@ -167,6 +167,10 @@ The same list is shown in the application under What's new.
 
   Specimen and distribution lists and catalogues check the 10,000-row limit when you download a CSV. If another staff member changes the matching records, you receive the full selection within the limit or a message to narrow your filters. The audit trail records the number of data rows in each file.
 
+- **Fixed:** Find every unit in a storage class (2026-11-19, Storage catalogues)
+
+  Select All units in this class on a storage class to search its active and retired units, including those beyond the 100 shown on the class record.
+
 - **Changed:** Open free positions from storage lists (2026-11-19, Storage units)
 
   In Rooms, Storage units, Racks and shelves, or Boxes, select a positive Free count to see the available positions in that location. Select a position to open its cell in the box.

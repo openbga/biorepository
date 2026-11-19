@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% load ui %}
-{% comment %}A storage class (catalogue). Context: obj (annotated unit_count), crumbs, units, history, can_manage.{% endcomment %}
+{% comment %}A storage class (catalogue). Context: obj (annotated unit_count), crumbs, units, has_more_units, history, can_manage.{% endcomment %}
 {% block breadcrumbs %}{% breadcrumbs crumbs=crumbs %}{% endblock %}
 {% block page_heading %}<span class="vr-id">{{ obj.code }}</span>{% endblock %}
 {% block page_meta %}{% page_meta %}{% meta_item %}{% include "storage/_status.html" with obj=obj catalogue=True %}{% endmeta_item %}{% meta_item label="Name" value=obj.name %}{% endpage_meta %}{% endblock %}
@@ -13,7 +13,7 @@
     {% fact label="Active storage units" class="vr-id" %}{{ obj.unit_count }}{% endfact %}
   </dl>
 {% endpanel %}
-{% panel title="Storage units" heading_id="class-units" table=True class="mb-3" %}{% fill count %}{{ units|length }}{% if units|length >= 100 %}, first 100 shown{% endif %}{% endfill %}
+{% panel title="Storage units" heading_id="class-units" table=True class="mb-3" %}{% fill count %}{% if has_more_units %}First {{ units|length }} shown{% else %}{{ units|length }}{% endif %}{% endfill %}{% fill actions %}{% if units %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:unit-list' %}?storage_class={{ obj.pk }}&amp;status=all">All units in this class</a>{% endif %}{% endfill %}
 {% if units %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col">Room</th><th scope="col">Status</th></tr></thead>
