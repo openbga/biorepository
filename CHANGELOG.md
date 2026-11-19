@@ -6,7 +6,7 @@ What was added or changed in OpenBGA Biorepository, newest first. Changes are
 grouped by the calendar month they were merged in and ranked from high to low impact.
 The same list is shown in the application under What's new.
 
-## November 2026 (2026-11-13 to 2026-11-18)
+## November 2026 (2026-11-13 to 2026-11-19)
 
 ### High impact
 
@@ -158,6 +158,10 @@ The same list is shown in the application under What's new.
   > No migration. The selection is rechecked when submitted and expires after one hour. No temperature triggers a hold automatically.
 
 ### Low impact
+
+- **Fixed:** Consistent limits on specimen and distribution CSV downloads (2026-11-19, Specimens and distribution)
+
+  Specimen and distribution lists and catalogues check the 10,000-row limit when you download a CSV. If another staff member changes the matching records, you receive the full selection within the limit or a message to narrow your filters. The audit trail records the number of data rows in each file.
 
 - **Changed:** Account pages use sentence case and the standard controls (2026-11-18)
 

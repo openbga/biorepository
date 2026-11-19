@@ -325,8 +325,13 @@ def test_export_is_capped_and_a_refused_export_leaves_no_record(people, world, m
     assert not OutputRecord.objects.exists()
     narrow = {"type": world.serum.pk}  # matches nothing, so under the cap
     assert rows_of(exports.export_specimens(actor=people["viewer"], filters=narrow)) == []
+    assert OutputRecord.objects.get().count == 0
+    assert AuditEvent.objects.get(action="specimens.export").after["count"] == 0
     monkeypatch.setattr(exports, "MAX_ROWS", 3)
     assert len(rows_of(exports.export_specimens(actor=people["viewer"], filters={}))) == 3
+    record = OutputRecord.objects.get(count=3)
+    event = AuditEvent.objects.get(action="specimens.export", object_id=str(record.pk))
+    assert event.after["count"] == 3
 
 
 def test_export_escapes_cells_a_spreadsheet_would_run_as_formulas(people, world):

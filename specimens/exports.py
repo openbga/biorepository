@@ -44,6 +44,15 @@ def _csv(header, rows):
     return buffer.getvalue().encode("utf-8")
 
 
+def _bounded_rows(queryset):
+    rows = list(queryset[: MAX_ROWS + 1])
+    if len(rows) > MAX_ROWS:
+        raise ValidationError(
+            f"To export {MAX_ROWS:,} rows or fewer, narrow the filters.", code="invalid"
+        )
+    return rows
+
+
 def _quantity(value):
     return format(value.normalize(), "f")
 
@@ -77,13 +86,7 @@ SPECIMEN_HEADER = (
 def export_specimens(*, actor, filters, sort="accession"):
     require_role(actor, *READ_ROLES)
     queryset = specimen_queryset(filters, sort).select_related("parent")
-    count = queryset.count()
-    if count > MAX_ROWS:
-        raise ValidationError(
-            f"{count} specimens match. Export at most {MAX_ROWS}: narrow the filters.",
-            code="invalid",
-        )
-    specimens = list(queryset)
+    specimens = _bounded_rows(queryset)
     paths = storage_queries.locations(
         actor=actor, occupancy_ids=[s.occupancy_id for s in specimens]
     )
@@ -199,14 +202,9 @@ def export_imports(*, actor, params):
 def export_catalogue(*, actor, kind, filters, sort="code"):
     require_role(actor, *READ_ROLES)
     queryset = catalogue_queryset(kind, filters, sort)
-    count = queryset.count()
-    if count > MAX_ROWS:
-        raise ValidationError(
-            f"Export at most {MAX_ROWS} rows: narrow the filters.", code="invalid"
-        )
     fields = CATALOGUE_FIELDS[kind]
     rows = []
-    for obj in queryset:
+    for obj in _bounded_rows(queryset):
         row = []
         for name in fields:
             value = getattr(obj, name)

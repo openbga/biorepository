@@ -127,7 +127,7 @@
         },
         {
           "label": "Export CSV",
-          "description": "Downloads the rows that match the current search, filters and sort as a UTF-8 CSV file, with exact amounts and times in the repository's time zone. Every role that can read the list can download it. A selection of more than 10,000 rows is refused rather than cut short: narrow the filters and export again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe. Each download is recorded with who exported which selection and how many rows, never the file itself."
+          "description": "Any staff role can download all matching rows across pages as UTF-8 CSV in the selected order. The file uses the current search and filters. Creation times use the repository's time zone. If more than 10,000 rows match when the export runs, the download stops. Narrow the filters and try again. Text that starts like a spreadsheet formula gets a leading apostrophe. The audit trail records who downloaded the selection, the filters and the number of data rows in the file. With no matches, the CSV contains only the header and the audit count is zero."
         }
       ]
     },
@@ -155,6 +155,7 @@
     "distribution/request_views.py",
     "distribution/request_lists.py",
     "distribution/exports.py",
-    "distribution/templates/distribution/requests/request_list.html"
+    "distribution/templates/distribution/requests/request_list.html",
+    "distribution/tests/test_views_requests.py"
   ]
 }
