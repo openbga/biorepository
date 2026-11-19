@@ -19,9 +19,9 @@ compliance or accreditation.
 
 - **Storage:** sites, rooms, freezers and LN2 tanks (vapor or liquid phase), racks, towers,
   shelves and boxes, each box with a position grid from a container type. Occupancy is shown per
-  unit, rack and box, free positions are searchable, positions can be blocked, and boxes and
-  racks move with everything in them as one recorded event. Templates build a unit like an
-  existing one.
+  unit, rack and box. Select a Free count on a location record to find available positions there.
+  Staff can search or block positions and move boxes and racks with their contents in one
+  recorded event. Templates build a unit like an existing one.
 - **Specimens:** registration with an opaque ID (`VP-000123` style) that carries no location or
   participant meaning, a coded participant (no names or record numbers), exact decimal amounts
   with units kept as a ledger, aliquots and derivatives with their lineage.

@@ -101,6 +101,10 @@ The same list is shown in the application under What's new.
 
   On the Imports tab of Temperature readings, select Export CSV to download the files matching your search and validation state. Each row shows who validated the file and when, the equipment, and the row and error counts.
 
+- **Changed:** Find available positions from storage records (2026-11-18, Free positions)
+
+  Select a positive Free count on a storage record to see available positions in that room, unit, rack, shelf or box. Select a position to open its cell in the box grid.
+
 - **Changed:** Lists remember your columns, rows per page and sort on any workstation (2026-11-18)
 
   List column layouts, rows per page and sort are remembered for each user on the server, so they follow you to any workstation and the next person at a shared one starts from the defaults. On narrower screens, less important columns start hidden; Columns brings them back.

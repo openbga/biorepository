@@ -29,7 +29,7 @@
 {% if "specimens"|app_installed %}{% include "storage/_attach_specimens.html" with positions=occupied %}{% endif %}
     <dl class="vr-facts vr-boxmap-legend">
       {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="occupied"></span>Occupied{% endfill %}{{ box.occupied }}{% endfact %}
-      {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="free"></span>Free{% endfill %}{{ box.free }}{% endfact %}
+      {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="free"></span>Free{% endfill %}{% include "storage/_free_count.html" with count=box.free scope="box" location=box only %}{% endfact %}
       {% if "specimens"|app_installed %}{% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="held"></span>On hold{% endfill %}{% with held=occupied|count_held %}{% if held %}{{ held }}{% else %}<span class="vr-muted">0</span>{% endif %}{% endwith %}{% endfact %}{% endif %}
       {% fact class="vr-id" %}{% fill label %}<span class="vr-boxmap-swatch" data-state="blocked"></span>Blocked{% endfill %}{% if box.blocked_count %}{{ box.blocked_count }}{% else %}<span class="vr-muted">0</span>{% endif %}{% endfact %}
       {% fact label="Positions" class="vr-id" %}{{ box.installed }}{% endfact %}

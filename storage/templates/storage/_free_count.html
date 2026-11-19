@@ -1,0 +1,2 @@
+{% comment %}count is the number of available positions under location; scope is its Free positions filter (room, unit, node or box).{% endcomment %}
+{% if count %}<a href="{% url 'storage:free-position-list' %}?{{ scope }}={{ location.pk }}">{{ count|floatformat:"0g" }}<span class="visually-hidden"> free position{{ count|pluralize }} in {{ location.code }}</span></a>{% else %}<span class="vr-muted">0</span>{% endif %}

@@ -18,7 +18,7 @@
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Code</th><th scope="col">Name</th><th scope="col" class="text-end">Storage units</th><th scope="col" class="text-end">Positions</th><th scope="col" class="text-end">Occupied</th><th scope="col" class="text-end">Free</th></tr></thead>
     <tbody>{% for row in rooms %}
-      <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:room-detail' row.pk %}">{{ row.code }}</a></th><td>{{ row.name }}</td><td class="text-end vr-id">{{ row.unit_count }}</td><td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{{ row.free }}</td></tr>
+      <tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:room-detail' row.pk %}">{{ row.code }}</a></th><td>{{ row.name }}</td><td class="text-end vr-id">{{ row.unit_count }}</td><td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{% include "storage/_free_count.html" with count=row.free scope="room" location=row only %}</td></tr>
     {% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No rooms yet" body="Add the rooms where this site's storage units stand." %}{% endif %}
 {% endpanel %}

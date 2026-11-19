@@ -28,7 +28,7 @@
   </dl>
   <p class="vr-muted small mt-3 mb-0">The nominal temperature is the unit's stated set point, not a measurement.</p>
 {% endpanel %}
-{% include "storage/_capacity.html" with c=unit %}
+{% include "storage/_capacity.html" with c=unit scope="unit" location=unit only %}
 {% panel title="Racks and shelves" heading_id="unit-nodes" table=True class="mb-3" %}{% fill count %}{{ nodes|length }}{% endfill %}{% fill actions %}{% if can_manage and unit.is_active %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:node-create' %}?unit={{ unit.pk }}">{% icon name="plus-lg" %}Add rack or shelf</a>{% endif %}{% endfill %}
 {% if nodes %}
   <div class="vr-table-wrap"><table class="table vr-table">
@@ -40,7 +40,7 @@
         <td>{% if row.parent %}<span class="vr-id">{{ row.parent.code }}</span>{% else %}Top level{% endif %}</td>
         <td class="text-end vr-id">{{ row.slot }}</td>
         <td>{% if row.box_slots %}{{ row.box_count }} of {{ row.box_slots }} box slots used{% else %}{{ row.child_count }} of {{ row.child_slots }} node slots used{% endif %}</td>
-        <td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{{ row.free }}</td>
+        <td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{% include "storage/_free_count.html" with count=row.free scope="node" location=row only %}</td>
         <td>{% include "storage/_status.html" with obj=row plain=True %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
@@ -56,7 +56,7 @@
         <td><a class="vr-id" href="{% url 'storage:node-detail' row.node_id %}">{{ row.node.code }}</a></td>
         <td class="text-end vr-id">{{ row.slot }}</td>
         <td>{{ row.container_type }}</td>
-        <td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{{ row.free }}</td>
+        <td class="text-end vr-id">{{ row.installed }}</td><td class="text-end vr-id">{{ row.occupied }}</td><td class="text-end vr-id">{% include "storage/_free_count.html" with count=row.free scope="box" location=row only %}</td>
       </tr>{% endfor %}
     </tbody></table></div>
   {% else %}{% empty_state title="No boxes in this unit" body="Add boxes from a rack or shelf with box slots." %}{% endif %}
