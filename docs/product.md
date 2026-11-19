@@ -93,7 +93,9 @@ Acceptance outcomes:
 
 1. A manager defines storage: site, room, unit (with storage class, technology and nominal
    temperature), racks, towers, canisters or shelves, boxes, and positions from a container type
-   with a grid and a numbering scheme. Templates build a unit like an existing one.
+   with a grid and a numbering scheme. A manager can save an active layout as a template and apply it to a new unit.
+   Within the template size limits, all four levels, top-level slot numbers and box grid versions
+   carry over. The manager can review and edit the unique code suffixes before saving.
 2. Occupancy is visible per unit, rack and box. From a storage list or a location record, staff
    can select a positive Free count to see available positions in that room, unit, rack, shelf or
    box. Selecting a position opens its cell in the box grid. A retired

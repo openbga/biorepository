@@ -18,7 +18,8 @@
     {
       "title": "Start from an existing unit",
       "steps": [
-        "Use Save layout as template on the unit's page. The recipe is filled in for you."
+        "Select [[Save layout as template]] on the storage unit.",
+        "Review the suggested suffixes in [[Layout recipe]]. You can edit them before saving."
       ]
     }
   ],
@@ -60,7 +61,8 @@
     {
       "title": "Layout recipe",
       "paragraphs": [
-        "The recipe is plain data, not a script. Unknown keys are rejected. Limits: at most 400 nodes, 400 boxes and 40,000 positions, and 4 levels. Codes in a recipe are suffixes; applying the template puts the new unit's code and a hyphen before each (VP-02 and T01 become VP-02-T01)."
+        "The recipe is plain data, not a script. Unknown keys are rejected. Limits: at most 400 nodes, 400 boxes and 40,000 positions, and 4 levels. Codes in a recipe are suffixes; applying the template puts the new unit's code and a hyphen before each (VP-02 and T01 become VP-02-T01).",
+        "When copying a unit, the form uses its rack, shelf and box codes as suffixes where possible, removing the unit prefix. If a suffix repeats or does not fit the format, the form suggests a unique numbered suffix. The source unit keeps its codes."
       ],
       "items": [
         {
@@ -85,11 +87,11 @@
         },
         {
           "label": "node: suffix, name, kind",
-          "description": "suffix is required, 1 to 30 letters, digits, '.', '_' or '-', and unique across all nodes and boxes of the recipe. name is optional, up to 160 characters. kind is shelf, rack, tower or canister; a shelf holds racks, the others hold shelves."
+          "description": "suffix is required, 1 to 30 letters, digits, '.', '_' or '-', starting with a letter or digit and unique across all nodes and boxes of the recipe. name is optional, up to 160 characters. kind is shelf, rack, tower or canister; a shelf holds racks, the others hold shelves."
         },
         {
           "label": "node: slot",
-          "description": "Required whole number from 1 (up to the parent's child_slots, or 100 at the top level); not used twice in the same place."
+          "description": "Required whole number from 1 to 1,000,000 at the top of a unit. For a child node, the upper limit is the parent's child_slots. Each slot can be used once within its parent."
         },
         {
           "label": "node: child_slots, box_slots",
@@ -131,6 +133,7 @@
     "storage/services.py",
     "storage/templates/storage/form.html",
     "storage/tests/test_views.py",
-    "storage/recipes.py"
+    "storage/recipes.py",
+    "storage/tests/test_definitions.py"
   ]
 }

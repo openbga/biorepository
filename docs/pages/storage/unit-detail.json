@@ -23,7 +23,8 @@
     {
       "title": "Reuse this layout for another unit",
       "steps": [
-        "Select [[Save layout as template]], check the recipe and save it."
+        "Select [[Save layout as template]].",
+        "Review the suggested code suffixes in [[Layout recipe]] before saving."
       ]
     },
     {
@@ -137,7 +138,7 @@
         },
         {
           "label": "Save layout as template",
-          "description": "Opens a new template form pre-filled with a recipe that reproduces this unit's active racks, shelves and boxes. Nothing is saved until you submit it."
+          "description": "Opens a new template with this unit's active layout, including slot numbers and box grid versions. Review the suggested code suffixes before saving. Applying the template creates empty positions in the new unit."
         },
         {
           "label": "Retire storage unit",
@@ -162,6 +163,8 @@
     "storage/templates/storage/_capacity.html",
     "templates/includes/history_panel.html",
     "storage/templates/storage/_free_count.html",
-    "storage/templates/storage/free_position_list.html"
+    "storage/templates/storage/free_position_list.html",
+    "storage/recipes.py",
+    "storage/tests/test_definitions.py"
   ]
 }
