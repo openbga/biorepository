@@ -5,6 +5,7 @@ its errors. Every rule is enforced again by the service.
 """
 
 import uuid
+from urllib.parse import urlencode
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -102,8 +103,13 @@ def grid_response(request, spec, template, *, list_url, export_url=None, extra=N
     )
     chips = active_filters(request, form) if form.is_valid() else []
     cleaned = getattr(form, "cleaned_data", {})
-    query = request.GET.copy()
-    query.pop("page", None)
+    over_limit = page_obj.paginator.count > exports.EXPORT_CAP
+    download_url = None
+    if export_url and form.is_valid() and not over_limit:
+        query = {k: data[k] for k in form.fields if k not in ("per_page", "sort") and data.get(k)}
+        if grid.sort:
+            query["sort"] = grid.sort
+        download_url = f"{export_url}?{urlencode(query)}" if query else export_url
     return render(
         request,
         template,
@@ -120,7 +126,8 @@ def grid_response(request, spec, template, *, list_url, export_url=None, extra=N
             "more_open": any(cleaned.get(name) for name in spec.more),
             "noun": spec.noun,
             "list_url": list_url,
-            "export_url": f"{export_url}?{query.urlencode()}" if export_url else None,
+            "export_url": download_url,
+            "exceeded_export_limit": f"{exports.EXPORT_CAP:,}" if over_limit else "",
             **flags(request.user),
             **(extra or {}),
         },

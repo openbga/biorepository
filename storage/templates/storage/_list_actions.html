@@ -1,1 +1,10 @@
-{% load ui %}{% comment %}List header actions: Export CSV (everyone who can read) and New <thing> (managers). Parameters: export_url, create_url, create_label.{% endcomment %}<a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% icon name="download" %}Export CSV</a>{% if can_manage and create_url %}<a class="btn btn-primary" href="{{ create_url }}">{% icon name="plus-lg" %}{{ create_label }}</a>{% endif %}
+{% load ui %}
+{% comment %}Storage list header actions. Parameters: export_url, exceeded_export_limit, can_manage, create_url, create_label.{% endcomment %}
+{% if export_url %}
+  <a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% icon name="download" %}Export CSV</a>
+{% elif exceeded_export_limit %}
+  <span class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</span>
+{% endif %}
+{% if can_manage and create_url %}
+  <a class="btn btn-primary" href="{{ create_url }}">{% icon name="plus-lg" %}{{ create_label }}</a>
+{% endif %}

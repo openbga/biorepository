@@ -4,6 +4,7 @@ services, denied roles get 403, and CSV exports are filtered, safe and audited."
 import csv
 import io
 import re
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
 from django.urls import reverse
@@ -17,6 +18,7 @@ from storage.models import (
     LayoutNode,
     MoveEvent,
     Position,
+    StorageClass,
     StorageGate,
     StorageUnit,
 )
@@ -499,15 +501,66 @@ def test_box_register_and_csv_order_container_codes_and_versions_across_pages(cl
     ):
         params = {"unit": tree.other_unit.pk, "sort": sort, "per_page": 25}
         first = client.get(register_url, params)
-        second = client.get(register_url, {**params, "page": 2})
+        second = client.get(register_url, {**params, "page": 2, "unrelated": "ignored"})
         assert first.status_code == second.status_code == 200
         assert [box.code for box in first.context["page_obj"]] == expected[:25]
         assert [box.code for box in second.context["page_obj"]] == expected[25:]
 
-        export = client.get(second.context["export_url"])
+        download_url = second.context["export_url"]
+        query = parse_qs(urlsplit(download_url).query)
+        assert query == {"unit": [str(tree.other_unit.pk)], "sort": [sort]}
+        assert f'href="{escape(download_url)}"' in second.content.decode()
+        export = client.get(download_url)
         assert export.status_code == 200
         rows = csv.DictReader(io.StringIO(export.content.decode(), newline=""))
         assert [row["Code"] for row in rows] == expected
+
+
+def test_catalogue_csv_preserves_the_filtered_sort_across_pages(client, people, monkeypatch):
+    codes = [f"EXAMPLE-CLASS-{number:02d}" for number in range(1, 27)]
+    StorageClass.objects.bulk_create(
+        [
+            StorageClass(code=code, name=code, created_by=people["manager"])
+            for code in [*codes, "OTHER-CLASS"]
+        ]
+        + [
+            StorageClass(
+                code="EXAMPLE-CLASS-INACTIVE",
+                name="Inactive test class",
+                is_active=False,
+                created_by=people["manager"],
+            )
+        ]
+    )
+    expected = codes[::-1]
+    client.force_login(people["viewer"])
+    list_url = reverse("storage:class-list")
+    params = {
+        "q": " EXAMPLE-CLASS ",
+        "active": "true",
+        "sort": "-name",
+        "page": 2,
+        "per_page": 25,
+        "unrelated": "ignored",
+    }
+    monkeypatch.setattr("storage.exports.EXPORT_CAP", 25)
+    oversized = client.get(list_url, params)
+    assert oversized.status_code == 200
+    assert len(oversized.context["page_obj"]) == 1
+    assert not oversized.context["export_url"]
+
+    monkeypatch.setattr("storage.exports.EXPORT_CAP", len(expected))
+    response = client.get(list_url, params)
+    assert response.status_code == 200
+    assert [row.code for row in response.context["page_obj"]] == expected[25:]
+    download_url = response.context["export_url"]
+    query = parse_qs(urlsplit(download_url).query)
+    assert query == {"q": ["EXAMPLE-CLASS"], "active": ["true"], "sort": ["-name"]}
+    assert f'href="{escape(download_url)}"' in response.content.decode()
+    export = client.get(download_url)
+    assert export.status_code == 200
+    rows = csv.DictReader(io.StringIO(export.content.decode(), newline=""))
+    assert [row["Code"] for row in rows] == expected
 
 
 def test_storage_registers_link_free_counts_to_the_location_in_each_row(client, tree, people):
@@ -644,6 +697,59 @@ def test_exports_match_filters_neutralize_formulas_and_are_audited(client, tree,
     assert audit.after["rows"] == 0
     client.force_login(people["nobody"])
     assert client.get(reverse("storage:export", args=["unit"])).status_code == 403
+
+
+@pytest.mark.parametrize(
+    ("kind", "export_name", "code", "invalid_filter"),
+    [
+        ("unit", "export", "VP-01", {"room": "not-a-uuid"}),
+        ("class", "catalogue-export", "CRYOGENIC", {"active": "unknown"}),
+    ],
+    ids=["register", "catalogue"],
+)
+def test_csv_availability_matches_valid_filter_results(
+    client, tree, people, monkeypatch, kind, export_name, code, invalid_filter
+):
+    if kind == "class":
+        StorageClass.objects.create(
+            code="OTHER-CLASS", name="Other class", created_by=people["manager"]
+        )
+    monkeypatch.setattr("storage.exports.EXPORT_CAP", 1)
+    client.force_login(people["viewer"])
+    list_url = reverse(f"storage:{kind}-list")
+    export_path = reverse(f"storage:{export_name}", args=[kind])
+    audits = AuditEvent.objects.filter(action="storage.exported", object_id=kind)
+
+    oversized = client.get(list_url)
+    assert oversized.status_code == 200
+    assert b"Narrow the filters to export CSV. The row limit is 1." in oversized.content
+    assert not oversized.context["export_url"]
+    assert f'href="{export_path}' not in oversized.content.decode()
+
+    refused = client.get(export_path)
+    assert refused.status_code == 400
+    assert "Content-Disposition" not in refused
+    assert not audits.exists()
+
+    invalid = client.get(list_url, invalid_filter)
+    assert invalid.status_code == 200
+    assert b"cannot be applied" in invalid.content
+    assert not invalid.context["export_url"]
+    assert f'href="{export_path}' not in invalid.content.decode()
+    assert not audits.exists()
+
+    for search, expected_codes in ((code, [code]), ("NO-MATCH-EXAMPLE", [])):
+        register = client.get(list_url, {"q": search})
+        assert register.status_code == 200
+        download_url = register.context["export_url"]
+        assert download_url.startswith(export_path)
+        assert f'href="{escape(download_url)}"' in register.content.decode()
+        downloaded = client.get(download_url)
+        assert downloaded.status_code == 200
+        rows = list(csv.reader(io.StringIO(downloaded.content.decode(), newline="")))
+        assert rows[0][0] == "Code"
+        assert [row[0] for row in rows[1:]] == expected_codes
+    assert sorted(audit.after["rows"] for audit in audits) == [0, 1]
 
 
 def test_latest_move_can_be_corrected_once_from_the_record(client, tree, people):
