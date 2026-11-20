@@ -1,17 +1,27 @@
 {% extends "base.html" %}{% load ui %}
 {% comment %}
-Label sheet preview (document page) for the specimens named by repeated id parameters. Each label
-carries the specimen ID only, as text and as a Code 128 barcode (labels.barcode_svg returns
-library SVG of a validated identifier). Context: stock (labels.LabelStock), items
-[{specimen, barcode, problem}], error, printable, query (the id parameters for the PDF).
+Label sheet preview (document page) for a direct specimen selection or a committed import group.
+Each label carries the specimen ID only, as text and as a Code 128 barcode (labels.barcode_svg
+returns library SVG of a validated identifier). Context: stock (labels.LabelStock), items
+[{specimen, barcode, problem}], error, printable, pdf_url, batch and label_range (for imports).
 {% endcomment %}
-{% block breadcrumbs %}{% url 'specimens:specimen-list' as list_url %}{% breadcrumbs section="Specimens" section_url=list_url current="Labels" %}{% endblock %}
-{% block page_meta %}{% if items %}{% page_meta %}{% meta_item label="Labels" value=items|length class="vr-id" %}{% meta_item label="Stock" value=stock.description %}{% endpage_meta %}{% endif %}{% endblock %}
-{% block page_actions %}{% if printable %}<a class="btn btn-primary" href="{% url 'specimens:label-pdf' %}?{{ query }}">{% icon name="download" %}Download PDF</a>{% endif %}{% endblock %}
+{% block breadcrumbs %}
+{% if batch %}
+{% url 'specimens:import-list' as list_url %}{% url 'specimens:import-detail' batch.pk as import_url %}{% breadcrumbs section="Imports" section_url=list_url record=batch.name record_url=import_url current="Labels" %}
+{% else %}
+{% url 'specimens:specimen-list' as list_url %}{% breadcrumbs section="Specimens" section_url=list_url current="Labels" %}
+{% endif %}
+{% endblock %}
+{% block page_meta %}{% if items %}{% page_meta %}{% meta_item label="Labels" value=items|length class="vr-id" %}{% if batch %}{% meta_item label="Import labels" value=label_range class="vr-id" %}{% endif %}{% meta_item label="Stock" value=stock.description %}{% endpage_meta %}{% endif %}{% endblock %}
+{% block page_actions %}{% if printable %}<a class="btn btn-primary" href="{{ pdf_url }}">{% icon name="download" %}Download PDF</a>{% endif %}{% endblock %}
 {% block content %}
 {% if error %}
 {% panel title="Labels" heading_id="labels-heading" %}
+{% if batch %}
+{% empty_state kind="error" title="No labels to preview" body=error %}
+{% else %}
 {% url 'specimens:specimen-list' as list_url %}{% empty_state kind="error" title="No labels to preview" body=error action_url=list_url action_label="Choose specimens" %}
+{% endif %}
 {% endpanel %}
 {% else %}
 {% panel title="Labels" heading_id="labels-heading" %}{% fill count %}{{ items|length }}{% endfill %}

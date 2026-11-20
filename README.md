@@ -38,7 +38,8 @@ compliance or accreditation.
   and keeps the record. Staff can export the filtered disposal request register to CSV.
 - **Throughput:** Code 128 label PDFs, scan-to-lookup in the top bar, CSV import with a validation
   pass before anything is committed, filters, sorting, pagination and CSV export. Operators can
-  download the specimen import register to review file states and validation counts. Specimen and
+  print labels for every specimen in a committed import, in file order, in groups of up to 200.
+  They can download the specimen import register to review file states and validation counts. Specimen and
   distribution list and catalogue exports include up to 10,000 matching rows. The audit trail
   records the number of data rows in each download.
 - **Equipment:** a register of the tanks, freezers, monitors and supply dewars that hold or watch

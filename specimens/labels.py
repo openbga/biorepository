@@ -106,11 +106,11 @@ def label_specimens(specimen_ids):
     if not 1 <= len(ids) <= MAX_LABELS:
         raise ValidationError(f"Print from 1 to {MAX_LABELS} labels at a time.")
     found = Specimen.objects.in_bulk(ids)
-    missing = [str(i) for i in ids if i not in found and str(i) not in map(str, found)]
-    if missing:
-        raise Specimen.DoesNotExist(missing[0])
-    by_str = {str(k): v for k, v in found.items()}
-    return [by_str[str(i)] for i in ids]
+    by_id = {str(pk): specimen for pk, specimen in found.items()}
+    try:
+        return [by_id[str(pk)] for pk in ids]
+    except KeyError as exc:
+        raise Specimen.DoesNotExist(exc.args[0]) from exc
 
 
 def render_labels(*, actor, specimen_ids, stock=None):

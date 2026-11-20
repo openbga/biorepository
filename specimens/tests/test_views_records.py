@@ -5,14 +5,20 @@ level. All data is synthetic.
 """
 
 import re
+from datetime import timedelta
+from decimal import Decimal
 
 import pytest
+from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from django.utils import timezone
 
+from core.models import AuditEvent
 from specimens import importing, services
 from specimens.dashboard import queues
-from specimens.models import ImportBatch, Specimen
+from specimens.models import ImportBatch, ImportCommit, OutputRecord, Specimen
+from storage.models import Occupancy
 
 from .conftest import check_out, place, register
 
@@ -252,6 +258,11 @@ def test_import_upload_validate_and_commit(client, people, world):
     assert '<span class="vr-muted vr-id">PLASMA</span>' in page
     assert '<span class="vr-muted vr-id">CRYOVIAL-2ML</span>' in page
     assert '<span class="vr-muted vr-id">DEMO</span>' in page
+    preview_url = reverse("specimens:import-label-preview", args=[batch.pk, 1])
+    assert f'href="{preview_url}"' not in page
+    assert client.get(preview_url).status_code == 404
+    assert client.get(reverse("specimens:import-label-pdf", args=[batch.pk, 1])).status_code == 404
+
     response = client.post(
         reverse("specimens:import-commit", args=[batch.pk]),
         {"reason": "Shipment 7", "expected_sha256": batch.sha256},
@@ -260,6 +271,8 @@ def test_import_upload_validate_and_commit(client, people, world):
     assert "Registered 1 specimen." in html(response)
     assert Specimen.objects.count() == 1
     assert "Print labels" in html(response)
+    assert f'href="{preview_url}"' in html(response)
+    assert f"Barcode for {Specimen.objects.get().accession}" in html(client.get(preview_url))
     assert client.get(reverse("specimens:import-list")).context["page_obj"].paginator.count == 1
 
 
@@ -279,6 +292,129 @@ def test_label_preview_shows_barcodes(client, people, specimens):
     assert page.count("<svg") >= 2 and "Download PDF" in page
     page = html(client.get(reverse("specimens:label-preview"), {"id": "not-a-uuid"}))
     assert "No labels to preview" in page and "Download PDF" not in page
+
+
+def legacy_committed_import(actor, world, count):
+    """Build the persisted shape of a legacy import with a recorded order unlike accession order."""
+    recorded_at = timezone.now() - timedelta(days=3)
+    occupancies = Occupancy.objects.bulk_create(
+        Occupancy(created_by=actor, last_occurred_at=recorded_at) for _ in range(count)
+    )
+    specimens = Specimen.objects.bulk_create(
+        Specimen(
+            occupancy=occupancy,
+            accession=f"VP-{number:06d}",
+            specimen_type=world.plasma,
+            container_type=world.cryovial,
+            unit=world.ml,
+            collected_at=recorded_at,
+            registered_by=actor,
+            registered_at=recorded_at,
+            custodian=actor,
+            quantity_on_hand=Decimal("1"),
+        )
+        for number, occupancy in enumerate(occupancies, start=1)
+    )[::-1]
+    batch = ImportBatch.objects.create(
+        actor=actor,
+        recorded_at=recorded_at,
+        expires_at=recorded_at + timedelta(days=1),
+        filename="legacy-import.csv",
+        sha256="0" * 64,
+        row_count=count,
+        normalized_rows=[{"line": line, "row_key": f"R{line}"} for line in range(2, count + 2)],
+    )
+    ImportCommit.objects.create(
+        batch=batch,
+        actor=actor,
+        recorded_at=recorded_at,
+        reason="Registered synthetic import",
+        specimen_ids=[str(s.pk) for s in specimens],
+    )
+    return batch, specimens
+
+
+def test_import_label_groups_cover_the_committed_rows_in_order(client, people, world):
+    batch, specimens = legacy_committed_import(people["technician"], world, 202)
+    login(client, people["technician2"])
+    detail_url = reverse("specimens:import-detail", args=[batch.pk])
+    detail = html(client.get(detail_url))
+
+    for group, expected, row_range in (
+        (1, specimens[:200], "1–200"),
+        (2, specimens[200:], "201–202"),
+    ):
+        args = [batch.pk, group]
+        preview_url = reverse("specimens:import-label-preview", args=args)
+        pdf_url = reverse("specimens:import-label-pdf", args=args)
+        assert f'href="{preview_url}"' in detail
+        assert row_range in detail
+
+        preview = client.get(preview_url, {"id": specimens[100].pk})
+        assert preview.status_code == 200
+        page = html(preview)
+        assert re.findall(r'aria-label="Barcode for (VP-\d+)"', page) == [
+            s.accession for s in expected
+        ]
+        assert f'href="{pdf_url}"' in page
+        assert f'href="{detail_url}"' in page
+
+    assert not OutputRecord.objects.filter(kind=OutputRecord.Kind.LABELS).exists()
+
+
+def test_import_label_routes_require_import_access_and_an_existing_group(client, people, world):
+    batch, _ = legacy_committed_import(people["technician"], world, 2)
+    routes = ("specimens:import-label-preview", "specimens:import-label-pdf")
+    for route in routes:
+        assert client.get(reverse(route, args=[batch.pk, 1])).status_code == 302
+
+    login(client, people["viewer"])
+    for route in routes:
+        assert client.get(reverse(route, args=[batch.pk, 1])).status_code == 403
+
+    login(client, people["manager"])
+    for route in routes:
+        for group in (0, 2):
+            assert client.get(reverse(route, args=[batch.pk, group])).status_code == 404
+    assert not OutputRecord.objects.filter(kind=OutputRecord.Kind.LABELS).exists()
+
+
+def test_import_group_pdf_records_the_exact_labels_and_actor(client, people, world):
+    from .test_outputs import weasyprint_or_skip
+
+    weasyprint_or_skip()
+    batch, specimens = legacy_committed_import(people["technician"], world, 202)
+    manager = people["manager"]
+    login(client, manager)
+    pdf_url = reverse("specimens:import-label-pdf", args=[batch.pk, 2])
+    response = client.get(pdf_url, {"id": specimens[0].pk})
+
+    assert response.status_code == 200 and response.content.startswith(b"%PDF")
+    assert response["Content-Type"] == "application/pdf"
+    assert response["Content-Disposition"].startswith('inline; filename="labels-')
+    assert response["Cache-Control"] == "no-store"
+    accessions = [s.accession for s in specimens[200:]]
+    output = OutputRecord.objects.get(kind=OutputRecord.Kind.LABELS)
+    assert output.actor == manager and output.count == 2
+    assert output.details["accessions"] == accessions
+    audit = AuditEvent.objects.get(action="specimens.labels_printed")
+    assert audit.actor == manager and audit.object_id == str(output.pk)
+    assert audit.after["count"] == 2 and audit.after["accessions"] == accessions
+
+
+def test_import_group_pdf_error_returns_to_its_preview(client, people, world, settings):
+    batch, _ = legacy_committed_import(people["technician"], world, 202)
+    settings.SPECIMEN_LABEL_STOCK = {"width_mm": "20"}
+    login(client, people["technician"])
+    preview_url = reverse("specimens:import-label-preview", args=[batch.pk, 2])
+    pdf_url = reverse("specimens:import-label-pdf", args=[batch.pk, 2])
+    response = client.get(pdf_url, follow=True)
+
+    assert response.redirect_chain == [(preview_url, 302)]
+    assert response.status_code == 200
+    assert any("does not fit" in str(message) for message in get_messages(response.wsgi_request))
+    assert f'href="{pdf_url}"' not in html(response)
+    assert not OutputRecord.objects.filter(kind=OutputRecord.Kind.LABELS).exists()
 
 
 def test_catalogue_create_and_edit(client, people, world):

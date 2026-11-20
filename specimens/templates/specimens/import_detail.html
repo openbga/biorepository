@@ -4,12 +4,12 @@
 One validated CSV import: warnings, file and row errors, a preview of the normalized rows, then
 either the commit form (valid, unexpired, not committed) or the specimens it registered.
 Context: batch (errors keeps the first importing.MAX_ERRORS; total_errors, errors_truncated),
-state, file_errors, row_errors, rows, commit, created, label_query, may_commit,
+state, file_errors, row_errors, rows, commit, created, label_groups (number, first, last), may_commit,
 form (ImportCommitForm).
 {% endcomment %}
 {% block breadcrumbs %}{% url 'specimens:import-list' as list_url %}{% breadcrumbs section="Imports" section_url=list_url current=page_title %}{% endblock %}
 {% block page_meta %}{% page_meta %}{% specimen_status_parts "import" state as st %}{% meta_item %}{% status label=st.label tone=st.tone size="lg" %}{% endmeta_item %}{% meta_item label="Rows" value=batch.row_count class="vr-id" %}{% meta_item label="Validated" %}<time datetime="{{ batch.recorded_at|date:'c' }}">{{ batch.recorded_at|date:"Y-m-d H:i" }}</time> by {{ batch.actor.get_full_name|default:batch.actor.get_username }}{% endmeta_item %}{% endpage_meta %}{% endblock %}
-{% block page_actions %}{% if created %}<a class="btn btn-outline-secondary" href="{% url 'specimens:label-preview' %}?{{ label_query }}">{% icon name="printer" %}Print labels</a>{% endif %}{% endblock %}
+{% block page_actions %}{% if label_groups|length == 1 %}<a class="btn btn-outline-secondary" href="{% url 'specimens:import-label-preview' batch.pk 1 %}">{% icon name="printer" %}Print labels</a>{% endif %}{% endblock %}
 {% block content %}
 {% for warning in batch.warnings %}
 {% notice tone="warning" label="Check" %}{{ warning }}{% endnotice %}
@@ -37,6 +37,15 @@ form (ImportCommitForm).
 {% if commit %}
 {% panel title="Registered specimens" heading_id="created-heading" table=True class="mb-3" %}{% fill count %}{{ created|length }}{% endfill %}
 {% panel_section %}<p class="mb-0">Committed <time datetime="{{ commit.recorded_at|date:'c' }}">{{ commit.recorded_at|date:"Y-m-d H:i" }}</time> by {{ commit.actor.get_full_name|default:commit.actor.get_username }}: {{ commit.reason }}</p>{% endpanel_section %}
+{% if label_groups|length > 1 %}
+{% panel_section %}
+  <ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+    {% for group, first, last in label_groups %}
+    <li><a class="btn btn-outline-secondary" href="{% url 'specimens:import-label-preview' batch.pk group %}">{% icon name="printer" %}Print labels {{ first }}–{{ last }}</a></li>
+    {% endfor %}
+  </ul>
+{% endpanel_section %}
+{% endif %}
   <div class="vr-table-wrap"><table class="table vr-table">
     <thead><tr><th scope="col">Specimen ID</th><th scope="col">Type</th><th scope="col" class="text-end">Amount</th><th scope="col">Status</th></tr></thead>
     <tbody>{% for s in created %}
