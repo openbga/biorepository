@@ -131,8 +131,8 @@ Intentional divergences from Environmental LIMS (keep this list current):
 - `core/grids.py` exposes the sorted queryset before pagination so the training register
   and its CSV share the same ordering, including ties.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
-  for the excursion hold picker and container move history. Its optional anchor returns staff
-  to the Moves heading when they change pages on a container record.
+  for the excursion hold picker and storage record timelines. Its optional anchor returns staff
+  to the selected timeline. The shared history panel accepts a footer for the record’s pager.
 - The `checks` workflow's `application` job allows 60 minutes (Environmental LIMS: 30): the OpenBGA Biorepository
   suite is larger. Lower it if CI runs leave room.
 - The `checks` workflow's `browser` job allows 45 minutes (Environmental LIMS: 20): it includes the

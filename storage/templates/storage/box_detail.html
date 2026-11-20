@@ -84,7 +84,7 @@
   {% else %}{% empty_state title="The box was empty at retirement" %}{% endif %}
 {% endpanel %}
 {% include "storage/_moves.html" with noun="box" kind="box" obj=box %}
-{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
+{% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=box.code %}{% endblock %}

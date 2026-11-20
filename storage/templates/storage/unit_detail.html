@@ -61,7 +61,7 @@
     </tbody></table></div>
   {% else %}{% empty_state title="No boxes in this unit" body="Add boxes from a rack or shelf with box slots." %}{% endif %}
 {% endpanel %}
-{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
+{% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=unit.code %}{% endblock %}

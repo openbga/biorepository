@@ -61,13 +61,14 @@ def flags(user):
     return {"can_manage": has_role(user, *MANAGE), "can_operate": has_role(user, *OPERATE)}
 
 
-def history(obj, limit=50):
-    """Audit events of one record, newest first (the template shows them newest last)."""
-    return list(
+def _history_page(request, obj):
+    """Start with the latest changes. The history panel reverses each page for display."""
+    events = (
         AuditEvent.objects.filter(object_type=obj._meta.label_lower, object_id=str(obj.pk))
         .select_related("actor")
-        .order_by("-occurred_at", "-id")[:limit]
+        .order_by("-occurred_at", "-id")
     )
+    return Paginator(events, 50).get_page(request.GET.get("history_page"))
 
 
 def _move_page(request, container):
@@ -400,7 +401,7 @@ def site_detail(request, pk):
             "rooms": rooms,
             "status_label": label,
             "status_tone": tone,
-            "history": history(site),
+            "history": _history_page(request, site),
             **flags(request.user),
         },
     )
@@ -474,7 +475,7 @@ def room_detail(request, pk):
             "capacity": capacity,
             "status_label": label,
             "status_tone": tone,
-            "history": history(room),
+            "history": _history_page(request, room),
             **flags(request.user),
         },
     )
@@ -554,7 +555,7 @@ def unit_detail(request, pk):
             "retire_blocked": "Retire or move its racks, towers and shelves first."
             if active_nodes
             else "",
-            "history": history(unit),
+            "history": _history_page(request, unit),
             **flags(request.user),
         },
     )
@@ -652,7 +653,7 @@ def node_detail(request, pk):
             "retire_blocked": retire_blocked,
             "correctable": correctable_move(node),
             "moves": _move_page(request, node),
-            "history": history(node),
+            "history": _history_page(request, node),
             **flags(request.user),
         },
     )
@@ -772,7 +773,7 @@ def box_detail(request, pk):
             "retire_blocked": "Move or dispose of the items in it first." if claims else "",
             "correctable": correctable_move(box),
             "moves": _move_page(request, box),
-            "history": history(box),
+            "history": _history_page(request, box),
             **flags(request.user),
         },
     )
@@ -882,7 +883,7 @@ def class_detail(request, pk):
             "crumbs": _catalogue_crumbs("class", None, (obj.code, None)),
             "units": units[:preview_limit],
             "has_more_units": len(units) > preview_limit,
-            "history": history(obj),
+            "history": _history_page(request, obj),
             **flags(request.user),
         },
     )
@@ -932,7 +933,7 @@ def container_type_detail(request, pk):
             "preview_rows": preview_rows,
             "preview_columns": range(1, min(obj.columns, 12) + 1),
             "preview_cut": obj.rows > 12 or obj.columns > 12,
-            "history": history(obj),
+            "history": _history_page(request, obj),
             **flags(request.user),
         },
     )
@@ -1024,7 +1025,7 @@ def template_detail(request, pk):
             ).first(),
             "units": obj.units.select_related("room__site").order_by("code"),
             "versions": StorageTemplate.objects.filter(code=obj.code).order_by("version"),
-            "history": history(obj),
+            "history": _history_page(request, obj),
             **flags(request.user),
         },
     )

@@ -1059,6 +1059,10 @@ s,
   border-top: 1px solid var(--vr-border);
 }
 
+.card-footer > .vr-table-footer {
+  padding: 0;
+}
+
 /* Notices: the tone's wash with its outline; the plain status first. */
 .alert {
   --bs-alert-padding-y: 0.75rem;

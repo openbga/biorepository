@@ -22,7 +22,7 @@
     {% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No rooms yet" body="Add the rooms where this site's storage units stand." %}{% endif %}
 {% endpanel %}
-{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
+{% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=site.code %}{% endblock %}
