@@ -131,9 +131,9 @@ Acceptance outcomes:
 11. Lists filter, sort, paginate and export to CSV. Storage, specimen and distribution list and
     catalogue exports use the matching rows at download time. Each successful export records the
     number of data rows in the file, including zero. If more than 10,000 rows match, staff must
-    narrow the filters before downloading. Storage lists and catalogues show the export action
-    for valid filters with zero to 10,000 matches. Larger selections show the row limit on the
-    list so staff can refine their filters there.
+    narrow the filters before downloading. Storage and specimen lists and catalogues show the export
+    action for valid filters with zero to 10,000 matches. Larger selections show the row limit
+    on the list so staff can refine their filters there.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,
     old value, new value, reason. Controlled fields require a reason to change.
 13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,
