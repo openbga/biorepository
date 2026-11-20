@@ -9,6 +9,7 @@ import uuid
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
+from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -66,6 +67,19 @@ def history(obj, limit=50):
         .select_related("actor")
         .order_by("-occurred_at", "-id")[:limit]
     )
+
+
+def _move_page(request, container):
+    moves = container.moves.order_by("-occurred_at", "-recorded_at", "-id")
+    page = Paginator(moves, 20).get_page(request.GET.get("page"))
+    # Limit the moves first so older pages do not make us count every item ever carried.
+    page_ids = page.object_list.values("pk")
+    page.object_list = (
+        moves.filter(pk__in=page_ids)
+        .select_related("actor", "corrects")
+        .annotate(item_count=Count("members"))
+    )
+    return page
 
 
 def _status(obj):
@@ -630,9 +644,7 @@ def node_detail(request, pk):
             "status_tone": tone,
             "retire_blocked": retire_blocked,
             "correctable": correctable_move(node),
-            "moves": MoveEvent.objects.filter(node=node)
-            .select_related("actor", "corrects")
-            .order_by("-occurred_at", "-recorded_at")[:20],
+            "moves": _move_page(request, node),
             "history": history(node),
             **flags(request.user),
         },
@@ -752,9 +764,7 @@ def box_detail(request, pk):
             "status_tone": tone,
             "retire_blocked": "Move or dispose of the items in it first." if claims else "",
             "correctable": correctable_move(box),
-            "moves": MoveEvent.objects.filter(box=box)
-            .select_related("actor", "corrects")
-            .order_by("-occurred_at", "-recorded_at")[:20],
+            "moves": _move_page(request, box),
             "history": history(box),
             **flags(request.user),
         },

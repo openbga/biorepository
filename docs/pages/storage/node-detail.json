@@ -23,7 +23,8 @@
     {
       "title": "Move it with everything inside",
       "steps": [
-        "Select the Move button, choose where it goes and give a reason."
+        "Select the Move button, choose where it goes and give a reason.",
+        "Find the recorded move under [[Moves]]. Use Next page to look further back."
       ]
     },
     {
@@ -93,7 +94,8 @@
     {
       "title": "Moves",
       "paragraphs": [
-        "Recorded moves of this node, newest first, up to 20. Columns: Moved at (with a Correction tag where it corrects an earlier move), From, To, Items carried, By, Reason."
+        "All moves recorded directly for this node, newest first. Each row shows when the move happened, its original and destination locations, how many items it carried, who moved it and why. Correction marks a move that corrects an earlier one.",
+        "When there are more than 20 moves, use Next page for older moves or Previous page for newer ones. First page returns to the latest moves and Last page opens the oldest."
       ],
       "items": [
         {
@@ -135,6 +137,7 @@
     "storage/templates/storage/node_detail.html",
     "storage/templates/storage/_capacity.html",
     "storage/templates/storage/_moves.html",
+    "templates/includes/pagination.html",
     "templates/includes/history_panel.html",
     "storage/templates/storage/_free_count.html",
     "storage/templates/storage/free_position_list.html"

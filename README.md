@@ -23,7 +23,8 @@ compliance or accreditation.
   the available positions there. Open a storage class to find all its active and retired units.
   Retired boxes keep their position labels and show every position as unavailable.
   Staff can search or block positions and move boxes and racks with their contents in one
-  recorded event. Templates copy up to four levels of racks and shelves, preserving slot numbers and box grids.
+  recorded event. The Moves table lists all moves recorded for that container, newest first.
+  Templates copy up to four levels of racks and shelves, preserving slot numbers and box grids.
   Staff can review the proposed codes before saving the template. CSV downloads from storage lists and storage catalogues
   record the exported row count in the audit trail.
 - **Specimens:** registration with an opaque ID (`VP-000123` style) that carries no location or

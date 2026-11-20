@@ -68,6 +68,10 @@ The same list is shown in the application under What's new.
 
 ### Medium impact
 
+- **Changed:** Browse earlier box and rack moves (2026-11-19, Storage)
+
+  The Moves table on a box, rack, shelf, tower or canister record now includes every move recorded directly for that container. When there are more than 20 moves, use Next page to see earlier moves and their recorded reasons.
+
 - **Fixed:** Copy four-level storage layouts into a new unit (2026-11-19, Storage units)
 
   Save layout as template keeps all four rack and shelf levels, including top-level slots above 100. When existing codes would give a duplicate or invalid suffix, the form suggests a unique suffix you can edit before saving.

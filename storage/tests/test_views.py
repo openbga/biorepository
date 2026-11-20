@@ -558,6 +558,68 @@ def test_latest_move_can_be_corrected_once_from_the_record(client, tree, people)
     assert f"?corrects={fixed.pk}" in client.get(detail).content.decode()
 
 
+@pytest.mark.parametrize("kind", ["box", "node"])
+def test_container_move_history_pages(client, tree, people, kind):
+    from uuid import UUID
+
+    from django.utils import timezone
+
+    if kind == "box":
+        container = tree.box
+        other = services.create_box(
+            actor=people["manager"],
+            node_id=tree.rack.pk,
+            code="EXAMPLE-OTHER",
+            name="Other box",
+            slot=1,
+            container_type_id=tree.grid.pk,
+        )
+    else:
+        container, other = tree.tower, tree.rack
+    detail = reverse(f"storage:{kind}-detail", args=[container.pk])
+    timestamp = timezone.now()
+    common = {
+        "kind": MoveEvent.Kind.CONTAINER_MOVE,
+        "actor": people["technician"],
+        "occurred_at": timestamp,
+        "recorded_at": timestamp,
+    }
+    # Identical event times straddle the page boundary. UUIDs break the tie.
+    moves = [
+        MoveEvent(
+            id=UUID(int=number),
+            reason=f"Example move {number:02d}",
+            from_path={"unit": {"code": "EXAMPLE-FROM"}},
+            to_path={"unit": {"code": "EXAMPLE-TO"}},
+            **{kind: container},
+            **common,
+        )
+        for number in range(1, 22)
+    ]
+    MoveEvent.objects.bulk_create(moves[:20])
+    MoveEvent.objects.create(reason="Other container move", **{kind: other}, **common)
+    client.force_login(people["viewer"])
+    assert b'href="?page=2' not in client.get(detail).content
+
+    moves[-1].save()
+    first = client.get(detail).content.decode()
+    assert re.findall(r"Example move (\d{2})", first) == [f"{n:02d}" for n in range(21, 1, -1)]
+    assert 'href="?page=2' in first
+    assert "Other container move" not in first and "?corrects=" not in first
+    older = client.get(detail, {"page": 2}).content.decode()
+    assert re.findall(r"Example move (\d{2})", older) == ["01"]
+    assert "EXAMPLE-FROM" in older and "EXAMPLE-TO" in older and "Other container move" not in older
+    assert 'href="?page=1' in older
+
+    client.force_login(people["manager"])
+    assert re.findall(r"\?corrects=([\w-]+)", client.get(detail).content.decode()) == [
+        str(moves[-1].pk)
+    ]
+    assert b"?corrects=" not in client.get(detail, {"page": 2}).content
+    client.force_login(people["nobody"])
+    assert client.get(detail, {"page": 2}).status_code == 403
+
+
 def test_box_page_links_its_occupants_to_the_specimen_list(client, tree, people):
     from .conftest import ago
 
