@@ -389,6 +389,34 @@ def test_list_filters_sorts_and_states(client, tree, people):
     assert free.context["page_obj"].paginator.count == 81
 
 
+def displayed_path(html):
+    return re.sub(r"\s*/\s*", "/", strip_tags(html).strip())
+
+
+def test_node_register_locations_match_full_paths_in_the_sorted_csv(client, tree, people):
+    client.force_login(people["viewer"])
+    register = client.get(reverse("storage:node-list"), {"unit": tree.unit.pk, "sort": "-path"})
+    assert register.status_code == 200
+    content = register.content.decode()
+    headers = re.findall(r'<th\b[^>]*data-vr-col="([^"]+)"', content)
+    location_column = headers.index("path")
+    rows = re.findall(r'<tr>(\s*<th scope="row".*?)</tr>', content, re.S)
+    displayed = []
+    for row in rows:
+        cells = re.findall(r"<t[hd]\b[^>]*>(.*?)</t[hd]>", row, re.S)
+        displayed.append((strip_tags(cells[0]).strip(), displayed_path(cells[location_column])))
+
+    assert displayed == [
+        (tree.shelf2.code, f"{tree.tower.code}/{tree.shelf2.code}"),
+        (tree.shelf1.code, f"{tree.tower.code}/{tree.shelf1.code}"),
+        (tree.tower.code, tree.tower.code),
+    ]
+    export = client.get(register.context["export_url"])
+    assert export.status_code == 200
+    exported = csv.DictReader(io.StringIO(export.content.decode(), newline=""))
+    assert [(row["Code"], row["Path"]) for row in exported] == displayed
+
+
 def test_box_register_links_the_complete_rack_or_shelf_path(client, tree, people):
     rack_box = services.create_box(
         actor=people["manager"],
@@ -412,7 +440,7 @@ def test_box_register_links_the_complete_rack_or_shelf_path(client, tree, people
         row = next(row for row in rows if f'href="{box_url}"' in row)
         location = re.search(rf'<a\b[^>]*href="{re.escape(node_url)}"[^>]*>(.*?)</a>', row)
         assert location, row
-        assert re.sub(r"\s*/\s*", "/", strip_tags(location[1]).strip()) == path
+        assert displayed_path(location[1]) == path
 
     export = client.get(register.context["export_url"])
     assert export.status_code == 200
@@ -566,8 +594,19 @@ def test_viewer_follows_tower_free_count_to_available_box_position(client, tree,
     assert page[0].pk == cell(tree.box, "A3").pk
     box = reverse("storage:box-detail", args=[tree.box.pk])
     anchor = f"position-{page[0].pk}"
-    assert f'href="{box}#{anchor}"' in positions.content.decode()
+    rows = re.findall(r"<tr>(.*?)</tr>", positions.content.decode(), re.S)
+    row = next(row for row in rows if f'href="{box}#{anchor}"' in row)
+    shelf = reverse("storage:node-detail", args=[tree.shelf1.pk])
+    location = re.search(rf'<a\b[^>]*href="{re.escape(shelf)}"[^>]*>(.*?)</a>', row, re.S)
+    assert location, row
+    path = displayed_path(location[1])
+    assert path == f"{tree.tower.code}/{tree.shelf1.code}"
     assert f'id="{anchor}" data-state="free"' in client.get(box).content.decode()
+    export = client.get(positions.context["export_url"])
+    assert export.status_code == 200
+    exported = csv.DictReader(io.StringIO(export.content.decode(), newline=""))
+    first = next(exported)
+    assert (first["Box"], first["Position"], first["Rack or shelf"]) == (tree.box.code, "A3", path)
     assert StorageGate.objects.get(pk=1).revision == gate
 
 

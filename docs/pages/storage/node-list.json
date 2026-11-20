@@ -24,7 +24,7 @@
   "good_to_know": [
     "Only active racks and shelves are listed until you change [[Status]].",
     "Counts include everything inside the node.",
-    "Location is the path of codes from the top of the unit."
+    "Read [[Location]] from left to right, from the top of the unit to the location listed in the row."
   ],
   "sections": [
     {
@@ -78,7 +78,7 @@
         },
         {
           "label": "Location",
-          "description": "Path of codes from the top of the unit to this node. Sortable."
+          "description": "The full path within the storage unit. A top-level location shows its own code. Select the heading to sort by the path shown."
         },
         {
           "label": "Slot",
@@ -139,6 +139,8 @@
     "storage/templates/storage/_capacity_cells.html",
     "storage/templates/storage/_free_count.html",
     "storage/templates/storage/_list_actions.html",
+    "storage/templates/storage/_path.html",
+    "storage/templatetags/storage_labels.py",
     "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
