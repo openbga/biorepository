@@ -24,7 +24,7 @@
           <th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:box-detail' row.pk %}">{{ row.code }}</a></th>
           <td>{{ row.name }}</td>
           <td><a class="vr-id" href="{% url 'storage:unit-detail' row.node.unit_id %}">{{ row.node.unit.code }}</a></td>
-          <td><a class="vr-id" href="{% url 'storage:node-detail' row.node_id %}">{{ row.node.code }}</a></td>
+          <td class="vr-id vr-path"><a href="{% url 'storage:node-detail' row.node_id %}">{% include "storage/_path.html" with node_path=row.node.path only %}</a></td>
           <td class="text-end vr-id">{{ row.slot }}</td>
           <td><a class="vr-id" href="{% url 'storage:container-type-detail' row.container_type_id %}">{{ row.container_type }}</a></td>
           {% include "storage/_capacity_cells.html" with row=row scope="box" only %}

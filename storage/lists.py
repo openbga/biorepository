@@ -481,7 +481,7 @@ SPECS = {
             "name": "name",
             "unit": "node__unit__code",
             "location": "node__path",
-            "grid": "container_type__code",
+            "grid": "container_type",  # ContainerType orders by code, then numeric version.
             "occupied": "occupied",
             "free": "free",
         },
