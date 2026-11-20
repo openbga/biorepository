@@ -9,6 +9,12 @@ register = template.Library()
 
 
 @register.filter
+def node_path_parts(path):
+    """The stored hierarchy is a slash-separated sequence of node codes."""
+    return path.split("/")
+
+
+@register.filter
 def technology_label(value):
     """ "ln2_vapor" -> "LN2 vapor phase"; unknown values print as stored."""
     return dict(StorageUnit.Technology.choices).get(value, value)

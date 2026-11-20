@@ -23,7 +23,7 @@
   ],
   "good_to_know": [
     "Only active boxes are listed until you change [[Status]].",
-    "Container type is the box grid, by code and version.",
+    "Sort by [[Container type]] to group boxes by grid code and order their versions numerically.",
     "Retired boxes offer no free capacity."
   ],
   "sections": [
@@ -78,7 +78,7 @@
         },
         {
           "label": "Rack or shelf",
-          "description": "Path to the node holding it. Sortable by location."
+          "description": "Path within the storage unit, from the top-level container to the one holding the box. Select the path to open the holding container, or select the column heading to sort by the full path."
         },
         {
           "label": "Slot",
@@ -86,7 +86,7 @@
         },
         {
           "label": "Container type",
-          "description": "Grid code and version. Sortable."
+          "description": "Grid code and version. Select the heading to sort by code, then by numeric version within each code. Select it again to reverse both. The CSV uses the same order."
         },
         {
           "label": "Positions, Blocked, Occupied, Free",
@@ -133,9 +133,12 @@
     "storage/urls.py",
     "storage/views.py",
     "storage/lists.py",
+    "storage/models.py",
     "storage/queries.py",
     "storage/exports.py",
     "storage/templates/storage/box_list.html",
+    "storage/templates/storage/_path.html",
+    "storage/templatetags/storage_labels.py",
     "storage/templates/storage/_capacity_cells.html",
     "storage/templates/storage/_free_count.html",
     "storage/templates/storage/_list_actions.html",

@@ -102,6 +102,8 @@ Acceptance outcomes:
    can select a positive Free count to see available positions in that room, unit, rack, shelf or
    box. Selecting a position opens its cell in the box grid. A retired
    box retains its grid and recorded block reasons. Every position is shown as unavailable.
+   The Boxes register shows the full rack or shelf path within the unit. Sorting by container
+   type orders boxes by grid code and numeric version across pages and in the CSV.
 3. A technician registers a specimen. The system assigns an opaque ID. Type, container, amount
    with unit, collection and processing times, and an optional coded participant and collection
    are recorded.

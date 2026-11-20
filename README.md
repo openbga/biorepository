@@ -21,6 +21,7 @@ compliance or accreditation.
   shelves and boxes, each box with a position grid from a container type. Occupancy is shown per
   unit, rack and box. Select a Free count in a storage list or on a location record to open
   the available positions there. Open a storage class to find all its active and retired units.
+  The Boxes register shows each rack or shelf path and sorts container types by code and numeric version.
   Retired boxes keep their position labels and show every position as unavailable.
   Staff can search or block positions and move boxes and racks with their contents in one
   recorded event. The Moves table lists all moves recorded for that container, newest first.

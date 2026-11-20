@@ -6,7 +6,7 @@ What was added or changed in OpenBGA Biorepository, newest first. Changes are
 grouped by the calendar month they were merged in and ranked from high to low impact.
 The same list is shown in the application under What's new.
 
-## November 2026 (2026-11-13 to 2026-11-19)
+## November 2026 (2026-11-13 to 2026-11-20)
 
 ### High impact
 
@@ -170,6 +170,10 @@ The same list is shown in the application under What's new.
   > No migration. The selection is rechecked when submitted and expires after one hour. No temperature triggers a hold automatically.
 
 ### Low impact
+
+- **Fixed:** See the full rack or shelf path in Boxes (2026-11-20, Boxes)
+
+  The Rack or shelf column shows the path from the top of the storage unit to the container holding the box. Sort by Container type to put grid versions in numeric order within each code, both in the register and in its CSV.
 
 - **Fixed:** Consistent limits on specimen and distribution CSV downloads (2026-11-19, Specimens and distribution)
 

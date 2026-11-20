@@ -11,7 +11,15 @@ from django.utils.html import escape, strip_tags
 
 from core.models import AuditEvent
 from storage import services
-from storage.models import Box, LayoutNode, MoveEvent, Position, StorageGate, StorageUnit
+from storage.models import (
+    Box,
+    ContainerType,
+    LayoutNode,
+    MoveEvent,
+    Position,
+    StorageGate,
+    StorageUnit,
+)
 
 from .conftest import new_item, place
 from .test_occupancy import cell
@@ -379,6 +387,99 @@ def test_list_filters_sorts_and_states(client, tree, people):
     assert client.get(url, {"per_page": "7"}).status_code == 400
     free = client.get(reverse("storage:free-position-list"), {"box": tree.box.pk})
     assert free.context["page_obj"].paginator.count == 81
+
+
+def test_box_register_links_the_complete_rack_or_shelf_path(client, tree, people):
+    rack_box = services.create_box(
+        actor=people["manager"],
+        node_id=tree.rack.pk,
+        code="BOX-ON-RACK",
+        name="Box on rack",
+        slot=1,
+        container_type_id=tree.grid.pk,
+    )
+    client.force_login(people["viewer"])
+    register = client.get(reverse("storage:box-list"))
+    assert register.status_code == 200
+    rows = re.findall(r"<tr>(.*?)</tr>", register.content.decode(), re.S)
+    locations = (
+        (tree.box, tree.shelf1, f"{tree.tower.code}/{tree.shelf1.code}"),
+        (rack_box, tree.rack, tree.rack.code),
+    )
+    for box, node, path in locations:
+        box_url = reverse("storage:box-detail", args=[box.pk])
+        node_url = reverse("storage:node-detail", args=[node.pk])
+        row = next(row for row in rows if f'href="{box_url}"' in row)
+        location = re.search(rf'<a\b[^>]*href="{re.escape(node_url)}"[^>]*>(.*?)</a>', row)
+        assert location, row
+        assert re.sub(r"\s*/\s*", "/", strip_tags(location[1]).strip()) == path
+
+    export = client.get(register.context["export_url"])
+    assert export.status_code == 200
+    exported = csv.DictReader(io.StringIO(export.content.decode(), newline=""))
+    assert {row["Code"]: row["Rack or shelf"] for row in exported} == {
+        box.code: path for box, _, path in locations
+    }
+
+
+def test_box_register_and_csv_order_container_codes_and_versions_across_pages(client, tree, people):
+    manager = people["manager"]
+    rack = services.create_node(
+        actor=manager,
+        unit_id=tree.other_unit.pk,
+        parent_id=None,
+        code="R-ORDER",
+        name="Sort test rack",
+        kind="rack",
+        slot=2,
+        child_slots=0,
+        box_slots=26,
+    )
+    codes_and_versions = (("ORDER-A", 2), ("ORDER-A", 10), ("ORDER-Z", 1))
+    v2, v10, other = (
+        ContainerType.objects.create(
+            code=code,
+            version=version,
+            name="Sort test container",
+            rows=1,
+            columns=1,
+            label_scheme=ContainerType.LabelScheme.NUMERIC,
+            fill_order=ContainerType.FillOrder.ROW_MAJOR,
+            created_by=manager,
+        )
+        for code, version in codes_and_versions
+    )
+    boxes = [
+        services.create_box(
+            actor=manager,
+            node_id=rack.pk,
+            code=f"SORT-BOX-{slot:02d}",
+            name="Sort test box",
+            slot=slot,
+            container_type_id=container_type.pk,
+        )
+        for slot, container_type in enumerate((v10, other, *([v2] * 24)), start=1)
+    ]
+    v10_box, other_box, *v2_boxes = boxes
+    tied_codes = [box.code for box in sorted(v2_boxes, key=lambda box: box.pk)]
+
+    client.force_login(people["viewer"])
+    register_url = reverse("storage:box-list")
+    for sort, expected in (
+        ("grid", [*tied_codes, v10_box.code, other_box.code]),
+        ("-grid", [other_box.code, v10_box.code, *tied_codes]),
+    ):
+        params = {"unit": tree.other_unit.pk, "sort": sort, "per_page": 25}
+        first = client.get(register_url, params)
+        second = client.get(register_url, {**params, "page": 2})
+        assert first.status_code == second.status_code == 200
+        assert [box.code for box in first.context["page_obj"]] == expected[:25]
+        assert [box.code for box in second.context["page_obj"]] == expected[25:]
+
+        export = client.get(second.context["export_url"])
+        assert export.status_code == 200
+        rows = csv.DictReader(io.StringIO(export.content.decode(), newline=""))
+        assert [row["Code"] for row in rows] == expected
 
 
 def test_storage_registers_link_free_counts_to_the_location_in_each_row(client, tree, people):
