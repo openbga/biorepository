@@ -20,7 +20,7 @@
     <tbody>{% for u in units %}<tr><th scope="row"><a class="vr-row-link vr-id" href="{% url 'storage:unit-detail' u.pk %}">{{ u.code }}</a></th><td>{{ u.name }}</td><td class="vr-id">{{ u.room.site.code }} / {{ u.room.code }}</td><td>{% include "storage/_status.html" with obj=u plain=True %}</td></tr>{% endfor %}</tbody></table></div>
   {% else %}{% empty_state title="No storage units use this class" %}{% endif %}
 {% endpanel %}
-{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
+{% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=obj.code %}{% endblock %}

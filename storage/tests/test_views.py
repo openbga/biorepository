@@ -5,6 +5,7 @@ import csv
 import io
 import re
 from urllib.parse import parse_qs, urlsplit
+from uuid import UUID
 
 import pytest
 from django.urls import reverse
@@ -804,10 +805,82 @@ def test_latest_move_can_be_corrected_once_from_the_record(client, tree, people)
     assert f"?corrects={fixed.pk}" in client.get(detail).content.decode()
 
 
+def record_change(obj, actor, number):
+    return AuditEvent(
+        id=UUID(int=number),
+        actor=actor,
+        action="storage.record_updated",
+        object_type=obj._meta.label_lower,
+        object_id=str(obj.pk),
+        reason=f"Example record change {number:02d}",
+    )
+
+
+@pytest.mark.parametrize(
+    ("kind", "tree_attr"),
+    [
+        ("site", "site"),
+        ("room", "room"),
+        ("unit", "unit"),
+        ("node", "tower"),
+        ("box", "box"),
+        ("class", "cryogenic"),
+        ("container-type", "grid"),
+        ("template", None),
+    ],
+)
+def test_record_history_pages(client, tree, people, template, monkeypatch, kind, tree_attr):
+    from django.utils import timezone
+
+    obj = getattr(tree, tree_attr) if tree_attr else template
+    actor = people["manager"]
+    detail = reverse(f"storage:{kind}-detail", args=[obj.pk])
+    client.force_login(people["viewer"])
+
+    # All 49 changes are newer than the creation event and share one timestamp.
+    timestamp = timezone.now()
+    same_time = [record_change(obj, actor, number) for number in range(49, 0, -1)]
+    other_type = record_change(obj, actor, 52)
+    other_type.object_type = "storage.unrelated"
+    other_record = record_change(obj, actor, 53)
+    other_record.object_id = str(UUID(int=0))
+    with monkeypatch.context() as clock:
+        clock.setattr(timezone, "now", lambda: timestamp)
+        AuditEvent.objects.bulk_create([*same_time, other_type, other_record])
+    boundary = client.get(detail).content.decode()
+    assert boundary.count('class="vr-history-item"') == 50
+    assert re.findall(r"Example record change (\d{2})", boundary) == [
+        f"{n:02d}" for n in range(1, 50)
+    ]
+    assert "?history_page=" not in boundary
+
+    # UUID orders equal-time changes across the page boundary. Time still takes precedence.
+    with monkeypatch.context() as clock:
+        clock.setattr(timezone, "now", lambda: timestamp)
+        record_change(obj, actor, 50).save()
+        clock.setattr(timezone, "now", lambda: timestamp + timezone.timedelta(seconds=1))
+        newest = record_change(obj, actor, 51)
+        newest.pk = UUID(int=0)
+        newest.save()
+
+    first = client.get(detail).content.decode()
+    assert re.findall(r"Example record change (\d{2})", first) == [f"{n:02d}" for n in range(2, 52)]
+    assert 'id="history-heading"' in first
+    assert 'aria-labelledby="history-heading">' in first
+    assert 'href="?history_page=2#history-heading"' in first
+
+    older = client.get(detail, {"history_page": 2}).content.decode()
+    assert older.count('class="vr-history-item"') == 2
+    assert "Initial definition" in older
+    assert re.findall(r"Example record change (\d{2})", older) == ["01"]
+    assert 'href="?history_page=1#history-heading"' in older
+
+    latest = client.get(detail, {"history_page": 1}).content.decode()
+    assert 'aria-labelledby="history-heading" open>' in latest
+
+
 @pytest.mark.parametrize("kind", ["box", "node"])
 def test_container_move_history_pages(client, tree, people, kind):
-    from uuid import UUID
-
     from django.utils import timezone
 
     if kind == "box":
@@ -857,13 +930,30 @@ def test_container_move_history_pages(client, tree, people, kind):
     assert "EXAMPLE-FROM" in older and "EXAMPLE-TO" in older and "Other container move" not in older
     assert 'href="?page=1' in older
 
+    AuditEvent.objects.bulk_create(
+        [record_change(container, people["manager"], number) for number in range(1, 51)]
+    )
+    moves_page_two = client.get(detail, {"page": 2}).content.decode()
+    assert 'href="?page=2&amp;history_page=2#history-heading"' in moves_page_two
+    assert "Example record change 50" in moves_page_two
+    both_older = client.get(detail, {"page": 2, "history_page": 2}).content.decode()
+    assert re.findall(r"Example move (\d{2})", both_older) == ["01"]
+    assert "Initial definition" in both_older and "Example record change" not in both_older
+    assert 'href="?page=1&amp;history_page=2#moves-heading"' in both_older
+    assert 'href="?page=2&amp;history_page=1#history-heading"' in both_older
+    for value, expected_page in (("invalid", 1), ("999", 2)):
+        fallback = client.get(detail, {"page": 2, "history_page": value})
+        assert fallback.status_code == 200
+        assert fallback.context["history"].number == expected_page
+        assert fallback.context["moves"].number == 2
+
     client.force_login(people["manager"])
     assert re.findall(r"\?corrects=([\w-]+)", client.get(detail).content.decode()) == [
         str(moves[-1].pk)
     ]
     assert b"?corrects=" not in client.get(detail, {"page": 2}).content
     client.force_login(people["nobody"])
-    assert client.get(detail, {"page": 2}).status_code == 403
+    assert client.get(detail, {"page": 2, "history_page": 2}).status_code == 403
 
 
 def test_box_page_links_its_occupants_to_the_specimen_list(client, tree, people):

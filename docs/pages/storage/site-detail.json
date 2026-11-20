@@ -30,7 +30,7 @@
   "good_to_know": [
     "Sites cannot be retired or deleted.",
     "Counts cover active boxes in active structure only.",
-    "The history lists each change with who made it and why."
+    "Open [[History]] and use [[Next page]] if you need to see older changes."
   ],
   "sections": [
     {
@@ -89,7 +89,9 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
+        "Each entry shows the action, its time, who made the change and any reason given. History cannot be edited or deleted. If there are no entries, the panel shows No recorded changes yet.",
+        "History shows the latest changes first, with up to 50 entries per page. Within each page, entries run from oldest to newest. If there are more than 50 changes, the heading shows the total. Next page shows older changes and Previous page shows newer ones. First page returns to the latest changes and Last page opens the oldest.",
+        "On opening the record, History starts collapsed if it has more than five entries. Select the heading to open or close it. Using a History page link keeps History open."
       ]
     }
   ],
@@ -99,6 +101,8 @@
     "storage/lists.py",
     "storage/queries.py",
     "storage/templates/storage/site_detail.html",
+    "storage/templates/storage/_history.html",
+    "templates/includes/pagination.html",
     "templates/includes/history_panel.html",
     "storage/templates/storage/_free_count.html",
     "storage/templates/storage/free_position_list.html"

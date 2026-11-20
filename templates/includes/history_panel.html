@@ -12,6 +12,7 @@ Parameters:
   newest_first  truthy when events come newest first: they are shown reversed
   title         the panel heading (default "History");  heading_id: default "<slug>-heading"
   count         optional text after the title (or a "count" part for markup), e.g. "12 entries, oldest first"
+  footer        optional part for navigation beneath the timeline
   class         extra classes on the panel (default none; e.g. "mt-3", "vr-narrow")
   empty_title   default "No recorded changes yet";  empty_body: optional sentence
   collapsible   truthy for a details panel whose heading opens and closes it (a record with a
@@ -25,6 +26,7 @@ Usage:
   {% endhistory_panel %}
 {% endcomment %}{% if not form_dialog %}
 {% load ui history %}{% with items=body %}{% panel title=title heading_id=heading_id class=class|add:" vr-page-only" count=slots.count|default:count collapsible=collapsible open=open %}
+{% fill footer %}{{ slots.footer }}{% endfill %}
 {% if events %}
 <ol class="vr-timeline">
   {% if items %}{{ items }}{% else %}{% for event in events %}{% history_item title=event.action|action_label at=event.occurred_at actor=event.actor reason=event.reason detail=event.detail by=None changes=None extra=None %}{% endfor %}{% endif %}

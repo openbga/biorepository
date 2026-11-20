@@ -97,7 +97,11 @@ Acceptance outcomes:
    Within the template size limits, all four levels, top-level slot numbers and box grid versions
    carry over. The manager can review and edit the unique code suffixes before saving.
    Staff can open the complete register of active and retired units from their storage class,
-   including units beyond the first 100 shown on the class record.
+   including units beyond the first 100 shown on the class record. Staff can review the full
+   change history for sites, rooms, units, racks and shelves, boxes, storage classes, container
+   types and templates. The first History page shows the latest changes. Each page lists up to
+   50 entries in chronological order. Staff can follow older pages without losing their place
+   in Moves on a box or rack record.
 2. Occupancy is visible per unit, rack and box. From a storage list or a location record, staff
    can select a positive Free count to see available positions in that room, unit, rack, shelf or
    box. Selecting a position opens its cell in the box grid. A retired

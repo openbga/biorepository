@@ -23,7 +23,8 @@
   "good_to_know": [
     "A grid is fixed once any box uses it. A change is a new version.",
     "Grids larger than 12 × 12 preview only the top-left 12 × 12.",
-    "Numbering order fixes each position's number."
+    "Numbering order fixes each position's number.",
+    "Open [[History]] and use [[Next page]] if you need to see older changes."
   ],
   "sections": [
     {
@@ -89,7 +90,9 @@
     {
       "title": "History",
       "paragraphs": [
-        "The newest 50 recorded changes to this record, shown oldest to newest, each with its time, the person and the reason given. Setup entries carry no reason. History cannot be edited or deleted. With more than five entries the panel starts collapsed; select its heading to open or close it."
+        "Each entry shows the action, its time, who made the change and any reason given. History cannot be edited or deleted. If there are no entries, the panel shows No recorded changes yet.",
+        "History shows the latest changes first, with up to 50 entries per page. Within each page, entries run from oldest to newest. If there are more than 50 changes, the heading shows the total. Next page shows older changes and Previous page shows newer ones. First page returns to the latest changes and Last page opens the oldest.",
+        "On opening the record, History starts collapsed if it has more than five entries. Select the heading to open or close it. Using a History page link keeps History open."
       ]
     }
   ],
@@ -100,6 +103,8 @@
     "storage/queries.py",
     "storage/services.py",
     "storage/templates/storage/container_type_detail.html",
+    "storage/templates/storage/_history.html",
+    "templates/includes/pagination.html",
     "templates/includes/history_panel.html"
   ]
 }

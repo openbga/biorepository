@@ -1,0 +1,5 @@
+{% load ui %}
+{% history_panel events=history newest_first=True class="mt-3" collapsible=True open=request.GET.history_page %}
+  {% fill count %}{% if history.has_other_pages %}{{ history.paginator.count }} changes · newest on page 1{% endif %}{% endfill %}
+  {% fill footer %}{% if history.has_other_pages %}{% pagination page_obj=history noun="changes" page_parameter="history_page" fixed_per_page=True anchor="history-heading" %}{% endif %}{% endfill %}
+{% endhistory_panel %}

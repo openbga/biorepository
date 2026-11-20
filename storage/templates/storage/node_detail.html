@@ -52,7 +52,7 @@
 {% endpanel %}
 {% endif %}
 {% include "storage/_moves.html" with noun=node.get_kind_display|lower kind="node" obj=node %}
-{% history_panel events=history newest_first=True class="mt-3" collapsible=True %}{% endhistory_panel %}
+{% include "storage/_history.html" %}
 {% endblock %}
 {% block page_kind %}record{% endblock %}
 {% block record_foot %}{% record_foot identifier=node.code %}{% endblock %}
