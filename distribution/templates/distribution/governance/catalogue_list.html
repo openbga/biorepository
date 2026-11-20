@@ -12,6 +12,7 @@ tab, create_noun, create_url, edit_route, can_manage.
 {% panel title=tab heading_id="catalogue-heading" table=True hidden_title=True %}
   {% with grid_key="distribution.catalogue-"|add:kind %}
   {% grid_toolbar label="Filter "|add:noun q=q placeholder=placeholder inline=inline grid=grid_key %}
+  {% include "distribution/_export_feedback.html" with limit=exceeded_export_limit form=filter_form only %}
   {% if can_manage %}{% firstof "Consent records, requests and agreements are recorded with entries from these catalogues." as empty_body %}{% else %}{% firstof "A repository manager adds the entries consent records, requests and agreements use." as empty_body %}{% endif %}
   {% if can_manage %}{% firstof create_url as manage_url %}{% firstof "New "|add:create_noun as create_label %}{% endif %}
   {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="Nothing in this catalogue yet" empty_body=empty_body action_url=manage_url action_label=create_label no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}

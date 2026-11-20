@@ -31,6 +31,7 @@ from specimens.models import Participant
 
 from . import governance_lists as lists
 from . import queries, services
+from .export_views import export_action, export_error_response
 from .exports import register_csv
 from .governance_forms import (
     STUDY_VALUES,
@@ -149,9 +150,6 @@ def grid_response(request, spec, template, *, extra=None):
     )
     active = chips(request, form) if form.is_valid() else []
     cleaned = getattr(form, "cleaned_data", {})
-    query = request.GET.copy()
-    query.pop("page", None)
-    export_url = reverse("distribution:catalogue-export", args=[spec.slug])
     return render(
         request,
         template,
@@ -167,7 +165,14 @@ def grid_response(request, spec, template, *, extra=None):
             "more": [form[name] for name in spec.more if name in form.fields],
             "more_open": any(cleaned.get(name) for name in spec.more),
             "noun": spec.noun,
-            "export_url": f"{export_url}?{query.urlencode()}" if query else export_url,
+            **export_action(
+                form,
+                page_obj,
+                grid.sort,
+                route="distribution:catalogue-export",
+                kind=spec.slug,
+                limit=EXPORT_CAP,
+            ),
             "today": timezone.localdate(),
             **flags(request.user),
             **(extra or {}),
@@ -278,7 +283,9 @@ def export_rows(*, actor, slug, filters, sort=""):
         raise ValidationError("Unknown filter: " + ", ".join(unknown), code="invalid")
     form, queryset = lists.filtered(spec, data, actor)
     if form.errors:
-        raise ValidationError("These filters cannot be applied.", code="invalid")
+        raise ValidationError(
+            "These filters cannot be applied. Correct them, then export.", code="invalid_filters"
+        )
     queryset = lists.ordered(spec, queryset, sort)
     content, total = register_csv(queryset, spec.export_columns, limit=EXPORT_CAP)
     selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k != "page"}
@@ -307,7 +314,8 @@ def catalogue_export(request, kind):
     try:
         content = export_rows(actor=request.user, slug=kind, filters=params, sort=sort)
     except ValidationError as exc:
-        return HttpResponseBadRequest(" ".join(exc.messages))
+        prefix = lists.BY_SLUG[kind].key.replace("_", "-")
+        return export_error_response(request, exc, list_route=f"distribution:{prefix}-list")
     stamp = timezone.localtime().strftime("%Y%m%d-%H%M")
     response = HttpResponse(content, content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="distribution-{kind}-{stamp}.csv"'

@@ -289,7 +289,7 @@ def test_distribution_export_uses_the_selected_rows_for_limit_and_audit(
     if kind == "requests":
         create = partial(new_request, people["technician"], dist, world)
         first = create()
-        route, sort, count_key = "export", "number", "rows"
+        route, register, sort, count_key = "export", "request-list", "number", "rows"
         monkeypatch.setattr("distribution.exports.MAX_ROWS", cap)
     else:
         first = dist.institution
@@ -301,7 +301,7 @@ def test_distribution_export_uses_the_selected_rows_for_limit_and_audit(
             name="Example Z",
             address="100 Plaza",
         )
-        route, sort, count_key = "catalogue-export", "code", "count"
+        route, register, sort, count_key = "catalogue-export", "institution-list", "code", "count"
         monkeypatch.setattr("distribution.governance_views.EXPORT_CAP", cap)
 
     client.force_login(people["viewer"])
@@ -322,7 +322,8 @@ def test_distribution_export_uses_the_selected_rows_for_limit_and_audit(
     records = OutputRecord.objects.filter(kind=OutputRecord.Kind.EXPORT)
     audits = AuditEvent.objects.filter(action="distribution.exported")
     if cap == 1:
-        assert response.status_code == 400
+        assert response.status_code == 302
+        assert response.url == reverse(f"distribution:{register}", query={"sort": sort})
         assert "Content-Disposition" not in response
         assert not records.exists() and not audits.exists()
     else:

@@ -29,7 +29,8 @@
   "good_to_know": [
     "Shipments start from requests, so this list has no New button.",
     "Receipt shows the condition as corrected, or Not yet recorded after dispatch.",
-    "[[Specimen]] under More filters finds shipments that hold or sent that specimen."
+    "[[Specimen]] under More filters finds shipments that hold or sent that specimen.",
+    "If more than 10,000 rows match, narrow the filters to see [[Export CSV]]."
   ],
   "sections": [
     {
@@ -101,7 +102,7 @@
       "items": [
         {
           "label": "Export CSV",
-          "description": "Any staff role can download all matching rows across pages as UTF-8 CSV in the selected order. The file uses the current search and filters. Amounts are exact and times use the repository's time zone. If more than 10,000 rows match when the export runs, the download stops. Narrow the filters and try again. Text that starts like a spreadsheet formula gets a leading apostrophe. The audit trail records who downloaded the selection, the filters and the number of data rows in the file. With no matches, the CSV contains only the header and the audit count is zero."
+          "description": "Any staff role can download all matching rows across pages as UTF-8 CSV in the selected order. The file uses the current search and filters. Amounts are exact and times use the repository's time zone. Export CSV appears when the filters are valid and up to 10,000 rows match. Correct any filter errors before exporting. For a larger selection, the list shows the row limit. If the selection grows past the limit before you download, you return to this list with the same filters and sort. Narrow the selection and try again. Text that starts like a spreadsheet formula gets a leading apostrophe. The audit trail records who downloaded the selection, the filters and the number of data rows in the file. With no matches, the CSV contains only the header and the audit count is zero."
         }
       ]
     },
@@ -120,6 +121,7 @@
     }
   ],
   "sources": [
+    "distribution/export_views.py",
     "distribution/urls.py",
     "accounts/roles.py",
     "distribution/request_views.py",

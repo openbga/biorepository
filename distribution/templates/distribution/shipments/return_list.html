@@ -6,6 +6,7 @@
 {% section_tabs "distribution-shipments" %}
 {% panel title="Returns" heading_id="returns-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter returns" q=q placeholder="Specimen ID or shipment number" inline=inline more=more more_open=more_open grid="distribution.returns" %}
+  {% include "distribution/_export_feedback.html" with limit=exceeded_export_limit form=filter_form only %}
   {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No returns recorded" empty_body="Specimens that come back from a shipment are recorded on the shipment's page and listed here until and after review." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.returns" data-vr-grid-version="1" aria-labelledby="returns-heading">

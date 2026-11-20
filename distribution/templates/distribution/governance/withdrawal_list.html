@@ -7,6 +7,7 @@
 {% section_tabs "distribution-consents" %}
 {% panel title="Withdrawals" heading_id="withdrawals-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter withdrawals" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.withdrawals" %}
+  {% include "distribution/_export_feedback.html" with limit=exceeded_export_limit form=filter_form only %}
   {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No withdrawals recorded" empty_body="A withdrawal is recorded from the consent page of the participant and study." no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
   <div class="vr-table-wrap">
     <table class="table table-hover vr-table" data-vr-grid="distribution.withdrawals" data-vr-grid-version="2" aria-labelledby="withdrawals-heading">

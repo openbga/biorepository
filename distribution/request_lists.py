@@ -109,6 +109,15 @@ class RequestFilter(ListFilter):
                 help_text="Submitted requests you did not create or submit.",
             )
 
+    def clean(self):
+        cleaned = super().clean()
+        if "awaiting_me" in self.data and "awaiting_me" not in self.fields:
+            raise forms.ValidationError(
+                "Awaiting my decision requires request decision permission. "
+                "Apply the available filters to continue."
+            )
+        return cleaned
+
     def clean_specimen(self):
         return normalize_accession(self.cleaned_data.get("specimen") or "")
 
