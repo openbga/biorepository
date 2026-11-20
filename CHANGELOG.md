@@ -179,6 +179,10 @@ The same list is shown in the application under What's new.
 
   The Rack or shelf column shows the path from the top of the storage unit to the container holding the box. Sort by Container type to put grid versions in numeric order within each code, both in the register and in its CSV.
 
+- **Fixed:** See when a storage selection is too large to export (2026-11-20, Free positions)
+
+  Storage lists and catalogues show the 10,000-row limit when too many rows match. Narrow the selection or correct invalid filters to see Export CSV. A valid search with no matches still downloads the column headings.
+
 - **Fixed:** Consistent limits on specimen and distribution CSV downloads (2026-11-19, Specimens and distribution)
 
   Specimen and distribution lists and catalogues check the 10,000-row limit when you download a CSV. If another staff member changes the matching records, you receive the full selection within the limit or a message to narrow your filters. The audit trail records the number of data rows in each file.
