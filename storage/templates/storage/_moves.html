@@ -1,5 +1,5 @@
-{% load ui %}{% comment %}Recorded container moves of one box or node, newest first. Parameters: moves (MoveEvent list), heading_id, noun ("box", "rack"...), kind ("box" or "node"), obj (the container), correctable (its latest uncorrected move, or None; managers and admins may correct it), can_manage.{% endcomment %}
-{% firstof heading_id "moves-heading" as moves_heading %}{% panel title="Moves" heading_id=moves_heading table=True class="mb-3" %}{% fill count %}{{ moves|length }}{% if moves|length >= 20 %}, newest 20 shown{% endif %}{% endfill %}
+{% load ui %}{% comment %}Recorded container moves of one box or node, newest first. Parameters: moves (page of MoveEvents with item_count), heading_id, noun ("box", "rack"...), kind ("box" or "node"), obj (the container), correctable (its latest uncorrected move, or None; managers and admins may correct it), can_manage.{% endcomment %}
+{% firstof heading_id "moves-heading" as moves_heading %}{% panel title="Moves" heading_id=moves_heading count=moves.paginator.count table=True class="mb-3" %}
 {% if moves %}
   <div class="vr-table-wrap">
     <table class="table vr-table">
@@ -10,7 +10,7 @@
           <th scope="row" class="vr-nowrap"><time datetime="{{ m.occurred_at|date:'c' }}">{{ m.occurred_at|date:"Y-m-d H:i" }}</time>{% if m.kind == "correction" %} {% status label="Correction" tone="info" plain=True %}{% endif %}</th>
           <td class="vr-id vr-path">{% include "storage/_path.html" with p=m.from_path %}{% if m.from_path.slot %}, <span class="vr-path-part">slot {{ m.from_path.slot }}</span>{% endif %}</td>
           <td class="vr-id vr-path">{% include "storage/_path.html" with p=m.to_path %}{% if m.to_path.slot %}, <span class="vr-path-part">slot {{ m.to_path.slot }}</span>{% endif %}</td>
-          <td class="text-end vr-id">{{ m.members.count }}</td>
+          <td class="text-end vr-id">{{ m.item_count }}</td>
           <td>{{ m.actor.get_full_name|default:m.actor.get_username }}</td>
           <td class="vr-wrap">{{ m.reason }}{% if m.corrects_id %}<div class="vr-muted small">Corrects the move of {{ m.corrects.occurred_at|date:"Y-m-d H:i" }}</div>{% endif %}</td>
           <td class="text-end vr-nowrap">{% if can_manage and obj.is_active and correctable and m.pk == correctable.pk %}<a class="btn btn-sm btn-outline-secondary" href="{% url 'storage:container-move' kind obj.pk %}?corrects={{ m.pk }}">Correct move<span class="visually-hidden"> of {{ m.occurred_at|date:"Y-m-d H:i" }}</span></a>{% endif %}</td>
@@ -19,5 +19,6 @@
       </tbody>
     </table>
   </div>
+  {% if moves.has_other_pages %}{% pagination page_obj=moves noun="moves" fixed_per_page=True anchor=moves_heading %}{% endif %}
   {% else %}{% empty_state title="Not moved since it was set up" body="Moves of this "|add:noun|add:" are recorded here with the items carried." %}{% endif %}
 {% endpanel %}

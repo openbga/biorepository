@@ -326,7 +326,7 @@ COMPONENTS = {
     ),
     "pagination": Component(
         I + "pagination.html",
-        ("page_obj", "noun", "filtered", "post_name", "page_parameter", "fixed_per_page"),
+        ("page_obj", "noun", "filtered", "post_name", "page_parameter", "fixed_per_page", "anchor"),
         reads=("page_obj",),
     ),
     "select_all": Component(I + "select_all.html", ("name", "label", "ready_label")),
@@ -371,8 +371,8 @@ def page_size_field(per_page, noun):
 
 
 @register.simple_tag(takes_context=True)
-def pagination_query(context, page_number, page_parameter="page"):
+def pagination_query(context, page_number, page_parameter="page", anchor=""):
     """Change one table's GET page while preserving the other table and filter parameters."""
     query = context["request"].GET.copy()
     query[page_parameter or "page"] = page_number
-    return "?" + query.urlencode()
+    return "?" + query.urlencode() + (f"#{anchor}" if anchor else "")

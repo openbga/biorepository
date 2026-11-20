@@ -29,7 +29,8 @@
     {
       "title": "Move the box",
       "steps": [
-        "Select [[Move box]], choose the rack or shelf and slot, and give a reason."
+        "Select [[Move box]], choose the rack or shelf and slot, and give a reason.",
+        "Find the recorded move under [[Moves]]. Use Next page to look further back."
       ]
     },
     {
@@ -116,7 +117,8 @@
     {
       "title": "Moves",
       "paragraphs": [
-        "Recorded moves of this box, newest first, up to 20, with the number of items carried and the reason. A Correction tag marks a record that corrects an earlier move."
+        "All moves recorded directly for this box, newest first. Each row shows when the move happened, its original and destination locations, how many items it carried, who moved it and why. Correction marks a move that corrects an earlier one.",
+        "When there are more than 20 moves, use Next page for older moves or Previous page for newer ones. First page returns to the latest moves and Last page opens the oldest."
       ],
       "items": [
         {
@@ -158,6 +160,7 @@
     "storage/templates/storage/box_detail.html",
     "storage/templates/storage/_capacity.html",
     "storage/templates/storage/_moves.html",
+    "templates/includes/pagination.html",
     "templates/includes/history_panel.html",
     "storage/tests/test_views.py",
     "storage/templates/storage/_free_count.html",

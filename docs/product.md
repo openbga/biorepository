@@ -113,7 +113,8 @@ Acceptance outcomes:
 7. Check-out and check-in are recorded events with who, when and why. Time out of storage is
    computed, never typed. A thaw is recorded when it is observed; an unknown thaw history stays
    marked unknown.
-8. A box or rack moves with all its contents in one recorded event.
+8. A box or rack moves with all its contents in one recorded event. Staff can page through
+   all moves recorded for that container, with the original route, item count, actor and reason.
 9. Disposal records reason, method, who and when, needs approval by a different person holding
    that permission, frees the position and keeps the electronic history. A hold blocks disposal.
    Staff can download the seven disposal request register columns across all matching pages in
