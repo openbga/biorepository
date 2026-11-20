@@ -179,6 +179,10 @@ The same list is shown in the application under What's new.
 
   The Rack or shelf column shows the path from the top of the storage unit to the container holding the box. Sort by Container type to put grid versions in numeric order within each code, both in the register and in its CSV.
 
+- **Fixed:** See when a distribution selection is too large to export (2026-11-20, Requests)
+
+  Distribution lists and catalogues show the 10,000-row limit when too many records match. Narrow the selection or correct any filter errors to see Export CSV. A valid search with no matches still downloads the column headings.
+
 - **Fixed:** See when a specimen selection is too large to export (2026-11-20, Specimens)
 
   The Specimens list and its catalogue tabs show the 10,000-row limit when too many records match. Narrow the selection or correct a filter to see Export CSV. A search with no matches can still download the column headings.

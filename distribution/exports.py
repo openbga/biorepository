@@ -51,7 +51,7 @@ def register_csv(queryset, columns, *, limit):
         if total > limit:
             raise ValidationError(
                 f"Exports are limited to {limit:,} rows. Narrow the filters and export again.",
-                code="invalid",
+                code="export_limit",
             )
         writer.writerow([_cell(getter(row)) for _, getter in columns])
     return buffer.getvalue().encode("utf-8"), total
@@ -64,13 +64,15 @@ def export_list(*, actor, kind, filters, sort=""):
         raise ValidationError("Unknown list.", code="invalid")
     spec = SPECS[EXPORT_KINDS[kind]]
     data = _data(filters)
-    allowed = set(spec.form_class(user=actor).fields) | set(PAGING)
+    allowed = {"q", *spec.inline, *spec.more, *PAGING}
     unknown = {key for key in data if key not in allowed}
     if unknown:
         raise ValidationError("Unknown filter: " + ", ".join(sorted(unknown)), code="invalid")
     form, queryset = filtered(spec, data, actor)
     if form.errors:
-        raise ValidationError("These filters cannot be applied.", code="invalid")
+        raise ValidationError(
+            "These filters cannot be applied. Correct them, then export.", code="invalid_filters"
+        )
     queryset = ordered(spec, queryset, sort)
     content, total = register_csv(queryset, spec.export_columns, limit=MAX_ROWS)
     selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k not in PAGING}

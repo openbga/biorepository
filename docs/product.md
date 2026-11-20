@@ -128,12 +128,13 @@ Acceptance outcomes:
     all files matching their search, in the selected order. Each validation has its own row.
     From a committed import, they can preview and download labels for every registered specimen
     in file order, in groups of up to 200 per PDF.
-11. Lists filter, sort, paginate and export to CSV. Storage, specimen and distribution list and
-    catalogue exports use the matching rows at download time. Each successful export records the
-    number of data rows in the file, including zero. If more than 10,000 rows match, staff must
-    narrow the filters before downloading. Storage and specimen lists and catalogues show the export
-    action for valid filters with zero to 10,000 matches. Larger selections show the row limit
-    on the list so staff can refine their filters there.
+11. Lists filter, sort, paginate and export to CSV. Storage, specimen and distribution lists and
+    catalogues show Export CSV for valid filters with zero to 10,000 matches. Larger selections
+    show the row limit so staff can refine their filters, and invalid filters show errors. The
+    export uses the matching rows across all pages at download time in the selected order. Each
+    successful export records the number of data rows in the file, including zero. If a
+    distribution selection grows past the limit before download, staff return to the originating
+    list with the selected filters and sort.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,
     old value, new value, reason. Controlled fields require a reason to change.
 13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,

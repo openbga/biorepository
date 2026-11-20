@@ -33,6 +33,7 @@ from storage import queries as storage_queries
 from storage.models import Occupancy
 
 from . import documents, exports, queries, request_lists, services
+from .export_views import export_action, export_error_response
 from .models import (
     Allocation,
     AllocationEvent,
@@ -264,9 +265,6 @@ def grid_response(request, key, template, *, export_kind, extra=None):
     )
     active = chips(request, form) if form.is_valid() else []
     cleaned = getattr(form, "cleaned_data", {})
-    query = request.GET.copy()
-    query.pop("page", None)
-    export_url = reverse("distribution:export", args=[export_kind])
     return render(
         request,
         template,
@@ -282,7 +280,14 @@ def grid_response(request, key, template, *, export_kind, extra=None):
             "more": [form[name] for name in spec.more if name in form.fields],
             "more_open": any(cleaned.get(name) for name in spec.more),
             "noun": spec.noun,
-            "export_url": f"{export_url}?{query.urlencode()}",
+            **export_action(
+                form,
+                page_obj,
+                grid.sort,
+                route="distribution:export",
+                kind=export_kind,
+                limit=exports.MAX_ROWS,
+            ),
             **flags(request.user),
             **(extra or {}),
         },
@@ -323,7 +328,8 @@ def export(request, kind):
     try:
         content = exports.export_list(actor=request.user, kind=kind, filters=params, sort=sort)
     except ValidationError as exc:
-        return HttpResponseBadRequest(" ".join(exc.messages))
+        prefix = request_lists.EXPORT_KINDS[kind]
+        return export_error_response(request, exc, list_route=f"distribution:{prefix}-list")
     response = HttpResponse(content, content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="distribution-{kind}.csv"'
     response["Cache-Control"] = "no-store"

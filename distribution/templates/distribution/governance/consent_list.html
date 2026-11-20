@@ -7,6 +7,7 @@
 {% section_tabs "distribution-consents" %}
 {% panel title="Consents" heading_id="consents-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter consents" q=q placeholder=placeholder inline=inline more=more more_open=more_open grid="distribution.consents" %}
+  {% include "distribution/_export_feedback.html" with limit=exceeded_export_limit form=filter_form only %}
   {% if can_manage %}{% url 'distribution:consent-create' as create_url %}{% endif %}
   {% if can_manage %}{% firstof "Record a participant's consent from the filed original." as empty_body %}{% else %}{% firstof "A repository manager records consent from the filed originals." as empty_body %}{% endif %}
   {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No consent recorded" empty_body=empty_body action_url=create_url action_label="Record consent" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}

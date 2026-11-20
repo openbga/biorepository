@@ -5,6 +5,7 @@
 {% block content %}
 {% panel title="Requests" heading_id="requests-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter requests" q=q placeholder="Request number or title" inline=inline more=more more_open=more_open grid="distribution.requests" %}
+  {% include "distribution/_export_feedback.html" with limit=exceeded_export_limit form=filter_form only %}
   {% if can_operate %}{% url 'distribution:request-create' as create_url %}{% endif %}
   {% if can_operate %}{% firstof "Record a request as it was received from an investigator, then add its lines and submit it for a decision." as empty_body %}{% else %}{% firstof "Requests recorded by technicians and managers appear here." as empty_body %}{% endif %}
   {% list_results items=page_obj noun=noun filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No specimen requests recorded" empty_body=empty_body action_url=create_url action_label="New request" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." %}
