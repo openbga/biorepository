@@ -4,15 +4,19 @@ Smoke and contract tests for specimens.views; the rules themselves are tested at
 level. All data is synthetic.
 """
 
+import csv
+import io
 import re
 from datetime import timedelta
 from decimal import Decimal
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
 from django.contrib.messages import get_messages
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.html import escape
 
 from core.models import AuditEvent
 from specimens import importing, services
@@ -20,7 +24,7 @@ from specimens.dashboard import queues
 from specimens.models import ImportBatch, ImportCommit, OutputRecord, Specimen
 from storage.models import Occupancy
 
-from .conftest import check_out, place, register
+from .conftest import catalogue, check_out, place, register
 
 pytestmark = pytest.mark.django_db
 
@@ -210,6 +214,104 @@ def test_export_csv_matches_the_filters(client, people, specimens):
     lines = response.content.decode().splitlines()
     assert lines[0].startswith("accession,status,")
     assert len(lines) == 2 and lines[1].startswith(specimens["out"].accession)
+
+
+def csv_from_list_action(client, response, export_path):
+    url = response.context["export_url"]
+    assert urlsplit(url).path == export_path
+    link = re.search(rf'<a\b[^>]*href="{re.escape(str(escape(url)))}"[^>]*>', html(response))
+    assert link and " download" not in link[0]  # A stale selection may redirect to HTML.
+    download = client.get(url)
+    assert download.status_code == 200 and download["Content-Type"].startswith("text/csv")
+    return list(csv.reader(io.StringIO(download.content.decode(), newline="")))
+
+
+@pytest.mark.parametrize(
+    "kind", ["specimen", "participant", "collection", "specimen_type", "container_type", "unit"]
+)
+def test_csv_action_distinguishes_empty_and_invalid_selections(client, people, kind):
+    login(client, people["viewer"])
+    url = reverse(f"specimens:{kind.replace('_', '-')}-list")
+    if kind == "specimen":
+        export_path = reverse("specimens:export")
+        invalid = {"status": "unknown"}
+        heading = "accession"
+    else:
+        export_path = reverse("specimens:catalogue-export", args=[kind])
+        invalid = {"active": "unknown"}
+        heading = "code"
+
+    error_page = client.get(url, invalid)
+    assert "These filters cannot be applied" in html(error_page)
+    assert "Export CSV" not in html(error_page) and "row limit" not in html(error_page)
+    direct = client.get(export_path, invalid)
+    assert direct.status_code == 302
+    target = urlsplit(direct.url)
+    assert target.path == url and parse_qs(target.query) == {k: [v] for k, v in invalid.items()}
+    empty_page = client.get(url, {"q": "NO-SYNTHETIC-MATCH"})
+    header, *rows = csv_from_list_action(client, empty_page, export_path)
+    assert header[0] == heading and rows == []
+
+
+def test_refused_catalogue_export_returns_to_a_usable_page(client, people):
+    login(client, people["viewer"])
+    response = client.get(
+        reverse("specimens:catalogue-export", args=["collection"]),
+        {"q": "EXAMPLE", "sort": "-code", "per_page": 7, "page": 2},
+        follow=True,
+    )
+    register = reverse("specimens:collection-list", query={"q": "EXAMPLE", "sort": "-code"})
+    assert response.redirect_chain == [(register, 302)] and response.status_code == 200
+    assert any("Correct them, then export" in str(m) for m in get_messages(response.wsgi_request))
+
+
+@pytest.mark.parametrize("kind", ["specimen", "participant"])
+def test_csv_action_uses_all_matching_pages_at_the_limit(client, people, world, monkeypatch, kind):
+    monkeypatch.setattr("specimens.exports.MAX_ROWS", 26)
+    login(client, people["viewer"])
+    url = reverse(f"specimens:{kind}-list")
+    if kind == "specimen":
+        technician = people["technician"]
+        matches = [register(technician, world).accession for _ in range(26)]
+        register(technician, world, specimen_type_id=world.serum.pk)
+        params = {
+            "type": str(world.plasma.pk),
+            "participant": world.participant.code,
+            "sort": "-accession",
+        }
+        export_path = reverse("specimens:export")
+    else:
+        # The world fixture also contains an unrelated participant.
+        matches = [f"P-EXAMPLE-{i:03d}" for i in range(26)]
+        for code in matches:
+            catalogue(people["manager"], "participant", code=code)
+        params = {"q": "P-EXAMPLE", "sort": "-code"}
+        export_path = reverse("specimens:catalogue-export", args=[kind])
+
+    oversized = client.get(url, {"page": 2, "per_page": 25})
+    assert oversized.context["page_obj"].paginator.count == 27
+    assert "The row limit is 26." in html(oversized)
+    assert "Export CSV" not in html(oversized)
+
+    narrowed = client.get(url, {**params, "page": 2, "per_page": 25, "unrelated": "unused"})
+    assert narrowed.context["page_obj"].number == 2 and len(narrowed.context["page_obj"]) == 1
+    _, *rows = csv_from_list_action(client, narrowed, export_path)
+    assert [row[0] for row in rows] == sorted(matches, reverse=True)
+    download_url = narrowed.context["export_url"]
+    selection = {k: [v] for k, v in params.items()}
+    assert parse_qs(urlsplit(download_url).query) == selection
+
+    if kind == "specimen":
+        register(people["technician"], world)
+    else:
+        catalogue(people["manager"], "participant", code="P-EXAMPLE-026")
+    refused = client.get(download_url)
+    assert refused.status_code == 302
+    target = urlsplit(refused.url)
+    assert target.path == url and parse_qs(target.query) == selection
+    returned = client.get(refused.url)
+    assert "The row limit is 26." in html(returned) and "Export CSV" not in html(returned)
+    assert list(OutputRecord.objects.values_list("count", flat=True)) == [26]
 
 
 def test_list_filters_sort_and_invalid_filter(client, people, specimens):

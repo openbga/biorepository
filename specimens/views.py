@@ -98,10 +98,14 @@ def _chips(request, form):
     return chips
 
 
-def _without_page(request):
-    query = request.GET.copy()
-    query.pop("page", None)
-    return query.urlencode()
+def _export_action(form, page_obj, sort, route, *, args=None):
+    if not form.is_valid():
+        return {"export_url": None}
+    if page_obj.paginator.count > exports.MAX_ROWS:
+        return {"export_url": None, "exceeded_export_limit": f"{exports.MAX_ROWS:,}"}
+    # Rebind the same inputs on download: some fields take a code, others a primary key.
+    query = {key: form.data[key] for key in form.filters()}
+    return {"export_url": reverse(route, args=args, query={**query, "sort": sort})}
 
 
 def _csv(content, name):
@@ -115,9 +119,11 @@ def _stamp():
     return timezone.localtime().strftime("%Y%m%d-%H%M")
 
 
-def _list_url(request):
-    query = _without_page(request)
-    return reverse("specimens:specimen-list") + (f"?{query}" if query else "")
+def _list_url(request, route="specimens:specimen-list"):
+    query = request.GET.copy()
+    query.pop("page", None)
+    query.pop("per_page", None)
+    return reverse(route, query=query)
 
 
 # --- specimens ------------------------------------------------------------------------------
@@ -183,7 +189,6 @@ def specimen_list(request):
         row.out_for = queries.format_duration(now - since) if since else ""
         row.returned = kind == CustodyEvent.Kind.RETURN  # in hand after a return, as on the record
     page_obj.object_list = rows
-    query = _without_page(request)
     return render(
         request,
         "specimens/specimen_list.html",
@@ -198,7 +203,7 @@ def specimen_list(request):
             "inline": [form[name] for name in SpecimenFilter.INLINE],
             "more": [form[name] for name in SpecimenFilter.MORE],
             "more_open": any(form[name].value() for name in SpecimenFilter.MORE),
-            "export_url": reverse("specimens:export") + (f"?{query}" if query else ""),
+            **_export_action(form, page_obj, grid.sort, "specimens:export"),
             "max_labels": labels.MAX_LABELS,
             **flags(request.user),
         },
@@ -938,8 +943,7 @@ def catalogue_list(request, kind):
         chips = _chips(request, form)
     else:
         queryset, chips = CATALOGUES[kind].objects.none(), []
-    query = _without_page(request)
-    export_url = reverse("specimens:catalogue-export", args=[kind])
+    page_obj = _page(queryset, grid)
     return render(
         request,
         "specimens/catalogue_list.html",
@@ -951,14 +955,14 @@ def catalogue_list(request, kind):
             "plural": tab.lower(),
             "create_url": reverse(f"specimens:{prefix}-create"),
             "edit_route": f"specimens:{prefix}-edit",
-            "page_obj": _page(queryset, grid),
+            "page_obj": page_obj,
             "filter_form": form,
             "q": request.GET.get("q", "").strip(),
             "sort": grid.sort,
             "active_filters": chips,
             "filtered": bool(chips),
             "inline": [form["active"]],
-            "export_url": export_url + (f"?{query}" if query else ""),
+            **_export_action(form, page_obj, grid.sort, "specimens:catalogue-export", args=[kind]),
             **flags(request.user),
         },
     )
@@ -970,7 +974,7 @@ def catalogue_export(request, kind):
     if kind not in CATALOGUES:
         raise Http404
     form = CatalogueFilter(request.GET, kind=kind)
-    back = reverse(f"specimens:{CATALOGUE_TABS[kind][0]}-list")
+    back = _list_url(request, f"specimens:{CATALOGUE_TABS[kind][0]}-list")
     if not form.is_valid():
         messages.error(request, "These filters cannot be applied. Correct them, then export.")
         return redirect(back)

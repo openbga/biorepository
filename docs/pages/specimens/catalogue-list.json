@@ -101,7 +101,7 @@
     {
       "title": "Export",
       "paragraphs": [
-        "Export CSV downloads the entries that match the current search, filters and sort, with the columns the tab holds and yes or no for flags. If more than 10,000 rows match when the export runs, you return to the catalogue with an error. Narrow the filters and try again. The audit trail records who downloaded the selection, the filters and the number of data rows in the file. With no matches, the CSV contains only the header and the audit count is zero. An empty catalogue says “Nothing in this catalogue yet”; managers are offered the New button."
+        "Export CSV downloads the entries that match the current search, filters and sort, with the columns the tab holds and yes or no for flags. Export CSV appears when the filters are valid and at most 10,000 entries match across all pages. For a larger selection, the tab shows the limit. If the selection grows past the limit before you download, you return to the same tab and filters with an error. The audit trail records who downloaded the selection, the filters and the number of data rows in the file. With no matches, the CSV contains only the header and the audit count is zero. An empty catalogue says “Nothing in this catalogue yet”; managers are offered the New button."
       ]
     }
   ],

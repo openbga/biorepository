@@ -3,14 +3,18 @@
 {% comment %}
 Specimens list: server search, filters, sort and pagination over specimens.queries.specimen_queryset.
 Context: page_obj (rows carry .path from queries.locations_for, .held), filter_form, q, sort,
-inline, more, more_open, active_filters, filtered, export_url, max_labels, can_operate.
+inline, more, more_open, active_filters, filtered, export_url, exceeded_export_limit, max_labels, can_operate.
 Selecting rows prints their labels (label preview, at most max_labels).
 {% endcomment %}
-{% block page_actions %}<a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% icon name="download" %}Export CSV</a>{% if can_operate %}<a class="btn btn-primary" href="{% url 'specimens:specimen-create' %}">{% icon name="plus-lg" %}Register specimen</a>{% endif %}{% endblock %}
+{% block page_actions %}
+{% if export_url %}<a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>{% endif %}
+{% if can_operate %}<a class="btn btn-primary" href="{% url 'specimens:specimen-create' %}">{% icon name="plus-lg" %}Register specimen</a>{% endif %}
+{% endblock %}
 {% block content %}
 {% panel title="Specimens" heading_id="specimens-heading" table=True hidden_title=True %}
   {% grid_toolbar label="Filter specimens" q=q placeholder="Specimen ID, participant or collection code" inline=inline more=more more_open=more_open grid="specimens.specimens" %}
   {% if can_operate %}{% url 'specimens:specimen-create' as create_url %}{% endif %}
+  {% if exceeded_export_limit %}<p class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</p>{% endif %}
   {% list_results items=page_obj noun="specimens" filtered=filtered invalid=filter_form.errors clear_url=request.path empty_title="No specimens registered yet" empty_body="Register a specimen, or import many at once from a CSV file." action_url=create_url action_label="Register specimen" no_results_title="Nothing matches these filters" no_results_body="Change or clear the filters." error_body="Correct the highlighted filter above. No results are shown until every filter is valid." %}
   {# form: bulk-selection #}
   <form method="get" action="{% url 'specimens:label-preview' %}" aria-label="Print labels for selected specimens">
