@@ -43,6 +43,7 @@ from .models import (
     DisposalRequest,
     Hold,
     ImportBatch,
+    ImportCommit,
     QuantityEntry,
     Specimen,
     SpecimenContainerType,
@@ -728,6 +729,7 @@ def import_detail(request, pk):
     state = batch.state_at(timezone.now(), error_total=batch.total_errors)
     commit = getattr(batch, "commit", None) if state == "committed" else None
     created = []
+    label_groups = []
     if commit:
         order = {pk: n for n, pk in enumerate(commit.specimen_ids)}
         created = sorted(
@@ -736,6 +738,11 @@ def import_detail(request, pk):
             ),
             key=lambda s: order.get(str(s.pk), 0),
         )
+        count = len(commit.specimen_ids)
+        label_groups = [
+            (group, start + 1, min(start + labels.MAX_LABELS, count))
+            for group, start in enumerate(range(0, count, labels.MAX_LABELS), start=1)
+        ]
     may_commit = batch.actor_id == request.user.pk or has_role(request.user, *MANAGE)
     form = ImportCommitForm(initial={"expected_sha256": batch.sha256})
     return render(
@@ -755,7 +762,7 @@ def import_detail(request, pk):
             ),
             "commit": commit,
             "created": created,
-            "label_query": urlencode([("id", s.pk) for s in created[: labels.MAX_LABELS]]),
+            "label_groups": label_groups,
             "may_commit": may_commit,
             "form": form,
             **flags(request.user),
@@ -789,14 +796,58 @@ def import_commit(request, pk):
 # --- labels ---------------------------------------------------------------------------------
 
 
+def _import_label_group(pk, group):
+    commit = get_object_or_404(
+        ImportCommit.objects.select_related("batch").defer("batch__normalized_rows"),
+        batch_id=pk,
+    )
+    count = len(commit.specimen_ids)
+    start = (group - 1) * labels.MAX_LABELS
+    if not commit.batch.is_valid or not 0 <= start < count:
+        raise Http404
+    end = min(start + labels.MAX_LABELS, count)
+    return commit.batch, commit.specimen_ids[start:end], f"{start + 1}–{end} of {count}"
+
+
+@staff_role_required(*OPERATE)
+@require_GET
+def import_label_preview(request, pk, group):
+    batch, ids, label_range = _import_label_group(pk, group)
+    return _render_label_preview(
+        request,
+        ids,
+        pdf_url=reverse("specimens:import-label-pdf", args=[pk, group]),
+        batch=batch,
+        label_range=label_range,
+    )
+
+
+@staff_role_required(*OPERATE)
+@require_GET
+def import_label_pdf(request, pk, group):
+    _, ids, _ = _import_label_group(pk, group)
+    return _label_pdf_response(
+        request, ids, back=reverse("specimens:import-label-preview", args=[pk, group])
+    )
+
+
 @staff_role_required(*READ)
 @require_GET
 def label_preview(request):
-    stock = labels.default_stock()
-    error, items = "", []
     try:
         ids = label_ids(request.GET.getlist("id"))
-        specimens = labels.label_specimens(ids)
+    except ValidationError as exc:
+        return _render_label_preview(request, [], error=" ".join(exc.messages))
+    return _render_label_preview(
+        request, ids, pdf_url=reverse("specimens:label-pdf", query=[("id", pk) for pk in ids])
+    )
+
+
+def _render_label_preview(request, ids, *, pdf_url="", error="", batch=None, label_range=""):
+    stock = labels.default_stock()
+    items = []
+    try:
+        specimens = [] if error else labels.label_specimens(ids)
     except ValidationError as exc:
         error = " ".join(exc.messages)
     except Specimen.DoesNotExist:
@@ -817,7 +868,9 @@ def label_preview(request):
             "items": items,
             "error": error,
             "printable": bool(items) and not any(i["problem"] for i in items),
-            "query": urlencode([("id", i["specimen"].pk) for i in items]),
+            "pdf_url": pdf_url,
+            "batch": batch,
+            "label_range": label_range,
         },
     )
 
@@ -825,10 +878,18 @@ def label_preview(request):
 @staff_role_required(*READ)
 @require_GET
 def label_pdf(request):
-    query = urlencode([("id", v) for v in request.GET.getlist("id")])
-    back = reverse("specimens:label-preview") + (f"?{query}" if query else "")
+    values = request.GET.getlist("id")
+    back = reverse("specimens:label-preview", query=[("id", value) for value in values])
     try:
-        ids = label_ids(request.GET.getlist("id"))
+        ids = label_ids(values)
+    except ValidationError as exc:
+        messages.error(request, " ".join(exc.messages))
+        return redirect(back)
+    return _label_pdf_response(request, ids, back=back)
+
+
+def _label_pdf_response(request, ids, *, back):
+    try:
         pdf = labels.render_labels(
             actor=request.user, specimen_ids=ids, stock=labels.default_stock()
         )

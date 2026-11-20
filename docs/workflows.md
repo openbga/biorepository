@@ -272,6 +272,8 @@ placement time is the commit time and the collection and processing times are as
 In **Imports**, administrators, managers and technicians can export the six summary columns for
 up to 10,000 matching validations across pages. The download uses the applied file-name search
 and sort order. Open an individual import to inspect its specimen rows and validation messages.
+After a commit, print labels in registration order. Imports with more than 200 specimens show
+a link for each range, with up to 200 labels per PDF.
 
 ## Labels, lookup and exports
 

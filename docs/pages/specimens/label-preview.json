@@ -1,7 +1,8 @@
 {
   "id": "specimens-label-preview",
   "routes": [
-    "specimens:label-preview"
+    "specimens:label-preview",
+    "specimens:import-label-preview"
   ],
   "title": "Labels",
   "purpose": "Check the labels for the chosen specimens before downloading them as a PDF.",
@@ -16,7 +17,8 @@
     {
       "title": "Choose other specimens",
       "steps": [
-        "Go back to the specimen list, tick them and select Print labels."
+        "Go back to the specimen list, tick them and select Print labels.",
+        "For another group from the same import, select the file name above the page title and choose the next range."
       ]
     }
   ],
@@ -30,7 +32,7 @@
       "title": "What the page shows",
       "paragraphs": [
         "Each label shows the specimen ID as text and as a Code 128 barcode, and nothing else: no participant, collection, location or date. The ID is the only link between the physical tube and the record. The page header shows the number of labels and the label stock (name, version and size in millimetres) the PDF will use; print at actual size.",
-        "Every role can preview and download labels. Open the preview with Print label on a specimen record, with Print labels on the specimen list, or from a committed import."
+        "Every staff role can open labels from a specimen record or the specimen list. Administrators, managers and technicians can also open labels directly from a committed import. The import preview identifies the range of specimens in file order. Select the file name above the title to return to the import."
       ],
       "items": [
         {
@@ -46,7 +48,7 @@
     {
       "title": "Limits and errors",
       "paragraphs": [
-        "Between 1 and 200 labels can be previewed at a time. With none selected, more than 200, or a specimen that does not exist, the page says “No labels to preview” with the reason and Choose specimens to go back to the list.",
+        "From a specimen list or record, choose between 1 and 200 labels. If the selection is empty, exceeds the limit or includes a missing specimen, No labels to preview gives the reason. Choose specimens returns to the list. If an imported specimen is missing, select the file name above the title to return to the import.",
         "A label whose ID cannot fit the stock is marked Does not fit with the reason, and Download PDF is not offered until the problem is solved; this means a larger label stock is needed, which is a deployment setting."
       ]
     }
@@ -61,6 +63,8 @@
     "specimens/list_forms.py",
     "specimens/templates/specimens/label_preview.html",
     "specimens/templates/specimens/pdf/labels.html",
-    "specimens/tests/test_outputs.py"
+    "specimens/tests/test_outputs.py",
+    "specimens/importing.py",
+    "specimens/tests/test_views_records.py"
   ]
 }

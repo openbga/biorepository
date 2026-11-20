@@ -23,7 +23,8 @@
     {
       "title": "Print labels for the new specimens",
       "steps": [
-        "After the commit, select [[Print labels]]."
+        "For up to 200 specimens, select [[Print labels]]. For larger imports, choose a range under [[Registered specimens]].",
+        "Check the preview, then select [[Download PDF]]. Return to the import to print the next range."
       ]
     }
   ],
@@ -71,7 +72,7 @@
       "items": [
         {
           "label": "Print labels",
-          "description": "After a commit, opens the label preview for the registered specimens (up to the first 200)."
+          "description": "Administrators, managers and technicians can print labels from a committed import. Up to 200 specimens share one preview. For larger imports, Registered specimens has a link for each consecutive range in file order. Each link opens a separate preview and PDF."
         }
       ]
     }
@@ -85,6 +86,9 @@
     "specimens/importing.py",
     "specimens/list_forms.py",
     "specimens/templates/specimens/import_detail.html",
-    "specimens/tests/test_registration.py"
+    "specimens/tests/test_registration.py",
+    "specimens/labels.py",
+    "specimens/templates/specimens/label_preview.html",
+    "specimens/tests/test_views_records.py"
   ]
 }

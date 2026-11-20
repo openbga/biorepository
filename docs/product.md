@@ -122,6 +122,8 @@ Acceptance outcomes:
 10. Specimens import in bulk from CSV with a validation pass before anything is committed.
     Administrators, managers and technicians can download the six import register columns for
     all files matching their search, in the selected order. Each validation has its own row.
+    From a committed import, they can preview and download labels for every registered specimen
+    in file order, in groups of up to 200 per PDF.
 11. Lists filter, sort, paginate and export to CSV. Storage, specimen and distribution list and
     catalogue exports use the matching rows at download time. Each successful export records the
     number of data rows in the file, including zero. If more than 10,000 rows match, staff must

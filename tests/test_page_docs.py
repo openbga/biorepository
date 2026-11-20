@@ -43,6 +43,7 @@ NON_PAGE_ROUTES = {
     "specimens:export": "CSV download from the specimen list",
     "specimens:disposal-export": "CSV download from Disposal requests",
     "specimens:label-pdf": "PDF download from the label preview",
+    "specimens:import-label-pdf": "PDF download for a group of labels from a committed import",
     "specimens:catalogue-export": "CSV download from the specimen catalogue lists",
     "specimens:import-commit": "POST action on the import page",
     "specimens:import-export": "CSV download from the specimen import register",

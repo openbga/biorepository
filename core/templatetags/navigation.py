@@ -176,7 +176,7 @@ STAFF_NAV = (
         "Imports",
         "specimens:import-list",
         "file-earmark-arrow-up",
-        ("specimens:import-upload", "specimens:import-detail"),
+        ("specimens:import-upload", "specimens:import-detail", "specimens:import-label-preview"),
         roles=("admin", "manager", "technician"),  # specimens OPERATE_ROLES
     ),
     # Equipment

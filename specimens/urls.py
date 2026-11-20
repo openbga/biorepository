@@ -31,6 +31,16 @@ urlpatterns = [
     path("imports/template.csv", views.import_template, name="import-template"),
     path("imports/<uuid:pk>/", views.import_detail, name="import-detail"),
     path("imports/<uuid:pk>/commit/", views.import_commit, name="import-commit"),
+    path(
+        "imports/<uuid:pk>/labels/<int:group>/",
+        views.import_label_preview,
+        name="import-label-preview",
+    ),
+    path(
+        "imports/<uuid:pk>/labels/<int:group>.pdf",
+        views.import_label_pdf,
+        name="import-label-pdf",
+    ),
     path("catalogues/<slug:kind>/export/", views.catalogue_export, name="catalogue-export"),
     # Action forms and the entry grid (action_views)
     path("register/", actions.register, name="specimen-create"),
