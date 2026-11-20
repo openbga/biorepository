@@ -171,6 +171,10 @@ The same list is shown in the application under What's new.
 
 ### Low impact
 
+- **Fixed:** See full locations in Racks and shelves and Free positions (2026-11-20, Racks and shelves)
+
+  In Racks and shelves, the Location column shows the full path from the top of the unit to the location in each row. In Free positions, follow the path in the Rack or shelf column to open the location holding the box.
+
 - **Fixed:** See the full rack or shelf path in Boxes (2026-11-20, Boxes)
 
   The Rack or shelf column shows the path from the top of the storage unit to the container holding the box. Sort by Container type to put grid versions in numeric order within each code, both in the register and in its CSV.

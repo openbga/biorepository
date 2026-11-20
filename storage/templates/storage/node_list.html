@@ -26,7 +26,7 @@
           <td>{{ row.name }}</td>
           <td>{{ row.get_kind_display }}</td>
           <td><a class="vr-id" href="{% url 'storage:unit-detail' row.unit_id %}">{{ row.unit.code }}</a></td>
-          <td class="vr-id">{{ row.parent.code|default:"Top level" }}</td>
+          <td class="vr-id vr-path">{% include "storage/_path.html" with node_path=row.path only %}</td>
           <td class="text-end vr-id">{{ row.slot }}</td>
           <td>{% if row.box_slots %}{{ row.box_count }} of {{ row.box_slots }} box slots used{% else %}{{ row.child_count }} of {{ row.child_slots }} node slots used{% endif %}</td>
           {% include "storage/_capacity_cells.html" with row=row scope="node" only %}

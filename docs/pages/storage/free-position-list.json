@@ -11,7 +11,7 @@
       "title": "Find the next free position",
       "steps": [
         "Choose the [[Storage unit]], [[Rack or shelf]] or [[Box]], then select [[Apply]].",
-        "Use the first row. Select it to open the box at that position."
+        "Read the path in [[Rack or shelf]] to locate the box within the unit. Select the first [[Position]] to open its cell in the box."
       ]
     },
     {
@@ -66,7 +66,7 @@
         },
         {
           "label": "Rack or shelf",
-          "description": "Opens the node holding the box."
+          "description": "The full path from the top of the storage unit to the location holding the box. Select the path to open that location."
         },
         {
           "label": "Box",
@@ -117,6 +117,8 @@
     "storage/exports.py",
     "storage/templates/storage/free_position_list.html",
     "storage/templates/storage/_list_actions.html",
+    "storage/templates/storage/_path.html",
+    "storage/templatetags/storage_labels.py",
     "templates/includes/list_results.html",
     "storage/tests/test_views.py"
   ]
