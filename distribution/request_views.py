@@ -25,7 +25,7 @@ from django.views.decorators.http import require_GET, require_http_methods
 
 from accounts.roles import can_decide_requests, has_role, staff_role_required
 from core.attachments import download_response
-from core.grids import GridRequest
+from core.grids import GridRequest, export_error_response
 from core.models import Attachment, AuditEvent
 from specimens.forms import box_choices, suggestion_text
 from specimens.models import Specimen
@@ -33,7 +33,7 @@ from storage import queries as storage_queries
 from storage.models import Occupancy
 
 from . import documents, exports, queries, request_lists, services
-from .export_views import export_action, export_error_response
+from .export_views import export_action
 from .models import (
     Allocation,
     AllocationEvent,

@@ -728,10 +728,12 @@ def test_csv_availability_matches_valid_filter_results(
     assert f'href="{export_path}' not in oversized.content.decode()
 
     refused = client.get(export_path)
-    assert refused.status_code == 400
+    assert refused.status_code == 302
+    assert urlsplit(refused.url).path == list_url
     assert "Content-Disposition" not in refused
     assert not audits.exists()
 
+    assert client.get(export_path, invalid_filter).status_code == 400
     invalid = client.get(list_url, invalid_filter)
     assert invalid.status_code == 200
     assert b"cannot be applied" in invalid.content
@@ -751,6 +753,48 @@ def test_csv_availability_matches_valid_filter_results(
         assert rows[0][0] == "Code"
         assert [row[0] for row in rows[1:]] == expected_codes
     assert sorted(audit.after["rows"] for audit in audits) == [0, 1]
+
+
+@pytest.mark.parametrize(
+    ("register", "filters"),
+    [
+        ("unit", {"q": "Tank VP-01", "status": "all", "sort": "-name"}),
+        ("node", {"q": "Shelf", "kind": "shelf", "sort": "-path"}),
+        ("box", {"q": "BOX-001", "free": "yes", "sort": "-location"}),
+        ("free-position", {"q": "BOX-001"}),
+        ("site", {"q": "Example", "sort": "-timezone"}),
+        ("room", {"q": "CRYO", "sort": "-occupied"}),
+        ("class", {"q": "CRYOGENIC", "active": "true", "sort": "-units"}),
+        ("container-type", {"q": "GRID-9X9", "active": "true", "sort": "-boxes"}),
+        ("template", {"q": "TANK", "active": "true", "sort": "-units"}),
+    ],
+)
+def test_csv_limit_returns_to_filtered_storage_register(
+    client, template, people, monkeypatch, register, filters
+):
+    client.force_login(people["viewer"])
+    list_url = reverse(f"storage:{register}-list")
+    page = client.get(list_url, filters)
+    link = page.context["export_url"]
+    matches = page.context["page_obj"].paginator.count
+    assert matches > 0
+    href = re.escape(str(escape(link)))
+    anchor = re.search(rf'<a\b[^>]*href="{href}"[^>]*>', page.content.decode())
+    assert anchor and " download" not in anchor[0]  # The cap refusal navigates to HTML.
+
+    # Exercise every return route at a small limit. The concurrent site test grows a
+    # selection between opening the register and reading the rows for download.
+    monkeypatch.setattr("storage.exports.EXPORT_CAP", matches - 1)
+    refused = client.get(link, follow=True)
+    assert len(refused.redirect_chain) == 1 and refused.redirect_chain[0][1] == 302
+    target = urlsplit(refused.redirect_chain[0][0])
+    assert target.path == list_url
+    assert parse_qs(target.query) == {name: [value] for name, value in filters.items()}
+    assert refused.status_code == 200
+    assert b"Narrow the filters and export again." in refused.content
+    assert not refused.context["export_url"]
+    assert "Content-Disposition" not in refused
+    assert not AuditEvent.objects.filter(action="storage.exported").exists()
 
 
 def test_latest_move_can_be_corrected_once_from_the_record(client, tree, people):

@@ -4,7 +4,11 @@ from contextvars import ContextVar
 from dataclasses import dataclass
 
 from django import forms
+from django.contrib import messages
 from django.core.paginator import Paginator
+from django.http import HttpResponseBadRequest
+from django.shortcuts import redirect
+from django.urls import reverse
 
 PAGE_SIZES = (25, 50, 100)
 
@@ -82,3 +86,14 @@ def active_filters(request, form):
             {"label": label, "value": str(display), "remove_url": "?" + params.urlencode()}
         )
     return chips
+
+
+def export_error_response(request, error, *, list_route):
+    message = " ".join(error.messages)
+    if error.code not in ("invalid_filters", "export_limit"):
+        return HttpResponseBadRequest(message, content_type="text/plain; charset=utf-8")
+    messages.error(request, message)
+    query = request.GET.copy()
+    query.pop("page", None)
+    query.pop("per_page", None)
+    return redirect(reverse(list_route, query=query))

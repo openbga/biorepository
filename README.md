@@ -29,7 +29,9 @@ compliance or accreditation.
   Open History on a storage record and use Next page to see older changes.
   Templates copy up to four levels of racks and shelves, preserving slot numbers and box grids.
   Staff can review the proposed codes before saving the template. Storage lists and catalogues offer CSV
-  downloads for valid selections of up to 10,000 rows. Each download records its row count in the audit trail.
+  downloads for valid selections of up to 10,000 rows. If a selection grows past that limit before download,
+  staff return to the list with their filters and sort order so they can narrow the selection. Each download records
+  its row count in the audit trail.
 - **Specimens:** registration with an opaque ID (`VP-000123` style) that carries no location or
   participant meaning, a coded participant (no names or record numbers), exact decimal amounts
   with units kept as a ledger, aliquots and derivatives with their lineage.

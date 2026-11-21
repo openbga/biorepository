@@ -129,7 +129,8 @@ Intentional divergences from Environmental LIMS (keep this list current):
   `record_rows.specimen_rows(user, specimen)`, which returns nothing unless the user may read
   distribution). The box map's held wells come through the existing `{% attach_specimens %}` seam.
 - `core/grids.py` exposes the sorted queryset before pagination so the training register
-  and its CSV share the same ordering, including ties.
+  and its CSV share the same ordering, including ties. Storage and distribution use the same
+  grid helper to return staff to their filtered register when a CSV exceeds the row limit.
 - `templates/includes/pagination.html` accepts a fixed page size without a rows-per-page control
   for the excursion hold picker and storage record timelines. Its optional anchor returns staff
   to the selected timeline. The shared history panel accepts a footer for the record’s pager.

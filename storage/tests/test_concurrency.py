@@ -184,6 +184,9 @@ def test_storage_export_uses_the_downloaded_rows_for_the_limit_and_audit(
     add_site("EXAMPLE-A")
     client.force_login(people["viewer"])
     monkeypatch.setattr("storage.exports.EXPORT_CAP", cap)
+    register = reverse("storage:site-list")
+    selection = {"q": "EXAMPLE-", "sort": "code"}
+    link = client.get(register, selection).context["export_url"]
     outcomes = {}
 
     def add_site_before_row_read(execute, sql, params, many, context):
@@ -196,13 +199,23 @@ def test_storage_export_uses_the_downloaded_rows_for_the_limit_and_audit(
         return execute(sql, params, many, context)
 
     with connection.execute_wrapper(add_site_before_row_read):
-        response = client.get(reverse("storage:export", args=["site"]))
+        response = client.get(link)
     assert "writer" in outcomes
     audits = AuditEvent.objects.filter(action="storage.exported", object_id="site")
     if cap == 1:
-        assert response.status_code == 400
+        assert response.status_code == 302
         assert "Content-Disposition" not in response
         assert not audits.exists()
+        recovered = client.get(response.url)
+        assert recovered.wsgi_request.path == register
+        assert recovered.context["page_obj"].paginator.count == 2
+        assert not recovered.context["export_url"]
+        narrowed = client.get(register, {**selection, "q": "EXAMPLE-A"})
+        download = client.get(narrowed.context["export_url"])
+        assert download.status_code == 200 and download["Content-Type"].startswith("text/csv")
+        rows = list(csv.reader(io.StringIO(download.content.decode())))[1:]
+        assert [row[0] for row in rows] == ["EXAMPLE-A"]
+        assert audits.get().after["rows"] == 1
     else:
         assert response.status_code == 200
         rows = list(csv.reader(io.StringIO(response.content.decode())))[1:]
