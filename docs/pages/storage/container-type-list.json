@@ -82,7 +82,7 @@
       "items": [
         {
           "label": "Export CSV",
-          "description": "Downloads all matching rows across pages as a UTF-8 CSV in the order shown. Anyone who can read this list can export it. Correct invalid filters or narrow the selection to 10,000 rows or fewer to see Export CSV. An empty selection downloads just the column headings. The limit is checked again when you download. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe, and numbers are exact decimals. The audit trail records who exported the selection and the number of data rows in the CSV. An over-limit request produces no download or export event."
+          "description": "Downloads all matching rows across pages as a UTF-8 CSV in the order shown. Anyone who can read this list can export it. Correct invalid filters or narrow the selection to 10,000 rows or fewer to see Export CSV. An empty selection downloads just the column headings. If the selection grows past 10,000 rows before you download, you return to this list with your filters and sort order. Narrow the selection and try again. Cells that a spreadsheet could read as a formula are prefixed with an apostrophe, and numbers are exact decimals. The audit trail records who exported the selection and the number of data rows in the CSV. An over-limit request produces no download or export event."
         },
         {
           "label": "New container type",

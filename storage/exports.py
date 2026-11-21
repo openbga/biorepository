@@ -65,7 +65,7 @@ def _export(*, actor, spec, filters, sort, label):
         if total > EXPORT_CAP:
             raise ValidationError(
                 f"Exports are limited to {EXPORT_CAP:,} rows. Narrow the filters and export again.",
-                code="invalid",
+                code="export_limit",
             )
         writer.writerow([safe_cell(getter(row)) for _, getter in spec.export_columns])
     selection = {k: data.get(k) for k in sorted(data) if data.get(k) and k != "page"}

@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods
 
 from accounts.roles import has_role, require_role, staff_role_required
-from core.grids import GridRequest, active_filters
+from core.grids import GridRequest, active_filters, export_error_response
 from core.models import AuditEvent
 
 from . import exports, lists, pathbar, queries, recipes, services
@@ -234,7 +234,6 @@ def template_list(request):
     return _catalogue_list(request, "template")
 
 
-EXPORT_KINDS = {"unit", "node", "box", "position", "site", "room"}
 CATALOGUE_SLUGS = {"class": "class", "container-type": "container_type", "template": "template"}
 
 
@@ -248,7 +247,7 @@ def _csv(content, name):
 @staff_role_required(*READ)
 @require_GET
 def export(request, kind):
-    if kind not in EXPORT_KINDS:
+    if kind not in lists.SPECS:
         raise Http404
     params = request.GET.copy()
     sort = params.pop("sort", [""])[-1]
@@ -257,23 +256,25 @@ def export(request, kind):
             actor=request.user, kind=kind, filters=params, sort=sort or "code"
         )
     except ValidationError as exc:
-        return HttpResponseBadRequest(" ".join(exc.messages))
+        prefix = "free-position" if kind == "position" else kind
+        return export_error_response(request, exc, list_route=f"storage:{prefix}-list")
     return _csv(content, f"storage-{kind}s")
 
 
 @staff_role_required(*READ)
 @require_GET
 def catalogue_export(request, kind):
-    if kind not in CATALOGUE_SLUGS:
+    catalogue = CATALOGUE_SLUGS.get(kind)
+    if catalogue is None:
         raise Http404
     params = request.GET.copy()
     sort = params.pop("sort", [""])[-1]
     try:
         content = exports.export_catalogue(
-            actor=request.user, kind=CATALOGUE_SLUGS[kind], filters=params, sort=sort or "code"
+            actor=request.user, kind=catalogue, filters=params, sort=sort or "code"
         )
     except ValidationError as exc:
-        return HttpResponseBadRequest(" ".join(exc.messages))
+        return export_error_response(request, exc, list_route=CATALOGUE_URLS[catalogue][0])
     return _csv(content, f"storage-{kind}")
 
 

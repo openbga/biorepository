@@ -136,9 +136,9 @@ Acceptance outcomes:
     catalogues show Export CSV for valid filters with zero to 10,000 matches. Larger selections
     show the row limit so staff can refine their filters, and invalid filters show errors. The
     export uses the matching rows across all pages at download time in the selected order. Each
-    successful export records the number of data rows in the file, including zero. If a
-    distribution selection grows past the limit before download, staff return to the originating
-    list with the selected filters and sort.
+    successful export records the number of data rows in the file, including zero. If a storage
+    or distribution selection grows past the limit before download, staff return to the originating
+    list with their filters and sort order so they can narrow the selection and retry.
 12. Every change to a specimen, position, status or storage definition is traceable: who, when,
     old value, new value, reason. Controlled fields require a reason to change.
 13. Sign-in, optional two-factor authentication, roles, announcements on the sign-in page,

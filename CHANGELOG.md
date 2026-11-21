@@ -175,6 +175,10 @@ The same list is shown in the application under What's new.
 
 ### Low impact
 
+- **Fixed:** Keep your filters when a storage CSV exceeds the row limit (2026-11-20, Free positions)
+
+  If more than 10,000 rows match when you select Export CSV, the storage list reopens with your filters and sort order. Narrow the selection there and try again.
+
 - **Fixed:** See full locations in Racks and shelves and Free positions (2026-11-20, Racks and shelves)
 
   In Racks and shelves, the Location column shows the full path from the top of the unit to the location in each row. In Free positions, follow the path in the Rack or shelf column to open the location holding the box.

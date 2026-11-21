@@ -1,7 +1,7 @@
 {% load ui %}
 {% comment %}Storage list header actions. Parameters: export_url, exceeded_export_limit, can_manage, create_url, create_label.{% endcomment %}
 {% if export_url %}
-  <a class="btn btn-outline-secondary" href="{{ export_url }}" download>{% icon name="download" %}Export CSV</a>
+  <a class="btn btn-outline-secondary" href="{{ export_url }}">{% icon name="download" %}Export CSV</a>
 {% elif exceeded_export_limit %}
   <span class="vr-muted">Narrow the filters to export CSV. The row limit is {{ exceeded_export_limit }}.</span>
 {% endif %}
