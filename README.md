@@ -208,20 +208,10 @@ Signed-in users may optionally enrol an authenticator app from the account menu'
 its enforcement and account-recovery policy. The first owner has the `admin` role;
 `createsuperuser` alone does not assign a repository role.
 
-| Role | Work it enables |
-| --- | --- |
-| `admin` | Configure the repository, post announcements, record the retention statement, and do manager, technician and viewer work |
-| `manager` | Repository manager: define storage, block positions, manage catalogues, correct records and release holds, record consent and agreements, allocate specimens, as well as technician work |
-| `technician` | Day-to-day work: register, store, check out and in, split, hold, request disposal, import, equipment entries, requests, picking and shipments |
-| `viewer` | Read-only access, including exports and labels |
-
-The role list is a default; see [product scope](docs/product.md#working-assumptions).
-
-Disposal approval is not a role. It is the permission `accounts | approve_disposal`,
-granted per person or group in `/admin/` to qualified staff. No role group carries it, the `admin`
-role does not imply it, and nobody may approve their own disposal request (the server refuses it).
-Deciding a specimen request is likewise the permission `accounts | approve_distribution`, granted
-per person, and nobody decides a request they created or submitted.
+Roles and what each can do are described in
+[Setup, roles and the repository record](docs/workflows.md#setup-roles-and-the-repository-record);
+the separate permissions in [Disposal approval](docs/workflows.md#disposal-approval) and
+[Request decisions](docs/workflows.md#request-decisions).
 
 Account administration requires a superuser and is separate from repository roles. To add a role
 to an existing owner from the service shell, use `setup_repository --admin-username owner --role

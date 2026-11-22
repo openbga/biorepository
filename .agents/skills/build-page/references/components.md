@@ -30,7 +30,7 @@ Block tags end with `{% end<name> %}`. Parts are filled with `{% fill <part> %}â
 | History | `history_panel` (block), `history_item` | Newest last, final panel; item has `title`, `at`, `actor`, `reason`, `changes` |
 | Status of a record | `status` | `label`, `tone`, `plain`: an outlined capsule with icon and word; the per-app state-to-tone mapping lives in a small partial |
 | Dated obligation | `due_pill` | `due`, `soon_days` (default 30), `plain` in cells; rule in `core.due.due_state` |
-| Time out of storage | `clock` | The warm running clock (`span.vr-clock[data-state]`); being added during migration |
+| Time out of storage | `clock` | The warm running clock (`span.vr-clock[data-state]`) |
 | Icon | `icon` | `name` = a Bootstrap Icons name present in `static/img/icons.svg` |
 | Breadcrumbs | `breadcrumbs` | Records, forms, actions and documents only |
 | On-this-page anchors | `page_toc` | Pages with four or more sections |

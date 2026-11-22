@@ -3,15 +3,7 @@
 The summary of these rules is in the skill's SKILL.md; this file has
 the complete guide and its examples.
 
-The Help drawer has four parts. The first three are short; the fourth is the complete reference,
-collapsed by default.
-
-| Part | JSON | Reader's question | Length |
-| --- | --- | --- | --- |
-| What this page is for | `summary` | "Am I in the right place?" | 1–2 sentences, at most 240 characters |
-| Common tasks | `tasks[]` | "How do I do the thing I came for?" | 2–5 tasks, each 1–4 steps, each step at most 200 characters |
-| Good to know | `good_to_know[]` | "What will surprise me or go wrong?" | 3–5 items, each at most 200 characters |
-| All fields and actions | `sections[]` (existing) | "What exactly does this field or rule do?" | Complete. This is the reference, and `tests/test_page_docs.py` still checks its coverage |
+The Help drawer's four parts and their size limits are in SKILL.md ("Each entry has two layers").
 
 ## Tone
 
@@ -31,8 +23,8 @@ collapsed by default.
 
 - Name the record or workflow and what the person can find or do here. Add who can use the page
   only when access is restricted ("Admin and manager only.").
-- Keep the existing `purpose` field for the page header and search. `summary` is the friendlier
-  version shown in the drawer. When `summary` is missing, the drawer falls back to `purpose`.
+- `purpose` stays required. `summary` is the friendlier version shown in the drawer; when
+  `summary` is missing, the drawer falls back to `purpose`.
 
 ## Tasks
 
@@ -71,13 +63,3 @@ Use 3–5 items; if you have more, the page probably needs a better task instead
   them by searching, not by reading top to bottom.
 - Don't repeat the tasks or "Good to know" items word for word; the reference states the rule
   fully, the friendly layer explains why it matters.
-
-## Checklist for each page
-
-- [ ] `summary`: 1–2 sentences, at most 240 characters, no implementation detail.
-- [ ] `tasks`: 2–5, verb-phrase titles, 1–4 steps each, exact labels in `[[ ]]`.
-- [ ] `good_to_know`: 3–5 items, each one surprising, preventive, explaining a block or
-      protecting the record.
-- [ ] Every sentence is traceable to the reference or a file in `sources`.
-- [ ] Read it in the drawer beside the page: every `[[label]]` exists on that page (or on the
-      page the task names).

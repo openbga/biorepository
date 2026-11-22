@@ -12,7 +12,9 @@ the published guidance splits, the rule below is a house decision and says so.
 - Bootstrap 5.3 is the only component library. Controls, dialogs, dropdowns, collapses, tables
   and form widgets are Bootstrap components, themed through the `--vr-*` tokens in
   `static/css/app.css`, which map onto Bootstrap's `--bs-*` variables. DataTables presents grid
-  columns. Nothing else, and no self-written replacement for something these provide.
+  columns, Tom Select enhances selects and vanilla-calendar-pro supplies the date picker
+  (`static/vendor/README.md`). Nothing else, and no self-written replacement for something these
+  provide.
 - One job, one component. Each concept in section 8 has exactly one shared include or one markup
   pattern. A page that needs a variation asks for a parameter on the shared part; it does not
   copy the markup.
@@ -72,7 +74,7 @@ Every page is one of these. The type fixes its header, layout and navigation beh
 
 ## 4. Page header
 
-Top to bottom, all through the blocks of `templates/base.html`:
+Top to bottom, all through the blocks of `templates/layouts/document.html`:
 
 | Part | Block | Rule |
 | --- | --- | --- |
@@ -147,7 +149,8 @@ patterns. The record or list stays behind the dialog; long forms and entry grids
 Small screens use the full screen. Normal dialogs have comfortable outer and inner margins;
 the heading and close controls remain visible while the body scrolls. Controls use the Soft
 paper treatment: lightly tinted fields, muted boundaries, modest rounding and quiet shadows,
-while preserving graph paper, the margin rule and the menu marker.
+while preserving graph paper, the margin rule and the menu marker. (The paper treatment is
+superseded by the Cryo visual language, section 12.)
 
 Use one dialog at a time. Move focus inside on open, retain keyboard focus there, and return it
 to the opener on close. Escape and Cancel close clean forms; unsaved input offers Keep editing
@@ -261,7 +264,7 @@ it use the same words. Every page uses the same term for the same thing.
 
 ## 12. Visual language
 
-Cryo, chosen on 2026-11-18 from three design directions. It replaces the "cold-store log" field-notebook look. The
+Cryo, chosen on 2026-11-18 from three design directions. The
 platform layer (shell structure, components, controls, help drawer, panel spacing) stays shared
 with Environmental LIMS; only the visual language below differs. `static/css/app.css` holds the
 one definition of each token and component for light, dark and print; this section states the
@@ -313,8 +316,13 @@ are capsules. Panel content sits `--vr-panel-inset` from the edge and stacked bl
   hover and focus, blocked a hatched danger ring; a key counts each state and hidden text names it
   per cell.
 - Mark: an ice tile with a six-point crystal and a vial cap (`static/img/mark.svg`).
-- Record foot line, application footer and the dateline (under an overview's title) keep their
-  roles from earlier versions of this section.
+- Record foot line (`includes/record_foot.html`): the record's identifier, and when and by whom
+  the view was produced, under the last panel and on its printout. It is a viewing note, not a
+  statement about the record.
+- Application footer (`includes/source_footer.html`): product name, the "Source code" link
+  (`SOURCE_CODE_URL`, required by AGPL-3.0 section 13) and the licence, on every staff,
+  entrance, error and admin page. Keep it; it is hidden only in form dialogs and on printouts.
+- Dateline: today's date and ISO week under an overview's title (`includes/dateline.html`).
 
 Dates and times in these devices are rendered by the server in the repository's time zone
 (`TIME_ZONE`), never the browser's.

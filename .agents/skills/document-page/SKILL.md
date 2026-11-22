@@ -47,8 +47,8 @@ Production reads the files once per release.
 - `match` (optional): URL arguments, as strings, that narrow a shared route to one variant. For
   example `{"kind": "calibration"}` on a shared form route. The entry with the most matching keys wins. Two entries for one
   route with the same number of keys must not both match the same URL.
-- `title`: the page's visible title. `purpose`: one sentence on what the page is for, used in
-  the page header and search. The drawer shows `summary` and falls back to `purpose`.
+- `title`: the page's visible title. `purpose`: one sentence on what the page is for. The drawer
+  shows `summary` and falls back to `purpose`.
 - `summary`, `tasks`, `good_to_know`: the friendly layer, with the sizes in the table above.
   A task is `{"title": "...", "steps": ["...", ...]}`. All three are present, or none: a partial
   layer is rejected. An entry without them still renders, with its reference sections open, but

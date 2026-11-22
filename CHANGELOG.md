@@ -6,7 +6,7 @@ What was added or changed in OpenBGA Biorepository, newest first. Changes are
 grouped by the calendar month they were merged in and ranked from high to low impact.
 The same list is shown in the application under What's new.
 
-## November 2026 (2026-11-13 to 2026-11-20)
+## November 2026 (2026-11-13 to 2026-11-22)
 
 ### High impact
 
@@ -174,6 +174,10 @@ The same list is shown in the application under What's new.
   > No migration. The selection is rechecked when submitted and expires after one hour. No temperature triggers a hold automatically.
 
 ### Low impact
+
+- **Fixed:** Correct the help for the dashboard, sign-in codes and authenticator setup (2026-11-22, Dashboard, [#50](https://github.com/openbga/biorepository/pull/50))
+
+  The dashboard help now says that only Your work queues drops the link at a count of 0. The sign-in code help names the address line as it appears on the page, and the authenticator setup help no longer says the form has no Cancel button.
 
 - **Fixed:** Keep your filters when a storage CSV exceeds the row limit (2026-11-20, Free positions)
 
