@@ -39,7 +39,7 @@
       "title": "Fields and actions",
       "items": [
         {
-          "label": "Recipient",
+          "label": "We've sent a code to",
           "description": "Read-only email address entered on the request page. Its email link opens your mail application; it does not change the recipient. If the address is wrong, cancel and request a code again with the correct address. The confirmation screen appears for unknown addresses too, so it does not establish that an account exists."
         },
         {

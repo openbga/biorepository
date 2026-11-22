@@ -35,8 +35,9 @@ feature needs statistics. See [Django support](https://www.djangoproject.com/dow
 A React/API split adds contracts and deployment/testing surface without a demonstrated need.
 Use DataTables with its Bootstrap adapter and ColReorder for column presentation only. Keep
 Django-rendered rows, full-queryset filtering/sort links and pagination; disable client sorting,
-search and paging. Browser preferences store column IDs/order/visibility only, with keyboard
-controls and reset. No Ajax row API, server preference model, or second table/query framework.
+search and paging. Per-user preferences on the server (`core/preferences.py`) store column
+IDs/order/visibility, page size and sort only, with keyboard controls and reset. No Ajax row API
+or second table/query framework.
 
 ## Shared platform
 
@@ -96,8 +97,7 @@ Intentional divergences from Environmental LIMS (keep this list current):
 - Chart.js is not vendored, and `core/widgets.py` (the list-or-other and
   suggestion inputs) with its widget templates is not carried over: no OpenBGA Biorepository page uses them.
   `static/css/app.css` drops their styles and the Environmental LIMS domain styles (quote documents,
-  requested-test pickers, container rows, the labels menu). The `.tomselect` branches in
-  `static/js/app.js` and `static/js/form-dialog.js` stay, unused, so those files remain identical.
+  requested-test pickers, container rows, the labels menu).
 - Uploaded files are `core.Attachment` rows (`core/attachments.py`, migration `core` 0003): each
   file stored once and referenced by equipment and distribution event versions, with the optional
   `ATTACHMENT_STORAGE_LIMIT_BYTES` total cap. Environmental LIMS keeps attachment bytes on its
@@ -141,7 +141,7 @@ Intentional divergences from Environmental LIMS (keep this list current):
   `main` ruleset requires.
 - What's new (2026-11-17) shares `core/changelog.py`, the `changelog` management command, the
   `changelog` workflow and the entry format with Environmental LIMS. It differs in where an
-  account's seen entries live: there is no server preference model here, so
+  account's seen entries live: they do not use the server preferences (`core/preferences.py`);
   `static/js/whats-new.js` keeps them in the browser's local storage per account (as the help
   panel does) and computes the unread count from `indicator_data()` embedded in each page (a first visit in a
   browser therefore starts with nothing unread, per browser rather than per account);
@@ -248,7 +248,7 @@ maintenance tooling only.
 
 Page help is versioned plain-text content selected from the authorized response's resolved route,
 including distinct form variants. It introduces no record API or database state. The browser keeps
-per-account panel visibility and width preferences, as it does table presentation preferences.
+per-account panel visibility and width preferences.
 Route-coverage checks require help for every HTML page; downloads and transitions are documented
 on their invoking pages. The document-page skill defines the authoring and maintenance standard.
 

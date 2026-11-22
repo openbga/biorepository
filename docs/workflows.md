@@ -279,8 +279,8 @@ a link for each range, with up to 200 labels per PDF.
 
 **Labels** are a PDF with one label per page: the specimen ID in text and as a Code 128 barcode,
 nothing else (no participant, no location). Any role prints up to 200 at a time. The stock is
-50.8 × 25.4 mm by default, a working assumption the deployment sets with `SPECIMEN_LABEL_STOCK`;
-barcodes have not been read with a scanner. Each print is audited with the IDs, count, stock and
+50.8 × 25.4 mm by default, a working assumption; the Django setting `SPECIMEN_LABEL_STOCK`
+(not read from the environment) overrides it. Barcodes have not been read with a scanner. Each print is audited with the IDs, count, stock and
 template version, and makes no claim that a label was affixed.
 
 **Lookup.** The top bar takes a typed or scanned ID (outer whitespace trimmed, matched exactly after

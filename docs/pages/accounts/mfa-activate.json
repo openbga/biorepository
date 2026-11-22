@@ -53,7 +53,7 @@
     {
       "title": "Prerequisites and changing enrollment",
       "paragraphs": [
-        "Requires sign-in, recent reauthentication and no unverified associated email records. This check is not a blanket requirement that a verified email record must exist: an account with no address records passes that particular test. If an app is already active, this route opens deactivation instead. Reloading an unsubmitted activation form generates new enrollment information; use the QR/secret currently displayed. There is no Back or Cancel button in this form; leave through the normal account navigation to abandon enrollment.",
+        "Requires sign-in, recent reauthentication and no unverified associated email records. This check is not a blanket requirement that a verified email record must exist: an account with no address records passes that particular test. If an app is already active, this route opens deactivation instead. Reloading an unsubmitted activation form generates new enrollment information; use the QR/secret currently displayed.",
         "The setup opens in the shared form dialog over Two-factor authentication; Cancel closes it without activating anything."
       ]
     }
