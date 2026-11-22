@@ -208,8 +208,10 @@ Signed-in users may optionally enrol an authenticator app from the account menu'
 its enforcement and account-recovery policy. The first owner has the `admin` role;
 `createsuperuser` alone does not assign a repository role.
 
-Roles, what each can do, and the separate disposal-approval and request-decision permissions are
-described in [Setup, roles and the repository record](docs/workflows.md#setup-roles-and-the-repository-record).
+Roles and what each can do are described in
+[Setup, roles and the repository record](docs/workflows.md#setup-roles-and-the-repository-record);
+the separate permissions in [Disposal approval](docs/workflows.md#disposal-approval) and
+[Request decisions](docs/workflows.md#request-decisions).
 
 Account administration requires a superuser and is separate from repository roles. To add a role
 to an existing owner from the service shell, use `setup_repository --admin-username owner --role
