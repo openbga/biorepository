@@ -322,7 +322,7 @@ are capsules. Panel content sits `--vr-panel-inset` from the edge and stacked bl
 - Application footer (`includes/source_footer.html`): product name, the "Source code" link
   (`SOURCE_CODE_URL`, required by AGPL-3.0 section 13) and the licence, on every staff,
   entrance, error and admin page. Keep it; it is hidden only in form dialogs and on printouts.
-- Dateline: today's date and ISO week above an overview's title (`includes/dateline.html`).
+- Dateline: today's date and ISO week under an overview's title (`includes/dateline.html`).
 
 Dates and times in these devices are rendered by the server in the repository's time zone
 (`TIME_ZONE`), never the browser's.
